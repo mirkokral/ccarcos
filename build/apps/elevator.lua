@@ -75,12 +75,9 @@ modem.open(711)
 reDraw()
 while true do
     ev = table.pack(__LEGACY.os.pullEventRaw())
-    -- print(table.unpack(ev))
     if ev[1] == "modem_message" then
-        
         selectedFloor = ev[5]+1
         reDraw()
-        -- print("mdmm " .. ev[5])
     end
     if ev[1] == "terminate" then
         shell.run("shell")
@@ -90,16 +87,13 @@ while true do
             for i, v in ipairs(buttons) do
                 if ev[3] >= v["pos"] and ev[3] <= v["pos"]+#v["text"] then
                     v["callback"]()
-                    -- print(v["text"])
                 end
             end
         end
-        -- button, x, y = ev[1], ev[2], ev[3]
         if floors[ev[4]-1] then
             selectedFloor = floors[ev[4]-1]["id"]
             modem.transmit(476, 0, floors[ev[4]-1]["id"]-1)
             reDraw()
         end
-
     end
 end

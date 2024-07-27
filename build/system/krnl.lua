@@ -4,10 +4,7 @@ local kernelLogBuffer = ""
 local tasks = {}
 local config = {
     forceNice = nil
-
 }
-
-
 _G.arcos = {
     kernelPanic = function(err, file, line)
         term.setBackgroundColor(colors.black)
@@ -57,7 +54,6 @@ _G.arcos = {
         _G[v] = tAPI
     end
 }
-
 _G.tasking = {
     createTask = function(name, callback, nice, user, out)
         if not user then
@@ -76,7 +72,6 @@ _G.tasking = {
             write("\nEnter root password")
             local password = read()
         end
-
         table.insert(tasks, {
             name = name,
             crt = coroutine.create(callback),
@@ -105,7 +100,6 @@ _G.tasking = {
         return returnstuff
     end
 }
-
 _G.devices = {
     get = function(what)
         return peripheral.wrap(what)
@@ -117,7 +111,6 @@ _G.devices = {
 for i, v in ipairs(__LEGACY.fs.listDir("/system/apis/")) do
     print("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
-    
 end 
 function _G.strsplit(inputstr, sep)
     if sep == nil then
@@ -129,9 +122,7 @@ function _G.strsplit(inputstr, sep)
     end
     return t
 end
-
 local i = 0
-
 while true do
     i = i + 1
     if args[i] == nil then
@@ -166,5 +157,4 @@ while true do
         sleep(5)
         error()
     end
-    -- sleep()
 end

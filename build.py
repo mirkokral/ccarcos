@@ -41,6 +41,8 @@ def compileFile(filepathstr: str):
                         currentlyExcluding = i.strip()[8:] in config["options"]
                     case "Inv":
                         currentlyExcluding = not currentlyExcluding
+            elif i.strip().startswith("--") or i.strip() == "":
+                pass
             else:
                 if not currentlyExcluding:
                     outlines.append(i)

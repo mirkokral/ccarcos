@@ -2,9 +2,7 @@ local theme = {
     background = colours.blue,
     foreground = colors.lightBlue
 }
-
 function main()
-    
     term.setTextColor(theme.foreground)
     term.setBackgroundColor(theme.background)
     term.clear()
