@@ -144,6 +144,5 @@ while true do
         sleep(5)
         error()
     end
-    coroutine.yield()
     sleep()
 end
