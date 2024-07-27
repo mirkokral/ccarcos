@@ -117,7 +117,7 @@ while true do
 end
 tasking.createTask("Init", function()
     __LEGACY.shell.run("/apps/init.lua")
-end, 1, "root")
+end, 1, "root", __LEGACY.term)
 while true do
     if #tasks > 0 then
         ev = os.pullEvent()
