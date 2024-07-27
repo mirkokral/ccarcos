@@ -13,7 +13,7 @@ function _G.strsplit(inputstr, sep)
 end
 write("Branch> ")
 local branch = read()
-file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/main/"..branch.."/objList.txt")
+file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/objList.txt")
 cont = file.readAll()
 file.close()
 for _,i in ipairs(strsplit(cont, "\n")) do
