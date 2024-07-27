@@ -11,7 +11,9 @@ function _G.strsplit(inputstr, sep)
     end
     return t
 end
-file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/main/build/objList.txt")
+write("Branch> ")
+local branch = read()
+file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/main/"..branch.."/objList.txt")
 cont = file.readAll()
 file.close()
 for _,i in ipairs(strsplit(cont, "\n")) do
@@ -24,14 +26,14 @@ for _,i in ipairs(strsplit(cont, "\n")) do
     if action == "f" then
         shell.run("rm /" .. filename)
         f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/main/build/" .. filename)
+        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
         f.close()
     end
     if action == "r" and not fs.exists("/" .. filename) then
         f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/main/build/" .. filename)
+        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
         f.close()
