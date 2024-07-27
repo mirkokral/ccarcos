@@ -22,7 +22,7 @@ end
 local floors = {
     {id=8, name="Outside"},
     {id=3, name="Living"},
-    {id=2, name="Lab"},
+    {id=4, name="Lab"},
     {id=7, name="Bunker"}
 }
 local function reDraw()
@@ -43,7 +43,7 @@ modem.open(711)
 reDraw()
 while true do
     ev = table.pack(__LEGACY.os.pullEventRaw())
-    print(table.unpack(ev))
+    -- print(table.unpack(ev))
     if ev[1] == "modem_message" then
         
         selectedFloor = ev[5]+1
