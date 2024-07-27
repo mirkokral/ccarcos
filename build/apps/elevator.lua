@@ -5,14 +5,15 @@ if arcos then
 else
     modem = peripheral.find("modem")
 end
+local theme
 if arcos then
-    local theme = {
+    theme = {
         bg = _G.__LEGACY.colors.black,
         elFloor = _G.__LEGACY.colors.blue,
         elFloorSel = _G.__LEGACY.colors.lightBlue,
     }
 else
-    local theme = {
+    theme = {
         bg = colors.black,
         elFloor = colors.brown,
         elFloorSel = colors.yellow
