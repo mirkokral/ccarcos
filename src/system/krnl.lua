@@ -8,6 +8,16 @@ local config = {
 }
 
 
+function _G.strsplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
 _G.arcos = {
     kernelPanic = function(err, file, line)
         term.setBackgroundColor(colors.black)
@@ -124,16 +134,6 @@ end
 _G.col = require("src.system.apis.col")
 _G.red = require("src.system.apis.red")
 -- C:End
-function _G.strsplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
 
 local i = 0
 

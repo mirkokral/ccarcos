@@ -5,6 +5,16 @@ local tasks = {}
 local config = {
     forceNice = nil
 }
+function _G.strsplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
 _G.arcos = {
     kernelPanic = function(err, file, line)
         term.setBackgroundColor(colors.black)
@@ -112,16 +122,6 @@ for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     print("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
 end 
-function _G.strsplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
 local i = 0
 while true do
     i = i + 1
