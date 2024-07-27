@@ -1,2 +1,6 @@
-local bootloader = require("system/bootloader.lua")
-bootloader.main()
+_G.__LEGACY = {
+    shell = shell,
+    term = term,
+    peripheral = peripheral
+}
+dofile("/system/bootloader.lua")

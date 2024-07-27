@@ -7,6 +7,12 @@ local config = {
 
 }
 
+--C:Exc
+function sleep(n)
+    os.execute("sleep " .. tonumber(n))
+end
+  
+--C:End
 
 _G.arcos = {
     kernelPanic = function(err, file, line)
@@ -77,6 +83,15 @@ _G.tasking = {
     end
 }
 
+_G.devices = {
+    get = function(what)
+        return peripheral.wrap(what)
+    end,
+    find = function(what)
+        return peripheral.find(what)
+    end
+}
+
 local i = 0
 
 while true
@@ -94,7 +109,7 @@ do
         config["forceNice"] = tonumber(args[i])
     end
 end
-tasking.createTask("Test", function()
+tasking.createTask("Shell", function()
     while true do
         print("Task 1")
         coroutine.yield()
@@ -111,7 +126,7 @@ do
     if #tasks > 0 then
         for _, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
-                coroutine.resume(i["crt"])
+                coroutine.resume(i["crt"], os.pullEvent())
             end
         end
     else
@@ -120,4 +135,5 @@ do
         error()
     end
     coroutine.yield()
+    sleep()
 end

@@ -9,6 +9,8 @@ if not "options" in config:
     print("Missing config: options")
 if not "compileFiles" in config:
     print("Missing config: compileFiles")
+if not "mkDirs" in config:
+    print("Missing config: mkDirs")
 if not "build" in os.listdir("."):
     os.mkdir("build")
 
@@ -56,15 +58,23 @@ match sys.argv[1]:
         pass
     case "whole":
         objectListLines = []
+        for i in config["mkDirs"]:
+            objectListLines.append("d>" + i)
         for ind, i in enumerate(config["compileFiles"]):
             try:
                 compileFile(i or "FileNameThatSurelyDoesNotExistAsWhyWouldSomeoneMakeSuchAStupidDecisionToMakeThisFileNameJustToHaveADefaultFile.ImpracticalFileExtension")
-                print(f'{ind+1}/{len(config["compileFiles"])+1} | {i}')
+                print(f'{ind+1}/{len(config["nrFiles"]) + len(config["compileFiles"])+1} | {i}')
             except Exception as e:
                 print("An error happened while parsing file: " + i)
                 print(e)
-            objectListLines.append(i)
-        print(f'{len(config["compileFiles"])+1}/{len(config["compileFiles"])+1} | objList.txt')
+            objectListLines.append("f>" + i)
+        for ind, i in enumerate(config["nrFiles"]):
+            # try:
+            compileFile(i or "FileNameThatSurelyDoesNotExistAsWhyWouldSomeoneMakeSuchAStupidDecisionToMakeThisFileNameJustToHaveADefaultFile.ImpracticalFileExtension")
+            print(f'{len(config["compileFiles"]) +ind+1}/{len(config["nrFiles"])+len(config["compileFiles"])+1} | {i}')
+            
+            objectListLines.append("r>" + i)
+        print(f'{len(config["nrFiles"])+len(config["compileFiles"])+1}/{len(config["nrFiles"]) + len(config["compileFiles"])+1} | objList.txt')
 
         with open("build/objList.txt", "w") as f:
             f.write('\n'.join(objectListLines))

@@ -3,7 +3,13 @@ options:
 mkDirs:
   - system
   - system/libs
+  - user
+  - apps
 compileFiles:
   - system/bootloader.lua
-  - system.passwd
+  - system/passwd
+  - system/krnl.lua
+  - system/installer.lua
   - startup.lua
+nrFiles:
+  - system/passwd

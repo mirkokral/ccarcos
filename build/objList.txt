@@ -1,2 +1,9 @@
-system/bootloader.lua
-startup.lua
+d>system
+d>system/libs
+d>user
+d>apps
+f>system/bootloader.lua
+f>system/passwd
+f>system/krnl.lua
+f>startup.lua
+r>system/passwd
