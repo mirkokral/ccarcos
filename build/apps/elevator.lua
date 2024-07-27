@@ -25,10 +25,39 @@ local floors = {
     {id=4, name="Lab"},
     {id=7, name="Bunker"}
 }
+local buttons = {
+    {
+        text = "[()]",
+        pos = 1,
+        callback = function()
+            modem.transmit(4590, 0, "")
+        end
+    },
+    {
+        text = "[ ]",
+        pos = 5,
+        callback = function()
+            modem.transmit(713, 0, "MatDoorOpen")
+        end
+    },
+    {
+        text = "[:]",
+        pos = 9,
+        callback = function()
+            modem.transmit(713, 0, "MatDoorClose")
+        end
+    }
+}
 local function reDraw()
     term.setBackgroundColor(theme.bg)
     term.clear()
     term.setCursorPos(1, 1)
+    for i, v in ipairs(buttons) do
+        term.setTextColor(theme.elFloorSel)
+        term.setCursorPos(v["pos"], 1)
+        write(v["text"])
+    end
+    term.setCursorPos(2, 1)
     for i, v in ipairs(floors) do
         if selectedFloor == v["id"] then
             term.setTextColor(theme.elFloorSel)
@@ -54,11 +83,13 @@ while true do
         shell.run("shell")
     end
     if ev[1] == "mouse_click" then
-
+        if ev[4] == 1 then
+            
+        end
         -- button, x, y = ev[1], ev[2], ev[3]
-        if floors[ev[4]] then
-            selectedFloor = floors[ev[4]]["id"]
-            modem.transmit(476, 0, floors[ev[4]]["id"]-1)
+        if floors[ev[4]-1] then
+            selectedFloor = floors[ev[4]-1]["id"]
+            modem.transmit(476, 0, floors[ev[4]-1]["id"]-1)
             reDraw()
         end
 
