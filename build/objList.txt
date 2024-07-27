@@ -1,5 +1,5 @@
 d>system
-d>system/libs
+d>system/apis
 d>user
 d>apps
 f>system/bootloader.lua
@@ -8,5 +8,7 @@ f>system/krnl.lua
 f>system/installer.lua
 f>apps/elevator.lua
 f>apps/init.lua
+f>system/apis/col.lua
+f>system/apis/red.lua
 f>startup.lua
 r>system/passwd

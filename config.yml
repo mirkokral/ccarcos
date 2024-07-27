@@ -2,7 +2,7 @@ options:
   - enableCompatibility
 mkDirs:
   - system
-  - system/libs
+  - system/apis
   - user
   - apps
 compileFiles:
@@ -12,6 +12,8 @@ compileFiles:
   - system/installer.lua
   - apps/elevator.lua
   - apps/init.lua
+  - system/apis/col.lua
+  - system/apis/red.lua
   - startup.lua
 nrFiles:
   - system/passwd

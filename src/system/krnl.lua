@@ -29,6 +29,32 @@ _G.arcos = {
         else
             return nil
         end
+    end,
+    loadAPI = function(api)
+        assert(type(api) == "string", "Invalid argument: api")
+        local tabEnv = {}
+        setmetatable(tabEnv, {__index = _G})
+        local funcApi, err = loadfile(api, nil, tabEnv)
+        if funcApi then
+            local ok, err = pcall(funcApi)
+            if not ok then
+                error(err)
+            end 
+        else
+            error(err)
+        end
+        local tAPI = {}
+        for k, v in pairs(tabEnv) do
+            if k ~= "_ENV" then
+                tAPI[k] =  v
+            end
+        end
+        local s = strsplit(api, "/")
+        local v = s[#s]
+        if string.sub(v, #s-4) == ".lua" then
+            v = v:sub(0, #s-5)
+        end 
+        _G[v] = tAPI
     end
 }
 
@@ -88,6 +114,15 @@ _G.devices = {
         return peripheral.find(what)
     end
 }
+for i, v in ipairs(__LEGACY.fs.listDir("/system/apis/")) do
+    print("Loading API: " .. v)
+    arcos.loadAPI("/system/apis/" .. v)
+    
+end 
+-- C:Exc
+_G.col = require("src.system.apis.col")
+_G.red = require("src.system.apis.red")
+-- C:End
 function _G.strsplit(inputstr, sep)
     if sep == nil then
         sep = "%s"
