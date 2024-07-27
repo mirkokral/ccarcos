@@ -5,5 +5,6 @@ d>apps
 f>system/bootloader.lua
 f>system/passwd
 f>system/krnl.lua
+f>system/installer.lua
 f>startup.lua
 r>system/passwd

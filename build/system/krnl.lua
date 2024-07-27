@@ -3,10 +3,16 @@ local currentTask
 local kernelLogBuffer = ""
 local tasks = {}
 local config = {
-    forceNice = nil,
+    forceNice = nil
 
 }
 
+-- C:Exc
+function sleep(n)
+    os.execute("sleep " .. tonumber(n))
+end
+
+-- C:End
 
 _G.arcos = {
     kernelPanic = function(err, file, line)
@@ -55,11 +61,13 @@ _G.tasking = {
             name = name,
             crt = coroutine.create(callback),
             nice = nice,
-            user = user,
+            user = user
         })
     end,
     killTask = function(pid)
-        if not currentTask or currentTask["user"]=="root" or tasks[pid]["user"] == (currentTask or {user="root"})["user"] then
+        if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
+            user = "root"
+        })["user"] then
             table.remove(tasks, pid)
         end
     end,
@@ -77,10 +85,28 @@ _G.tasking = {
     end
 }
 
+_G.devices = {
+    get = function(what)
+        return peripheral.wrap(what)
+    end,
+    find = function(what)
+        return peripheral.find(what)
+    end
+}
+function _G.strsplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
+
 local i = 0
 
-while true
-do
+while true do
     i = i + 1
     if args[i] == nil then
         break
@@ -90,11 +116,11 @@ do
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
-        i=i+1
+        i = i + 1
         config["forceNice"] = tonumber(args[i])
     end
 end
-tasking.createTask("Test", function()
+tasking.createTask("Shell", function()
     while true do
         print("Task 1")
         coroutine.yield()
@@ -106,12 +132,11 @@ tasking.createTask("Test2", function()
         coroutine.yield()
     end
 end, 1, "root")
-while true
-do
+while true do
     if #tasks > 0 then
         for _, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
-                coroutine.resume(i["crt"])
+                coroutine.resume(i["crt"], os.pullEvent())
             end
         end
     else
@@ -120,4 +145,5 @@ do
         error()
     end
     coroutine.yield()
+    sleep()
 end

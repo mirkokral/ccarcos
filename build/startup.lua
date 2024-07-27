@@ -1,6 +1,27 @@
 _G.__LEGACY = {
+    colors = colors,
+    colours = colours,
+    commands = commands,
+    disk = disk,
+    fs = fs,
+    gps = gps,
+    help = help,
+    http = http,
+    io = io,
+    keys = keys,
+    os = os,
+    paintutils = paintutils,
+    parallel = parallel,
+    peripheral = peripheral,
+    pocket = pocket,
+    rednet = rednet,
+    redstone = redstone,
+    settings = settings,
     shell = shell,
     term = term,
-    peripheral = peripheral
+    textutils = textutils,
+    turtle = turtle,
+    vector = vector,
+    window = window
 }
 dofile("/system/bootloader.lua")
