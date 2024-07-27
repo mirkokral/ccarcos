@@ -7,12 +7,6 @@ local config = {
 
 }
 
--- C:Exc
-function sleep(n)
-    os.execute("sleep " .. tonumber(n))
-end
-
--- C:End
 
 _G.arcos = {
     kernelPanic = function(err, file, line)

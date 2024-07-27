@@ -30,15 +30,15 @@ def compileFile(filepathstr: str):
         outlines = []
         currentlyExcluding = False
         for i in file.readlines():
-            if i.strip().startswith("--C:"):
-                cmd = i.strip()[4:]
+            if i.strip().startswith("-- C:"):
+                cmd = i.strip()[5:]
                 match cmd:
                     case "Exc":
                         currentlyExcluding = True
                     case "End":
                         currentlyExcluding = False
                     case "Ifc":
-                        currentlyExcluding = i.strip()[7:] in config["options"]
+                        currentlyExcluding = i.strip()[8:] in config["options"]
                     case "Inv":
                         currentlyExcluding = not currentlyExcluding
             else:
