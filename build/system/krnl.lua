@@ -120,11 +120,11 @@ tasking.createTask("Init", function()
 end, 1, "root", __LEGACY.term)
 while true do
     if #tasks > 0 then
-        ev = os.pullEvent()
+        ev = { os.pullEventRaw() }
         for _, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
                 _G.term = i["out"]
-                coroutine.resume(i["crt"], ev)
+                coroutine.resume(i["crt"], table.unpack(ev))
             end
         end
     else

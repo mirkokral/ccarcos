@@ -42,7 +42,7 @@ end
 modem.open(711)
 reDraw()
 while true do
-    ev = table.pack(coroutine.yield())
+    ev = table.pack(__LEGACY.os.pullEventRaw())
     if ev[1] == "modem_message" then
         selectedFloor = ev[5]
         reDraw()
@@ -51,10 +51,10 @@ while true do
         shell.run("shell")
     end
     if ev[1] == "mouse_click" then
-        print("click")
-        button, x, y = ev[1], ev[2], ev[3]
-        if floors[y] then
-            selectedFloor = floors[y]["id"]-1
+
+        -- button, x, y = ev[1], ev[2], ev[3]
+        if floors[ev[4]] then
+            selectedFloor = floors[ev[4]]["id"]-1
             modem.transmit(476, 0, floors[y]["id"]-1)
             reDraw()
         end
