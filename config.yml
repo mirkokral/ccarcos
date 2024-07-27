@@ -1,5 +1,9 @@
 options:
   - enableCompatibility
+mkDirs:
+  - system
+  - system/libs
 compileFiles:
   - system/bootloader.lua
+  - system.passwd
   - startup.lua

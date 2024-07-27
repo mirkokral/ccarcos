@@ -31,10 +31,14 @@ def compileFile(filepathstr: str):
             if i.strip().startswith("--C:"):
                 cmd = i.strip()[4:]
                 match cmd:
-                    case "Exclude":
+                    case "Exc":
                         currentlyExcluding = True
                     case "End":
                         currentlyExcluding = False
+                    case "Ifc":
+                        currentlyExcluding = i.strip()[7:] in config["options"]
+                    case "Inv":
+                        currentlyExcluding = not currentlyExcluding
             else:
                 if not currentlyExcluding:
                     outlines.append(i)
@@ -51,13 +55,19 @@ match sys.argv[1]:
             print(e)
         pass
     case "whole":
-        objectListLines = [""]
-        for i in config["compileFiles"]:
+        objectListLines = []
+        for ind, i in enumerate(config["compileFiles"]):
             try:
                 compileFile(i or "FileNameThatSurelyDoesNotExistAsWhyWouldSomeoneMakeSuchAStupidDecisionToMakeThisFileNameJustToHaveADefaultFile.ImpracticalFileExtension")
+                print(f'{ind+1}/{len(config["compileFiles"])+1} | {i}')
             except Exception as e:
                 print("An error happened while parsing file: " + i)
                 print(e)
+            objectListLines.append(i)
+        print(f'{len(config["compileFiles"])+1}/{len(config["compileFiles"])+1} | objList.txt')
+
+        with open("build/objList.txt", "w") as f:
+            f.write('\n'.join(objectListLines))
     case "clean":
         os.system("rm -rf build/*")
     case "test":
