@@ -11,12 +11,14 @@ if arcos then
         bg = _G.__LEGACY.colors.black,
         elFloor = _G.__LEGACY.colors.blue,
         elFloorSel = _G.__LEGACY.colors.lightBlue,
+        buttonColor = __LEGACY.colors.white
     }
 else
     theme = {
         bg = colors.black,
         elFloor = colors.brown,
-        elFloorSel = colors.yellow
+        elFloorSel = colors.yellow,
+        buttonColor = colors.white
     }
 end
 local floors = {
@@ -35,14 +37,14 @@ local buttons = {
     },
     {
         text = "[ ]",
-        pos = 5,
+        pos = 6,
         callback = function()
             modem.transmit(713, 0, "MatDoorOpen")
         end
     },
     {
         text = "[:]",
-        pos = 9,
+        pos = 10,
         callback = function()
             modem.transmit(713, 0, "MatDoorClose")
         end
@@ -52,12 +54,12 @@ local function reDraw()
     term.setBackgroundColor(theme.bg)
     term.clear()
     term.setCursorPos(1, 1)
+    term.setTextColor(theme.buttonColor)
     for i, v in ipairs(buttons) do
-        term.setTextColor(theme.elFloorSel)
         term.setCursorPos(v["pos"], 1)
         write(v["text"])
     end
-    term.setCursorPos(2, 1)
+    term.setCursorPos(1, 2)
     for i, v in ipairs(floors) do
         if selectedFloor == v["id"] then
             term.setTextColor(theme.elFloorSel)
@@ -84,7 +86,12 @@ while true do
     end
     if ev[1] == "mouse_click" then
         if ev[4] == 1 then
-            
+            for i, v in ipairs(buttons) do
+                if ev[3] >= v["pos"] and ev[3] <= v["pos"]+#v["text"] then
+                    v["callback"]()
+                    -- print(v["text"])
+                end
+            end
         end
         -- button, x, y = ev[1], ev[2], ev[3]
         if floors[ev[4]-1] then
