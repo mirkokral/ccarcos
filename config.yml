@@ -1,0 +1,5 @@
+options:
+  - enableCompatibility
+compileFiles:
+  - system/bootloader.lua
+  - startup.lua
