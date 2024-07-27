@@ -90,6 +90,7 @@ _G.tasking = {
             user = "root"
         })["user"] then
             table.remove(tasks, pid)
+            
         end
     end,
     getTasks = function(onlyThisUser)
@@ -114,7 +115,7 @@ _G.devices = {
         return peripheral.find(what)
     end
 }
-for i, v in ipairs(__LEGACY.fs.listDir("/system/apis/")) do
+for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     print("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
     
