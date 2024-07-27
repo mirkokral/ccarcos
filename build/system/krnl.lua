@@ -33,7 +33,7 @@ _G.arcos = {
 }
 
 _G.tasking = {
-    createTask = function(name, callback, nice, user)
+    createTask = function(name, callback, nice, user, out)
         if not user then
             if currentTask then
                 user = currentTask["user"]
@@ -55,7 +55,8 @@ _G.tasking = {
             name = name,
             crt = coroutine.create(callback),
             nice = nice,
-            user = user
+            user = user,
+            out = out
         })
     end,
     killTask = function(pid)
@@ -114,23 +115,16 @@ while true do
         config["forceNice"] = tonumber(args[i])
     end
 end
-tasking.createTask("Shell", function()
-    while true do
-        print("Task 1")
-        coroutine.yield()
-    end
-end, 1, "root")
-tasking.createTask("Test2", function()
-    while true do
-        print("Task 2")
-        coroutine.yield()
-    end
+tasking.createTask("Init", function()
+    __LEGACY.shell.run("/apps/init.lua")
 end, 1, "root")
 while true do
     if #tasks > 0 then
+        ev = os.pullEvent()
         for _, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
-                coroutine.resume(i["crt"], os.pullEvent())
+                _G.term = i["out"]
+                coroutine.resume(i["crt"], ev)
             end
         end
     else
