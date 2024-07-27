@@ -16,6 +16,7 @@ file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/main/build/
 cont = file.readAll()
 file.close()
 for i in strsplit(cont, "\n") do
+    print(i)
     action = string.sub(i, 1, 1)
     filename = string.sub(i, 3)
     if action == "d" then
