@@ -1,0 +1,1 @@
+__LEGACY.shell.run("/apps/elevator.lua")

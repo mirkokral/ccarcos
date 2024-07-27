@@ -10,6 +10,8 @@ compileFiles:
   - system/passwd
   - system/krnl.lua
   - system/installer.lua
+  - apps/elevator.lua
+  - apps/init.lua
   - startup.lua
 nrFiles:
   - system/passwd
