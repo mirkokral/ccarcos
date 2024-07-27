@@ -121,10 +121,13 @@ end, 1, "root", __LEGACY.term)
 while true do
     if #tasks > 0 then
         ev = { os.pullEventRaw() }
-        for _, i in ipairs(tasks) do
+        for d, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
                 _G.term = i["out"]
                 coroutine.resume(i["crt"], table.unpack(ev))
+            end
+            if coroutine.status(i["crt"]) == "dead" then
+                table.remove(tasks, d)
             end
         end
     else
@@ -132,5 +135,5 @@ while true do
         sleep(5)
         error()
     end
-    sleep()
+    -- sleep()
 end

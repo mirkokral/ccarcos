@@ -30,7 +30,7 @@ local function reDraw()
     term.clear()
     term.setCursorPos(1, 1)
     for i, v in ipairs(floors) do
-        if selectedFloor == v["id"]-1 then
+        if selectedFloor == v["id"] then
             term.setTextColor(theme.elFloorSel)
             print("> " .. v["name"])
         else
@@ -43,9 +43,12 @@ modem.open(711)
 reDraw()
 while true do
     ev = table.pack(__LEGACY.os.pullEventRaw())
+    print(table.unpack(ev))
     if ev[1] == "modem_message" then
-        selectedFloor = ev[5]
+        
+        selectedFloor = ev[5]+1
         reDraw()
+        -- print("mdmm " .. ev[5])
     end
     if ev[1] == "terminate" then
         shell.run("shell")
@@ -54,8 +57,8 @@ while true do
 
         -- button, x, y = ev[1], ev[2], ev[3]
         if floors[ev[4]] then
-            selectedFloor = floors[ev[4]]["id"]-1
-            modem.transmit(476, 0, floors[y]["id"]-1)
+            selectedFloor = floors[ev[4]]["id"]
+            modem.transmit(476, 0, floors[ev[4]]["id"]-1)
             reDraw()
         end
 
