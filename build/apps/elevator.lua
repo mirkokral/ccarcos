@@ -25,6 +25,7 @@ local floors = {
     {id=8, name="Outside"},
     {id=3, name="Living"},
     {id=4, name="Lab"},
+    {id=9, name="Spatial"},
     {id=7, name="Bunker"}
 }
 local buttons = {
@@ -89,7 +90,7 @@ while true do
             for i, v in ipairs(buttons) do
                 if ev[3] >= v["pos"] and ev[3] <= v["pos"]+#v["text"] then
                     v["callback"]()
-                    print(v["text"])
+                    -- print(v["text"])
                 end
             end
         end

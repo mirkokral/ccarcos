@@ -25,6 +25,7 @@ local floors = {
     {id=8, name="Outside"},
     {id=3, name="Living"},
     {id=4, name="Lab"},
+    {id=9, name="Spatial"},
     {id=7, name="Bunker"}
 }
 local buttons = {
