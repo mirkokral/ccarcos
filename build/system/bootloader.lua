@@ -1,6 +1,6 @@
 local theme = {
-    background = colours.blue,
-    foreground = colors.lightBlue
+    background = colours.black,
+    foreground = colors.white
 }
 function main()
     term.setTextColor(theme.foreground)
@@ -8,8 +8,7 @@ function main()
     term.clear()
     term.setCursorPos(1, 1)
     print("arcos2 bootloader")
-    write("kargs: ")
-    local args = read()
+    local args = ""
     _G.__LEGACY.shell.run("/system/krnl.lua " .. args)
 end
 main()
