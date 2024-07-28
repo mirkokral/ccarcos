@@ -132,7 +132,7 @@ _G.devices = {
 }
 for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     print("Loading API: " .. v)
-    arcos.loadAPI("/system/apis/" .. v)
+    __LEGACY.os.loadAPI("/system/apis/" .. v)
 end 
 local i = 0
 while true do
