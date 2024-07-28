@@ -1,4 +1,5 @@
 local mdm = devices.find("modem")
+local currentFloor = -1
 if not mdm then
     error("Modem not found")
 end
@@ -24,13 +25,15 @@ tasking.createTask("Elevator step player detector handler", function()
             print("Testing: " .. i)
             print(table.unpack(playersInRange))
             if contains(playersInRange, i) then
-                mdm.transmit(476, 0, 7)
+                print("sending")
+                if currentFloor ~= 7 then mdm.transmit(476, 0, 7) end
             end
         end
-        sleep(5)
+        sleep(1)
     end
 end, 1, "root", term)
 while true do
     local _, side, channel, rc, msg, dist = arcos.ev()
+    currentFloor = tonumber(msg)
     red.setO("back", msg ~= "7")
 end
