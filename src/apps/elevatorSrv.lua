@@ -4,6 +4,8 @@ local queue = {}
 local enderModem = devices.get("top")
 local wiredModem = devices.get("right")
 wiredModem.open(712)
+wiredModem.open(476)
+enderModem.open(476)
 local function changeFloor(floor)
     enderModem.transmit(711, 712, floor)
     wiredModem.transmit(711, 712, floor)
@@ -36,9 +38,11 @@ tasking.createTask("Queue task", function()
     end
 end, 1, "root", term)
 while true do
-    local event, channel, repChannel, msg, dist = arcos.ev("modem_message")
+    local event, side, channel, repChannel, msg, dist = arcos.ev("modem_message")
     if channel == 476 then
         print("Queued floor " .. tonumber(msg + 1))
         table.insert(queue, tonumber(msg + 1))
+    else
+        print(channel)
     end
 end
