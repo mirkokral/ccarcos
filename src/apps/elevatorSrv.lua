@@ -6,6 +6,15 @@ local wiredModem = devices.get("right")
 wiredModem.open(712)
 wiredModem.open(476)
 enderModem.open(476)
+local function contains(table, element)
+    for _, value in pairs(table) do
+        if value == element then
+            return true
+        end
+    end
+    return false
+end
+
 local function changeFloor(floor)
     enderModem.transmit(711, 712, floor-1)
     wiredModem.transmit(711, 712, floor-1)
@@ -45,7 +54,7 @@ tasking.createTask("Queue task", function()
 end, 1, "root", term)
 while true do
     local event, side, channel, repChannel, msg, dist = arcos.ev("modem_message")
-    if channel == 476 and queue[#queue] ~= tonumber(msg+1) then
+    if channel == 476 and not contains(queue, tonumber(msg+1)) then
         print("Queued floor " .. tonumber(msg + 1))
         table.insert(queue, tonumber(msg + 1))
     else
