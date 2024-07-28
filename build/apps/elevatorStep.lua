@@ -18,11 +18,14 @@ local function contains(table, element)
 end
 tasking.createTask("Elevator step player detector handler", function()
     local pd = devices.find("playerDetector")
-    local playersInRange = pd.getPlayersInRange(4)
-    for _, i in ipairs(whitelistedPlayers) do
-        if contains(playersInRange, i) then
-            mdm.transmit(476, 0, 7)
+    while true do
+        local playersInRange = pd.getPlayersInRange(4)
+        for _, i in ipairs(whitelistedPlayers) do
+            if contains(playersInRange, i) then
+                mdm.transmit(476, 0, 7)
+            end
         end
+        sleep(5)
     end
 end, 1, "root", term)
 while true do
