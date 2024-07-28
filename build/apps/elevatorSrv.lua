@@ -43,7 +43,7 @@ tasking.createTask("Queue task", function()
 end, 1, "root", term)
 while true do
     local event, side, channel, repChannel, msg, dist = arcos.ev("modem_message")
-    if channel == 476 then
+    if channel == 476 and queue[#queue] ~= tonumber(msg+1) then
         print("Queued floor " .. tonumber(msg + 1))
         table.insert(queue, tonumber(msg + 1))
     else
