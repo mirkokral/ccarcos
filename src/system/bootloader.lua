@@ -10,7 +10,7 @@ function main()
     term.clear()
     term.setCursorPos(1, 1)
     local branch = textutils.unserialiseJSON(http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main").readAll())["sha"]
-    local cur = fs.open("/system/rel")
+    local cur = fs.open("/system/rel", "r")
     if cur and cur.readAll() ~= branch then
         shell.run("/system/installer.lua")
     end
