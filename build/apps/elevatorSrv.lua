@@ -24,7 +24,7 @@ local function changeFloor(floor)
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", false)
     sleep()
     repeat
-        local r = devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", false)
+        local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("top")
         sleep()
     until r
 end
