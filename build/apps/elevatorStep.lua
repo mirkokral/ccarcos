@@ -22,6 +22,7 @@ tasking.createTask("Elevator step player detector handler", function()
         local playersInRange = pd.getPlayersInRange(4)
         for _, i in ipairs(whitelistedPlayers) do
             print("Testing: " .. i)
+            print(table.unpack(playersInRange))
             if contains(playersInRange, i) then
                 mdm.transmit(476, 0, 7)
             end
