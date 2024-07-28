@@ -12,6 +12,7 @@ compileFiles:
   - system/installer.lua
   - apps/elevator.lua
   - apps/elevatorStep.lua
+  - apps/elevatorSrv.lua
   - apps/init.lua
   - system/apis/col.lua
   - system/apis/red.lua

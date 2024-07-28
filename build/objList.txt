@@ -8,6 +8,7 @@ f>system/krnl.lua
 f>system/installer.lua
 f>apps/elevator.lua
 f>apps/elevatorStep.lua
+f>apps/elevatorSrv.lua
 f>apps/init.lua
 f>system/apis/col.lua
 f>system/apis/red.lua
