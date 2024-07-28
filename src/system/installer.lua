@@ -43,6 +43,6 @@ for _,i in ipairs(strsplit(cont, "\n")) do
         
     end
 end
-f = fs.open("/system/rel")
+f = fs.open("/system/rel", "w")
 f.write(branch)
 f.close()
