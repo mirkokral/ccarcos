@@ -96,7 +96,6 @@ while true do
         end
         -- button, x, y = ev[1], ev[2], ev[3]
         if floors[ev[4]-1] then
-            selectedFloor = floors[ev[4]-1]["id"]
             modem.transmit(476, 0, floors[ev[4]-1]["id"]-1)
             reDraw()
         end

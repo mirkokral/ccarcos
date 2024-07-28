@@ -27,6 +27,7 @@ tasking.createTask("Elevator step player detector handler", function()
             if contains(playersInRange, i) then
                 print("sending")
                 if currentFloor ~= 7 then mdm.transmit(476, 0, 7) end
+                currentFloor = 7
             end
         end
         sleep(1)
