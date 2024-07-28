@@ -3,8 +3,10 @@ function setO(side, value)
     assert(type(side) == "string", "Invalid argument: side")
     if type(value) == "number" then
         __LEGACY.redstone.setAnalogOutput(side, value)
+        print("numset")
     elseif type(value) == "boolean" then
         __LEGACY.redstone.setOutput(side, value)
+        print("boolset")
     end
 end
 function getO(side)
