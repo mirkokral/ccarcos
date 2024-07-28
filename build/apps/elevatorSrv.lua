@@ -22,6 +22,11 @@ local function changeFloor(floor)
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", true)
     sleep()
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", false)
+    sleep()
+    repeat
+        local r = devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", false)
+        sleep()
+    until r
 end
 tasking.createTask("Queue task", function()
     while true do
@@ -29,8 +34,8 @@ tasking.createTask("Queue task", function()
         if newFloor then
             print("Moving to floor: " .. tostring(newFloor))
             changeFloor(newFloor)
+            print("Finished moving")
             if #queue > 0 then sleep(5) end
-            sleep(2 * math.abs(newFloor - currentFloor))
         else
             sleep(1)
         end
