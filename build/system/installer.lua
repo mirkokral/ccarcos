@@ -11,8 +11,7 @@ function _G.strsplit(inputstr, sep)
     end
     return t
 end
-write("Branch> ")
-local branch = read()
+local branch = textutils.deserializeJson(http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main").readAll())["sha"]
 file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
 cont = file.readAll()
 file.close()
@@ -39,3 +38,6 @@ for _,i in ipairs(strsplit(cont, "\n")) do
         f.close()
     end
 end
+f = fs.open("/system/rel")
+f.write(branch)
+f.close()
