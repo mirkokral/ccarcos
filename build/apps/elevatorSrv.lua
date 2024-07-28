@@ -29,7 +29,8 @@ tasking.createTask("Queue task", function()
         if newFloor then
             print("Moving to floor: " .. tostring(newFloor))
             changeFloor(newFloor)
-            sleep(5 + 5 * math.abs(newFloor - currentFloor))
+            if #queue > 0 then sleep(5) end
+            sleep(2 * math.abs(newFloor - currentFloor))
         else
             sleep(1)
         end
