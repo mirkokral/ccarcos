@@ -33,7 +33,7 @@ tasking.createTask("Queue task", function()
             sleep(5 + 5 * math.abs(newFloor - currentFloor))
             
         else
-            sleep()
+            sleep(1)
         end
     end
 end, 1, "root", term)
