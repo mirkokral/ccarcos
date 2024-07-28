@@ -3,7 +3,8 @@ local currentTask
 local kernelLogBuffer = ""
 local tasks = {}
 local config = {
-    forceNice = nil
+    forceNice = nil,
+    init = "/apps/init.lua"
 }
 function _G.strsplit(inputstr, sep)
     if sep == nil then
@@ -35,6 +36,17 @@ _G.arcos = {
             return kernelLogBuffer
         else
             return nil
+        end
+    end,
+    ev = function(filter)
+        r = table.pack(coroutine.yield())
+        if r[1] == "terminate" then
+            error("Terminated")
+        end
+        if not filter or r[1] == filter then
+            return table.unpack(r)
+        else 
+            return arcos.ev(filter)
         end
     end,
     loadAPI = function(api)
@@ -136,9 +148,16 @@ while true do
         i = i + 1
         config["forceNice"] = tonumber(args[i])
     end
+    if arg == "init" then
+        i = i + 1
+        config["init"] = args[i]
+    end
 end
 tasking.createTask("Init", function()
-    __LEGACY.shell.run("/apps/init.lua")
+    local ok, err = pcall(function()
+        __LEGACY.shell.run(config["init"])
+    end)
+    arcos.kernelPanic("Init Died", "Kernel", "173")
 end, 1, "root", __LEGACY.term)
 while true do
     if #tasks > 0 then
@@ -153,8 +172,12 @@ while true do
             end
         end
     else
-        print("No tasks")
-        sleep(5)
-        error()
+        tasking.createTask("Emergency shell", function ()
+            term.setBackgroundColor(col.black)
+            term.setTextColor(col.white)
+            term.clear()
+            print("Kernel Emergency Shell System - No tasks.")
+            shell.run("shell")
+        end, 1, "root", __LEGACY.term)
     end
 end

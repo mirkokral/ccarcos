@@ -11,6 +11,7 @@ compileFiles:
   - system/krnl.lua
   - system/installer.lua
   - apps/elevator.lua
+  - apps/elevatorStep.lua
   - apps/init.lua
   - system/apis/col.lua
   - system/apis/red.lua
