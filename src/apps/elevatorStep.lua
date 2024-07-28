@@ -44,7 +44,7 @@ while true do
         if msg == "TopDoorOpen" then
             __LEGACY.redstone.setOutput("back", false)
         elseif msg == "TopDoorClose" then
-            __LEGACY.redstone.setO("back", true)
+            __LEGACY.redstone.setOutput("back", true)
         end
     elseif channel == 711 then
         currentFloor = tonumber(msg)
