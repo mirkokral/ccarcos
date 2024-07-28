@@ -8,7 +8,7 @@ local whitelistedPlayers = {
     "emireri1498",
     "kkk8GJ"
 }
-mdm.open(711)
+mdm.open(713)
 local function contains(table, element)
     for _, value in pairs(table) do
         if value == element then
@@ -34,7 +34,10 @@ tasking.createTask("Elevator step player detector handler", function()
     end
 end, 1, "root", term)
 while true do
-    local _, side, channel, rc, msg, dist = arcos.ev()
-    currentFloor = tonumber(msg)
-    red.setO("back", msg ~= "7")
+    local _, side, channel, rc, msg, dist = arcos.ev("modem_message")
+    if msg == "TopDoorOpen" then
+        red.setO("back", false)
+    else
+        red.setO("back", true)
+    end
 end

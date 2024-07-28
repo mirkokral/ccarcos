@@ -9,6 +9,11 @@ function main()
     term.setBackgroundColor(theme.background)
     term.clear()
     term.setCursorPos(1, 1)
+    local branch = textutils.unserialiseJSON(http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main").readAll())["sha"]
+    local cur = fs.open("/system/rel")
+    if cur and cur.readAll() ~= branch then
+        shell.run("/system/installer.lua")
+    end
     print("arcos2 bootloader")
     -- write("kargs: ")
     local args = ""
