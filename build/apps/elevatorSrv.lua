@@ -24,9 +24,13 @@ end
 tasking.createTask("Queue task", function()
     while true do
         local newFloor = table.remove(queue, 1)
-        print("Moving to floor: " .. tostring(newFloor))
-        changeFloor(newFloor)
-        sleep(5 + 5 * math.abs(newFloor - currentFloor))
+        if newFloor then
+            print("Moving to floor: " .. tostring(newFloor))
+            changeFloor(newFloor)
+            sleep(5 + 5 * math.abs(newFloor - currentFloor))
+        else
+            sleep()
+        end
     end
 end, 1, "root", term)
 while true do
