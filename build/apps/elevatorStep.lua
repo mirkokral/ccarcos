@@ -21,7 +21,7 @@ end
 tasking.createTask("Elevator step player detector handler", function()
     local pd = devices.find("playerDetector")
     while true do
-        local playersInRange = pd.getPlayersInRange(4)
+        local playersInRange = pd.getPlayersInRange(5)
         for _, i in ipairs(whitelistedPlayers) do
             print("Testing: " .. i)
             print(table.unpack(playersInRange))
