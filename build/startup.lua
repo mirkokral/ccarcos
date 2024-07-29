@@ -53,7 +53,7 @@ _G["turtle"] = nil
 _G["vector"] = nil
 _G["window"] = nil
 setmetatable(_G, {
-    __index = function(_, i) do
+    __index = function(_, i)
         if debug.getinfo(2).source:sub(2) == "bios.lua" then
             return oldug[i]
         end
