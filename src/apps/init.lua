@@ -10,9 +10,8 @@ for i in servFile.readLine do
                 end
             }, "/services/" + i:sub(3))
         local threadterm        
-        if i:sub(1,1) == "o" then
-            threadterm = term
-        elseif i:sub(1,1) == "l" then
+        
+        if i:sub(1,1) == "l" then
             threadterm = {
                 native = function()
                     return term
@@ -36,7 +35,9 @@ for i in servFile.readLine do
                 isColor = function() return false end,
                 isColour = function() return false end,
             }
-        end
+        else
+            threadterm = term
+        end    
         end, 1, "root", threadterm)
         if i:sub(2,2) == "|" then
             repeat sleep(0.2)
