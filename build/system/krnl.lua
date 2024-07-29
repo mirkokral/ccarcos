@@ -157,17 +157,6 @@ _G.devices = {
         return peripheral.find(what)
     end
 }
-arcos.log("Seems like it works")
-for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
-    arcos.log("Loading API: " .. v)
-    arcos.loadAPI("/system/apis/" .. v)
-end 
-local f, err = fs.open("/config/passwd", "r")
-if f then
-    table = __LEGACY.textutils.unserializeJSON(f.read())
-else
-    apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
-end
 local i = 0
 while true do
     i = i + 1
@@ -189,6 +178,17 @@ while true do
     if arg == "printLog" then
         config["printLogToConsole"] = true
     end
+end
+arcos.log("Seems like it works")
+for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
+    arcos.log("Loading API: " .. v)
+    arcos.loadAPI("/system/apis/" .. v)
+end 
+local f, err = fs.open("/config/passwd", "r")
+if f then
+    table = __LEGACY.textutils.unserializeJSON(f.read())
+else
+    apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
 end
 tasking.createTask("Init", function()
     local ok, err = pcall(function()
