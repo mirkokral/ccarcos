@@ -1,6 +1,7 @@
 d>system
 d>system/apis
 d>services
+d>temporary
 d>user
 d>apps
 f>system/bootloader.lua

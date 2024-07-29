@@ -4,6 +4,7 @@ mkDirs:
   - system
   - system/apis
   - services
+  - temporary
   - user
   - apps
 compileFiles:
