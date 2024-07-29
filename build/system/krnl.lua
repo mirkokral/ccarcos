@@ -157,7 +157,7 @@ _G.devices = {
         return peripheral.find(what)
     end
 }
-log("Seems like it works")
+arcos.log("Seems like it works")
 for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     arcos.log("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
