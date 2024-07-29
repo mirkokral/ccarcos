@@ -216,8 +216,8 @@ else
     apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
 end
 
-
 tasking.createTask("Init", function()
+    arcos.log("Starting Init")
     local ok, err = pcall(function()
         __LEGACY.shell.run(config["init"])
     end)
