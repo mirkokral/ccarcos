@@ -8,9 +8,6 @@ local config = {
 }
 __LEGACY.shell.run("rm --rf /temporary/*")
 local users = {}
-function fetchUsers()
-    f = fs.open("/")
-end
 function _G.strsplit(inputstr, sep)
     if sep == nil then
         sep = "%s"

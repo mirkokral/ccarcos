@@ -1,6 +1,6 @@
 local theme = {
-    background = colours.black,
-    foreground = colors.white
+    background = col.black,
+    foreground = col.white
 }
 
 function main()
