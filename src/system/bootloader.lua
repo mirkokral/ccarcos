@@ -25,8 +25,8 @@ function main()
       if cur and cur.readAll() ~= branch then
         loadfile("/system/installer.lua")()
       end
+      f.close() 
     end
-    f.close() 
     local args = ""
     if not config["skipPrompt"] then
         write("krnl: ")
