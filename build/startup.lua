@@ -43,7 +43,6 @@ _G.rednet = nil
 _G.redstone = nil 
 _G.settings = nil 
 _G.shell = nil 
-_G.term = nil 
 _G.textutils = nil 
 _G.turtle = nil 
 _G.vector = nil 
