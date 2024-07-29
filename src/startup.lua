@@ -1,5 +1,5 @@
 local oldug = {}
-for k, v in range(_G) do
+for k, v in pairs(_G) do
     oldug[k] = v
 end
 
