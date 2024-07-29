@@ -16,11 +16,15 @@ function main()
     __LEGACY.term.setBackgroundColor(__LEGACY.colors[config["theme"]["bg"]])
     __LEGACY.term.clear()
     __LEGACY.term.setCursorPos(1, 1)
-    local branch = __LEGACY.textutils.unserialiseJSON(__LEGACY.http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main").readAll())["sha"] 
-    local cur = __LEGACY.fs.open("/system/rel", "r")
-    if cur and cur.readAll() ~= branch then
+    local f = __LEGACY.http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+    if f then
+      local branch = __LEGACY.textutils.unserialiseJSON(f.readAll())["sha"]
+      local cur = __LEGACY.fs.open("/system/rel", "r")
+      if cur and cur.readAll() ~= branch then
         loadfile("/system/installer.lua")()
+      end
     end
+    f.close() 
     local args = ""
     if not config["skipPrompt"] then
         write("krnl: ")
