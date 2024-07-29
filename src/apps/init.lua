@@ -3,12 +3,6 @@ for i in servFile.readLine do
     if i:sub(1, 1) ~= "#" then 
         arcos.log("Starting service: " .. i)
         local currentServiceDone = false
-        tasking.createTask("Service: " .. i:sub(3), function()
-            arcos.r({
-                ackFinish = function()
-                    currentServiceDone = true
-                end
-            }, "/services/" + i:sub(3))
         local threadterm        
         
         if i:sub(1,1) == "l" then
@@ -38,6 +32,13 @@ for i in servFile.readLine do
         else
             threadterm = term
         end    
+        tasking.createTask("Service: " .. i:sub(3), function()
+            arcos.r({
+                ackFinish = function()
+                    currentServiceDone = true
+                end
+            }, "/services/" + i:sub(3))
+
         end, 1, "root", threadterm)
         if i:sub(2,2) == "|" then
             repeat sleep(0.2)
