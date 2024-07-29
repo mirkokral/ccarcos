@@ -52,4 +52,4 @@ oldug["textutils"] = nil
 oldug["turtle"] = nil
 oldug["vector"] = nil
 oldug["window"] = nil
-loadfile("/system/bootloader.lua", nil, oldug)()
+local ok, err = pcall(loadfile("/system/bootloader.lua", nil, oldug))

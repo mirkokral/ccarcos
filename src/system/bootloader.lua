@@ -21,7 +21,7 @@ function main()
     local branch = __LEGACY.textutils.unserialiseJSON(__LEGACY.http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main").readAll())["sha"] 
     local cur = __LEGACY.fs.open("/system/rel", "r")
     if cur and cur.readAll() ~= branch then
-        laodfile("/system/installer.lua")()
+        loadfile("/system/installer.lua")()
     end
     
     local args = ""
