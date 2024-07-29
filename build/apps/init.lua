@@ -37,7 +37,8 @@ for i in servFile.readLine do
                     currentServiceDone = true
                 end
             }, "/services/" .. i:sub(3))
-                arcos.log("Service " .. i:sub(3) .. " failed with error: " .. err)
+            arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
+            sleep(1)
         end, 1, "root", threadterm)
         if i:sub(2,2) == "|" then
             repeat sleep(0.2)
