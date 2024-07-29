@@ -3,6 +3,7 @@ options:
 mkDirs:
   - system
   - system/apis
+  - services
   - user
   - apps
 compileFiles:
@@ -10,12 +11,12 @@ compileFiles:
   - system/passwd
   - system/krnl.lua
   - system/installer.lua
-  - apps/elevator.lua
-  - apps/elevatorStep.lua
-  - apps/elevatorSrv.lua
-  - apps/init.lua
   - system/apis/col.lua
   - system/apis/red.lua
+  - apps/init.lua
   - startup.lua
 nrFiles:
+  - services/elevator.lua
+  - services/elevatorStep.lua
+  - services/elevatorSrv.lua
   - system/passwd
