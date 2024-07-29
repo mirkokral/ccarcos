@@ -40,7 +40,7 @@ _G.arcos = {
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
-            __LEGACY.term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
+            __LEGACY.term.native().write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
         end
     end,
     getCurrentTask = function()
@@ -107,12 +107,14 @@ _G.arcos = {
         _G[v] = tAPI
     end
 }
+--C:Exc
 _G.term = {
     write = function(towrite) end,
     setBackgroundColor = function(col) end,
     setTextColor = function(col) end,
     setCursorPos = function(cx, cy) end
 }
+--C:End
 _G.tasking = {
     createTask = function(name, callback, nice, user, out)
         if not user then
@@ -217,7 +219,7 @@ tasking.createTask("Init", function()
         __LEGACY.shell.run(config["init"])
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
-end, 1, "root", __LEGACY.term)
+end, 1, "root", __LEGACY.term.native())
 while true do
     if #tasks > 0 then
         ev = { os.pullEventRaw() }
@@ -238,7 +240,7 @@ while true do
             term.setCursorPos(1, 1)
             print("Kernel Emergency Shell System - No tasks.")
             shell.run("shell")
-        end, 1, "root", __LEGACY.term)
+        end, 1, "root", __LEGACY.term.native())
         -- sleep(5)
         -- __LEGACY.os.reboot()
     end

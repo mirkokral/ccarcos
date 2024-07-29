@@ -37,7 +37,7 @@ _G.arcos = {
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
-            __LEGACY.term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
+            __LEGACY.term.native().write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
         end
     end,
     getCurrentTask = function()
@@ -200,7 +200,7 @@ tasking.createTask("Init", function()
         __LEGACY.shell.run(config["init"])
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
-end, 1, "root", __LEGACY.term)
+end, 1, "root", __LEGACY.term.native())
 while true do
     if #tasks > 0 then
         ev = { os.pullEventRaw() }
@@ -221,6 +221,6 @@ while true do
             term.setCursorPos(1, 1)
             print("Kernel Emergency Shell System - No tasks.")
             shell.run("shell")
-        end, 1, "root", __LEGACY.term)
+        end, 1, "root", __LEGACY.term.native())
     end
 end
