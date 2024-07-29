@@ -11,7 +11,13 @@ function _G.strsplit(inputstr, sep)
     end
     return t
 end
-local branch = textutils.unserialiseJSON(http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main").readAll())["sha"]
+local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+local branch
+if fr then
+    branch = textutils.unserialiseJSON(fr.readAll())["sha"]
+else
+    branch = "main"
+end
 file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
 cont = file.readAll()
 file.close()
