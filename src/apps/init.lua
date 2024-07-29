@@ -47,3 +47,4 @@ for i in servFile.readLine do
     -- ::ct::
 end
 tasking.setTaskPaused(arcos.getCurrentTask()["pid"], true)
+coroutine.yield()

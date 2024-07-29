@@ -265,7 +265,7 @@ while true do
         ev = { os.pullEventRaw() }
         for d, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
-                _G.term = i["out"]
+                _G.term = i["out"] or __LEGACY.term
                 if not i["paused"] then
                     currentTask = i
                     cPid = d
