@@ -16,7 +16,8 @@ local branch
 if fr then
     branch = textutils.unserialiseJSON(fr.readAll())["sha"]
 else
-    branch = "main"
+    write(">")
+    branch = read()
 end
 file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
 cont = file.readAll()
