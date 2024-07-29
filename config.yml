@@ -14,10 +14,13 @@ compileFiles:
   - system/apis/col.lua
   - system/apis/red.lua
   - system/apis/fs.lua
+  - system/apis/tutils.lua
   - services/elevator.lua
   - services/elevatorStep.lua
   - services/elevatorSrv.lua
+  - services/shell.lua
   - apps/init.lua
+  - apps/shell.lua
   - startup.lua
 nrFiles:
   - services/enabled

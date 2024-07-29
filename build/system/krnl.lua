@@ -146,6 +146,14 @@ _G.tasking = {
             paused = false
         })
     end,
+    getName = function()
+        return __LEGACY.os.computerLabel()
+    end,
+    setName = function(new)
+        if arcos.getCurrentTask().user == "root" then
+            __LEGACY.os.setComputerLabel(new)
+        end
+    end,
     killTask = function(pid)
         arcos.log("Killing task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
@@ -240,7 +248,8 @@ while true do
                 table.remove(tasks, d)
             end
         end
-    else
+    end
+    if #tasks <= 0 then
         tasking.createTask("Emergency shell", function ()
             term.setBackgroundColor(col.black)
             term.setTextColor(col.white)
