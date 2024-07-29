@@ -1,5 +1,5 @@
 local oldug = {}
-for k, v in _G do
+for k, v in range(_G) do
     oldug[k] = v
 end
 _G.__LEGACY = {
