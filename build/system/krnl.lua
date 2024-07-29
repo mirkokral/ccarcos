@@ -103,12 +103,6 @@ _G.arcos = {
         _G[v] = tAPI
     end
 }
-_G.term = {
-    write = function(towrite) end,
-    setBackgroundColor = function(col) end,
-    setTextColor = function(col) end,
-    setCursorPos = function(cx, cy) end
-}
 _G.tasking = {
     createTask = function(name, callback, nice, user, out)
         if not user then
