@@ -8,6 +8,7 @@ local config = {
     init = "/apps/init.lua",
     printLogToConsole = false
 }
+
 __LEGACY.shell.run("rm /temporary/*")
 local users = {}
 
@@ -172,25 +173,6 @@ _G.devices = {
         return peripheral.find(what)
     end
 }
-arcos.log("Seems like it works")
-for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
-    arcos.log("Loading API: " .. v)
-    arcos.loadAPI("/system/apis/" .. v)
-    
-end 
--- C:Exc
-_G.col = require("src.system.apis.col")
-_G.red = require("src.system.apis.red")
-_G.fs = require("src.system.apis.fs")
--- C:End
-
-local f, err = fs.open("/config/passwd", "r")
-if f then
-    table = __LEGACY.textutils.unserializeJSON(f.read())
-else
-    apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
-end
-
 
 local i = 0
 
@@ -215,6 +197,26 @@ while true do
         config["printLogToConsole"] = true
     end
 end
+arcos.log("Seems like it works")
+for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
+    arcos.log("Loading API: " .. v)
+    arcos.loadAPI("/system/apis/" .. v)
+    
+end 
+-- C:Exc
+_G.col = require("src.system.apis.col")
+_G.red = require("src.system.apis.red")
+_G.fs = require("src.system.apis.fs")
+-- C:End
+
+local f, err = fs.open("/config/passwd", "r")
+if f then
+    table = __LEGACY.textutils.unserializeJSON(f.read())
+else
+    apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
+end
+
+
 tasking.createTask("Init", function()
     local ok, err = pcall(function()
         __LEGACY.shell.run(config["init"])
