@@ -1,5 +1,5 @@
 local servFile = fs.open("/services/enabled", "r")
-for i in servFile.readLine() do
+for i in servFile.readLine do
     if i:sub(1, 1) ~= "#" then 
         arcos.log("Starting service: " .. i)
         local currentServiceDone = false
