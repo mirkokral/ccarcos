@@ -36,7 +36,7 @@ for i in servFile.readLine do
                 ackFinish = function()
                     currentServiceDone = true
                 end
-            }, "/services/" + i:sub(3))
+            }, "/services/" .. i:sub(3))
                 arcos.log("Service " .. i:sub(3) .. " failed with error: " .. err)
         end, 1, "root", threadterm)
         if i:sub(2,2) == "|" then

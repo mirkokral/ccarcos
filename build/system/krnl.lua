@@ -245,6 +245,7 @@ while true do
                 end
             end
             if coroutine.status(i["crt"]) == "dead" then
+                arcos.log("Task " .. i["name"] .. " died.")
                 table.remove(tasks, d)
             end
         end
