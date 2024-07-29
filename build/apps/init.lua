@@ -32,11 +32,14 @@ for i in servFile.readLine do
             threadterm = term
         end    
         tasking.createTask("Service: " .. i:sub(3), function()
-            arcos.r({
+            local ok, err = arcos.r({
                 ackFinish = function()
                     currentServiceDone = true
                 end
             }, "/services/" + i:sub(3))
+            if not ok then
+                arcos.log("Service " .. i:sub(3) .. " failed with error: " .. err)
+            end
         end, 1, "root", threadterm)
         if i:sub(2,2) == "|" then
             repeat sleep(0.2)
