@@ -185,7 +185,7 @@ _G.fs = require("src.system.apis.fs")
 
 local f, err = fs.open("/config/passwd", "r")
 if f then
-    table = __LEGACY.textutils.deserializeJSON(f.read())
+    table = __LEGACY.textutils.unserializeJSON(f.read())
 else
     apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
 end
