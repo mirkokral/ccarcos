@@ -56,3 +56,5 @@ oldug["turtle"] = nil
 oldug["vector"] = nil
 oldug["window"] = nil
 local ok, err = pcall(loadfile("/system/bootloader.lua", nil, oldug))
+oldug["__LEGACY"].term.write(err)
+sleep(50)
