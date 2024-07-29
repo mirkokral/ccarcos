@@ -228,9 +228,9 @@ end
 tasking.createTask("Init", function()
     arcos.log("Starting Init")
     local ok, err = pcall(function()
-        arcos.r({}, config["init"])
+        local ok, err = arcos.r({}, config["init"])
+        apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
 end, 1, "root", __LEGACY.term)
 while true do
     if #tasks > 0 then
