@@ -1,9 +1,9 @@
 if pocket then
-    __LEGACY.shell.run("/apps/elevator.lua")
+    arcos.r({}, "/apps/elevator.lua")
 elseif devices.find("playerDetector") then
-    __LEGACY.shell.run("/apps/elevatorStep.lua")
+    arcos.r({}, "/apps/elevatorStep.lua")
 elseif devices.find("modem") then
-    __LEGACY.shell.run("/apps/elevatorSrv.lua")
+    arcos.r({}, "/apps/elevatorSrv.lua")
 else
-    __LEGACY.shell.run("shell")
+    arcos.r({}, "shell")
 end

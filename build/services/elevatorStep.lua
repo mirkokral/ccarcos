@@ -22,9 +22,9 @@ while true do
     local _, side, channel, rc, msg, dist = arcos.ev("modem_message")
     if channel == 713 then
         if msg == "TopDoorOpen" then
-            __LEGACY.redstone.setOutput("back", false)
+            red.setO("back", false)
         elseif msg == "TopDoorClose" then
-            __LEGACY.redstone.setOutput("back", true)
+            red.setO("back", true)
         end
     elseif channel == 711 then
         currentFloor = tonumber(msg)

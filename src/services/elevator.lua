@@ -8,10 +8,10 @@ end
 local theme
 if arcos then
     theme = {
-        bg = _G.__LEGACY.colors.black,
-        elFloor = _G.__LEGACY.colors.blue,
-        elFloorSel = _G.__LEGACY.colors.lightBlue,
-        buttonColor = __LEGACY.colors.white
+        bg = col.black,
+        elFloor = col.blue,
+        elFloorSel = col.lightBlue,
+        buttonColor = col.white
     }
 else
     theme = {
@@ -74,7 +74,7 @@ end
 modem.open(711)
 reDraw()
 while true do
-    ev = table.pack(__LEGACY.os.pullEventRaw())
+    ev = table.pack(arcos.ev())
     -- print(table.unpack(ev))
     if ev[1] == "modem_message" then
         
@@ -82,9 +82,9 @@ while true do
         reDraw()
         -- print("mdmm " .. ev[5])
     end
-    if ev[1] == "terminate" then
-        shell.run("shell")
-    end
+    -- if ev[1] == "terminate" then
+    --     shell.run("shell")
+    -- end
     if ev[1] == "mouse_click" then
         if ev[4] == 1 then
             for i, v in ipairs(buttons) do

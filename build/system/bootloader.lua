@@ -1,7 +1,3 @@
-local theme = {
-    background = __LEGACY.colors.black,
-    foreground = __LEGACY.colors.white
-}
 function mysplit(inputstr, sep)
     if sep == nil then
       sep = "%s"
@@ -13,17 +9,23 @@ function mysplit(inputstr, sep)
     return t
   end
 function main()
-    term.setTextColor(theme.foreground)
-    term.setBackgroundColor(theme.background)
-    term.clear()
-    term.setCursorPos(1, 1)
+    local cf = __LEGACY.fs.open("/config/aboot")
+    local config = __LEGACY.textutils.unserialiseJSON(cf.readAll())
+    cf.close()
+    __LEGACY.term.setTextColor(__LEGACY.colors[cf["theme"]["fg"]])
+    __LEGACY.term.setBackgroundColor(__LEGACY.colors[cf["theme"]["bg"]])
+    __LEGACY.term.clear()
+    __LEGACY.term.setCursorPos(1, 1)
     local branch = __LEGACY.textutils.unserialiseJSON(__LEGACY.http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main").readAll())["sha"] 
     local cur = __LEGACY.fs.open("/system/rel", "r")
     if cur and cur.readAll() ~= branch then
         laodfile("/system/installer.lua")()
     end
-    print("arcos2 bootloader")
     local args = ""
-    loadfile("/system/krnl.lua", mysplit(args, " "))
+    if not config["skipPrompt"] then
+        write("krnl: ")
+        args = read()
+    end
+    loadfile("/system/krnl.lua", nil, setmetatable({}, {__index = _G}))(table.unpack(mysplit(args, " ")))
 end
 main()

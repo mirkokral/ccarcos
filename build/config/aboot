@@ -1,0 +1,7 @@
+{
+    "theme": {
+        "fg": "white",
+        "bg": "black"
+    },
+    "skipPrompt": false
+}

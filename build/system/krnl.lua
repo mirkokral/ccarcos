@@ -1,12 +1,14 @@
 local args = {...}
 local currentTask
-local kernelLogBuffer = ""
+local kernelLogBuffer = "Start\n"
 local tasks = {}
+local permmatrix
 local config = {
     forceNice = nil,
-    init = "/apps/init.lua"
+    init = "/apps/init.lua",
+    printLogToConsole = false
 }
-__LEGACY.shell.run("rm --rf /temporary/*")
+__LEGACY.shell.run("rm /temporary/*")
 local users = {}
 function _G.strsplit(inputstr, sep)
     if sep == nil then
@@ -18,17 +20,25 @@ function _G.strsplit(inputstr, sep)
     end
     return t
 end
-_G.arcos = {
+_G.apiUtils = {
     kernelPanic = function(err, file, line)
         term.setBackgroundColor(colors.black)
         term.setTextColor(colors.red)
         term.clear()
         term.setCursorPos(1, 1)
-        print("--- KERNEL PANIC ---")
-        print(err)
-        print("" .. file .. " at " .. line)
-        print("--------------------")
+        arcos.log("--- KERNEL PANIC ---")
+        arcos.log(err)
+        arcos.log("" .. file .. " at " .. line)
+        arcos.log("--------------------")
         tasks = {}
+    end
+}
+_G.arcos = {
+    log = function(txt)
+        kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
+        if config["printLogToConsole"] then
+            __LEGACY.term.native().write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
+        end
     end,
     getCurrentTask = function()
         return currentTask
@@ -49,6 +59,21 @@ _G.arcos = {
             return table.unpack(r)
         else 
             return arcos.ev(filter)
+        end
+    end,
+    r = function(env, path, ...) 
+        assert(type(env) == "table", "Invalid argument: env")
+        assert(type(path) == "string", "Invalid argument: path")
+        local compEnv = env
+        compEnv["__LEGACY"] = nil
+        compEnv["apiUtils"] = nil
+        setmetatable(compEnv, {__index = _G})
+        local compFunc = loadfile(path)
+        if compFunc == nil then
+            return false, "Failed to load function"
+        else
+            local ok, err = pcall(compFunc, ...)
+            return ok, err
         end
     end,
     loadAPI = function(api)
@@ -77,6 +102,12 @@ _G.arcos = {
         end 
         _G[v] = tAPI
     end
+}
+_G.term = {
+    write = function(towrite) end,
+    setBackgroundColor = function(col) end,
+    setTextColor = function(col) end,
+    setCursorPos = function(cx, cy) end
 }
 _G.tasking = {
     createTask = function(name, callback, nice, user, out)
@@ -133,9 +164,15 @@ _G.devices = {
     end
 }
 for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
-    print("Loading API: " .. v)
-    __LEGACY.os.loadAPI("/system/apis/" .. v)
+    arcos.log("Loading API: " .. v)
+    arcos.loadAPI("/system/apis/" .. v)
 end 
+local f, err = fs.open("/config/passwd", "r")
+if f then
+    table = __LEGACY.textutils.deserializeJSON(f.read())
+else
+    apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
+end
 local i = 0
 while true do
     i = i + 1
@@ -143,7 +180,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        arcos.kernelPanic("Invalid argument: " .. args[i], "Kernel", debug.getinfo().currentline)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], "Kernel", debug.getinfo().currentline)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -154,13 +191,16 @@ while true do
         i = i + 1
         config["init"] = args[i]
     end
+    if arg == "printLog" then
+        config["printLogToConsole"] = true
+    end
 end
 tasking.createTask("Init", function()
     local ok, err = pcall(function()
         __LEGACY.shell.run(config["init"])
     end)
-    arcos.kernelPanic("Init Died: " .. err, "Kernel", "173")
-end, 1, "root", __LEGACY.term)
+    apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
+end, 1, "root", __LEGACY.term.native())
 while true do
     if #tasks > 0 then
         ev = { os.pullEventRaw() }
@@ -178,8 +218,9 @@ while true do
             term.setBackgroundColor(col.black)
             term.setTextColor(col.white)
             term.clear()
+            term.setCursorPos(1, 1)
             print("Kernel Emergency Shell System - No tasks.")
             shell.run("shell")
-        end, 1, "root", __LEGACY.term)
+        end, 1, "root", __LEGACY.term.native())
     end
 end

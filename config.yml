@@ -8,15 +8,17 @@ mkDirs:
   - apps
 compileFiles:
   - system/bootloader.lua
-  - system/passwd
   - system/krnl.lua
   - system/installer.lua
   - system/apis/col.lua
   - system/apis/red.lua
+  - system/apis/fs.lua
   - apps/init.lua
   - startup.lua
 nrFiles:
   - services/elevator.lua
   - services/elevatorStep.lua
   - services/elevatorSrv.lua
-  - system/passwd
+  - services/enabled
+  - config/passwd
+  - config/aboot
