@@ -10,7 +10,7 @@ function mysplit(inputstr, sep)
   end
 
 function main()
-    local cf = __LEGACY.fs.open("/config/aboot")
+    local cf = __LEGACY.fs.open("/config/aboot", "r")
     local config = __LEGACY.textutils.unserialiseJSON(cf.readAll())
     cf.close()
     __LEGACY.term.setTextColor(__LEGACY.colors[cf["theme"]["fg"]])
