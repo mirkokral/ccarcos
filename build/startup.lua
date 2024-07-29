@@ -2,6 +2,13 @@ local oldug = {}
 for k, v in pairs(_G) do
     oldug[k] = v
 end
+setmetatable(_G, {
+    __index = function(_, i)
+        if debug.getinfo(2).source:sub(2) == "bios.lua" then
+            return oldug[i]
+        end
+    end
+})
 _G.__LEGACY = {
     colors = colors,
     colours = colours,
@@ -52,11 +59,4 @@ _G["textutils"] = nil
 _G["turtle"] = nil
 _G["vector"] = nil
 _G["window"] = nil
-setmetatable(_G, {
-    __index = function(_, i)
-        if debug.getinfo(2).source:sub(2) == "bios.lua" then
-            return oldug[i]
-        end
-    end
-})
 dofile("/system/bootloader.lua")
