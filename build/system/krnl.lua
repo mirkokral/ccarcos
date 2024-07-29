@@ -163,7 +163,7 @@ for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
 end 
 local f, err = fs.open("/config/passwd", "r")
 if f then
-    table = __LEGACY.textutils.unserializeJSON(f.read())
+    table = __LEGACY.textutils.deserializeJSON(f.read())
 else
     apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
 end
