@@ -1,5 +1,6 @@
 local args = {...}
 local currentTask
+local cPid
 local kernelLogBuffer = "Start\n"
 local tasks = {}
 local permmatrix
@@ -41,7 +42,13 @@ _G.arcos = {
         end
     end,
     getCurrentTask = function()
-        return currentTask
+        return {
+            pid = cPid,
+            name = currentTask["name"],
+            user = currentTask["user"],
+            nice = currentTask["nice"],
+            paused = currentTask["paused"]
+        }
     end,
     getKernelLogBuffer = function()
         if not currentTask or not currentTask["user"] == "root" then
@@ -101,10 +108,19 @@ _G.arcos = {
             v = v:sub(0, #s-5)
         end 
         _G[v] = tAPI
+    end,
+    startTimer = function(d) 
+        return __LEGACY.os.startTimer(d)
     end
 }
+function _G.sleep(time)
+    local tId = arcos.startTimer(time)
+    repeat _, i = arcos.ev("timer")
+    until i == tId
+end
 _G.tasking = {
     createTask = function(name, callback, nice, user, out)
+        arcos.log("Creating task: "..name)
         if not user then
             if currentTask then
                 user = currentTask["user"]
@@ -126,27 +142,38 @@ _G.tasking = {
             crt = coroutine.create(callback),
             nice = nice,
             user = user,
-            out = out
+            out = out,
+            paused = false
         })
     end,
     killTask = function(pid)
+        arcos.log("Killing task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
             user = "root"
         })["user"] then
             table.remove(tasks, pid)
         end
     end,
-    getTasks = function(onlyThisUser)
+    getTasks = function()
         local returnstuff = {}
         for i, v in ipairs(tasks) do
             table.insert(returnstuff, {
                 pid = i,
                 name = v["name"],
                 user = v["user"],
-                nice = v["nice"]
+                nice = v["nice"],
+                paused = v["paused"]
             })
         end
         return returnstuff
+    end,
+    setTaskPaused = function(pid, paused)
+        arcos.log("Setting pf on task: " .. pid)
+        if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
+            user = "root"
+        })["user"] then
+            tasks[pid]["paused"] = true
+        end
     end
 }
 _G.devices = {
@@ -193,7 +220,7 @@ end
 tasking.createTask("Init", function()
     arcos.log("Starting Init")
     local ok, err = pcall(function()
-        __LEGACY.shell.run(config["init"])
+        arcos.r({}, config["init"])
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
 end, 1, "root", __LEGACY.term)
@@ -203,7 +230,11 @@ while true do
         for d, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
                 _G.term = i["out"]
-                coroutine.resume(i["crt"], table.unpack(ev))
+                if not i["paused"] then
+                    currentTask = i
+                    cPid = d
+                    coroutine.resume(i["crt"], table.unpack(ev))
+                end
             end
             if coroutine.status(i["crt"]) == "dead" then
                 table.remove(tasks, d)

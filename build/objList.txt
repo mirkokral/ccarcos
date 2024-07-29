@@ -10,11 +10,11 @@ f>system/installer.lua
 f>system/apis/col.lua
 f>system/apis/red.lua
 f>system/apis/fs.lua
+f>services/elevator.lua
+f>services/elevatorStep.lua
+f>services/elevatorSrv.lua
 f>apps/init.lua
 f>startup.lua
-r>services/elevator.lua
-r>services/elevatorStep.lua
-r>services/elevatorSrv.lua
 r>services/enabled
 r>config/passwd
 r>config/aboot

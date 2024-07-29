@@ -18,9 +18,16 @@ function open(path, mode)
         end
     elseif mode == "r" then
         file.read = function()
+            return file._f.readAll()
+        end
+        file.readLine = function()
+            return file._f.readLine()
         end
     end
 end
 function ls(dir)
     return __LEGACY.fs.listDir(dir)
+end
+function rm(f)
+    return __LEGACY.fs.remove(f)
 end

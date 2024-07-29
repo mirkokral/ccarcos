@@ -14,12 +14,12 @@ compileFiles:
   - system/apis/col.lua
   - system/apis/red.lua
   - system/apis/fs.lua
-  - apps/init.lua
-  - startup.lua
-nrFiles:
   - services/elevator.lua
   - services/elevatorStep.lua
   - services/elevatorSrv.lua
+  - apps/init.lua
+  - startup.lua
+nrFiles:
   - services/enabled
   - config/passwd
   - config/aboot
