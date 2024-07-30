@@ -1,9 +1,11 @@
+print("Terminate to enter shell or wait 1 second to continue boot")
+sleep(1)
 local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
 if f then
   local branch = textutils.unserialiseJSON(f.readAll())["sha"]
   local cur = fs.open("/system/rel", "r")
   if cur and cur.readAll() ~= branch then
-    loadfile("/system/installer.lua")()
+    loadfile("/system/installer.lua", nil, _G)()
   end
   f.close() 
 else
