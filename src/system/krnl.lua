@@ -81,7 +81,7 @@ _G.arcos = {
         compEnv["__LEGACY"] = nil
         compEnv["apiUtils"] = nil
         setmetatable(compEnv, {__index = _G})
-        local f = __LEGACY.fs.open(path)
+        local f = __LEGACY.fs.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
         f.close()
         if compFunc == nil then
