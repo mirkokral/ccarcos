@@ -43,5 +43,5 @@ do
     write("> ")
     term.setTextColor(col.white)
     local cmd = read()
-    run(table.unpack(tutils.split(cmd, " ")))
+    local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
 end
