@@ -1,7 +1,7 @@
-local f = __LEGACY.http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
 if f then
-  local branch = __LEGACY.textutils.unserialiseJSON(f.readAll())["sha"]
-  local cur = __LEGACY.fs.open("/system/rel", "r")
+  local branch = textutils.unserialiseJSON(f.readAll())["sha"]
+  local cur = fs.open("/system/rel", "r")
   if cur and cur.readAll() ~= branch then
     loadfile("/system/installer.lua")()
   end
