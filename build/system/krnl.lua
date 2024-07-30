@@ -260,10 +260,8 @@ while true do
         tasking.createTask("Emergency shell", function ()
             term.setBackgroundColor(col.black)
             term.setTextColor(col.white)
-            term.clear()
-            term.setCursorPos(1, 1)
             print("Kernel Emergency Shell System - No tasks.")
-            shell.run("shell")
+            arcos.r({}, "/apps/shell.lua")
         end, 1, "root", __LEGACY.term)
     end
 end
