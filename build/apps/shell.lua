@@ -34,11 +34,13 @@ do
         term.setTextColor(col.green)
     end
     write(cTask.user)
-    term.setTextColor(col.gray)
-    write("@")
-    term.setTextColor(col.purple)
     local a, err = pcall(arcos.getName)
-    write(a or "(none)")
+    if a then
+        term.setTextColor(col.gray)
+        write("@")
+        term.setTextColor(col.purple)
+        write(err)
+    end
     write(" ")
     term.setTextColor(col.gray)
     write("> ")
