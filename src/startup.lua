@@ -75,7 +75,6 @@ local olderr = error
 _G.term.redirect = function(e)
     
 end
-_G.error = function() end
 function _G.term.native()
     _G.error = olderr
     _G.term.redirect = oldtr
