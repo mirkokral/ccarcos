@@ -21,6 +21,7 @@ end
 while true do
     local _, side, channel, rc, msg, dist = arcos.ev("modem_message")
     if channel == 713 then
+        print(msg)
         if msg == "TopDoorOpen" then
             red.setO("back", false)
         elseif msg == "TopDoorClose" then
