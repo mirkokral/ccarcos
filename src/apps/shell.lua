@@ -47,5 +47,7 @@ do
     term.setTextColor(col.white)
     local cmd = read()
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
-    
+    if not r then
+        printError(k)
+    end
 end
