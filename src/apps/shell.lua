@@ -8,8 +8,8 @@ local function run(a1, ...)
     for i, v in ipairs(conf["path"]) do
         for i, v in ipairs(fs.ls(v)) do
             local t = v
-            if t:sub(#t-4, #t) == ".lua" then
-                t = t:sub(1, #t-5)
+            if t:sub(#t-3, #t) == ".lua" then
+                t = t:sub(1, #t-4)
             end
             if t == a1 then
                 cmd = t
@@ -21,12 +21,13 @@ local function run(a1, ...)
         printError("Command Not Found.")
         return false
     end
-    local ok, err = arcos.r()
+    local ok, err = arcos.r({}, cmd, ...)
     if not ok then
         printError(err)
     end
     return ok, err
 end
+
 while true
 do
     local cTask = arcos.getCurrentTask()
