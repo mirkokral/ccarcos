@@ -71,12 +71,12 @@ _G.term.redirect = function(e)
 end
 _G.error = function() end
 function _G.term.native()
+    _G.error = olderr
+    _G.term.redirect = oldtr
+    _G.os.pullEventRaw = oldprr
     function _G.os.shutdown() 
         print("Successful escape")
         _G.os.shutdown = oldst
-        _G.error = olderr
-        _G.term.redirect = oldtr
-        _G.os.pullEventRaw = oldprr
         term.clear()
         term.setCursorPos(1, 1)
         term.setTextColor(colors.white)
