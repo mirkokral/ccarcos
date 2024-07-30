@@ -77,7 +77,7 @@ _G.arcos = {
         compEnv["apiUtils"] = nil
         setmetatable(compEnv, {__index = _G})
         local f = __LEGACY.fs.open(path)
-        local compFunc, err = load(f.readAll(), nil, nil, compEnv)
+        local compFunc, err = load(f.readAll(), path, nil, compEnv)
         f.close()
         if compFunc == nil then
             return false, "Failed to load function: " .. err 
@@ -95,7 +95,7 @@ _G.arcos = {
         if not f then
             error(e)
         end
-        local funcApi, err = load(f.readAll(), nil, nil, tabEnv)
+        local funcApi, err = load(f.readAll(), api, nil, tabEnv)
         f.close()
         if funcApi then
             local ok, err = pcall(funcApi)
