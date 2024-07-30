@@ -110,7 +110,7 @@ _G.arcos = {
         local s = strsplit(api, "/")
         local v = s[#s]
         if string.sub(v, #v-3) == ".lua" then
-            v = v:sub(1, #v-5)
+            v = v:sub(1, #v-4)
         end 
         arcos.log("Loaded api " .. v)
         _G[v] = tAPI
@@ -249,7 +249,7 @@ _G.fs = require("src.system.apis.fs")
 
 local f, err = fs.open("/config/passwd", "r")
 if f then
-    table = __LEGACY.textutils.unserializeJSON(f.read())
+    table = tutils.dJSON(f.read())
 else
     apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
 end
