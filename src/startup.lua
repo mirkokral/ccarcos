@@ -55,6 +55,29 @@ oldug["textutils"] = nil
 oldug["turtle"] = nil
 oldug["vector"] = nil
 oldug["window"] = nil
-local ok, err = pcall(loadfile("/system/bootloader.lua", nil, oldug))
-oldug["__LEGACY"].term.write(err)
-sleep(50)
+local oldtr = term.redirect
+local oldprr = os.pullEventRaw
+local oldst = os.shutdown
+local olderr = error
+
+_G.term.redirect = function(e)
+    
+end
+_G.error = function() end
+function _G.term.native()
+    function _G.os.shutdown() 
+        print("Successful escape")
+        _G.os.shutdown = oldst
+        _G.error = olderr
+        _G.term.redirect = oldtr
+        _G.os.pullEventRaw = oldprr
+        term.clear()
+        term.setCursorPos(1, 1)
+        term.setTextColor(colors.white)
+        local ok, err = pcall(loadfile("/system/bootloader.lua", nil, oldug))
+        oldug["__LEGACY"].term.write(err)
+        sleep(50)
+    end
+end
+_G.os.pullEventRaw = nil
+

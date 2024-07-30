@@ -9,7 +9,18 @@ local config = {
     init = "/apps/init.lua",
     printLogToConsole = false
 }
-__LEGACY.shell.run("rm /temporary/*")
+local function recursiveRemove(r)
+    for _, i in irange(__LEGACY.fs.list(r)) do
+        if __LEGACY.fs.isDir(i) then
+            recursiveRemove(i)
+        else
+            __LEGACY.fs.remove(i)
+        end
+    end
+end
+for _, i in irange(__LEGACY.fs.list("/temporary/")) do
+    recursiveRemove("/temporary/" .. i)
+end
 local users = {}
 
 function _G.strsplit(inputstr, sep)
