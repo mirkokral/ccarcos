@@ -6,13 +6,13 @@ confile.close()
 local function run(a1, ...)
     local cmd = nil
     for i, v in ipairs(conf["path"]) do
-        for i, v in ipairs(fs.ls(v)) do
-            local t = v
+        for i, s in ipairs(fs.ls(v)) do
+            local t = s
             if t:sub(#t-3, #t) == ".lua" then
                 t = t:sub(1, #t-4)
             end
             if t == a1 then
-                cmd = t
+                cmd = v .. "/" .. s
             end
         end
 
