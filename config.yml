@@ -26,3 +26,4 @@ nrFiles:
   - services/enabled
   - config/passwd
   - config/aboot
+  - config/arcshell

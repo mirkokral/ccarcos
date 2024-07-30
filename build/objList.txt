@@ -21,3 +21,4 @@ f>startup.lua
 r>services/enabled
 r>config/passwd
 r>config/aboot
+r>config/arcshell
