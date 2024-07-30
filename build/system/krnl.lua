@@ -231,7 +231,7 @@ local f, err = fs.open("/config/passwd", "r")
 if f then
     table = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. err, "Kernel", "174")
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), "Kernel", "174")
 end
 tasking.createTask("Init", function()
     arcos.log("Starting Init")
