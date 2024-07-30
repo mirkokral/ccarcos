@@ -97,7 +97,7 @@ _G.arcos = {
         if not f then
             error(e)
         end
-        local funcApi, err = load(f.readAll(), nil, tabEnv)
+        local funcApi, err = load(f.readAll(), nil, nil, tabEnv)
         f.close()
         if funcApi then
             local ok, err = pcall(funcApi)
