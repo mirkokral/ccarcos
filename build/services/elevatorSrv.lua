@@ -28,7 +28,7 @@ local function changeFloor(floor)
         until e[3] == 712
     end
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", true)
-    sleep(0.05)
+    sleep(0.1)
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", false)
     sleep(0.1)
     repeat
