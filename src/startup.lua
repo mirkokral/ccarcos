@@ -93,3 +93,4 @@ function _G.term.native()
 end
 _G.os.pullEventRaw = nil
 
+coroutine.yield()
