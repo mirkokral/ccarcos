@@ -27,7 +27,7 @@ function open(path, mode)
     return file, nil
 end
 function ls(dir)
-    return __LEGACY.fs.listDir(dir)
+    return __LEGACY.fs.list(dir)
 end
 function rm(f)
     return __LEGACY.fs.remove(f)
