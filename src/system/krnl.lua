@@ -112,7 +112,7 @@ _G.arcos = {
         if string.sub(v, #s-4) == ".lua" then
             v = v:sub(0, #s-5)
         end 
-
+        arcos.log("Loaded api " .. v)
         _G[v] = tAPI
     end,
     startTimer = function(d) 
