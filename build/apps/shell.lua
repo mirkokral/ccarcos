@@ -39,7 +39,9 @@ do
         term.setTextColor(col.gray)
         write("@")
         term.setTextColor(col.purple)
-        write(err)
+        if not pcall(write, err) then
+            write("(none)")
+        end
     end
     write(" ")
     term.setTextColor(col.gray)
