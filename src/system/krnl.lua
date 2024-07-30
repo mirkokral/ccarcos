@@ -285,7 +285,7 @@ tasking.createTask("Init", function()
         apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
-end, 1, "root", __LEGACY.term)
+end, 1, "root", __LEGACY.term, {})
 while true do
     if #tasks > 0 then
         ev = { os.pullEventRaw() }

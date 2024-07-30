@@ -24,6 +24,8 @@ function main()
         loadfile("/system/installer.lua")()
       end
       f.close() 
+    else
+      print("Update failed")
     end
     local args = ""
     if not config["skipPrompt"] then
