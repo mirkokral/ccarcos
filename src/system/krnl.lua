@@ -128,6 +128,7 @@ _G.term = {
 }
 -- C:End
 function _G.sleep(time)
+    if not time then time=0.05 end
     local tId = arcos.startTimer(time)
     repeat _, i = arcos.ev("timer")
     until i == tId
