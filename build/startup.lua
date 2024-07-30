@@ -84,5 +84,4 @@ function _G.term.native()
         sleep(50)
     end
 end
-_G.os.pullEventRaw = nil
 coroutine.yield()
