@@ -229,8 +229,9 @@ for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     arcos.loadAPI("/system/apis/" .. v)
 end 
 local f, err = fs.open("/config/passwd", "r")
+local tab
 if f then
-    table = tutils.dJSON(f.read())
+    tab = tutils.dJSON(f.read())
 else
     apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), "Kernel", "174")
 end

@@ -7,6 +7,8 @@ end
 
 if not crApi.fs.exists("/system/krnl.lua") then
     crApi.shell.run("rm /*")
+else
+    crApi.shell.run("rm /system/*")
 end
 function _G.strsplit(inputstr, sep)
     if sep == nil then
