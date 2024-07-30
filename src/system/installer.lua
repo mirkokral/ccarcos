@@ -2,7 +2,12 @@ local crApi
 if __LEGACY then
     crApi = __LEGACY
 else
-    crApi = _G
+    crApi = {
+        shell = shell,
+        fs = fs,
+        http = http,
+        textutils = textutils
+    }
 end
 
 if not crApi.fs.exists("/system/krnl.lua") then
