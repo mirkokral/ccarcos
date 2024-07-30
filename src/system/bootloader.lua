@@ -24,6 +24,7 @@ function main()
         write("krnl: ")
         args = read()
     end
-    loadfile("/system/krnl.lua", nil, setmetatable({}, {__index = _G}))(table.unpack(mysplit(args, " ")))
+    local f = __LEGACY.fs.open("/system/krnl.lua", "r")
+    load(f.readAll(), "/system/krnl.lua", nil, setmetatable({}, {__index = _G}))(table.unpack(mysplit(args, " ")))
 end
 main()

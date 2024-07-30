@@ -66,6 +66,10 @@ function _G.term.native()
     term.setTextColor(__LEGACY.colors.white)
     function os.shutdown() 
         os.shutdown = oldst
+        local oldug = {}
+        for k, v in pairs(_G) do
+            oldug[k] = v
+        end
         oldug["colors"] = nil
         oldug["colours"] = nil
         oldug["commands"] = nil
@@ -90,7 +94,8 @@ function _G.term.native()
         oldug["turtle"] = nil
         oldug["vector"] = nil
         oldug["window"] = nil
-        local ok, err = pcall(loadfile("/system/bootloader.lua", nil, oldug))
+        local f = __LEGACY.fs.open("/system/bootloader.lua")
+        local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
         oldug["__LEGACY"].term.write(err)
         sleep(50)
     end
