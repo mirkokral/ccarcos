@@ -61,40 +61,42 @@ function _G.term.native()
     _G.os.pullEventRaw = oldprr
     _G.os.pullEvent = oldpe
     print("Successful escape")
-    _G.os.shutdown = oldst
     term.clear()
     term.setCursorPos(1, 1)
-    term.setTextColor(colors.white)
+    term.setTextColor(__LEGACY.colors.white)
+    function os.shutdown() 
+        os.shutdown = oldst
+        oldug["colors"] = nil
+        oldug["colours"] = nil
+        oldug["commands"] = nil
+        oldug["disk"] = nil
+        oldug["fs"] = nil
+        oldug["gps"] = nil
+        oldug["help"] = nil
+        oldug["http"] = nil
+        oldug["io"] = nil
+        oldug["keys"] = nil
+        oldug["os"] = nil
+        oldug["paintutils"] = nil
+        oldug["parallel"] = nil
+        oldug["peripheral"] = nil
+        oldug["pocket"] = nil
+        oldug["rednet"] = nil
+        oldug["redstone"] = nil
+        oldug["settings"] = nil
+        oldug["shell"] = nil
+        oldug["term"] = nil
+        oldug["textutils"] = nil
+        oldug["turtle"] = nil
+        oldug["vector"] = nil
+        oldug["window"] = nil
+        local ok, err = pcall(loadfile("/system/bootloader.lua", nil, oldug))
+        oldug["__LEGACY"].term.write(err)
+        sleep(50)
+    end
     local oldug = {}
     for k, v in pairs(_G) do
         oldug[k] = v
     end
-    oldug["colors"] = nil
-    oldug["colours"] = nil
-    oldug["commands"] = nil
-    oldug["disk"] = nil
-    oldug["fs"] = nil
-    oldug["gps"] = nil
-    oldug["help"] = nil
-    oldug["http"] = nil
-    oldug["io"] = nil
-    oldug["keys"] = nil
-    oldug["os"] = nil
-    oldug["paintutils"] = nil
-    oldug["parallel"] = nil
-    oldug["peripheral"] = nil
-    oldug["pocket"] = nil
-    oldug["rednet"] = nil
-    oldug["redstone"] = nil
-    oldug["settings"] = nil
-    oldug["shell"] = nil
-    oldug["term"] = nil
-    oldug["textutils"] = nil
-    oldug["turtle"] = nil
-    oldug["vector"] = nil
-    oldug["window"] = nil
-    local ok, err = pcall(loadfile("/system/bootloader.lua", nil, oldug))
-    oldug["__LEGACY"].term.write(err)
-    sleep(50)
 end
 coroutine.yield()
