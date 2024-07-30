@@ -10,7 +10,7 @@ local config = {
     printLogToConsole = false
 }
 local function recursiveRemove(r)
-    for _, i in irange(__LEGACY.fs.list(r)) do
+    for _, i in ipairs(__LEGACY.fs.list(r)) do
         if __LEGACY.fs.isDir(i) then
             recursiveRemove(i)
         else
@@ -18,7 +18,7 @@ local function recursiveRemove(r)
         end
     end
 end
-for _, i in irange(__LEGACY.fs.list("/temporary/")) do
+for _, i in ipairs(__LEGACY.fs.list("/temporary/")) do
     recursiveRemove("/temporary/" .. i)
 end
 local users = {}
