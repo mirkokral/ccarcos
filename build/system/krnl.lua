@@ -42,6 +42,14 @@ _G.arcos = {
             print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
     end,
+    getName = function()
+        return __LEGACY.os.getComputerLabel()
+    end,
+    setName = function(new)
+        if arcos.getCurrentTask().user == "root" then
+            __LEGACY.os.setComputerLabel(new)
+        end
+    end,
     getCurrentTask = function()
         return {
             pid = cPid,
@@ -156,14 +164,6 @@ _G.tasking = {
             out = out,
             paused = false
         })
-    end,
-    getName = function()
-        return __LEGACY.os.getComputerLabel()
-    end,
-    setName = function(new)
-        if arcos.getCurrentTask().user == "root" then
-            __LEGACY.os.setComputerLabel(new)
-        end
     end,
     killTask = function(pid)
         arcos.log("Killing task: " .. pid)

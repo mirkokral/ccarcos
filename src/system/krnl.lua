@@ -9,7 +9,6 @@ local config = {
     init = "/apps/init.lua",
     printLogToConsole = false
 }
-
 __LEGACY.shell.run("rm /temporary/*")
 local users = {}
 
@@ -45,6 +44,15 @@ _G.arcos = {
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
             print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
+        end
+    end,
+    getName = function()
+        return __LEGACY.os.getComputerLabel()
+    end,
+    setName = function(new)
+
+        if arcos.getCurrentTask().user == "root" then
+            __LEGACY.os.setComputerLabel(new)
         end
     end,
     getCurrentTask = function()
@@ -170,14 +178,6 @@ _G.tasking = {
             out = out,
             paused = false
         })
-    end,
-    getName = function()
-        return __LEGACY.os.getComputerLabel()
-    end,
-    setName = function(new)
-        if arcos.getCurrentTask().user == "root" then
-            __LEGACY.os.setComputerLabel(new)
-        end
     end,
     killTask = function(pid)
         arcos.log("Killing task: " .. pid)
