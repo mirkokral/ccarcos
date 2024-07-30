@@ -50,6 +50,6 @@ do
     local cmd = read()
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
     if not r then
-        printError(k)
+        pcall(printError, k)
     end
 end
