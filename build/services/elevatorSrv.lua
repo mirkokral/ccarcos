@@ -28,12 +28,12 @@ local function changeFloor(floor)
         until e[3] == 712
     end
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", true)
-    sleep()
+    sleep(0.05)
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", false)
-    sleep()
+    sleep(0.1)
     repeat
         local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("top")
-        sleep()
+        sleep(0.1)
     until r
 end
 tasking.createTask("Queue task", function()

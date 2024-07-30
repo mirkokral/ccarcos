@@ -1,5 +1,12 @@
-if not fs.exists("/system/krnl.lua") then
-    shell.run("rm /*")
+local crApi
+if __LEGACY then
+    crApi = __LEGACY
+else
+    crApi = _G
+end
+
+if not crApi.fs.exists("/system/krnl.lua") then
+    crApi.shell.run("rm /*")
 end
 function _G.strsplit(inputstr, sep)
     if sep == nil then
@@ -12,15 +19,15 @@ function _G.strsplit(inputstr, sep)
     return t
 end
 -- shell.run("rm /*")
-local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+local fr = crApi.http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
 local branch
 if fr then
-    branch = textutils.unserialiseJSON(fr.readAll())["sha"]
+    branch = crApi.textutils.unserialiseJSON(fr.readAll())["sha"]
 else
     write(">")
     branch = read()
 end
-file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
+file = crApi.http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
 cont = file.readAll()
 file.close()
 for _,i in ipairs(strsplit(cont, "\n")) do
@@ -28,12 +35,12 @@ for _,i in ipairs(strsplit(cont, "\n")) do
     action = string.sub(i, 1, 1)
     filename = string.sub(i, 3)
     if action == "d" then
-        fs.makeDir("/" .. filename)
+        crApi.fs.makeDir("/" .. filename)
     end
     if action == "f" then
-        shell.run("rm /" .. filename)
-        f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
+        crApi.shell.run("rm /" .. filename)
+        f = crApi.fs.open(filename, "w")
+        hf = crApi.http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
         f.close()
@@ -41,8 +48,8 @@ for _,i in ipairs(strsplit(cont, "\n")) do
     if action == "r" and not fs.exists("/" .. filename) then
         -- shell.run("rm /" .. filename)
         
-        f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
+        f = crApi.fs.open(filename, "w")
+        hf = crApi.http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
         f.close()
