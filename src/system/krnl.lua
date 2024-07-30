@@ -29,8 +29,6 @@ _G.apiUtils = {
     kernelPanic = function(err, file, line)
         term.setBackgroundColor(colors.black)
         term.setTextColor(colors.red)
-        term.clear()
-        term.setCursorPos(1, 1)
         arcos.log("--- KERNEL PANIC ---")
         arcos.log(err)
         arcos.log("" .. file .. " at " .. line)
