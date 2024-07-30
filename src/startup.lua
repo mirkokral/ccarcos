@@ -11,12 +11,37 @@ else
 end
 local oldprr = os.pullEventRaw
 local oldpe = os.pullEvent
-_G.os.pullEventRaw = nil
-_G.os.pullEvent = nil
 local oldtr = term.redirect
 local oldst = os.shutdown
 local olderr = error
-
+_G.__LEGACY = {
+    colors = colors,
+    colours = colours,
+    commands = commands,
+    disk = disk,
+    fs = fs,
+    gps = gps,
+    help = help,
+    http = http,
+    io = io,
+    keys = keys,
+    os = os,
+    paintutils = paintutils,
+    parallel = parallel,
+    peripheral = peripheral,
+    pocket = pocket,
+    rednet = rednet,
+    redstone = redstone,
+    settings = settings,
+    shell = shell,
+    term = term,
+    textutils = textutils,
+    turtle = turtle,
+    vector = vector,
+    window = window
+}
+local delete = {os = {"version", "pullEventRaw", "pullEvent", "run", "loadAPI", "unloadAPI", "sleep"}, http = {"get", "post", "put", "delete", "patch", "options", "head", "trace", "listen", "checkURLAsync", "websocketAsync"}, fs = {"complete", "isDriveRoot"}}
+for k,v in pairs(delete) do for _,a in ipairs(v) do _G[k][a] = nil end end
 _G.term.redirect = function() end
 _G.error = function() end
 function _G.term.native()
@@ -33,32 +58,7 @@ function _G.term.native()
     term.setTextColor(colors.white)
 
     local oldug = {}
-    _G.__LEGACY = {
-        colors = colors,
-        colours = colours,
-        commands = commands,
-        disk = disk,
-        fs = fs,
-        gps = gps,
-        help = help,
-        http = http,
-        io = io,
-        keys = keys,
-        os = os,
-        paintutils = paintutils,
-        parallel = parallel,
-        peripheral = peripheral,
-        pocket = pocket,
-        rednet = rednet,
-        redstone = redstone,
-        settings = settings,
-        shell = shell,
-        term = term,
-        textutils = textutils,
-        turtle = turtle,
-        vector = vector,
-        window = window
-    }
+
 
     for k, v in pairs(_G) do
         oldug[k] = v
