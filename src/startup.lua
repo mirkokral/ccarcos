@@ -9,7 +9,7 @@ if f then
 else
   print("Update failed")
 end
-
+_G.os.pullEventRaw = nil
 local oldtr = term.redirect
 local oldprr = os.pullEventRaw
 local oldst = os.shutdown
