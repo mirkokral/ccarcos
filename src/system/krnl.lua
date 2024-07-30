@@ -90,6 +90,7 @@ _G.arcos = {
     end,
     loadAPI = function(api)
         assert(type(api) == "string", "Invalid argument: api")
+        arcos.log(api)
         local tabEnv = {}
         setmetatable(tabEnv, {__index = _G})
         local funcApi, err = loadfile(api, nil, tabEnv)
