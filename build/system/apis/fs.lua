@@ -9,7 +9,7 @@ function open(path, mode)
     file = {}
     file._f, i.err = __LEGACY.fs.open(path, mode)
     if i.err then
-        error(i.err)
+        return nil, i.err
     end
     file.close = file._f.close
     if mode == "w" then
@@ -24,6 +24,7 @@ function open(path, mode)
             return file._f.readLine()
         end
     end
+    return file, nil
 end
 function ls(dir)
     return __LEGACY.fs.listDir(dir)

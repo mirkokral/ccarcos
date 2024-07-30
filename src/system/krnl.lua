@@ -34,6 +34,9 @@ _G.apiUtils = {
         arcos.log("" .. file .. " at " .. line)
         arcos.log("--------------------")
         tasks = {}
+        while true do
+            coroutine.yield()
+        end
     end
 
 }
