@@ -8,7 +8,7 @@ f>system/bootloader.lua
 f>system/krnl.lua
 f>system/installer.lua
 f>system/apis/col.lua
-f>system/apis/red.lua
+f>system/apis/rd.lua
 f>system/apis/fs.lua
 f>system/apis/tutils.lua
 f>services/elevator.lua

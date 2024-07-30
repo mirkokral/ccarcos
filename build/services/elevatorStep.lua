@@ -23,9 +23,9 @@ while true do
     if channel == 713 then
         print(msg)
         if msg == "TopDoorOpen" then
-            red.setO("back", false)
+            rd.setO("back", false)
         elseif msg == "TopDoorClose" then
-            red.setO("back", true)
+            rd.setO("back", true)
         end
     elseif channel == 711 then
         currentFloor = tonumber(msg)

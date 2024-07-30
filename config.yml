@@ -12,7 +12,7 @@ compileFiles:
   - system/krnl.lua
   - system/installer.lua
   - system/apis/col.lua
-  - system/apis/red.lua
+  - system/apis/rd.lua
   - system/apis/fs.lua
   - system/apis/tutils.lua
   - services/elevator.lua
