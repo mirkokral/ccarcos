@@ -56,7 +56,8 @@ _G.arcos = {
             name = currentTask["name"],
             user = currentTask["user"],
             nice = currentTask["nice"],
-            paused = currentTask["paused"]
+            paused = currentTask["paused"],
+            env = currentTask["env"]
         }
     end,
     getKernelLogBuffer = function()
@@ -138,7 +139,8 @@ function _G.sleep(time)
     until i == tId
 end
 _G.tasking = {
-    createTask = function(name, callback, nice, user, out)
+    createTask = function(name, callback, nice, user, out, env)
+        if not env then env = arcos.getCurrentTask().env or {workDir = "/"} end
         arcos.log("Creating task: "..name)
         if not user then
             if currentTask then
@@ -162,6 +164,7 @@ _G.tasking = {
             nice = nice,
             user = user,
             out = out,
+            env = env,
             paused = false
         })
     end,

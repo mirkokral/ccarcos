@@ -32,3 +32,6 @@ end
 function rm(f)
     return __LEGACY.fs.remove(f)
 end
+
+function resolve(f, wd)
+end
