@@ -172,7 +172,7 @@ _G.tasking = {
         })
     end,
     getName = function()
-        return __LEGACY.os.computerLabel()
+        return __LEGACY.os.getComputerLabel()
     end,
     setName = function(new)
         if arcos.getCurrentTask().user == "root" then
