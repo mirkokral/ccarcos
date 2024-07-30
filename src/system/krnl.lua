@@ -162,6 +162,12 @@ function _G.sleep(time)
     repeat _, i = arcos.ev("timer")
     until i == tId
 end
+function _G.printError(...)
+    local oldtc = term.getTextColor()
+    term.setTextColor(col.red)
+    print(...)
+    term.setTextColor(oldtc)
+end
 _G.tasking = {
     createTask = function(name, callback, nice, user, out, env)
         if not env then env = arcos.getCurrentTask().env or {workDir = "/"} end
