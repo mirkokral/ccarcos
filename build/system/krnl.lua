@@ -88,7 +88,12 @@ _G.arcos = {
         arcos.log(api)
         local tabEnv = {}
         setmetatable(tabEnv, {__index = _G})
-        local funcApi, err = loadfile(api, nil, tabEnv)
+        local f, e = __LEGACY.fs.open(api, "r")
+        if not f then
+            error(e)
+        end
+        local funcApi, err = load(f.readAll(), nil, tabEnv)
+        f.close()
         if funcApi then
             local ok, err = pcall(funcApi)
             if not ok then
