@@ -105,7 +105,7 @@ _G.arcos = {
         local s = strsplit(api, "/")
         local v = s[#s]
         if string.sub(v, #v-4) == ".lua" then
-            v = v:sub(0, #v-5)
+            v = v:sub(1, #v-5)
         end 
         arcos.log("Loaded api " .. v)
         _G[v] = tAPI
