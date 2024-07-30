@@ -9,9 +9,11 @@ if f then
 else
   print("Update failed")
 end
-_G.os.pullEventRaw = nil
-local oldtr = term.redirect
 local oldprr = os.pullEventRaw
+local oldpe = os.pullEvent
+_G.os.pullEventRaw = nil
+_G.os.pullEvent = nil
+local oldtr = term.redirect
 local oldst = os.shutdown
 local olderr = error
 _G.term.redirect = function() end
@@ -20,6 +22,7 @@ function _G.term.native()
     _G.error = olderr
     _G.term.redirect = oldtr
     _G.os.pullEventRaw = oldprr
+    _G.os.pullEvent = oldpe
     function _G.os.shutdown() 
         print("Successful escape")
         _G.os.shutdown = oldst
