@@ -28,12 +28,12 @@ local function changeFloor(floor)
             local e = {arcos.ev("modem_message")}
         until e[3] == 712
     end
-    devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", true)
+    devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", true)
     sleep(0.1)
-    devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("top", false)
+    devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", false)
     sleep(0.1)
     repeat
-        local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("top")
+        local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("front")
         sleep(0.1)
     until r
 
