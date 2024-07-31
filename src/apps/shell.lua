@@ -2,7 +2,7 @@ print("arcos shell")
 local confile = fs.open("/config/arcshell", "r")
 local conf = tutils.dJSON(confile.read())
 confile.close()
-
+if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
     local cmd = nil
     for i, v in ipairs(conf["path"]) do

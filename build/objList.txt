@@ -17,6 +17,7 @@ f>services/elevatorSrv.lua
 f>services/shell.lua
 f>apps/init.lua
 f>apps/shell.lua
+f>apps/cd.lua
 f>startup.lua
 r>services/enabled
 r>config/passwd

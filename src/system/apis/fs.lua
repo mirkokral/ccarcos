@@ -32,6 +32,33 @@ end
 function rm(f)
     return __LEGACY.fs.remove(f)
 end
-
-function resolve(f, wd)
+function exists(f)
+    return __LEGACY.fs.exists(f)
+end
+function resolve(f)
+    local p = f:sub(1, 1) == "/" and "/" or (environ.workDir or "/")
+    local pa = tutils.split(p, "/")
+    local rmItems = {}
+    for ix, i in ipairs(pa) do
+        if i == "" then
+            table.insert(rmItems, 1, ix)
+        end
+    end
+    for _, rmi in ipairs(rmItems) do
+        pa:remove(rmi)
+    end
+    local fla = tutils.split(f, "/")
+    local frmItems = {}
+    for ix, i in ipairs(fla) do
+        if i == "" then
+            table.insert(frmItems, 1, ix)
+        end
+    end
+    for _, rmi in ipairs(frmItems) do
+        fla:remove(rmi)
+    end
+    return { "/" .. tutils.join(table.concat(pa, fla), "/") }
+end
+function dir(d) 
+    return __LEGACY.fs.isDir(d)
 end

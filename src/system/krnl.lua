@@ -301,7 +301,9 @@ while true do
                 if not i["paused"] then
                     currentTask = i
                     cPid = d
+                    _G.environ = i["env"]
                     coroutine.resume(i["crt"], table.unpack(ev))
+                    i["env"] = _G.environ
                 end
             end
             if coroutine.status(i["crt"]) == "dead" then

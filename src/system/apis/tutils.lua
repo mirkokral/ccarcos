@@ -20,3 +20,10 @@ function split(inputstr, sep)
     end
     return t
 end
+function join(tab, sep )
+    local out = ""
+    for _, i in ipairs(tab) do
+        out = out .. tostring(i) .. sep
+    end
+    return out:sub(1, #out-1)
+end
