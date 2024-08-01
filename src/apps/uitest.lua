@@ -30,8 +30,7 @@ local widgets = {
         label = "No key yet pressed"
     }),
 }
-table.insert(widgets, 
-ui.Button({
+local btn = ui.Button({
     callBack = function ()
         counter = counter + 1
         widgets[1].label = "Counter: " .. counter
@@ -42,7 +41,16 @@ ui.Button({
     y = 7,
     col = ui.UItheme.buttonBg,
     textCol = ui.UItheme.buttonFg
-}))
+})
+table.insert(widgets, btn)
+table.insert(widgets,
+ui.Label({
+    label = "Button width: " .. tostring(btn.width) .. ", height: " .. tostring(btn.height),
+    x = 1,
+    y = 8
+})
+)
+
 ui.RenderWidgets(widgets)
 while true do
     local ev = { arcos.ev() }
