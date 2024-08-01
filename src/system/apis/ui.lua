@@ -53,7 +53,7 @@ end
 ---@field x number The x position of the widget
 ---@field y number The y position of the widget
 ---@field getDrawCommands fun(): RenderCommand[]
----@field onEvent fun(e)
+---@field onEvent fun(e): boolean?
 ---@field getWH fun(): [number, number] Gets the width and height of this element.
 
 ---@class Label: Widget
@@ -165,10 +165,12 @@ function ScrollPane(b)
             if ce[3] == config.x+config.width and ce[4] == config.y then
                 
                 config.scroll = math.max(config.scroll - 1, 0) 
+                return true
             end
             if ce[3] == config.x+config.width and ce[4] == config.y+1 then
                 
                 config.scroll = math.min(config.scroll + 1, config.getTotalHeight()) 
+                return true
             end
         end
     end

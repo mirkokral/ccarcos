@@ -132,17 +132,19 @@ end
 rerender()
 while true do
     local ev = { arcos.ev() }
+    local red = false
     if ev[1] == "mouse_click" then
         for i, v in ipairs(pages[page]) do
-            v.onEvent({"click", ev[2], ev[3]-ox, ev[4]-oy})
+            if v.onEvent({"click", ev[2], ev[3]-ox, ev[4]-oy}) then red = true end
         end
     else
         for i, v in ipairs(pages[page]) do
-            v.onEvent(ev)
+            if v.onEvent(ev) then red = true end
         end
     end
     if ev[1] == "key" and page == 1 then
         pages[1][5].label = "Latest key: " .. tostring(ev[2])
         rerender()
     end
+    if red then rerender()
 end
