@@ -7,9 +7,9 @@ UItheme = {
 W, H = term.getSize()
 
 ---Inits the buffer
----@param buf table buffer
-function InitBuffer(buf)
-    buf = {}
+---@return table
+function InitBuffer()
+    local buf = {}
     W, H = term.getSize()
     for i = 1, W, 1 do
         local tb = {}
@@ -18,6 +18,7 @@ function InitBuffer(buf)
         end
         table.insert(buf, tb)
     end
+    return buf
 end
 ---@param x number The X position for the blit
 ---@param y number The Y position for the blit
@@ -300,7 +301,6 @@ end
 ---@param speed number Speed
 ---@param ontop boolean True if new widget on top
 function PageTransition(widgets1, widgets2, dir, speed, ontop)
-    local buf = {}
     local tw, th = term.getSize()
     local ox = 0
     local accel = 1
@@ -313,7 +313,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
         while ox > 0 do
             ox = ox - accel
             accel = accel - speed
-            InitBuffer(buf)
+            local buf = InitBuffer()
             RenderWidgets(widgets1, 0, 0, buf)
             RenderWidgets(widgets2, ox * (dir and -1 or 1), 0, buf)
             Push(buf)
@@ -323,7 +323,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
         while ox < tw do
             ox = ox + accel
             accel = accel + speed
-            InitBuffer(buf)
+            local buf = InitBuffer()
             RenderWidgets(widgets2, 0, 0, buf)
             RenderWidgets(widgets1, ox * (dir and -1 or 1), 0, buf)
             Push(buf)

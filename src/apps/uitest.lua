@@ -99,8 +99,7 @@ table.insert(
     )
 )
 function rerender()
-    local buf = {}
-    ui.InitBuffer(buf)
+    local buf = ui.InitBuffer()
     ui.RenderWidgets(pages[page], ox, oy, buf)
     ui.Push(buf)
 end

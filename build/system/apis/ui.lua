@@ -5,8 +5,8 @@ UItheme = {
     buttonFg = col.white
 }
 W, H = term.getSize()
-function InitBuffer(buf)
-    buf = {}
+function InitBuffer()
+    local buf = {}
     W, H = term.getSize()
     for i = 1, W, 1 do
         local tb = {}
@@ -15,6 +15,7 @@ function InitBuffer(buf)
         end
         table.insert(buf, tb)
     end
+    return buf
 end
 local function blitAtPos(x, y, bgCol, forCol, text, buf)
     if x <= W and y <= H and y>0 and x>0 then
@@ -218,7 +219,6 @@ function RenderWidgets(wdg, ox, oy, buf)
     end
 end
 function PageTransition(widgets1, widgets2, dir, speed, ontop)
-    local buf = {}
     local tw, th = term.getSize()
     local ox = 0
     local accel = 1
@@ -230,7 +230,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
         while ox > 0 do
             ox = ox - accel
             accel = accel - speed
-            InitBuffer(buf)
+            local buf = InitBuffer()
             RenderWidgets(widgets1, 0, 0, buf)
             RenderWidgets(widgets2, ox * (dir and -1 or 1), 0, buf)
             Push(buf)
@@ -240,7 +240,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
         while ox < tw do
             ox = ox + accel
             accel = accel + speed
-            InitBuffer(buf)
+            local buf = InitBuffer()
             RenderWidgets(widgets2, 0, 0, buf)
             RenderWidgets(widgets1, ox * (dir and -1 or 1), 0, buf)
             Push(buf)
