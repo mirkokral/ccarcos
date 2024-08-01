@@ -228,7 +228,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             accel = accel + speed
         end
         while ox > 0 do
-            ox = ox - accel
+            ox = math.min(ox - accel, 0)
             accel = accel - speed
             local buf = InitBuffer()
             RenderWidgets(widgets1, 0, 0, buf)
@@ -238,7 +238,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
         end        
     else
         while ox < tw do
-            ox = ox + accel
+            ox = math.max(ox + accel, tw)
             accel = accel + speed
             local buf = InitBuffer()
             RenderWidgets(widgets2, 0, 0, buf)
