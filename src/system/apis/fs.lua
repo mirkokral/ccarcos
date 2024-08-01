@@ -65,12 +65,12 @@ function resolve(f)
             table.insert(frmItems, 1, ix)
         end
         if i == "." then
-            table.insert(rmItems, 1, ix)
+            table.insert(frmItems, 1, ix)
         end
         if i == ".." then
-            table.insert(rmItems, 1, ix)
+            table.insert(frmItems, 1, ix)
             if #pa + ix ~= 1 then
-                table.insert(rmItems, 1, ix-1) 
+                table.insert(frmItems, 1, ix-1) 
             end
             
         end
