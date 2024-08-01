@@ -39,8 +39,7 @@ table.insert(
     ui.Button(
         {
             callBack = function ()
-                oy = oy + 1
-                ui.PageTransition(pages[1], pages[2], true, 0.05)
+                ui.PageTransition(pages[1], pages[2], true, 0.01)
                 page = 2
             end,
             x = tw - 5,
@@ -80,7 +79,7 @@ table.insert(
     ui.Button(
         {
             callBack = function ()
-                ui.PageTransition(pages[2], pages[1], false, 0.05)
+                ui.PageTransition(pages[2], pages[1], false, 0.01)
                 page = 1
                 ui.RenderWidgets(pages[page], ox, oy)
             end,
