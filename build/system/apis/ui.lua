@@ -1,5 +1,5 @@
 UItheme = {
-    bg = col.blue,
+    bg = col.black,
     fg = col.white,
     buttonBg = col.lightBlue
 }

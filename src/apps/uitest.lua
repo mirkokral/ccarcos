@@ -32,6 +32,9 @@ local widgets = {
 ui.RenderWidgets(widgets)
 while true do
     local ev = { arcos.ev() }
+    for i, v in ipairs(widgets) do
+        v.onEvent(ev)
+    end
     if ev[1] == "key" then
         widgets[5].label = "Latest key: " .. tostring(ev[2])
         ui.RenderWidgets(widgets)
