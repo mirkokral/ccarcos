@@ -22,7 +22,7 @@ for _, i in ipairs(__LEGACY.fs.list("/temporary/")) do
     recursiveRemove("/temporary/" .. i)
 end
 local users = {}
-function _G.strsplit(inputstr, sep)
+local function strsplit(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
@@ -34,8 +34,8 @@ function _G.strsplit(inputstr, sep)
 end
 _G.apiUtils = {
     kernelPanic = function(err, file, line)
-        term.setBackgroundColor(colors.black)
-        term.setTextColor(colors.red)
+        term.setBackgroundColor(__LEGACY.colors.black)
+        term.setTextColor(__LEGACY.colors.red)
         arcos.log("--- KERNEL PANIC ---")
         arcos.log(err)
         arcos.log("" .. file .. " at " .. line)
@@ -184,6 +184,7 @@ _G.tasking = {
             env = env,
             paused = false
         })
+        return #tasks
     end,
     killTask = function(pid)
         arcos.log("Killing task: " .. pid)
@@ -217,10 +218,10 @@ _G.tasking = {
 }
 _G.devices = {
     get = function(what)
-        return peripheral.wrap(what)
+        return __LEGACY.peripheral.wrap(what)
     end,
     find = function(what)
-        return peripheral.find(what)
+        return __LEGACY.peripheral.find(what)
     end
 }
 local i = 0

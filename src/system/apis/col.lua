@@ -1,69 +1,74 @@
---- White: Written as `0` in paint files and [`term.blit`], has a default
--- terminal colour of #F0F0F0.
+---@alias Color number
+
+---White: Written as `0` in paint files and [`term.blit`], has a default
+---@type Color
 white = 0x1
 
---- Orange: Written as `1` in paint files and [`term.blit`], has a
--- default terminal colour of #F2B233.
+---Orange: Written as `1` in paint files and [`term.blit`], has a
+---@type Color
 orange = 0x2
 
---- Magenta: Written as `2` in paint files and [`term.blit`], has a
--- default terminal colour of #E57FD8.
+---Magenta: Written as `2` in paint files and [`term.blit`], has a
+---@type Color
 magenta = 0x4
 
---- Light blue: Written as `3` in paint files and [`term.blit`], has a
--- default terminal colour of #99B2F2.
+---Light blue: Written as `3` in paint files and [`term.blit`], has a
+---@type Color
 lightBlue = 0x8
 
---- Yellow: Written as `4` in paint files and [`term.blit`], has a
--- default terminal colour of #DEDE6C.
+---Yellow: Written as `4` in paint files and [`term.blit`], has a
+---@type Color
 yellow = 0x10
 
---- Lime: Written as `5` in paint files and [`term.blit`], has a default
--- terminal colour of #7FCC19.
+---Lime: Written as `5` in paint files and [`term.blit`], has a default
+---@type Color
 lime = 0x20
 
---- Pink: Written as `6` in paint files and [`term.blit`], has a default
--- terminal colour of #F2B2CC.
+---Pink: Written as `6` in paint files and [`term.blit`], has a default
+---@type Color
 pink = 0x40
 
---- Gray: Written as `7` in paint files and [`term.blit`], has a default
--- terminal colour of #4C4C4C.
+---Gray: Written as `7` in paint files and [`term.blit`], has a default
+---@type Color
 gray = 0x80
 
---- Light gray: Written as `8` in paint files and [`term.blit`], has a
--- default terminal colour of #999999.
+---Light gray: Written as `8` in paint files and [`term.blit`], has a
+---@type Color
 lightGray = 0x100
 
---- Cyan: Written as `9` in paint files and [`term.blit`], has a default
--- terminal colour of #4C99B2.
+---Cyan: Written as `9` in paint files and [`term.blit`], has a default
+---@type Color
 cyan = 0x200
 
---- Purple: Written as `a` in paint files and [`term.blit`], has a
--- default terminal colour of #B266E5.
+---Purple: Written as `a` in paint files and [`term.blit`], has a
+---@type Color
 purple = 0x400
 
---- Blue: Written as `b` in paint files and [`term.blit`], has a default
--- terminal colour of #3366CC.
+---Blue: Written as `b` in paint files and [`term.blit`], has a default
+---@type Color
 blue = 0x800
 
---- Brown: Written as `c` in paint files and [`term.blit`], has a default
--- terminal colour of #7F664C.
+---Brown: Written as `c` in paint files and [`term.blit`], has a default
+---@type Color
 brown = 0x1000
 
---- Green: Written as `d` in paint files and [`term.blit`], has a default
--- terminal colour of #57A64E.
+---Green: Written as `d` in paint files and [`term.blit`], has a default
+---@type Color
 green = 0x2000
 
---- Red: Written as `e` in paint files and [`term.blit`], has a default
--- terminal colour of #CC4C4C.
+---Red: Written as `e` in paint files and [`term.blit`], has a default
+---@type Color
 red = 0x4000
 
---- Black: Written as `f` in paint files and [`term.blit`], has a default
--- terminal colour of #111111.
+---Black: Written as `f` in paint files and [`term.blit`], has a default
+---@type Color
 black = 0x8000
 
+---comment
+---@param hex string
+---@return Color?
 function fromBlit(hex)
-    expect(1, hex, "string")
+    assert(hex == "string")
 
     if #hex ~= 1 then return nil end
     local value = tonumber(hex, 16)

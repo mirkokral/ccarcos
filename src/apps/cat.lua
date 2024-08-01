@@ -1,3 +1,4 @@
+
 local f = ...
 if not f then error("No file specified!") end
 local fr = fs.resolve(f)[1]

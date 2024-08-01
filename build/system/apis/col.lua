@@ -15,7 +15,7 @@ green = 0x2000
 red = 0x4000
 black = 0x8000
 function fromBlit(hex)
-    expect(1, hex, "string")
+    assert(hex == "string")
     if #hex ~= 1 then return nil end
     local value = tonumber(hex, 16)
     if not value then return nil end

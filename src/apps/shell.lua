@@ -28,6 +28,7 @@ local function run(a1, ...)
         if not ok then
             printError(err)
         end
+        
         return ok
     end
     local ok, err = arcos.r({}, cmd, ...)

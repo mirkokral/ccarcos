@@ -9,6 +9,8 @@ local config = {
     init = "/apps/init.lua",
     printLogToConsole = false
 }
+
+
 local function recursiveRemove(r)
     for _, i in ipairs(__LEGACY.fs.list(r)) do
         if __LEGACY.fs.isDir(i) then
@@ -23,7 +25,7 @@ for _, i in ipairs(__LEGACY.fs.list("/temporary/")) do
 end
 local users = {}
 
-function _G.strsplit(inputstr, sep)
+local function strsplit(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
@@ -36,9 +38,13 @@ end
 
 
 _G.apiUtils = {
+    ---Executes a kernel panic
+    ---@param err string Error to display
+    ---@param file string File kernel panic source
+    ---@param line string File line
     kernelPanic = function(err, file, line)
-        term.setBackgroundColor(colors.black)
-        term.setTextColor(colors.red)
+        term.setBackgroundColor(__LEGACY.colors.black)
+        term.setTextColor(__LEGACY.colors.red)
         arcos.log("--- KERNEL PANIC ---")
         arcos.log(err)
         arcos.log("" .. file .. " at " .. line)
@@ -51,21 +57,30 @@ _G.apiUtils = {
 
 }
 _G.arcos = {
+
+    ---Logs a string
+    ---@param txt string String to log
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
             print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
     end,
+    ---Gets the computer name
+    ---@return string
     getName = function()
         return __LEGACY.os.getComputerLabel()
     end,
+    ---Sets the computer name
+    ---@param new string New computer name
     setName = function(new)
 
         if arcos.getCurrentTask().user == "root" then
             __LEGACY.os.setComputerLabel(new)
         end
     end,
+    ---Gets the currrent task
+    ---@return {pid: number, name: string, user: string, nice: number, paused: boolean, env: table}
     getCurrentTask = function()
         return {
             pid = cPid,
@@ -76,6 +91,8 @@ _G.arcos = {
             env = currentTask["env"]
         }
     end,
+    ---Gets the kernel log buffer
+    ---@return string?
     getKernelLogBuffer = function()
         if not currentTask or not currentTask["user"] == "root" then
             return kernelLogBuffer
@@ -83,6 +100,9 @@ _G.arcos = {
             return nil
         end
     end,
+    ---Pulls an event with respect for the arcos thread executor.
+    ---@param filter string
+    ---@return table
     ev = function(filter)
         r = table.pack(coroutine.yield())
         if r[1] == "terminate" then
@@ -94,6 +114,12 @@ _G.arcos = {
             return arcos.ev(filter)
         end
     end,
+    ---Runs a program
+    ---@param env table Environment
+    ---@param path string Path to the executable
+    ---@param ... any
+    ---@return boolean success
+    ---@return any out
     r = function(env, path, ...) 
         assert(type(env) == "table", "Invalid argument: env")
         assert(type(path) == "string", "Invalid argument: path")
@@ -111,6 +137,8 @@ _G.arcos = {
             return ok, err
         end
     end,
+    ---Loads an API. This shouldn't be used outside of the kernel, but there are cases where it's needed.
+    ---@param api string
     loadAPI = function(api)
         assert(type(api) == "string", "Invalid argument: api")
         arcos.log(api)
@@ -144,24 +172,33 @@ _G.arcos = {
         arcos.log("Loaded api " .. v)
         _G[v] = tAPI
     end,
+    ---Starts a timer
+    ---@param d number Timer duration in seconds
+    ---@return number id Timer id
     startTimer = function(d) 
         return __LEGACY.os.startTimer(d)
     end
 }
 -- C:Exc
+
 _G.term = {
     write = function(towrite) end,
     setBackgroundColor = function(col) end,
     setTextColor = function(col) end,
     setCursorPos = function(cx, cy) end
 }
+
 -- C:End
+---Sleeps for a time, respects arcos thread executor
+---@param time number Sleep time
 function _G.sleep(time)
     if not time then time=0.05 end
     local tId = arcos.startTimer(time)
     repeat _, i = arcos.ev("timer")
     until i == tId
 end
+---Prints an error
+---@param ... string toprint
 function _G.printError(...)
     local oldtc = term.getTextColor()
     term.setTextColor(col.red)
@@ -169,6 +206,14 @@ function _G.printError(...)
     term.setTextColor(oldtc)
 end
 _G.tasking = {
+    ---Creates a task
+    ---@param name string Task name
+    ---@param callback function The actual code that the task runs
+    ---@param nice number Task niceness, how many times to execute coroutine.resume during the tasks round
+    ---@param user string Task user executor. Can only be current user and root if not root. changing to root asks for a password.
+    ---@param out any The output, exposed as term to the task
+    ---@param env table The task environment
+    ---@return integer pid The task process id
     createTask = function(name, callback, nice, user, out, env)
         if not env then env = arcos.getCurrentTask().env or {workDir = "/"} end
         arcos.log("Creating task: "..name)
@@ -198,7 +243,10 @@ _G.tasking = {
             env = env,
             paused = false
         })
+        return #tasks
     end,
+    ---Kills task. Can only be current user task if not root
+    ---@param pid number The actual pid
     killTask = function(pid)
         arcos.log("Killing task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
@@ -208,6 +256,8 @@ _G.tasking = {
             
         end
     end,
+    ---Gets all tasks
+    ---@return { pid: number, name: string, user: string, nice: number, paused: boolean }[]
     getTasks = function()
         local returnstuff = {}
         for i, v in ipairs(tasks) do
@@ -221,6 +271,9 @@ _G.tasking = {
         end
         return returnstuff
     end,
+    ---Sets the task paused status if not root can only be used on task of self
+    ---@param pid number The pid of the task to set
+    ---@param paused boolean New paused status
     setTaskPaused = function(pid, paused)
         arcos.log("Setting pf on task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
@@ -231,13 +284,13 @@ _G.tasking = {
         end
     end
 }
-
+---@deprecated In favor of dev api
 _G.devices = {
     get = function(what)
-        return peripheral.wrap(what)
+        return __LEGACY.peripheral.wrap(what)
     end,
     find = function(what)
-        return peripheral.find(what)
+        return __LEGACY.peripheral.find(what)
     end
 }
 
@@ -271,11 +324,22 @@ for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     
 end 
 -- C:Exc
-_G.col = require("src.system.apis.col")
-_G.red = require("src.system.apis.red")
-_G.fs = require("src.system.apis.fs")
--- C:End
+---Prints something
+---@param ... string
+_G.print = function(...) end
+---Just like print but doesn't write a newline
+---@param ... string
+_G.write = function(...) end
+---Reads a line
+---@return string userInput
+_G.read = function() return "" end
 
+_G.col = require "src.system.apis.col"
+_G.fs = require "src.system.apis.fs"
+_G.rd = require "src.system.apis.rd"
+_G.tutils = require "src.system.apis.tutils"
+_G.ui = require "src.system.apis.ui"
+-- C:End
 local f, err = fs.open("/config/passwd", "r")
 local tab
 if f then

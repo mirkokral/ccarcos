@@ -1,15 +1,31 @@
+---Serializes an object into JSON
+---@param obj any
+---@return string
 function sJSON(obj)
     return __LEGACY.textutils.serializeJSON(obj)
 end
+---Deserializes a JSON string
+---@param obj string
+---@return any
 function dJSON(obj)
     return __LEGACY.textutils.unserialiseJSON(obj)
 end
+---Serializes a lua object into lua coded
+---@param obj any
+---@return string
 function s(obj)
     return __LEGACY.textutils.serialize(obj)
 end
+---Deserializes lua code
+---@param obj string
+---@return any
 function d(obj)
     return __LEGACY.textutils.unserialize(obj)
 end
+---Splits string by seperator
+---@param inputstr string
+---@param sep string
+---@return table
 function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -20,6 +36,11 @@ function split(inputstr, sep)
     end
     return t
 end
+---Joins an table by seperators
+---@param tab table
+---@param sep string
+---@return string
+---@deprecated Use table.concat
 function join(tab, sep )
     local out = ""
     for _, i in ipairs(tab) do

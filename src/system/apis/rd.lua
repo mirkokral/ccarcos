@@ -1,3 +1,8 @@
+---@alias Side "top" | "bottom" | "left" | "right" | "front" | "back"
+
+---Sets the output of a side
+---@param sd Side
+---@param val number | boolean
 function setO(sd, val)
     assert(type(val) == "number" or type(val) == "boolean", "Invalid argument: value")
     assert(type(sd) == "string", "Invalid argument: side")
@@ -9,9 +14,15 @@ function setO(sd, val)
         -- print("boolset")
     end
 end
+---Gets the output of a side
+---@param side Side
+---@return number
 function getO(side)
     return __LEGACY.redstone.getAnalogOutput(side)
 end
+---Gets the input of a side
+---@param side Side
+---@return number
 function getI(side)
     return __LEGACY.redstone.getAnalogInput(side)
 end
