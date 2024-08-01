@@ -72,7 +72,7 @@ _G.arcos = {
         }
     end,
     getKernelLogBuffer = function()
-        if not currentTask or currentTask["user"] ~= "root" then
+        if not currentTask or currentTask["user"] == "root" then
             return kernelLogBuffer
         else
             return nil
