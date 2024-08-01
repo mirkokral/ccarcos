@@ -40,6 +40,7 @@ function ScrollPane(b)
         for index, value in ipairs(config.children) do
             h = h + value.getWH()[2]
         end
+        return h
     end
     config.getDrawCommands = function ()
         local dcBuf = {}
@@ -117,7 +118,7 @@ function ScrollPane(b)
                 return true
             end
             if ce[3] == config.x+config.width and ce[4] == config.y+1 then
-                config.scroll = math.min(config.scroll + 1, config.getTotalHeight()) 
+                config.scroll = math.min(config.scroll + 1, config.getTotalHeight() - config.height) 
                 return true
             end
         end
