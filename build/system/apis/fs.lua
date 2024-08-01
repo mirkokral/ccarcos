@@ -57,7 +57,14 @@ function resolve(f)
     for _, rmi in ipairs(frmItems) do
         fla:remove(rmi)
     end
-    return { "/" .. tutils.join(table.concat(pa, fla), "/") }
+    local out = {}
+    for _, i in ipairs(pa) do
+        table.insert(out, i)
+    end
+    for _, i in ipairs(fla) do
+        table.insert(out, i)
+    end
+    return { "/" .. tutils.join(out, "/") }
 end
 function dir(d) 
     return __LEGACY.fs.isDir(d)
