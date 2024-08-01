@@ -80,8 +80,8 @@ function DirectRender(wr)
     else
         rc = wr
     end
-    print(v.text)
     for i, v in ipairs(rc) do
+        print(v.text)
         blitAtPos(v.x, v.y, v.bgCol, v.forCol, v.text)
     end
 end
