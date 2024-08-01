@@ -62,6 +62,15 @@ function resolve(f)
         if i == "" then
             table.insert(frmItems, 1, ix)
         end
+        if i == "." then
+            table.insert(rmItems, 1, ix)
+        end
+        if i == ".." then
+            table.insert(rmItems, 1, ix)
+            if ix ~= 1 then
+                table.insert(rmItems, 1, ix-1) 
+            end
+        end
     end
     for _, rmi in ipairs(frmItems) do
         fla:remove(rmi)
