@@ -82,6 +82,7 @@ table.insert(
             callBack = function ()
                 ui.PageTransition(pages[2], pages[1], false, 0.05)
                 page = 1
+                ui.RenderWidgets(pages[page], ox, oy)
             end,
             x = tw - 5,
             y = th - 1,
