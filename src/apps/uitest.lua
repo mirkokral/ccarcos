@@ -38,9 +38,10 @@ table.insert(widgets, ui.Button(
     {
         callBack = function ()
             ox = ox + 1
+            ui.RenderWidgets(widgets, ox, oy)
         end,
         x = tw - 2,
-        y = tw - 3,
+        y = th - 3,
         label = ">"
     }
 ))
@@ -48,9 +49,10 @@ table.insert(widgets, ui.Button(
     {
         callBack = function ()
             ox = ox - 1
+            ui.RenderWidgets(widgets, ox, oy)
         end,
         x = tw - 4,
-        y = tw - 3,
+        y = th - 3,
         label = "<"
     }
 ))
@@ -63,7 +65,7 @@ table.insert(
                 ui.RenderWidgets(widgets, ox, oy)
             end,
             x = tw - 3,
-            y = tw - 2,
+            y = th - 2,
             label = "^"
         }
     )
@@ -74,9 +76,10 @@ table.insert(
         {
             callBack = function ()
                 oy = oy + 1
+                ui.RenderWidgets(widgets, ox, oy)
             end,
             x = tw - 3,
-            y = tw - 2,
+            y = th - 2,
             label = "v"
         }
     )
