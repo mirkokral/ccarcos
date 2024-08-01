@@ -137,6 +137,14 @@ while true do
         for i, v in ipairs(pages[page]) do
             if v.onEvent({"click", ev[2], ev[3]-ox, ev[4]-oy}) then red = true end
         end
+    elseif ev[1] == "mouse_drag" then
+        for i, v in ipairs(pages[page]) do
+            if v.onEvent({"drag", ev[2], ev[3]-ox, ev[4]-oy}) then red = true end
+        end
+    elseif ev[1] == "mouse_up" then
+        for i, v in ipairs(pages[page]) do
+            if v.onEvent({"up", ev[2], ev[3]-ox, ev[4]-oy}) then red = true end
+        end
     else
         for i, v in ipairs(pages[page]) do
             if v.onEvent(ev) then red = true end
