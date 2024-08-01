@@ -109,7 +109,7 @@ pages[2] = {
         y = 7,
         children = lbls,
         col = col.gray,
-        showScrollbar = true
+        showScrollBtns = false
     })
 }
 table.insert(

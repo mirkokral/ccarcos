@@ -82,7 +82,23 @@ function ScrollPane(b)
         for index, value in ipairs(rmIndexes) do
             table.remove(dcBuf, value)
         end
-        for i = 0, config.height-1, 1 do
+        if config.showScrollBtns then
+            table.insert(dcBuf, {
+                text = "^",
+                forCol = UItheme.bg,
+                bgCol = UItheme.fg,
+                x = config.x + config.width,
+                y = config.y
+            })
+            table.insert(dcBuf, {
+                text = "v",
+                forCol = UItheme.bg,
+                bgCol = UItheme.fg,
+                x = config.x + config.width,
+                y = config.y + 1
+            })
+        end
+        for i = (config.showScrollBtns and 2 or 0), config.height-1, 1 do
             table.insert(dcBuf, {
                 text = "|",
                 forCol = UItheme.bg,
@@ -101,6 +117,16 @@ function ScrollPane(b)
                     value.onEvent({"click", ce[2], ce[3] - config.x, ce[4] - config.y})
                 end
             end
+            if config.showScrollBtns then
+                if ce[3] == config.x+config.width and ce[4] == config.y then
+                    config.scroll = math.max(config.scroll - 1, 0) 
+                    return true
+                end
+                if ce[3] == config.x+config.width and ce[4] == config.y+1 then
+                    config.scroll = math.min(config.scroll + 1, config.getTotalHeight() - config.height) 
+                    return true
+                end
+            end
             mbpressedatm = true
             lastx, lasty = ce[3], ce[4]
         end
@@ -111,7 +137,7 @@ function ScrollPane(b)
                 end
             end
             local ret = false
-            if mbpressedatm and lastx == config.x + config.width + 1 and lasty >= config.y and lasty <= config.y + config.width then
+            if mbpressedatm and lastx == config.x + config.width + 1 and lasty >= config.y + (config.showScrollBtns and 2 or 0) and lasty <= config.y + config.width then
                 config.scroll = math.min(math.max(config.scroll + (ce[4] - lasty)*-1, 0), config.getTotalHeight() - config.height)
                 ret = true
             end
