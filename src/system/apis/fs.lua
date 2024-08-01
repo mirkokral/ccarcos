@@ -55,7 +55,8 @@ function resolve(f)
         end
     end
     for _, rmi in ipairs(rmItems) do
-        pa:remove(rmi)
+        
+        table.remove(pa, rmi)
     end
     local fla = tutils.split(f, "/")
     local frmItems = {}
@@ -75,7 +76,8 @@ function resolve(f)
         end
     end
     for _, rmi in ipairs(frmItems) do
-        fla:remove(rmi)
+        
+        table.remove(fla, rmi)
     end
     local out = {}
     for _, i in ipairs(pa) do
