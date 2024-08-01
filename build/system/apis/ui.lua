@@ -118,11 +118,11 @@ function ScrollPane(b)
                 end
             end
             if config.showScrollBtns then
-                if ce[3] == config.x+config.width and ce[4] == config.y then
+                if ce[3] == config.x+config.width+1 and ce[4] == config.y then
                     config.scroll = math.max(config.scroll - 1, 0) 
                     return true
                 end
-                if ce[3] == config.x+config.width and ce[4] == config.y+1 then
+                if ce[3] == config.x+config.width+1 and ce[4] == config.y+1 then
                     config.scroll = math.min(config.scroll + 1, config.getTotalHeight() - config.height) 
                     return true
                 end
