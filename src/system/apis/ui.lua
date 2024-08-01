@@ -49,7 +49,7 @@ function Label(b)
         local rx = 0
         local ry = 0
         local i = 1
-        while string.sub(config.label, i, i) do
+        while string.sub(config.label, i, i) ~= "" do
             if string.sub(config.label, i, i) == "\n" then
                 rx = 0
                 ry = ry + 1
@@ -81,7 +81,6 @@ function DirectRender(wr)
         rc = wr
     end
     for i, v in ipairs(rc) do
-        print(v.text)
         blitAtPos(v.x, v.y, v.bgCol, v.forCol, v.text)
     end
 end
