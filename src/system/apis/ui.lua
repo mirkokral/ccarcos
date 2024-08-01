@@ -341,7 +341,8 @@ _G.ui = {
     RenderWidgets = RenderWidgets,
     PageTransition = PageTransition,
     InitBuffer = InitBuffer,
-    Push = Push
+    Push = Push,
+    ScrollPane = ScrollPane
     
 }
 -- C:End

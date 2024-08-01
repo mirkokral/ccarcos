@@ -73,12 +73,28 @@ ui.Label({
     y = 8
 })
 )
-
+local lbls = {}
+for i = 1, 40, 1 do
+    table.insert(lbls, ui.Label({
+        label = "Hello world: " .. tostring(i),
+        x = 1,
+        y = 1
+    }))
+end
 pages[2] = {
     ui.Label({
         label = "Hello, world!",
         x = 3,
         y = 3,
+    }),
+    ui.ScrollPane({
+        width= 20,
+        height= 10,
+        x = 20,
+        y = 7,
+        children = lbls,
+        col = col.gray,
+        showScrollbar = true
     })
 }
 table.insert(
