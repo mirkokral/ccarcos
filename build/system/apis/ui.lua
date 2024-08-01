@@ -15,16 +15,20 @@ function Label(b)
     for i, v in pairs(b) do
         config[i] = v
     end
-    config.height = 1
-    config.width = 1
-    local i = 1
-    while string.sub(config.label, i, i) ~= "" do
-        if string.sub(config.label, i, i) == "\n" then
-            config.height = config.height + 1
-        else
-            config.width = config.width + 1
+    function getWH()
+        local height = 1
+        local width = 1
+        local i = 1
+        while string.sub(config.label, i, i) ~= "" do
+            if string.sub(config.label, i, i) == "\n" then
+                height = height + 1
+            else
+                width = width + 1
+            end
+            i = i + 1
         end
-        i = i + 1
+        width = width - 1
+        return {width, height}
     end
     if not config.col then config.col = UItheme.bg end
     if not config.textCol then config.textCol = UItheme.fg end
@@ -61,7 +65,8 @@ function Button(b)
     local o = Label(b)
     o.onEvent = function (e)
         if e[1] == "click" then
-            if e[2] == 1 and e[3] >= o.x and e[4] >= o.x and e[3] < o.x + o.width and e[4] < o.y + o.height then
+            local wh = o.getWH()
+            if e[2] == 1 and e[3] >= o.x and e[4] >= o.y and e[3] < o.x + wh[1] and e[4] < o.y + wh[2] then
                 b.callBack()
             end
         end
