@@ -102,10 +102,10 @@ function PageTransition(widgets1, widgets2, dir, speed)
     local ox = 0
     local accel = 1
     while ox < tw do
-        ox = ox + 1
+        ox = ox + accel
         accel = accel + 1
         RenderWidgets(widgets2, 0, 0)
         RenderWidgets(widgets1, ox * (dir and -1 or 1), 0)
-        sleep(speed/accel)
+        sleep(speed)
     end
 end

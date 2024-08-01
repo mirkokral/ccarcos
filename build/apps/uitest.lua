@@ -43,7 +43,7 @@ table.insert(
                 ui.PageTransition(pages[1], pages[2], true, 0.05)
                 page = 2
             end,
-            x = tw - 1,
+            x = tw - 5,
             y = th - 1,
             label = "Next",
         }
@@ -83,7 +83,7 @@ table.insert(
                 ui.PageTransition(pages[2], pages[1], false, 0.05)
                 page = 1
             end,
-            x = tw - 1,
+            x = tw - 5,
             y = th - 1,
             label = "Back",
             col = col.gray,
