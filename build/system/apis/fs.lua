@@ -62,6 +62,7 @@ function resolve(f)
             table.insert(frmItems, 1, ix)
         end
     end
+    if not fs.exists("/" .. tutils.join(out, "/")) then return {} end
     for _, rmi in ipairs(frmItems) do
         table.remove(out, rmi)
     end
