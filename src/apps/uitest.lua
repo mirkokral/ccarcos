@@ -43,7 +43,7 @@ table.insert(
         {
             callBack = function ()
                 -- oy = oy + 1
-                ui.PageTransition(pages[1], pages[2], true, 1, true)
+                ui.PageTransition(pages[1], pages[2], false, 1, true)
                 page = 2
             end,
             x = tw - 5,

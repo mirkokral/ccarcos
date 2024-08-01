@@ -39,7 +39,7 @@ table.insert(
     ui.Button(
         {
             callBack = function ()
-                ui.PageTransition(pages[1], pages[2], true, 1, true)
+                ui.PageTransition(pages[1], pages[2], false, 1, true)
                 page = 2
             end,
             x = tw - 5,
