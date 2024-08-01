@@ -137,14 +137,14 @@ function ScrollPane(b)
                 text = "^",
                 forCol = UItheme.bg,
                 bgCol = UItheme.fg,
-                x = config.x + config.width,
+                x = config.x + config.width+1,
                 y = config.y
             })
             table.insert(dcBuf, {
                 text = "v",
                 forCol = UItheme.bg,
                 bgCol = UItheme.fg,
-                x = config.x + config.width,
+                x = config.x + config.width+1,
                 y = config.y + 1
             })
         end
