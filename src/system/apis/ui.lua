@@ -34,9 +34,10 @@ end
 ---@field textCol Color The text color for the label 
 
 ---Creates a new label
----@param config { label: string, x: number, y: number, col: Color?, textCol: Color? } The button configuration
+---@param b { label: string, x: number, y: number, col: Color?, textCol: Color? } The button configuration
 ---@return Label
-function Label(config)
+function Label(b)
+    local config = b
     if not config.col then config.col = UItheme.bg end
     if not config.textCol then config.textCol = UItheme.fg end
     return {

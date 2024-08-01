@@ -9,7 +9,8 @@ local function blitAtPos(x, y, bgCol, forCol, text)
     term.setTextColor(forCol)
     term.write(text)
 end
-function Label(config)
+function Label(b)
+    local config = b
     if not config.col then config.col = UItheme.bg end
     if not config.textCol then config.textCol = UItheme.fg end
     return {
