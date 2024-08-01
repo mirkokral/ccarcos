@@ -89,6 +89,8 @@ function ScrollPane(b)
         end
         return h
     end
+    local mbpressedatm = false
+    local lastx, lasty = 0, 0
     config.getDrawCommands = function ()
         ---@type RenderCommand[]
         local dcBuf = {}
@@ -134,14 +136,14 @@ function ScrollPane(b)
             text = "^",
             forCol = UItheme.bg,
             bgCol = UItheme.fg,
-            x = config.x + config.width,
+            x = config.x + config.width + 1,
             y = config.y
         })
         table.insert(dcBuf, {
             text = "v",
             forCol = UItheme.bg,
             bgCol = UItheme.fg,
-            x = config.x + config.width,
+            x = config.x + config.width+ 1,
             y = config.y + 1
         })
         for i = 2, config.height-1, 1 do
@@ -149,7 +151,7 @@ function ScrollPane(b)
                 text = "|",
                 forCol = UItheme.bg,
                 bgCol = UItheme.fg,
-                x = config.x + config.width,
+                x = config.x + config.width + 1,
                 y = config.y + i
             }) 
         end
@@ -163,16 +165,40 @@ function ScrollPane(b)
                     value.onEvent({"click", ce[2], ce[3] - config.x, ce[4] - config.y})
                 end
             end
-            if ce[3] == config.x+config.width and ce[4] == config.y then
+            if ce[3] == config.x+config.width+1 and ce[4] == config.y then
                 
-                config.scroll = math.max(config.scroll - 1, 0) 
+                config.scroll = math.max(config.scroll - 2, 0) 
                 return true
             end
-            if ce[3] == config.x+config.width and ce[4] == config.y+1 then
+            if ce[3] == config.x+config.width+1 and ce[4] == config.y+1 then
                 
-                config.scroll = math.min(config.scroll + 1, config.getTotalHeight() - config.height) 
+                config.scroll = math.min(config.scroll + 2, config.getTotalHeight() - config.height) 
                 return true
             end
+            mbpressedatm = true
+            lastx, lasty = ce[3], ce[4]
+        end
+        if ce[1] == "drag" then
+            if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
+                for index, value in ipairs(config.children) do
+                    value.onEvent({"drag", ce[2], ce[3] - config.x, ce[4] - config.y})
+                end
+            end
+            local ret = false
+            if mbpressedatm and lastx == config.x + config.width + 1 and lasty >= config.y + 2 and lasty <= config.y + config.width then
+                config.scroll = config.scroll + (ce[4] - lasty)
+                ret = true
+            end
+            lastx, lasty = ce[3], ce[4]
+            return ret
+        end
+        if ce[1] == "up" then
+            if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
+                for index, value in ipairs(config.children) do
+                    value.onEvent({"up", ce[2], ce[3] - config.x, ce[4] - config.y})
+                end
+            end
+            mbpressedatm = false
         end
     end
     return config
