@@ -49,8 +49,8 @@ function Label(b)
         local rx = 0
         local ry = 0
         local i = 1
-        while config.label:sub(i, i) do
-            if config.label:sub(i, i) == "\n" then
+        while string.sub(config.label, i, i) do
+            if string.sub(config.label, i, i) == "\n" then
                 rx = 0
                 ry = ry + 1
             else
@@ -59,7 +59,7 @@ function Label(b)
                     y = config.y + ry,
                     forCol = config.textCol,
                     bgCol = config.col,
-                    text = config.label:sub(i, i)
+                    text = string.sub(config.label, i, i)
                 })
                 rx = rx + 1
             end

@@ -24,7 +24,7 @@ local widgets = {
         textCol = col.white
     }),
     ui.Label({
-        x=10,
+        x=13,
         y=1,
         label = "No key yet pressed"
     })
