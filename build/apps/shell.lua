@@ -18,7 +18,12 @@ local function run(a1, ...)
     end
     if cmd == nil then
         local cq = tutils.join({ a1, ... }, " ")
-        local ok, err = pcall(load(cq, "ShellEval", nil, _G))
+        local chunkl, err = load(cq, "eval", nil, _G)
+        if not chunkl then
+            printError(err)
+            return false
+        end
+        local ok, err = pcall(chunkl)
         if not ok then
             printError(err)
         end
