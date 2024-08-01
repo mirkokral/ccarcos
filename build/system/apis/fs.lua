@@ -67,7 +67,7 @@ function resolve(f)
         end
         if i == ".." then
             table.insert(rmItems, 1, ix)
-            if ix ~= 1 then
+            if #pa + ix ~= 1 then
                 table.insert(rmItems, 1, ix-1) 
             end
         end
