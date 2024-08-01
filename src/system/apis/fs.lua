@@ -39,26 +39,6 @@ end
 function resolve(f)
     local p = f:sub(1, 1) == "/" and "/" or (environ.workDir or "/")
     local pa = tutils.split(p, "/")
-    local rmItems = {}
-    for ix, i in ipairs(pa) do
-        if i == "" then
-            table.insert(rmItems, 1, ix)
-        end
-        if i == "." then
-            table.insert(rmItems, 1, ix)
-        end
-        if i == ".." then
-            table.insert(rmItems, 1, ix)
-            if ix ~= 1 then
-                table.insert(rmItems, 1, ix-1) 
-            end
-            
-        end
-    end
-    for _, rmi in ipairs(rmItems) do
-        
-        table.remove(pa, rmi)
-    end
     local fla = tutils.split(f, "/")
     
     local out = {}
