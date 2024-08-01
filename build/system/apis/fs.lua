@@ -57,8 +57,15 @@ function resolve(f)
         table.remove(pa, rmi)
     end
     local fla = tutils.split(f, "/")
+    local out = {}
     local frmItems = {}
-    for ix, i in ipairs(fla) do
+    for _, i in ipairs(pa) do
+        table.insert(out, i)
+    end
+    for _, i in ipairs(fla) do
+        table.insert(out, i)
+    end
+    for ix, i in ipairs(out) do
         if i == "" then
             table.insert(frmItems, 1, ix)
         end
@@ -73,14 +80,7 @@ function resolve(f)
         end
     end
     for _, rmi in ipairs(frmItems) do
-        table.remove(fla, rmi)
-    end
-    local out = {}
-    for _, i in ipairs(pa) do
-        table.insert(out, i)
-    end
-    for _, i in ipairs(fla) do
-        table.insert(out, i)
+        table.remove(out, rmi)
     end
     return { "/" .. tutils.join(out, "/") }
 end
