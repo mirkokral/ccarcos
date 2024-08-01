@@ -17,8 +17,12 @@ local function run(a1, ...)
         end
     end
     if cmd == nil then
-        printError("Command Not Found.")
-        return false
+        local cq = tutils.join({ a1, ... }, " ")
+        local ok, err = pcall(load(cq, "ShellEval", nil, _G))
+        if not ok then
+            printError(err)
+        end
+        return ok
     end
     local ok, err = arcos.r({}, cmd, ...)
     if not ok then
@@ -40,7 +44,7 @@ do
         term.setTextColor(col.gray)
         write("@")
         term.setTextColor(col.purple)
-        if not pcall(write, err) then
+        if not pcall(write, tostring(err)) then
             write("(none)")
         end
     end
