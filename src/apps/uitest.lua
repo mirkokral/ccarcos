@@ -43,7 +43,7 @@ table.insert(
         {
             callBack = function ()
                 -- oy = oy + 1
-                ui.PageTransition(pages[1], pages[2], true, 0.01)
+                ui.PageTransition(pages[1], pages[2], true, 1, true)
                 page = 2
             end,
             x = tw - 5,
@@ -55,6 +55,7 @@ table.insert(
 )
 local btn = ui.Button({
     callBack = function ()
+        counter = counter + 1
         pages[1][1].label = "Counter: " .. counter
         rerender()
     end,
@@ -85,7 +86,7 @@ table.insert(
     ui.Button(
         {
             callBack = function ()
-                ui.PageTransition(pages[2], pages[1], false, 0.01)
+                ui.PageTransition(pages[2], pages[1], false, 1, false)
                 page = 1
                 rerender()
             end,
@@ -98,9 +99,10 @@ table.insert(
     )
 )
 function rerender()
-    ui.InitBuffer()
-    ui.RenderWidgets(pages[page], ox, oy)
-    ui.Push() 
+    local buf = {}
+    ui.InitBuffer(buf)
+    ui.RenderWidgets(pages[page], ox, oy, buf)
+    ui.Push(buf) 
 end
 rerender()
 while true do
