@@ -77,8 +77,8 @@ local lbls = {}
 for i = 1, 40, 1 do
     table.insert(lbls, ui.Label({
         label = "Hello world: " .. tostring(i),
-        x = 1,
-        y = 1
+        x = 0,
+        y = 0
     }))
 end
 pages[2] = {
