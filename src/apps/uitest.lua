@@ -45,7 +45,7 @@ local btn = ui.Button({
 table.insert(widgets, btn)
 table.insert(widgets,
 ui.Label({
-    label = "Button width: " .. tostring(btn.width) .. ", height: " .. tostring(btn.height),
+    label = "Button width: " .. tostring(btn.getWH()[1]) .. ", height: " .. tostring(btn.getWH()[2]),
     x = 1,
     y = 8
 })
