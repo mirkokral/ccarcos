@@ -48,3 +48,14 @@ function join(tab, sep )
     end
     return out:sub(1, #out-1)
 end
+
+-- C:Exc
+_G.tutils = {
+    dJSON = dJSON,
+    sJSON = sJSON,
+    d = d,
+    s = s,
+    split = split,
+    join = join
+}
+-- C:End

@@ -27,6 +27,7 @@ function open(path, mode)
     if i.err then
         return nil, i.err
     end
+    
     file.close = file._f.close
     if mode == "w" then
         file.write = function(towrite)
@@ -124,3 +125,16 @@ end
 function c(t, d)
     return __LEGACY.fs.copy(t, d)
 end
+
+-- C:Exc
+_G.fs = {
+    open = open,
+    ls = ls,
+    rm = rm, 
+    exists = exists,
+    resolve = resolve,
+    dir = dir,
+    m = m,
+    c = c
+}
+-- C:End

@@ -333,13 +333,8 @@ _G.write = function(...) end
 ---Reads a line
 ---@return string userInput
 _G.read = function() return "" end
-
-_G.col = require "src.system.apis.col"
-_G.fs = require "src.system.apis.fs"
-_G.rd = require "src.system.apis.rd"
-_G.tutils = require "src.system.apis.tutils"
-_G.ui = require "src.system.apis.ui"
 -- C:End
+
 local f, err = fs.open("/config/passwd", "r")
 local tab
 if f then

@@ -26,3 +26,11 @@ end
 function getI(side)
     return __LEGACY.redstone.getAnalogInput(side)
 end
+
+-- C:Exc
+_G.rd = {
+    setO = setO,
+    getO = getO,
+    getI = getI
+}
+-- C:End

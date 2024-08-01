@@ -1,5 +1,10 @@
 ---@alias Color number
 
+-- C:Exc
+---@type {white: Color, orange: Color, magenta: Color, lightBlue: Color, yellow: Color, lime: Color, pink: Color, gray: Color, lightGray: Color, cyan: Color, purple: Color, blue: Color, brown: Color, green: Color, red: Color, black: Color, fromBlit: fun(hex: string): Color}
+_G.col = {}
+-- C:End
+
 ---White: Written as `0` in paint files and [`term.blit`], has a default
 ---@type Color
 white = 0x1

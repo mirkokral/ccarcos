@@ -20,3 +20,9 @@ end
 ---@param config { label: string, x: number, y: number, col: number?, textCol: number? } The button configuration
 function Button(config)
 end
+
+-- C:Exc
+_G.ui = {
+    Button = Button
+}
+-- C:End
