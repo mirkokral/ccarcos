@@ -93,7 +93,7 @@ function ScrollPane(b)
             x = config.x + config.width,
             y = config.y + 1
         })
-        for i = 3, config.height, 1 do
+        for i = 2, config.height, 1 do
             table.insert(dcBuf, {
                 text = "|",
                 forCol = UItheme.bg,
