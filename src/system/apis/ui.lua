@@ -48,6 +48,15 @@ function Label(b)
     end
     config.height = 1
     config.width = 1
+    local i = 1
+    while string.sub(config.label, i, i) ~= "" do
+        if string.sub(config.label, i, i) == "\n" then
+            config.height = config.height + 1
+        else
+            config.width = config.width + 1
+        end
+        i = i + 1
+    end
     if not config.col then config.col = UItheme.bg end
     if not config.textCol then config.textCol = UItheme.fg end
     config.getDrawCommands = function ()
