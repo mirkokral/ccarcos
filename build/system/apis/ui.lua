@@ -1,7 +1,8 @@
 UItheme = {
-    bg = col.black,
-    fg = col.white,
-    buttonBg = col.lightBlue
+    bg = col.white,
+    fg = col.black,
+    buttonBg = col.lightBlue,
+    buttonFg = col.white
 }
 local function blitAtPos(x, y, bgCol, forCol, text)
     term.setCursorPos(x, y)
@@ -14,6 +15,8 @@ function Label(b)
     for i, v in pairs(b) do
         config[i] = v
     end
+    config.height = 1
+    config.width = 1
     if not config.col then config.col = UItheme.bg end
     if not config.textCol then config.textCol = UItheme.fg end
     config.getDrawCommands = function ()
@@ -25,6 +28,7 @@ function Label(b)
             if string.sub(config.label, i, i) == "\n" then
                 rx = 0
                 ry = ry + 1
+                config.height = config.height + 1
             else
                 table.insert(rcbuffer, {
                     x = config.x + rx,
@@ -34,6 +38,7 @@ function Label(b)
                     text = string.sub(config.label, i, i)
                 })
                 rx = rx + 1
+                config.width = config.width + 1
             end
             i = i + 1
         end
@@ -42,6 +47,17 @@ function Label(b)
     config.onEvent = function(ev)
     end
     return config
+end
+function Button(b)
+    local o = Label(b)
+    o.onEvent = function (e)
+        if e[1] == "click" then
+            if e[2] == 1 and e[3] >= o.x and e[4] >= o.x and e[3] < o.x + o.width and e[4] < o.y + o.height then
+                b.callBack()
+            end
+        end
+    end
+    return o
 end
 function DirectRender(wr)
     local rc

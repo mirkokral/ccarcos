@@ -1,6 +1,7 @@
+local counter = 0
 local widgets = {
     ui.Label({
-        label = "Testing 123",
+        label = "Counter: "..counter,
         x = 1,
         y = 1
     }),
@@ -27,13 +28,32 @@ local widgets = {
         x=13,
         y=1,
         label = "No key yet pressed"
-    })
+    }),
 }
+table.insert(widgets, 
+ui.Button({
+    callBack = function ()
+        counter = counter + 1
+        widgets[1].label = "Counter: " .. counter
+        ui.RenderWidgets(widgets)
+    end,
+    label = "Increase counter",
+    x = 1,
+    y = 7,
+    col = ui.UItheme.buttonBg,
+    textCol = ui.UItheme.buttonFg
+}))
 ui.RenderWidgets(widgets)
 while true do
     local ev = { arcos.ev() }
-    for i, v in ipairs(widgets) do
-        v.onEvent(ev)
+    if ev == "mouse_click" then
+        for i, v in ipairs(widgets) do
+            v.onEvent({"click", ev[2], ev[3], ev[4]})
+        end
+    else
+        for i, v in ipairs(widgets) do
+            v.onEvent(ev)
+        end
     end
     if ev[1] == "key" then
         widgets[5].label = "Latest key: " .. tostring(ev[2])
