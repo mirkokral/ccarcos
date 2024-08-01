@@ -1,4 +1,6 @@
 local counter = 0
+local ox, oy = 0,0 
+local tw, th = term.getSize()
 local widgets = {
     ui.Label({
         label = "Counter: "..counter,
@@ -30,11 +32,58 @@ local widgets = {
         label = "No key yet pressed"
     }),
 }
+table.insert(widgets, ui.Button(
+    {
+        callBack = function ()
+            ox = ox + 1
+        end,
+        x = tw - 2,
+        y = tw - 3,
+        label = ">"
+    }
+))
+table.insert(widgets, ui.Button(
+    {
+        callBack = function ()
+            ox = ox - 1
+        end,
+        x = tw - 4,
+        y = tw - 3,
+        label = "<"
+    }
+))
+table.insert(
+    widgets,
+    ui.Button(
+        {
+            callBack = function ()
+                oy = oy - 1
+                ui.RenderWidgets(widgets, ox, oy)
+            end,
+            x = tw - 3,
+            y = tw - 2,
+            label = "^"
+        }
+    )
+)
+table.insert(
+    widgets,
+    ui.Button(
+        {
+            callBack = function ()
+                oy = oy + 1
+            end,
+            x = tw - 3,
+            y = tw - 2,
+            label = "v"
+        }
+    )
+)
 local btn = ui.Button({
     callBack = function ()
         counter = counter + 1
         widgets[1].label = "Counter: " .. counter
-        ui.RenderWidgets(widgets)
+        ui.RenderWidgets(widgets, ox, oy)
     end,
     label = "Increase counter",
     x = 1,
@@ -50,7 +99,7 @@ ui.Label({
     y = 8
 })
 )
-ui.RenderWidgets(widgets)
+ui.RenderWidgets(widgets, ox, oy)
 while true do
     local ev = { arcos.ev() }
     if ev[1] == "mouse_click" then
@@ -64,6 +113,6 @@ while true do
     end
     if ev[1] == "key" then
         widgets[5].label = "Latest key: " .. tostring(ev[2])
-        ui.RenderWidgets(widgets)
+        ui.RenderWidgets(widgets, ox, oy)
     end
 end

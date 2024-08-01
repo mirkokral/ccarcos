@@ -110,7 +110,9 @@ end
 
 ---Directly renders rendercommands.
 ---@param wr RenderCommand[] | Widget
-function DirectRender(wr)
+---@param ox number Offset X
+---@param oy number Offset Y
+function DirectRender(wr, ox, oy)
     local rc
     if wr["getDrawCommands"] then
         rc = wr["getDrawCommands"]()
@@ -118,17 +120,23 @@ function DirectRender(wr)
         rc = wr
     end
     for i, v in ipairs(rc) do
-        blitAtPos(v.x, v.y, v.bgCol, v.forCol, v.text)
+        blitAtPos(v.x+ox, v.y+oy, v.bgCol, v.forCol, v.text)
     end
 end
 
 ---Render some widgets
 ---@param wdg Widget[]
-function RenderWidgets(wdg)
-    term.setBackgroundColor(ui.UItheme.bg)
-    term.clear()
+---@param ox number Offset X
+---@param oy number Offset Y
+function RenderWidgets(wdg, ox, oy)
+    local tw, th = term.getSize()
+    for i = 1, th, 1 do
+        for ix = 1, tw, 1 do
+            blitAtPos(ix+ox, i+oy, ui.UItheme.bg, ui.UItheme.fg, " ")
+        end
+    end
     for index, value in ipairs(wdg) do
-        ui.DirectRender(value)
+        ui.DirectRender(value, ox, oy)
     end
 end
 
