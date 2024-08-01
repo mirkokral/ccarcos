@@ -87,6 +87,16 @@ pages[2] = {
         x = 3,
         y = 17,
     }),
+    ui.Label({
+        label = "XLevel!",
+        x = 20,
+        y = 2,
+    }),
+    ui.Label({
+        label = "XLevel2!",
+        x = 40,
+        y = 2,
+    }),
     ui.ScrollPane({
         width= 20,
         height= 10,
