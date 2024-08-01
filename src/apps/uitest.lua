@@ -3,6 +3,7 @@ local ox, oy = 0,0
 local tw, th = term.getSize()
 local pages = {}
 local page = 1
+
 pages[1] = {
     ui.Label({
         label = "Counter: "..counter,
@@ -55,7 +56,7 @@ table.insert(
 local btn = ui.Button({
     callBack = function ()
         pages[1][1].label = "Counter: " .. counter
-        ui.RenderWidgets(pages[page], ox, oy)
+        rerender()
     end,
     label = "Increase counter",
     x = 1,
@@ -86,7 +87,7 @@ table.insert(
             callBack = function ()
                 ui.PageTransition(pages[2], pages[1], false, 0.01)
                 page = 1
-                ui.RenderWidgets(pages[page], ox, oy)
+                rerender()
             end,
             x = tw - 5,
             y = th - 1,
@@ -96,8 +97,11 @@ table.insert(
         }
     )
 )
-
-ui.RenderWidgets(pages[page], ox, oy)
+function rerender()
+    ui.InitBuffer()
+    ui.RenderWidgets(pages[page], ox, oy)
+    ui.Push() 
+end
 while true do
     local ev = { arcos.ev() }
     if ev[1] == "mouse_click" then
@@ -110,9 +114,9 @@ while true do
             v.onEvent(ev)
         end
     end
-    if ev[1] == "key" then
+    if ev[1] == "key" and page == 1 then
         pages[1][5].label = "Latest key: " .. tostring(ev[2])
-        ui.RenderWidgets(pages[page], ox, oy)
+        rerender()
         
     end
 end

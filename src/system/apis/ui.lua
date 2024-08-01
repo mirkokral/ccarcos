@@ -4,13 +4,37 @@ UItheme = {
     buttonBg = col.lightBlue,
     buttonFg = col.white
 }
+local buf = {}
+w, h = term.getSize()
 
+---Inits the buffer
+function InitBuffer()
+    buf = {}
+    w, h = term.getSize()
+    for i = 1, w, 1 do
+        local tb = {}
+        for i = 1, h, 1 do
+            table.insert(tb, {col.white, col.black, " "})
+        end
+        table.insert(buf, tb)
+    end
+end
 ---@param x number The X position for the blit
 ---@param y number The Y position for the blit
 ---@param bgCol Color The background color
 ---@param forCol Color The foreground color
 ---@param text string The text
 local function blitAtPos(x, y, bgCol, forCol, text)
+    if x <= w and y <= h and y>0 and x>0 then
+        buf[x][y] = {bgCol, forCol, text}
+    end
+end
+---@param x number The X position for the blit
+---@param y number The Y position for the blit
+---@param bgCol Color The background color
+---@param forCol Color The foreground color
+---@param text string The text
+local function oldBlitAtPos(x, y, bgCol, forCol, text)
     term.setCursorPos(x, y)
     term.setBackgroundColor(bgCol or UItheme.bg)
     term.setTextColor(forCol or UItheme.fg)
@@ -127,11 +151,21 @@ function DirectRender(wr, ox, oy)
     end
 end
 
+---Pushes the buffer to the screen, finnalizing rendering. NOTE: this does not reinit the buffer so make sure to reinit it after you're done with pushing.
+function Push()
+    for ix, vx in ipairs(buf) do
+        for iy, vy in ipairs(vx) do
+            oldBlitAtPos(ix, iy, vy[1], vy[2], vy[3])
+        end
+    end
+end
+
 ---Render some widgets
 ---@param wdg Widget[]
 ---@param ox number Offset X
 ---@param oy number Offset Y
 function RenderWidgets(wdg, ox, oy)
+    
     local tw, th = term.getSize()
     for i = 1, th, 1 do
         for ix = 1, tw, 1 do
@@ -154,8 +188,10 @@ function PageTransition(widgets1, widgets2, dir, speed)
     while ox < tw do
         ox = ox + accel
         accel = accel + 1
+        InitBuffer()
         RenderWidgets(widgets2, 0, 0)
         RenderWidgets(widgets1, ox * (dir and -1 or 1), 0)
+        Push()
         sleep(speed)
     end
 end
@@ -168,6 +204,8 @@ _G.ui = {
     UItheme = UItheme,
     RenderWidgets = RenderWidgets,
     PageTransition = PageTransition,
+    InitBuffer = InitBuffer,
+    Push = Push
     
 }
 -- C:End
