@@ -72,7 +72,6 @@ function Label(b)
             if string.sub(config.label, i, i) == "\n" then
                 rx = 0
                 ry = ry + 1
-                config.height = config.height + 1
             else
                 table.insert(rcbuffer, {
                     x = config.x + rx,
@@ -82,7 +81,6 @@ function Label(b)
                     text = string.sub(config.label, i, i)
                 })
                 rx = rx + 1
-                config.width = config.width + 1
             end
             i = i + 1
         end
