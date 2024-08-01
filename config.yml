@@ -23,6 +23,8 @@ compileFiles:
   - apps/shell.lua
   - apps/cd.lua
   - apps/ls.lua
+  - apps/mv.lua
+  - apps/cp.lua
   - startup.lua
 nrFiles:
   - services/enabled

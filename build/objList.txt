@@ -19,6 +19,8 @@ f>apps/init.lua
 f>apps/shell.lua
 f>apps/cd.lua
 f>apps/ls.lua
+f>apps/mv.lua
+f>apps/cp.lua
 f>startup.lua
 r>services/enabled
 r>config/passwd

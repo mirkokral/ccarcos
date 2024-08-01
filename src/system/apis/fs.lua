@@ -75,3 +75,10 @@ function dir(d)
     if d == "" or d == "/" then return true end
     return __LEGACY.fs.isDir(d)
 end
+
+function m(t, d) 
+    return __LEGACY.fs.move(t, d)
+end
+function c(t, d)
+    return __LEGACY.fs.copy(t, d)
+end
