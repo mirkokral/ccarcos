@@ -22,6 +22,7 @@ f>apps/ls.lua
 f>apps/mv.lua
 f>apps/cp.lua
 f>apps/cat.lua
+f>apps/rm.lua
 f>startup.lua
 r>services/enabled
 r>config/passwd
