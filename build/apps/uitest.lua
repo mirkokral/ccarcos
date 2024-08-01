@@ -78,9 +78,9 @@ for i = 1, 40, 1 do
 end
 pages[2] = {
     ui.Label({
-        label = "Hello, world!",
+        label = "Level!",
         x = 3,
-        y = 3,
+        y = 7,
     }),
     ui.ScrollPane({
         width= 20,
