@@ -281,13 +281,14 @@ end
 ---@param oy number Offset Y
 ---@param buf table Offset Y
 function RenderWidgets(wdg, ox, oy, buf)
-    
+    arcos.log("UI blitatpos")
     local tw, th = term.getSize()
     for i = 1, th, 1 do
         for ix = 1, tw, 1 do
             blitAtPos(ix+ox, i+oy, ui.UItheme.bg, ui.UItheme.fg, " ", buf)
         end
     end
+    arcos.log("UI directrender")
     for index, value in ipairs(wdg) do
         ui.DirectRender(value, ox, oy, buf)
     end
