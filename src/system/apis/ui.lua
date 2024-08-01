@@ -65,7 +65,7 @@ function Label(b)
             end
             i = i + 1
         end
-
+        return rcbuffer
     end
     config.onEvent = function(ev)
     end
