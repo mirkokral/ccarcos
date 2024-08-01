@@ -32,6 +32,9 @@ for i in servFile.readLine do
                 clear = function() end,
                 isColor = function() return false end,
                 isColour = function() return false end,
+                getSize = function ()
+                    return 0, 0
+                end
             }
         else
             threadterm = term

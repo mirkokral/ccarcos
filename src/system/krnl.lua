@@ -182,10 +182,34 @@ _G.arcos = {
 -- C:Exc
 
 _G.term = {
-    write = function(towrite) end,
-    setBackgroundColor = function(col) end,
+    native = function()
+        return term
+    end,
+    current = function()
+        return term
+    end,
+    write = function(text)
+        arcos.log(i .. ": " .. text)
+    end,
+    blit = function(text, ...)
+        arcos.log(i .. ": " .. text)
+    end,
     setTextColor = function(col) end,
-    setCursorPos = function(cx, cy) end
+    setBackgroundColor = function(col) end,
+    setTextColour = function(col) end,
+    setBackgroundColour = function(col) end,
+    getTextColour = function() return col.white end,
+    getBackgroundColour = function() return col.black end,
+    getTextColor = function() return col.white end,
+    getBackgroundColor = function() return col.black end,
+    setCursorPos = function(cx, cy) end,
+    scroll = function(sx) end,
+    clear = function() end,
+    isColor = function() return false end,
+    isColour = function() return false end,
+    getSize = function ()
+        return 0, 0
+    end
 }
 
 -- C:End
