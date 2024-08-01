@@ -153,5 +153,5 @@ while true do
         rerender()
         
     end
-    if red then rerender()
+    if red then rerender() end
 end

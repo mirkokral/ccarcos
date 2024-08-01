@@ -146,5 +146,5 @@ while true do
         pages[1][5].label = "Latest key: " .. tostring(ev[2])
         rerender()
     end
-    if red then rerender()
+    if red then rerender() end
 end
