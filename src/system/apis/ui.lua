@@ -111,8 +111,8 @@ function ScrollPane(b)
             local rc = value.getDrawCommands()
             for index, value in ipairs(rc) do
                 table.insert(dcBuf, {
-                    x = value.x,
-                    y = value.y - config.scroll + yo,
+                    x = config.x + value.x,
+                    y = config.y + value.y - config.scroll + yo,
                     text = value.text,
                     bgCol = value.bgCol,
                     forCol = value.forCol
