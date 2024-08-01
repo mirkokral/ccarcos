@@ -186,7 +186,7 @@ function ScrollPane(b)
             end
             local ret = false
             if mbpressedatm and lastx == config.x + config.width + 1 and lasty >= config.y + 2 and lasty <= config.y + config.width then
-                config.scroll = config.scroll + (ce[4] - lasty)
+                config.scroll = math.min(math.max(config.scroll + (ce[4] - lasty), 0), config.getTotalHeight() - config.height)
                 ret = true
             end
             lastx, lasty = ce[3], ce[4]
