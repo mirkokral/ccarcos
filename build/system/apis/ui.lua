@@ -21,8 +21,6 @@ function Label(b)
         local rx = 0
         local ry = 0
         local i = 1
-        print(config.label)
-        sleep(5)
         while string.sub(config.label, i, i) do
             if string.sub(config.label, i, i) == "\n" then
                 rx = 0
@@ -60,6 +58,6 @@ function RenderWidgets(wdg)
     term.setBackgroundColor(ui.UItheme.bg)
     term.clear()
     for index, value in ipairs(wdg) do
-        ui.DirectRender(wdg)
+        ui.DirectRender(value)
     end
 end

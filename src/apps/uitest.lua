@@ -35,5 +35,6 @@ while true do
     if ev[1] == "key" then
         widgets[5].label = "Latest key: " .. tostring(ev[2])
         ui.RenderWidgets(widgets)
+        
     end
 end
