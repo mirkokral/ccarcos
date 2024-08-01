@@ -1,7 +1,9 @@
 local counter = 0
 local ox, oy = 0,0 
 local tw, th = term.getSize()
-local widgets = {
+local pages = {}
+local page = 1
+pages[1] = {
     ui.Label({
         label = "Counter: "..counter,
         x = 1,
@@ -32,61 +34,25 @@ local widgets = {
         label = "No key yet pressed"
     }),
 }
-table.insert(widgets, ui.Button(
-    {
-        callBack = function ()
-            ox = ox + 1
-            ui.RenderWidgets(widgets, ox, oy)
-        end,
-        x = tw - 2,
-        y = th - 3,
-        label = ">"
-    }
-))
-table.insert(widgets, ui.Button(
-    {
-        callBack = function ()
-            ox = ox - 1
-            ui.RenderWidgets(widgets, ox, oy)
-        end,
-        x = tw - 4,
-        y = th - 3,
-        label = "<"
-    }
-))
 table.insert(
-    widgets,
-    ui.Button(
-        {
-            callBack = function ()
-                oy = oy - 1
-                ui.RenderWidgets(widgets, ox, oy)
-            end,
-            x = tw - 3,
-            y = th - 4,
-            label = "^"
-        }
-    )
-)
-table.insert(
-    widgets,
+    pages[1],
     ui.Button(
         {
             callBack = function ()
                 oy = oy + 1
-                ui.RenderWidgets(widgets, ox, oy)
+                ui.PageTransition(pages[1], pages[2], true, 0.05)
+                page = 2
             end,
-            x = tw - 3,
-            y = th - 2,
-            label = "v"
+            x = tw - 1,
+            y = th - 1,
+            label = "Next",
         }
     )
 )
 local btn = ui.Button({
     callBack = function ()
-        counter = counter + 1
-        widgets[1].label = "Counter: " .. counter
-        ui.RenderWidgets(widgets, ox, oy)
+        pages[1][1].label = "Counter: " .. counter
+        ui.RenderWidgets(pages[page], ox, oy)
     end,
     label = "Increase counter",
     x = 1,
@@ -94,28 +60,51 @@ local btn = ui.Button({
     col = ui.UItheme.buttonBg,
     textCol = ui.UItheme.buttonFg
 })
-table.insert(widgets, btn)
-table.insert(widgets,
+table.insert(pages[1], btn)
+table.insert(pages[1],
 ui.Label({
     label = "Button width: " .. tostring(btn.getWH()[1]) .. ", height: " .. tostring(btn.getWH()[2]),
     x = 1,
     y = 8
 })
 )
-ui.RenderWidgets(widgets, ox, oy)
+pages[2] = {
+    ui.Label({
+        label = "Hello, world!",
+        x = 3,
+        y = 3,
+    })
+}
+table.insert(
+    pages[2],
+    ui.Button(
+        {
+            callBack = function ()
+                ui.PageTransition(pages[2], pages[1], false, 0.05)
+                page = 1
+            end,
+            x = tw - 1,
+            y = th - 1,
+            label = "Back",
+            col = col.gray,
+            textCol = col.white
+        }
+    )
+)
+ui.RenderWidgets(pages[page], ox, oy)
 while true do
     local ev = { arcos.ev() }
     if ev[1] == "mouse_click" then
-        for i, v in ipairs(widgets) do
+        for i, v in ipairs(pages[page]) do
             v.onEvent({"click", ev[2], ev[3]-ox, ev[4]-oy})
         end
     else
-        for i, v in ipairs(widgets) do
+        for i, v in ipairs(pages[page]) do
             v.onEvent(ev)
         end
     end
     if ev[1] == "key" then
-        widgets[5].label = "Latest key: " .. tostring(ev[2])
-        ui.RenderWidgets(widgets, ox, oy)
+        pages[1][5].label = "Latest key: " .. tostring(ev[2])
+        ui.RenderWidgets(pages[page], ox, oy)
     end
 end

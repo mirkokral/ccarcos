@@ -95,13 +95,10 @@ end
 ---@param b { label: string, x: number, y: number, callBack: fun(), col: Color?, textCol: Color? } The button configuration
 ---@return Button
 function Button(b)
-    local config = {}
+    local config = {col = UItheme.buttonBg, textCol = UItheme.buttonFg}
     for i, v in pairs(b) do
         config[i] = v
     end
-    if not config.col then config.col = UItheme.bg end
-    if not config.textCol then config.textCol = UItheme.fg end
-
     local o = Label(config)
     o.onEvent = function (e)
         if e[1] == "click" then
@@ -145,6 +142,23 @@ function RenderWidgets(wdg, ox, oy)
         ui.DirectRender(value, ox, oy)
     end
 end
+---Play a transition between widget sets 1 and 2
+---@param widgets1 Widget[]
+---@param widgets2 Widget[]
+---@param dir boolean True if to the right, false if to the left
+---@param speed number Speed
+function PageTransition(widgets1, widgets2, dir, speed)
+    local tw, th = term.getSize()
+    local ox = 0
+    local accel = 1
+    while ox < tw do
+        ox = ox + 1
+        accel = accel + 1
+        RenderWidgets(widgets2, 0, 0)
+        RenderWidgets(widgets1, ox * (dir and -1 or 1), 0)
+        sleep(speed/accel)
+    end
+end
 
 -- C:Exc
 _G.ui = {
@@ -153,6 +167,7 @@ _G.ui = {
     DirectRender = DirectRender,
     UItheme = UItheme,
     RenderWidgets = RenderWidgets,
+    PageTransition = PageTransition,
     
 }
 -- C:End
