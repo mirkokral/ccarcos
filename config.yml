@@ -30,6 +30,7 @@ compileFiles:
   - apps/rm.lua
   - apps/mkdir.lua
   - apps/uitest.lua
+  - apps/kmsg.lua
   - startup.lua
 nrFiles:
   - services/enabled

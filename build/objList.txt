@@ -26,6 +26,7 @@ f>apps/cat.lua
 f>apps/rm.lua
 f>apps/mkdir.lua
 f>apps/uitest.lua
+f>apps/kmsg.lua
 f>startup.lua
 r>services/enabled
 r>config/passwd
