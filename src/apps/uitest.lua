@@ -65,7 +65,7 @@ table.insert(
                 ui.RenderWidgets(widgets, ox, oy)
             end,
             x = tw - 3,
-            y = th - 2,
+            y = th - 4,
             label = "^"
         }
     )
@@ -111,7 +111,7 @@ while true do
     local ev = { arcos.ev() }
     if ev[1] == "mouse_click" then
         for i, v in ipairs(widgets) do
-            v.onEvent({"click", ev[2], ev[3], ev[4]})
+            v.onEvent({"click", ev[2], ev[3]+ox, ev[4]+oy})
         end
     else
 

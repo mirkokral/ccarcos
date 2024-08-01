@@ -95,8 +95,14 @@ end
 ---@param b { label: string, x: number, y: number, callBack: fun(), col: Color?, textCol: Color? } The button configuration
 ---@return Button
 function Button(b)
+    local config = {}
+    for i, v in pairs(b) do
+        config[i] = v
+    end
+    if not config.col then config.col = UItheme.bg end
+    if not config.textCol then config.textCol = UItheme.fg end
 
-    local o = Label(b)
+    local o = Label(config)
     o.onEvent = function (e)
         if e[1] == "click" then
             local wh = o.getWH()
