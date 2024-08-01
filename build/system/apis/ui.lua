@@ -15,7 +15,7 @@ function Label(b)
     for i, v in pairs(b) do
         config[i] = v
     end
-    function getWH()
+    function config.getWH()
         local height = 1
         local width = 1
         local i = 1
