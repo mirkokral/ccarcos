@@ -5,8 +5,8 @@ UItheme = {
 }
 local function blitAtPos(x, y, bgCol, forCol, text)
     term.setCursorPos(x, y)
-    term.setBackgroundColor(bgCol)
-    term.setTextColor(forCol)
+    term.setBackgroundColor(bgCol or UItheme.bg)
+    term.setTextColor(forCol or UItheme.fg)
     term.write(text)
 end
 function Label(b)
