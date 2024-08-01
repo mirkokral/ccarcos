@@ -33,6 +33,7 @@ function rm(f)
     return __LEGACY.fs.remove(f)
 end
 function exists(f)
+    if d == "" or d == "/" then return true end
     return __LEGACY.fs.exists(f)
 end
 function resolve(f)
