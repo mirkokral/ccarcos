@@ -133,6 +133,6 @@ function PageTransition(widgets1, widgets2, dir, speed)
         RenderWidgets(widgets2, 0, 0)
         RenderWidgets(widgets1, ox * (dir and -1 or 1), 0)
         Push()
-        sleep(speed)
+        sleep(1/60)
     end
 end

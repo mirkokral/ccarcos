@@ -96,6 +96,7 @@ function rerender()
     ui.RenderWidgets(pages[page], ox, oy)
     ui.Push() 
 end
+rerender()
 while true do
     local ev = { arcos.ev() }
     if ev[1] == "mouse_click" then
