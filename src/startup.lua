@@ -5,7 +5,7 @@ if f then
   local branch = textutils.unserialiseJSON(f.readAll())["sha"]
   local cur = fs.open("/system/rel", "r")
   if cur and cur.readAll() ~= branch then
-    shell.run("/system/installer.lua", nil, _G)()
+    shell.run("/system/installer.lua")
   end
   f.close() 
 else
