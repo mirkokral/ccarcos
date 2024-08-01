@@ -45,8 +45,10 @@ do
         end
     end
     write(" ")
-    term.setTextColor(col.gray)
-    write("> ")
+    term.setTextColor(col.gray) 
+    write(environ.workDir)
+    write(" ")
+    write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
     term.setTextColor(col.white)
     local cmd = read()
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
