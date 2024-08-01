@@ -22,6 +22,7 @@ compileFiles:
   - apps/init.lua
   - apps/shell.lua
   - apps/cd.lua
+  - apps/ls.lua
   - startup.lua
 nrFiles:
   - services/enabled
