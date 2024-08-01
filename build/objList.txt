@@ -11,6 +11,7 @@ f>system/apis/col.lua
 f>system/apis/rd.lua
 f>system/apis/fs.lua
 f>system/apis/tutils.lua
+f>system/apis/ui.lua
 f>services/elevator.lua
 f>services/elevatorStep.lua
 f>services/elevatorSrv.lua
@@ -23,6 +24,8 @@ f>apps/mv.lua
 f>apps/cp.lua
 f>apps/cat.lua
 f>apps/rm.lua
+f>apps/mkdir.lua
+f>apps/uitest.lua
 f>startup.lua
 r>services/enabled
 r>config/passwd

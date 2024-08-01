@@ -36,7 +36,10 @@ function exists(f)
     if d == "" or d == "/" then return true end
     return __LEGACY.fs.exists(f)
 end
-function resolve(f)
+function mkDir(d)
+    return __LEGACY.fs.makeDir(d)
+end
+function resolve(f, keepNonExistent)
     local p = f:sub(1, 1) == "/" and "/" or (environ.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
@@ -62,7 +65,7 @@ function resolve(f)
             table.insert(frmItems, 1, ix)
         end
     end
-    if not fs.exists("/" .. tutils.join(out, "/")) then return {} end
+    if not keepNonExistent and not fs.exists("/" .. tutils.join(out, "/")) then return {} end
     for _, rmi in ipairs(frmItems) do
         table.remove(out, rmi)
     end

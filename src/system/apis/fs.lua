@@ -65,10 +65,17 @@ function exists(f)
     if d == "" or d == "/" then return true end
     return __LEGACY.fs.exists(f)
 end
+---Makes a directory
+---@param d string Dir path
+function mkDir(d)
+    return __LEGACY.fs.makeDir(d)
+end
+
 ---Resolves a relative path.
----@param f string
+---@param f string File str to resolve
+---@param keepNonExistent boolean? Keep non existent files 
 ---@return string[]
-function resolve(f)
+function resolve(f, keepNonExistent)
     local p = f:sub(1, 1) == "/" and "/" or (environ.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
@@ -96,7 +103,7 @@ function resolve(f)
             
         end
     end
-    if not fs.exists("/" .. tutils.join(out, "/")) then return {} end
+    if not keepNonExistent and not fs.exists("/" .. tutils.join(out, "/")) then return {} end
     for _, rmi in ipairs(frmItems) do
         
         table.remove(out, rmi)
@@ -135,6 +142,7 @@ _G.fs = {
     resolve = resolve,
     dir = dir,
     m = m,
-    c = c
+    c = c,
+    mkDir = mkDir,
 }
 -- C:End

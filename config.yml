@@ -15,6 +15,7 @@ compileFiles:
   - system/apis/rd.lua
   - system/apis/fs.lua
   - system/apis/tutils.lua
+  - system/apis/ui.lua
   - services/elevator.lua
   - services/elevatorStep.lua
   - services/elevatorSrv.lua
@@ -27,6 +28,8 @@ compileFiles:
   - apps/cp.lua
   - apps/cat.lua
   - apps/rm.lua
+  - apps/mkdir.lua
+  - apps/uitest.lua
   - startup.lua
 nrFiles:
   - services/enabled
