@@ -30,7 +30,7 @@ function ls(dir)
     return __LEGACY.fs.list(dir)
 end
 function rm(f)
-    return __LEGACY.fs.remove(f)
+    return __LEGACY.fs.delete(f)
 end
 function exists(f)
     if d == "" or d == "/" then return true end
