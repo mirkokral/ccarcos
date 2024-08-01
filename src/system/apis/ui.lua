@@ -123,7 +123,7 @@ function ScrollPane(b)
         local rmIndexes = {}
         for index, value in ipairs(dcBuf) do
             if value.x < 1 or value.x > config.width or value.y < 1 or value.y > config.height then
-                table.insert(rmIndexes, i, index)
+                table.insert(rmIndexes, 1, index)
             end
         end
         for index, value in ipairs(rmIndexes) do
