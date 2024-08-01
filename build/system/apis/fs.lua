@@ -85,5 +85,6 @@ function resolve(f)
     return { "/" .. tutils.join(out, "/") }
 end
 function dir(d) 
+    if d == "" or d == "/" then return true end
     return __LEGACY.fs.isDir(d)
 end
