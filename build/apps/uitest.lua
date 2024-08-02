@@ -35,15 +35,15 @@ local ttw, tth = terma.getSize()
 local monSelPage = {
     ui.Label({
         label = "Select an Output",
-        x=1,
-        y=1
+        x=2,
+        y=2
     }),
     ui.ScrollPane({
         children = selection,
         height = tth-4,
         width = ttw-3,
-        x = 1,
-        y = 3,
+        x = 2,
+        y = 4,
         col = col.gray,
         showScrollBtns = false,
     })
