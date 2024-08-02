@@ -233,7 +233,6 @@ function Wrap(str, maxLength)
     environ.ostr = ""
     environ.cstr = ""
     for index2, value2 in ipairs(tutils.split(str, "\n")) do
-        environ.cstr = ""
         for index, value in ipairs(tutils.split(value2, " ")) do
             if #environ.cstr + #value > maxLength then
                 environ.ostr = environ.ostr .. environ.cstr .. "\n"
