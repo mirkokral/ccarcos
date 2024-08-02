@@ -7,6 +7,7 @@ d>apps
 f>system/bootloader.lua
 f>system/krnl.lua
 f>system/installer.lua
+f>system/liveinst.lua
 f>system/apis/col.lua
 f>system/apis/rd.lua
 f>system/apis/fs.lua

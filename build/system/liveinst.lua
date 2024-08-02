@@ -1,12 +1,7 @@
-
-
-if not fs.exists("/system/krnl.lua") then
-    for _, i in ipairs(fs.list("/")) do
-        fs.delete(i)
-    end
-else
-    fs.delete("/system")
+if fs.exists("/.arcliveenv") then
+    fs.delete("/.arcliveenv")
 end
+fs.makeDir("/.arcliveenv")
 function _G.strsplit(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -17,7 +12,6 @@ function _G.strsplit(inputstr, sep)
     end
     return t
 end
--- shell.run("rm /*")
 local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
 local branch
 if fr then
@@ -30,31 +24,40 @@ file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch..
 cont = file.readAll()
 file.close()
 for _,i in ipairs(strsplit(cont, "\n")) do
-    print(i)
     action = string.sub(i, 1, 1)
     filename = string.sub(i, 3)
     if action == "d" then
-        fs.makeDir("/" .. filename)
+        fs.makeDir("/.arcliveenv/" .. filename)
     end
     if action == "f" then
-        fs.delete("/" .. filename)
-        f = fs.open(filename, "w")
+        f = fs.open("/.arcliveenv/" .. filename, "w")
         hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
         f.close()
     end
-    if action == "r" and not fs.exists("/" .. filename) then
-        -- shell.run("rm /" .. filename)
-        
-        f = fs.open(filename, "w")
+    if action == "r" and not fs.exists("/.arcliveenv/" .. filename) then
+        f = fs.open("/.arcliveenv/" .. filename, "w")
         hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
         f.close()
-        
     end
 end
-f = fs.open("/system/rel", "w")
+f = fs.open("/.arcliveenv/system/rel", "w")
 f.write(branch)
 f.close()
+if fs.exists("/startup.lua") then
+    if fs.exists("/.startup.lua.albackup") then
+        fs.delete("/.startup.lua.albackup")
+    end
+    fs.copy("/startup.lua", "/.startup.lua.albackup")
+    fs.delete("/startup.lua")
+end
+local f = fs.open("/startup.lua", "w")
+if f then
+    f.write("fs.delete(\"/startup.lua\") if fs.exists(\"/.startup.lua.albackup\") then fs.move(\"/.startup.lua.albackup\", \"/startup.lua\") end shell.run(\"/.arcliveenv/startup.lua live\")")
+    f.close()
+else
+    print("Error while making temporary installation")
+end

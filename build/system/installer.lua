@@ -1,7 +1,9 @@
 if not fs.exists("/system/krnl.lua") then
-    shell.run("rm /*")
+    for _, i in ipairs(fs.list("/")) do
+        fs.delete(i)
+    end
 else
-    shell.run("rm /system/*")
+    fs.delete("/system")
 end
 function _G.strsplit(inputstr, sep)
     if sep == nil then
@@ -32,7 +34,7 @@ for _,i in ipairs(strsplit(cont, "\n")) do
         fs.makeDir("/" .. filename)
     end
     if action == "f" then
-        shell.run("rm /" .. filename)
+        fs.delete("/" .. filename)
         f = fs.open(filename, "w")
         hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())

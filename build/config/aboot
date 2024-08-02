@@ -3,5 +3,5 @@
         "fg": "white",
         "bg": "black"
     },
-    "skipPrompt": false
+    "skipPrompt": true
 }

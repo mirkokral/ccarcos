@@ -1,15 +1,18 @@
-print("Terminate to enter shell or wait 1 second to continue boot")
-sleep(1)
-local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
-if f then
-  local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-  local cur = fs.open("/system/rel", "r")
-  if cur and cur.readAll() ~= branch then
-    shell.run("/system/installer.lua")
+local live = ({ ... })[1] == "live"
+if not live then
+  print("Terminate to enter shell or wait 1 second to continue boot")
+  sleep(1)
+  local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+  if f then
+    local branch = textutils.unserialiseJSON(f.readAll())["sha"]
+    local cur = fs.open("/system/rel", "r")
+    if cur and cur.readAll() ~= branch then
+      shell.run("/system/installer.lua")
+    end
+    f.close() 
+  else
+    print("Update failed")
   end
-  f.close() 
-else
-  print("Update failed")
 end
 local oldprr = os.pullEventRaw
 local oldpe = os.pullEvent
@@ -42,6 +45,31 @@ _G.__LEGACY = {
     vector = vector,
     window = window
 }
+if live then
+  __LEGACY.fs = {
+    list = function (f)
+      return fs.list("/.arcliveenv/" .. f)
+    end,
+    delete = function (f)
+      return fs.delete("/.arcliveenv/" .. f)
+    end,
+    exists = function (f)
+      return fs.exists("/.arcliveenv/" .. f)
+    end,
+    makeDir = function (f)
+      return fs.makeDir("/.arcliveenv/" .. f)
+    end,
+    isDir = function (f)
+      return fs.isDir("/.arcliveenv/" .. f)
+    end,
+    move = function (f,k)
+      return fs.move("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
+    end,
+    copy = function (f,k)
+      return fs.copy("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
+    end,
+  }
+end
 local keptAPIs = {printError = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, bit = true, ccemux = true, config = true, coroutine = true, debug = true, fs = true, http = true, mounter = true, os = true, periphemu = true, peripheral = true, redstone = true, rs = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true,load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true}
 local t = {}
 for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
