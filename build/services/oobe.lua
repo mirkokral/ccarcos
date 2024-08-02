@@ -27,7 +27,7 @@ table.insert(pages[1],
 )
 table.insert(pages[1],
     ui.Label({
-        label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
+        label = "test" .. ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
         x = 2,
         y = 4,
         textCol = ui.UItheme.lighterBg
@@ -52,7 +52,7 @@ table.insert(pages[2], ui.Label({
     y = 2
 }))
 table.insert(pages[2], ui.Label({
-    label = ui.Wrap("An init is the program that gets started on machine boot.", w-2),
+    label = "test" .. ui.Wrap("An init is the program that gets started on machine boot.", w-2),
     x = 2,
     y = 2,
     textCol = ui.UItheme.lighterBg
