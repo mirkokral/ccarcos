@@ -1,5 +1,10 @@
 local currentPowerUsage = 0
 local f, e = fs.open("/config/pmst", "r")
+local titemcount = 0
+local iup = 0
+local monitor = devices.get("left")
+local ed = dev.energyDetector[1]
+local me = dev.meBridge[1]
 local total
 if f then
     local total = tonumber(f.read())
@@ -8,13 +13,14 @@ if f then
 else
     local total = 0
 end
-local nf = fs.open("/config/pmst", "w")
-local titemcount = 0
-local iup = 0
-local monitor = devices.get("left")
-local ed = dev.energyDetector[1]
-local me = dev.meBridge[1]
 monitor.setTextScale(0.5)
+local nf, err = fs.open("/config/pmst", "w")
+if not nf then
+    monitor.setBackgroundColor(ui.UItheme.bg)
+    monitor.setTextColor(ui.UItheme.fg)
+    monitor.clear()
+    monitor.write(err)
+end
 tasking.createTask("Energy Detector", function ()
     while true do
         currentPowerUsage = ed.getTransferRate()
