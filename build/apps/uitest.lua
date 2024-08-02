@@ -11,8 +11,8 @@ local selection = {
             selecting = false
             return false
         end,
-        col = col.gray,
-        textCol = col.white
+        col = col.lightGray,
+        textCol = col.black
     }),
 }
 for _, i in ipairs(monitors) do
@@ -26,8 +26,8 @@ for _, i in ipairs(monitors) do
             end,
             x = 0,
             y = 0,
-            col = col.gray,
-            textCol = col.white
+            col = col.lightGray,
+            textCol = col.black
         })
     )
 end
@@ -44,7 +44,7 @@ local monSelPage = {
         width = ttw-3,
         x = 2,
         y = 4,
-        col = col.gray,
+        col = col.lightGray,
         showScrollBtns = false,
     })
 }
