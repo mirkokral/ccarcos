@@ -2,10 +2,12 @@ UItheme = {
     bg = col.white,
     fg = col.black,
     buttonBg = col.blue,
-    buttonFg = col.white
+    buttonFg = col.white,
+    lighterBg = col.lightGray
 }
 W, H = term.getSize()
 function InitBuffer(mon)
+    mon.setPaletteColor(col.lightGray, 171/255, 171/255, 171/255)
     local buf = {}
     W, H = mon.getSize()
     for i = 1, H, 1 do
@@ -258,7 +260,7 @@ function RenderLoop(toRender, outTerm, f)
             end
         end
     end
-    return red
+    return red, ev
 end
 function DirectRender(wr, ox, oy, buf)
     local rc

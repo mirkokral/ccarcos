@@ -20,6 +20,7 @@ compileFiles:
   - services/elevatorStep.lua
   - services/elevatorSrv.lua
   - services/shell.lua
+  - services/pms.lua
   - apps/init.lua
   - apps/shell.lua
   - apps/cd.lua

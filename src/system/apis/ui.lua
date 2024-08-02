@@ -2,7 +2,8 @@ UItheme = {
     bg = col.white,
     fg = col.black,
     buttonBg = col.blue,
-    buttonFg = col.white
+    buttonFg = col.white,
+    lighterBg = col.lightGray
 }
 W, H = term.getSize()
 
@@ -10,6 +11,8 @@ W, H = term.getSize()
 ---@param mon any
 ---@return table
 function InitBuffer(mon)
+    mon.setPaletteColor(col.lightGray, 171/255, 171/255, 171/255)
+
     local buf = {}
     W, H = mon.getSize()
     for i = 1, H, 1 do
@@ -279,6 +282,8 @@ end
 ---@param toRender Widget[] The actual widgets to render.
 ---@param outTerm table Output terminal
 ---@param f boolean? Force render
+---@return boolean
+---@return table
 function RenderLoop(toRender, outTerm, f)
     local function rerender()
         local buf = ui.InitBuffer(outTerm)
@@ -320,7 +325,7 @@ function RenderLoop(toRender, outTerm, f)
             end
         end
     end
-    return red
+    return red, ev
 end
 
 ---Directly renders rendercommands.
