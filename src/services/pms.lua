@@ -15,16 +15,6 @@ else
     total = 0
 end
 monitor.setTextScale(0.5)
-local nf, err = fs.open("/config/pmst", "w")
-if not nf then
-    monitor.setBackgroundColor(ui.UItheme.bg)
-    monitor.setTextColor(ui.UItheme.fg)
-    monitor.clear()
-    monitor.write(err)
-    while true do
-        sleep(5)
-    end
-end
 tasking.createTask("Energy Detector", function ()
     while true do
             currentPowerUsage = ed.getTransferRate()
@@ -109,8 +99,11 @@ while rd do
     local e
     ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], teu, ceu, tic, uic}, monitor, ls)
     if e[1] == "timer" then
+
+        local nf, err = fs.open("/config/pmst", "w")
         if nf then
             nf.write(tostring(total))
+            nf.close()
         end
         sleep(0.3)
 
