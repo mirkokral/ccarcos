@@ -251,7 +251,7 @@ function Push(buf)
 end
 function Cpy(buf1, buf2, ox, oy)
     for iy, vy in ipairs(buf1) do
-        for ix, vx in ipairs(vx) do
+        for ix, vx in ipairs(vy) do
             blitAtPos(ix+ox, iy+oy, vy[1], vy[2], vy[3], buf2)
         end
     end
