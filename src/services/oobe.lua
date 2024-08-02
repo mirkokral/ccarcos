@@ -42,10 +42,25 @@ table.insert(pages[1],
             return true
         end,
         label = " Next ",
-        x = w-2-6,
-        y = h-2
+        x = w-1-6,
+        y = h-1
     })
 )
+-- Page 2
+pages[2] = {}
+
+table.insert(pages[2], ui.Label({
+    label = "Select an init",
+    x = 2,
+    y = 2
+}))
+
+table.insert(pages[2], ui.Label({
+    label = ui.Wrap("An init is the program that gets started on machine boot.", w-2),
+    x = 2,
+    y = 2,
+    textCol = col.gray
+}))
 -- Rendering
 local ls = true
 while true do
