@@ -246,6 +246,9 @@ function Wrap(str, maxLength)
             ostr = ostr .. cstr .. "\n"
         end
     end
+    if #cstr > 0 then
+        ostr = ostr .. cstr .. "\n"
+    end
     ostr = ostr:sub(#ostr)
     return ostr
 end
