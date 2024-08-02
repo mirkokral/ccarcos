@@ -23,7 +23,7 @@ UIthemedefs[col.blue] = {129, 161, 193}
 UIthemedefs[col.brown] = {0, 0, 0}
 UIthemedefs[col.green] = {163, 190, 140}
 UIthemedefs[col.red] = {191, 97, 106}
-UIthemedefs[col.black] = {46, 52, 64}
+UIthemedefs[col.black] = {59, 66, 82}
 W, H = term.getSize()
 
 ---Inits the buffer
