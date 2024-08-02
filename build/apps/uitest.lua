@@ -41,7 +41,7 @@ local monSelPage = {
     ui.ScrollPane({
         children = selection,
         height = tth-4,
-        width = ttw-3,
+        width = ttw-2,
         x = 2,
         y = 4,
         col = col.lightGray,

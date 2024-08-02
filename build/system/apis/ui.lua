@@ -41,8 +41,8 @@ function ScrollPane(b)
     config.getDrawCommands = function ()
         local dcBuf = {}
         local tw, th = config.width, config.height
-        for i = 1, tw, 1 do
-            for ix = 1, th, 1 do
+        for i = 0, tw, 1 do
+            for ix = 0, th, 1 do
                 local rc = {
                     bgCol = config.col,
                     forCol = col.white,
@@ -83,14 +83,14 @@ function ScrollPane(b)
                 text = "^",
                 forCol = UItheme.bg,
                 bgCol = UItheme.fg,
-                x = config.x + config.width+1,
+                x = config.x + config.width,
                 y = config.y
             })
             table.insert(dcBuf, {
                 text = "v",
                 forCol = UItheme.bg,
                 bgCol = UItheme.fg,
-                x = config.x + config.width+1,
+                x = config.x + config.width,
                 y = config.y + 1
             })
         end
@@ -99,7 +99,7 @@ function ScrollPane(b)
                 text = "|",
                 forCol = UItheme.bg,
                 bgCol = UItheme.fg,
-                x = config.x + config.width + 1,
+                x = config.x + config.width,
                 y = config.y + i
             }) 
         end
@@ -114,11 +114,11 @@ function ScrollPane(b)
                 end
             end
             if config.showScrollBtns then
-                if ce[3] == config.x+config.width+1 and ce[4] == config.y then
+                if ce[3] == config.x+config.width and ce[4] == config.y then
                     config.scroll = math.max(config.scroll - 1, 0) 
                     return true
                 end
-                if ce[3] == config.x+config.width+1 and ce[4] == config.y+1 then
+                if ce[3] == config.x+config.width and ce[4] == config.y+1 then
                     config.scroll = math.min(config.scroll + 1, config.getTotalHeight() - config.height) 
                     return true
                 end
@@ -133,7 +133,7 @@ function ScrollPane(b)
                 end
             end
             local ret = false
-            if mbpressedatm and lastx == config.x + config.width + 1 and lasty >= config.y + (config.showScrollBtns and 2 or 0) and lasty <= config.y + config.width then
+            if mbpressedatm and lastx == config.x + config.width and lasty >= config.y + (config.showScrollBtns and 2 or 0) and lasty <= config.y + config.width then
                 config.scroll = math.min(math.max(config.scroll + (ce[4] - lasty)*-1, 0), config.getTotalHeight() - config.height)
                 ret = true
             end
