@@ -54,7 +54,7 @@ end
 ---@param tfhour boolean
 ---@return string
 function formatTime(t, tfhour)
-    return __LEGACY.textutils.formatTine(t, tfhour)
+    return __LEGACY.textutils.formatTime(t, tfhour)
 end
 
 -- C:Exc
@@ -64,6 +64,7 @@ _G.tutils = {
     d = d,
     s = s,
     split = split,
-    join = join
+    join = join,
+    formatTime = formatTime,
 }
 -- C:End

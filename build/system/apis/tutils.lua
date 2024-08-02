@@ -28,5 +28,5 @@ function join(tab, sep )
     return out:sub(1, #out-1)
 end
 function formatTime(t, tfhour)
-    return __LEGACY.textutils.formatTine(t, tfhour)
+    return __LEGACY.textutils.formatTime(t, tfhour)
 end
