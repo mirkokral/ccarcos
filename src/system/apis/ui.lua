@@ -92,8 +92,8 @@ function ScrollPane(b)
                     bgCol = config.col,
                     forCol = col.white,
                     text = " ",
-                    x = i,
-                    y = ix,
+                    x = config.x + i,
+                    y = config.y + ix,
                 }
                 table.insert(dcBuf, rc)
             end
