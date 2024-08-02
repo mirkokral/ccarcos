@@ -52,31 +52,31 @@ local screen = {
     ui.Label({
         label = "Storage used",
         x = 2,
-        y = 6,
+        y = 8,
         textCol = ui.UItheme.lighterBg
     })
 }
 local ceu = ui.Label({
-    label = "0fe/t",
-    x = 21,
+    label = " 0fe/t ",
+    x = 23,
     y = 2,
     col = ui.UItheme.lighterBg,
 })
 local teu = ui.Label({
-    label = "0fe",
-    x = 21,
+    label = " 0fe ",
+    x = 23,
     y = 4,
     col = ui.UItheme.lighterBg,
 })
 local tic = ui.Label({
-    label = "0 items",
-    x = 21,
+    label = " 0 items ",
+    x = 23,
     y = 6,
     col = ui.UItheme.lighterBg,
 })
 local uic = ui.Label({
-    label = "0%",
-    x = 21,
+    label = " 0% ",
+    x = 23,
     y = 6,
     col = ui.UItheme.lighterBg,
 })
