@@ -1,6 +1,66 @@
+local monitors = dev.monitor
+local selecting = true
+local terma = term
+local selection = {
+    ui.Button({
+        label = "Local",
+        x = 0,
+        y = 0,
+        callBack = function ()
+            terma = term
+            selecting = false
+            return false
+        end,
+        col = col.gray,
+        textCol = col.white
+    }),
+
+}
+for _, i in ipairs(monitors) do
+    table.insert(selection, 
+        ui.Button({
+            label = i.origName,
+            callBack = function ()
+                terma = i
+                selecting = false
+                return false
+            end,
+            x = 0,
+            y = 0,
+            col = col.gray,
+            textCol = col.white
+        })
+    )
+end
+local ttw, tth = terma.getSize()
+local monSelPage = {
+    ui.Label({
+        label = "Select an Output",
+        x=1,
+        y=1
+    }),
+    ui.ScrollPane({
+        children = selection,
+        height = tth-4,
+        width = ttw-3,
+        x = 1,
+        y = 3,
+        col = col.gray,
+        showScrollBtns = false,
+    })
+}
+ui.RenderLoop(monSelPage, term, true)
+while selecting do
+    if term then
+        ui.RenderLoop(monSelPage, term)
+    end
+end
+
+
+
 local counter = 0
 local ox, oy = 0,0 
-local tw, th = term.getSize()
+local tw, th = terma.getSize()
 local pages = {}
 local page = 1
 
@@ -45,6 +105,7 @@ table.insert(
                 -- oy = oy + 1
                 ui.PageTransition(pages[1], pages[2], false, 1, true)
                 page = 2
+                return true
             end,
             x = tw - 5,
             y = th - 1,
@@ -57,7 +118,7 @@ local btn = ui.Button({
     callBack = function ()
         counter = counter + 1
         pages[1][1].label = "Counter: " .. counter
-        rerender()
+        return true
     end,
     label = "Increase counter",
     x = 1,
@@ -119,7 +180,7 @@ table.insert(
             callBack = function ()
                 ui.PageTransition(pages[2], pages[1], false, 1, false)
                 page = 1
-                rerender()
+                return true
             end,
             x = tw - 5,
             y = th - 1,
@@ -129,37 +190,10 @@ table.insert(
         }
     )
 )
-function rerender()
-    local buf = ui.InitBuffer()
-    ui.RenderWidgets(pages[page], ox, oy, buf)
-    ui.Push(buf)
-end
-rerender()
-while true do
-    local ev = { arcos.ev() }
-    local red = false
-    if ev[1] == "mouse_click" then
-        for i, v in ipairs(pages[page]) do
-            if v.onEvent({"click", ev[2], ev[3]-ox, ev[4]-oy}) then red = true end
-        end
-    elseif ev[1] == "mouse_drag" then
-        for i, v in ipairs(pages[page]) do
-            if v.onEvent({"drag", ev[2], ev[3]-ox, ev[4]-oy}) then red = true end
-        end
-    elseif ev[1] == "mouse_up" then
-        for i, v in ipairs(pages[page]) do
-            if v.onEvent({"up", ev[2], ev[3]-ox, ev[4]-oy}) then red = true end
-        end
-    else
 
-        for i, v in ipairs(pages[page]) do
-            if v.onEvent(ev) then red = true end
-        end
+ui.RenderLoop(monSelPage, terma, true)
+while selecting do
+    if term then
+        ui.RenderLoop(monSelPage, terma)
     end
-    if ev[1] == "key" and page == 1 then
-        pages[1][5].label = "Latest key: " .. tostring(ev[2])
-        rerender()
-        
-    end
-    if red then rerender() end
 end

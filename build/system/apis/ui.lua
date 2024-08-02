@@ -5,9 +5,9 @@ UItheme = {
     buttonFg = col.white
 }
 W, H = term.getSize()
-function InitBuffer()
+function InitBuffer(mon)
     local buf = {}
-    W, H = term.getSize()
+    W, H = mon.getSize()
     for i = 1, H, 1 do
         local tb = {}
         for i = 1, W, 1 do
@@ -18,15 +18,9 @@ function InitBuffer()
     return buf
 end
 local function blitAtPos(x, y, bgCol, forCol, text, buf)
-    if x <= W and y <= H and y>0 and x>0 then
+    if x <= #buf[1] and y <= #buf and y>0 and x>0 then
         buf[y][x] = {bgCol, forCol, text}
     end
-end
-local function oldBlitAtPos(x, y, bgCol, forCol, text)
-    term.setCursorPos(x, y)
-    term.setBackgroundColor(bgCol or UItheme.bg)
-    term.setTextColor(forCol or UItheme.fg)
-    term.write(text)
 end
 function ScrollPane(b)
     local config = {}
@@ -46,32 +40,34 @@ function ScrollPane(b)
     local lastx, lasty = 0, 0
     config.getDrawCommands = function ()
         local dcBuf = {}
-        local tw, th = term.getSize()
+        local tw, th = config.width, config.height
         for i = 1, tw, 1 do
             for ix = 1, th, 1 do
                 local rc = {
                     bgCol = config.col,
                     forCol = col.white,
                     text = " ",
-                    x = tw,
-                    y = th,
+                    x = i,
+                    y = ix,
                 }
                 table.insert(dcBuf, rc)
             end
         end
         local yo = 0
         for index, value in ipairs(config.children) do
-            local rc = value.getDrawCommands()
-            for index, value in ipairs(rc) do
-                table.insert(dcBuf, {
-                    x = config.x + value.x,
-                    y = config.y + value.y - config.scroll + yo,
-                    text = value.text,
-                    bgCol = value.bgCol,
-                    forCol = value.forCol
-                })
+            if value.y - config.scroll + value.getWH()[1] > 0 and value.y - config.scroll <= config.height then
+                local rc = value.getDrawCommands()
+                for index, value in ipairs(rc) do
+                    table.insert(dcBuf, {
+                        x = config.x + value.x,
+                        y = config.y + value.y - config.scroll + yo,
+                        text = value.text,
+                        bgCol = value.bgCol,
+                        forCol = value.forCol
+                    })
+                end
+                yo = yo + value.getWH()[2]
             end
-            yo = yo + value.getWH()[2]
         end
         local rmIndexes = {}
         for index, value in ipairs(dcBuf) do
@@ -211,14 +207,58 @@ function Button(b)
     end
     local o = Label(config)
     o.onEvent = function (e)
+        local rt = false
         if e[1] == "click" then
             local wh = o.getWH()
             if e[2] == 1 and e[3] >= o.x and e[4] >= o.y and e[3] < o.x + wh[1] and e[4] < o.y + wh[2] then
-                b.callBack()
+                if b.callBack() then rt = true end
+            end
+        end
+        return rt
+    end
+    return o
+end
+function RenderLoop(toRender, outTerm, f)
+    local function rerender()
+        local buf = ui.InitBuffer()
+        ui.RenderWidgets(toRender, 0, 0, buf)
+        ui.Push(buf, outTerm)
+    end
+    if f then rerender() end
+    local ev = { arcos.ev() }
+    local red = false
+    local isMonitor, monSide = pcall(__LEGACY.peripheral.getName, outTerm)
+    if not isMonitor then
+        if ev[1] == "mouse_click" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({"click", ev[2], ev[3]-0, ev[4]-0}) then red = true end
+            end
+        elseif ev[1] == "mouse_drag" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({"drag", ev[2], ev[3]-0, ev[4]-0}) then red = true end
+            end
+        elseif ev[1] == "mouse_up" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({"up", ev[2], ev[3]-0, ev[4]-0}) then red = true end
+            end
+        else
+            for i, v in ipairs(toRender) do
+                if v.onEvent(ev) then red = true end
+            end
+        end
+    else
+        if ev[1] == "monitor_touch" and ev[2] == monSide then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({"click", 1, ev[3]-0, ev[4]-0}) then red = true end
+                if v.onEvent({"up", 1, ev[3]-0, ev[4]-0}) then red = true end
+            end
+        else
+            for i, v in ipairs(toRender) do
+                if v.onEvent(ev) then red = true end
             end
         end
     end
-    return o
+    if red then rerender() end
 end
 function DirectRender(wr, ox, oy, buf)
     local rc
@@ -231,7 +271,7 @@ function DirectRender(wr, ox, oy, buf)
         blitAtPos(v.x+ox, v.y+oy, v.bgCol, v.forCol, v.text, buf)
     end
 end
-function Push(buf)
+function Push(buf, terma)
     for ix, vy in ipairs(buf) do
         local blitText = ""
         local blitColor = ""
@@ -241,8 +281,8 @@ function Push(buf)
             blitColor = blitColor .. col.toBlit(vx[2])
             blitText = blitText .. vx[3]
         end
-        term.setCursorPos(1, ix)
-        term.blit(blitText, blitColor, blitBgColor)
+        terma.setCursorPos(1, ix)
+        terma.blit(blitText, blitColor, blitBgColor)
     end
 end
 function Cpy(buf1, buf2, ox, oy)
@@ -254,7 +294,7 @@ function Cpy(buf1, buf2, ox, oy)
 end
 function RenderWidgets(wdg, ox, oy, buf)
     arcos.log("UI blitatpos")
-    local tw, th = term.getSize()
+    local tw, th = #buf[1], #buf
     for i = 1, th, 1 do
         for ix = 1, tw, 1 do
             blitAtPos(ix+ox, i+oy, ui.UItheme.bg, ui.UItheme.fg, " ", buf)
@@ -265,8 +305,8 @@ function RenderWidgets(wdg, ox, oy, buf)
         ui.DirectRender(value, ox, oy, buf)
     end
 end
-function PageTransition(widgets1, widgets2, dir, speed, ontop)
-    local tw, th = term.getSize()
+function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
+    local tw, th = terma.getSize()
     local ox = 0
     local accel = 1
     local buf = InitBuffer()
@@ -284,7 +324,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             local sbuf = InitBuffer()
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
-            Push(sbuf)
+            Push(sbuf, terma)
             sleep(1/60)
         end        
     else
@@ -294,7 +334,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             local sbuf = InitBuffer()
             Cpy(buf2, sbuf, 0, 0)
             Cpy(buf, sbuf, ox * (dir and -1 or 1), 0)
-            Push(sbuf)
+            Push(sbuf, terma)
             sleep(1/60)
         end
     end
