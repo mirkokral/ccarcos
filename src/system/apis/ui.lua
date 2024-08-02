@@ -11,7 +11,7 @@ W, H = term.getSize()
 ---@param mon any
 ---@return table
 function InitBuffer(mon)
-    mon.setPaletteColor(col.lightGray, 171/255, 171/255, 171/255)
+    mon.setPaletteColor(col.lightGray, 200/255, 200/255, 200/255)
 
     local buf = {}
     W, H = mon.getSize()
