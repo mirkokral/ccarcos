@@ -340,14 +340,16 @@ setmetatable(_G.dev, {
                     table.insert(devBuf, p)
                 end
             end
+            return devBuf
         else
             local devBuf = {}
             local c = __LEGACY.peripheral.find(k)
-            if not c then return {} end
+            if not c then return devBuf end
             for _, p in ipairs(c) do
                 p["origName"] = __LEGACY.peripheral.getName(p)
                 table.insert(devBuf, p)
             end
+            return devBuf
         end
     end
 })
