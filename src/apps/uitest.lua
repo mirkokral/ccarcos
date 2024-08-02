@@ -191,10 +191,10 @@ table.insert(
         }
     )
 )
-
+local ls = false
 ui.RenderLoop(pages[page], terma, true)
 while true do
     if terma then
-        ui.RenderLoop(pages[page], terma)
+        ls = ui.RenderLoop(pages[page], terma, ls)
     end
 end
