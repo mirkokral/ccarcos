@@ -1,6 +1,6 @@
 if not fs.exists("/system/krnl.lua") then
     for _, i in ipairs(fs.list("/")) do
-        fs.delete(i)
+        if not i == "rom" then fs.delete(i) end
     end
 else
     fs.delete("/system")
