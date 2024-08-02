@@ -258,7 +258,7 @@ function RenderLoop(toRender, outTerm, f)
             end
         end
     end
-    if red then rerender() end
+    return red
 end
 function DirectRender(wr, ox, oy, buf)
     local rc
