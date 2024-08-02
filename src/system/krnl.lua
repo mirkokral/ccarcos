@@ -324,19 +324,16 @@ _G.dev = {
 setmetatable(_G.dev, {
     __index = function (t, k)
         local n = ""
-        if k == "emodem" or k == "wmodem" or k == "modem" then
+        if k == "wmodem" or k == "modem" then
             local devBuf = {}
             local c = {__LEGACY.peripheral.find("modem")}
             if not c then return {} end
             for _, p in ipairs(c) do
                 p["origName"] = __LEGACY.peripheral.getName(p)
-                if k == "emodem" and p.isEnder() then
+                if k == "wmodem" and p.isWireless() then
                     table.insert(devBuf, p)
                 end
-                if k == "wmodem" and p.isWireless() and not p.isEnder() then
-                    table.insert(devBuf, p)
-                end
-                if k == "modem" and not p.isEnder() and not p.isWireless() then
+                if k == "modem" and not p.isWireless() then
                     table.insert(devBuf, p)
                 end
             end
