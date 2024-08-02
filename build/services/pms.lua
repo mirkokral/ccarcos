@@ -6,6 +6,7 @@ local monitor = devices.get("left")
 local ed = dev.energyDetector[1]
 local me = dev.meBridge[1]
 local total
+local rd = true
 if f then
     local total = tonumber(f.read())
     f.close()
@@ -35,6 +36,7 @@ tasking.createTask("Energy Detector", function ()
             iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
         end)
         if not ok then 
+            rd = false
             monitor.setBackgroundColor(ui.UItheme.bg)
             monitor.setTextColor(ui.UItheme.fg)
             monitor.clear()
@@ -114,7 +116,7 @@ local uic = ui.Label({
     col = ui.UItheme.lighterBg,
 })
 local ls = false
-while true do
+while rd do
     local e
     ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], teu, ceu, tic, uic}, monitor, ls)
     if e[1] == "timer" then
