@@ -302,20 +302,18 @@ end
 ---Pushes the buffer to the screen, finnalizing rendering. NOTE: this does not reinit the buffer so make sure to reinit it after you're done with pushing.
 ---@param buf table Buffer
 function Push(buf)
-    local blitText = ""
-    local blitColor = ""
-    local blitBgColor = ""
     for ix, vy in ipairs(buf) do
+        local blitText = ""
+        local blitColor = ""
+        local blitBgColor = ""
         for iy, vx in ipairs(vy) do
             blitBgColor = blitBgColor .. col.toBlit(vx[1])
             blitColor = blitColor .. col.toBlit(vx[2])
             blitText = blitText .. vx[3]
         end
-        blitText = blitText .. "\n"
-        blitColor = blitColor .. "0"
-        blitBgColor = blitBgColor .. "0"
+        term.setCursorPos(1, vy)
+        term.blit(blitText, blitColor, blitBgColor)
     end
-    term.blit(blitText, blitColor, blitBgColor)
 end
 
 ---Copies buf 1 to buf 2 with an offset
