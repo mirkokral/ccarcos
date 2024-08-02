@@ -8,11 +8,11 @@ local me = dev.meBridge[1]
 local total
 local rd = true
 if f then
-    local total = tonumber(f.read())
+    total = tonumber(f.read())
     f.close()
     
 else
-    local total = 0
+    total = 0
 end
 monitor.setTextScale(0.5)
 local nf, err = fs.open("/config/pmst", "w")
