@@ -231,10 +231,10 @@ function DirectRender(wr, ox, oy, buf)
         blitAtPos(v.x+ox, v.y+oy, v.bgCol, v.forCol, v.text, buf)
     end
 end
-function Push(buf)
+function Push(buf, ox, oy)
     for ix, vx in ipairs(buf) do
         for iy, vy in ipairs(vx) do
-            oldBlitAtPos(ix, iy, vy[1], vy[2], vy[3])
+            oldBlitAtPos(ix+ox, iy+oy, vy[1], vy[2], vy[3])
         end
     end
 end
@@ -255,6 +255,10 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
     local tw, th = term.getSize()
     local ox = 0
     local accel = 1
+    local buf = InitBuffer()
+    local buf2 = InitBuffer()
+    RenderWidgets(widgets1, 0, 0, buf)
+    RenderWidgets(widgets2, 0, 0, buf2)
     if ontop then
         while ox < tw do
             ox = ox + accel
@@ -263,20 +267,16 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
         while ox > 0 do
             ox = math.max(ox - accel, 0)
             accel = accel - speed
-            local buf = InitBuffer()
-            RenderWidgets(widgets1, 0, 0, buf)
-            RenderWidgets(widgets2, ox * (dir and -1 or 1), 0, buf)
-            Push(buf)
+            Push(buf, 0, 0)
+            Push(buf2, ox * (dir and -1 or 1), 0)
             sleep(1/60)
         end        
     else
         while ox < tw do
             ox = math.min(ox + accel, tw)
             accel = accel + speed
-            local buf = InitBuffer()
-            RenderWidgets(widgets2, 0, 0, buf)
-            RenderWidgets(widgets1, ox * (dir and -1 or 1), 0, buf)
-            Push(buf)
+            Push(buf2, 0, 0)
+            Push(buf, ox * (dir and -1 or 1), 0)
             sleep(1/60)
         end
     end
