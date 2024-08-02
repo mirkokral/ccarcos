@@ -68,3 +68,4 @@ if f then
 else
     print("Error while making temporary installation")
 end
+os.reboot()
