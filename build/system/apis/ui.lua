@@ -26,7 +26,7 @@ UIthemedefs[col.red] = {191, 97, 106}
 UIthemedefs[col.black] = {59, 66, 82}
 W, H = term.getSize()
 function InitBuffer(mon)
-    for index, value in ipairs(UIthemedefs) do
+    for index, value in pairs(UIthemedefs) do
         mon.setPaletteColor(index, value[1]/255, value[2]/255, value[3]/255)
     end
     local buf = {}
