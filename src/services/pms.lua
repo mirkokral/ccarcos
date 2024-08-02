@@ -7,17 +7,14 @@ local ed = dev.energyDetector[1]
 local me = dev.meBridge[1]
 monitor.setTextScale(0.5)
 tasking.createTask("Energy Detector", function ()
-    local ok, err = pcall(function (...)
-        
+    while true do
         currentPowerUsage = ed.getTransferRate()
         total = total + ed.getTransferRate() * 20
         titemcount = me.getUsedItemStorage()
         iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
-    end)
-    if not ok then
-        printError(err)
-    end
-    sleep(1)
+    
+        sleep(1)
+    end    
 end, 1, "root", term, {})
 
 function formatNum(number)
