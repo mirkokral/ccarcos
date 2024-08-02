@@ -311,6 +311,20 @@ function Push(buf, ox, oy)
     end
 end
 
+---Copies buf 1 to buf 2 with an offset
+---@param buf1 table[][]
+---@param buf2 table[][]
+---@param ox number
+---@param oy number
+function Cpy(buf1, buf2, ox, oy)
+    for ix, vx in ipairs(buf1) do
+        for iy, vy in ipairs(vx) do
+            blitAtPos(ix+ox, iy+oy, vy[1], vy[2], vy[3], buf2)
+        end
+    end
+
+end
+
 ---Render some widgets
 ---@param wdg Widget[]
 ---@param ox number Offset X
@@ -352,16 +366,20 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
         while ox > 0 do
             ox = math.max(ox - accel, 0)
             accel = accel - speed
-            Push(buf, 0, 0)
-            Push(buf2, ox * (dir and -1 or 1), 0)
+            local sbuf = InitBuffer()
+            Cpy(buf, sbuf, 0, 0)
+            Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
+            Push(sbuf, 0, 0)
             sleep(1/60)
         end        
     else
         while ox < tw do
             ox = math.min(ox + accel, tw)
             accel = accel + speed
-            Push(buf2, 0, 0)
-            Push(buf, ox * (dir and -1 or 1), 0)
+            local sbuf = InitBuffer()
+            Cpy(buf2, sbuf, 0, 0)
+            Cpy(buf, sbuf, ox * (dir and -1 or 1), 0)
+            Push(sbuf, 0, 0)
             sleep(1/60)
         end
     end
