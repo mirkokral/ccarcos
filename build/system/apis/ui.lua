@@ -1,13 +1,34 @@
 UItheme = {
-    bg = col.white,
-    fg = col.black,
-    buttonBg = col.blue,
-    buttonFg = col.white,
-    lighterBg = col.lightGray
+    bg = col.black,
+    fg = col.white,
+    buttonBg = col.cyan,
+    buttonFg = col.black,
+    lighterBg = col.gray,
+    lightBg = col.lightGray
 }
+UIthemedefs = {
+}
+UIthemedefs[col.white] = {236, 239, 244}
+UIthemedefs[col.orange] = {0, 0, 0}
+UIthemedefs[col.magenta] = {180, 142, 173}
+UIthemedefs[col.lightBlue] = {0, 0, 0}
+UIthemedefs[col.yellow] = {235, 203, 139}
+UIthemedefs[col.lime] = {163, 190, 140}
+UIthemedefs[col.pink] = {0, 0, 0}
+UIthemedefs[col.gray] = {174, 179, 187}
+UIthemedefs[col.lightGray] = {216, 222, 233}
+UIthemedefs[col.cyan] = {136, 192, 208}
+UIthemedefs[col.purple] = {0, 0, 0}
+UIthemedefs[col.blue] = {129, 161, 193}
+UIthemedefs[col.brown] = {0, 0, 0}
+UIthemedefs[col.green] = {163, 190, 140}
+UIthemedefs[col.red] = {191, 97, 106}
+UIthemedefs[col.black] = {46, 52, 64}
 W, H = term.getSize()
 function InitBuffer(mon)
-    mon.setPaletteColor(col.lightGray, 200/255, 200/255, 200/255)
+    for index, value in ipairs(UIthemedefs) do
+        mon.setPaletteColor(index, value[1]/255, value[2]/255, value[3]/255)
+    end
     local buf = {}
     W, H = mon.getSize()
     for i = 1, H, 1 do

@@ -48,25 +48,25 @@ local screen = {
         label = "Current energy usage",
         x = 2,
         y = 2,
-        textCol = ui.UItheme.lighterBg
+        textCol = ui.UItheme.lightBg
     }),
     ui.Label({
         label = "Total energy usage",
         x = 2,
         y = 4,
-        textCol = ui.UItheme.lighterBg
+        textCol = ui.UItheme.lightBg
     }),
     ui.Label({
         label = "Total ME item count",
         x = 2,
         y = 6,
-        textCol = ui.UItheme.lighterBg
+        textCol = ui.UItheme.lightBg
     }),
     ui.Label({
         label = "Storage used",
         x = 2,
         y = 8,
-        textCol = ui.UItheme.lighterBg
+        textCol = ui.UItheme.lightBg
     })
 }
 local ceu = ui.Label({
