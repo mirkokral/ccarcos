@@ -3,7 +3,7 @@ UItheme = {
     fg = col.white,
     buttonBg = col.cyan,
     buttonFg = col.black,
-    lighterBg = col.lightGray,
+    lighterBg = col.gray,
     lightBg = col.lightGray
 }
 UIthemedefs = {
@@ -230,27 +230,27 @@ end
 ---@param maxLength any
 ---@return string
 function Wrap(str, maxLength)
-    local ostr = ""
-    local cstr = ""
+    environ.ostr = ""
+    environ.cstr = ""
     for index2, value2 in ipairs(tutils.split(str, "\n")) do
-        cstr = ""
+        environ.cstr = ""
         for index, value in ipairs(tutils.split(value2, " ")) do
-            if #cstr + #value > maxLength then
-                ostr = ostr .. cstr .. "\n"
-                cstr = ""
+            if #environ.cstr + #value > maxLength then
+                environ.ostr = environ.ostr .. environ.cstr .. "\n"
+                environ.cstr = ""
             end
             
-            cstr = cstr .. value .. " "
+            environ.cstr = environ.cstr .. value .. " "
         end
-        if #cstr > 0 then
-            ostr = ostr .. cstr .. "\n"
+        if #environ.cstr > 0 then
+            environ.ostr = environ.ostr .. environ.cstr .. "\n"
         end
     end
-    if #cstr > 0 then
-        ostr = ostr .. cstr .. "\n"
+    if #environ.cstr > 0 then
+        environ.ostr = environ.ostr .. environ.cstr .. "\n"
     end
-    ostr = ostr:sub(#ostr)
-    return ostr
+    environ.ostr = environ.ostr:sub(#environ.ostr)
+    return environ.ostr
 end
 
 ---Creates a new label
