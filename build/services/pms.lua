@@ -69,25 +69,25 @@ local screen = {
 local ceu = ui.Label({
     label = " 0fe/t ",
     x = 23,
-    y = 2,
+    y = 4,
     col = ui.UItheme.lighterBg,
 })
 local teu = ui.Label({
     label = " 0fe ",
     x = 23,
-    y = 4,
+    y = 6,
     col = ui.UItheme.lighterBg,
 })
 local tic = ui.Label({
     label = " 0 items ",
     x = 23,
-    y = 6,
+    y = 8,
     col = ui.UItheme.lighterBg,
 })
 local uic = ui.Label({
     label = " 0% ",
     x = 23,
-    y = 8,
+    y = 10,
     col = ui.UItheme.lighterBg,
 })
 local time = ui.Label({
@@ -95,10 +95,26 @@ local time = ui.Label({
     x = ({ monitor.getSize() })[1]-1-5,
     y = 2,
 })
+local btn1 = ui.Button({
+    label = " Lights on ",
+    x = 2,
+    y = 2,
+    callBack = function ()
+        dev.modem[1].transmit(713, 0, "MainLightsOn")
+    end
+})
+local btn2 = ui.Button({
+    label = " Lights off ",
+    x = 14,
+    y = 2,
+    callBack = function ()
+        dev.modem[1].transmit(713, 0, "MainLightsOff")
+    end
+})
 local ls = false
 while rd do
     local e
-    ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic}, monitor, ls)
+    ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic, btn1, btn2}, monitor, ls)
     if e[1] == "timer" then
         local nf, err = fs.open("/config/pmst", "w")
         if nf then
