@@ -25,6 +25,7 @@ _G.__LEGACY = {
     commands = commands,
     disk = disk,
     fs = fs,
+    ofs = fs,
     gps = gps,
     help = help,
     http = http,
@@ -48,28 +49,28 @@ _G.__LEGACY = {
 if live then
   __LEGACY.fs = {
     list = function (f)
-      return fs.list("/.arcliveenv/" .. f)
+      return __LEGACY.ofs.list("/.arcliveenv/" .. f)
     end,
     delete = function (f)
-      return fs.delete("/.arcliveenv/" .. f)
+      return __LEGACY.ofs.delete("/.arcliveenv/" .. f)
     end,
     exists = function (f)
-      return fs.exists("/.arcliveenv/" .. f)
+      return __LEGACY.ofs.exists("/.arcliveenv/" .. f)
     end,
     makeDir = function (f)
-      return fs.makeDir("/.arcliveenv/" .. f)
+      return __LEGACY.ofs.makeDir("/.arcliveenv/" .. f)
     end,
     isDir = function (f)
-      return fs.isDir("/.arcliveenv/" .. f)
+      return __LEGACY.ofs.isDir("/.arcliveenv/" .. f)
     end,
     move = function (f,k)
-      return fs.move("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
+      return __LEGACY.ofs.move("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
     end,
     copy = function (f,k)
-      return fs.copy("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
+      return __LEGACY.ofs.copy("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
     end,
     open = function (o, m)
-      return fs.open("/.arcliveenv/" .. o, m)
+      return __LEGACY.ofs.open("/.arcliveenv/" .. o, m)
     end
   }
 end
