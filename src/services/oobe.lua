@@ -41,8 +41,8 @@ table.insert(pages[1],
             page = 2
             return true
         end,
-        label = "Next",
-        x = w-2-4,
+        label = " Next ",
+        x = w-2-6,
         y = h-2
     })
 )
