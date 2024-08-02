@@ -34,6 +34,9 @@ function split(inputstr, sep)
     for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
         table.insert(t, str)
     end
+    if t == {} then
+        t = { inputstr }
+    end
     return t
 end
 ---Joins an table by seperators
