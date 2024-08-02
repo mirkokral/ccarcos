@@ -12,8 +12,8 @@ local selection = {
             selecting = false
             return false
         end,
-        col = col.lightGray,
-        textCol = col.black
+        col = ui.UItheme.lighterBg,
+        textCol = ui.UItheme.fg
     }),
 
 }
@@ -28,8 +28,8 @@ for _, i in ipairs(monitors) do
             end,
             x = 1,
             y = 1,
-            col = col.lightGray,
-            textCol = col.black
+            col = ui.UItheme.lighterBg,
+            textCol = ui.UItheme.fg
         })
     )
 end
@@ -46,7 +46,7 @@ local monSelPage = {
         width = ttw-2,
         x = 2,
         y = 4,
-        col = col.lightGray,
+        col = ui.UItheme.lighterBg,
         showScrollBtns = false,
     })
 }
