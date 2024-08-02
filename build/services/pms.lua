@@ -5,7 +5,7 @@ local iup = 0
 local monitor = devices.get("left")
 local ed = dev.energyDetector[1]
 local me = dev.meBridge[1]
-local total
+local total = 0
 local rd = true
 if f then
     total = tonumber(f.read())
@@ -26,22 +26,10 @@ if not nf then
 end
 tasking.createTask("Energy Detector", function ()
     while true do
-        local ok, err = pcall(function (...)
             currentPowerUsage = ed.getTransferRate()
             total = total + ed.getTransferRate() * 20
             titemcount = me.getUsedItemStorage()
             iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
-        end)
-        if not ok then 
-            while true do
-                rd = false
-                monitor.setBackgroundColor(ui.UItheme.bg)
-                monitor.setTextColor(ui.UItheme.fg)
-                monitor.clear()
-                monitor.write(err)
-                sleep(5)
-            end
-        end
         sleep(1)
     end    
 end, 1, "root", term, {})
