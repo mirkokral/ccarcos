@@ -3,11 +3,11 @@ local f, e = fs.open("/config/pmst", "r")
 local total
 if f then
     local total = tonumber(f.read())
+    f.close()
     
 else
     local total = 0
 end
-f.close()
 local nf = fs.open("/config/pmst", "w")
 local titemcount = 0
 local iup = 0
