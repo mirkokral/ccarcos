@@ -1,5 +1,13 @@
 local currentPowerUsage = 0
-local total = 0
+local f, e = fs.open("/config/pmst", "r")
+local total
+if f then
+    local total = tonumber(f.read())
+else
+    local total = 0
+end
+f.close()
+local nf = fs.open("/config/pmst", "w")
 local titemcount = 0
 local iup = 0
 local monitor = devices.get("left")
@@ -10,6 +18,7 @@ tasking.createTask("Energy Detector", function ()
     while true do
         currentPowerUsage = ed.getTransferRate()
         total = total + ed.getTransferRate() * 20
+        nf.write(tostring(total))
         titemcount = me.getUsedItemStorage()
         iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
         sleep(1)
