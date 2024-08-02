@@ -307,9 +307,9 @@ function Push(buf)
     local blitBgColor = ""
     for ix, vy in ipairs(buf) do
         for iy, vx in ipairs(vy) do
-            blitColor = blitColor .. vx[1]
-            blitBgColor = blitBgColor .. col.toBlit(vx[2])
-            blitText = blitText .. col.toBlit(vx[3])
+            blitBgColor = blitBgColor .. col.toBlit(vx[1])
+            blitColor = blitColor .. col.toBlit(vx[2])
+            blitText = blitText .. vx[3]
         end
         blitText = blitText .. "\n"
         blitColor = blitColor .. "0"
