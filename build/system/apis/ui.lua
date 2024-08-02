@@ -220,7 +220,7 @@ function Button(b)
 end
 function RenderLoop(toRender, outTerm, f)
     local function rerender()
-        local buf = ui.InitBuffer()
+        local buf = ui.InitBuffer(outTerm)
         ui.RenderWidgets(toRender, 0, 0, buf)
         ui.Push(buf, outTerm)
     end
