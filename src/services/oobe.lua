@@ -47,7 +47,7 @@ table.insert(pages[1],
     })
 )
 -- Rendering
-local ls = false
+local ls = true
 while true do
     ls = ui.RenderLoop(pages[page], term, ls)
 end

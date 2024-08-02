@@ -45,7 +45,7 @@ table.insert(pages[1],
         y = h-2
     })
 )
-local ls = false
+local ls = true
 while true do
     ls = ui.RenderLoop(pages[page], term, ls)
 end
