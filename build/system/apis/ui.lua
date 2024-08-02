@@ -283,23 +283,23 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             accel = accel + speed
         end
         while ox > 0 do
-            ox = math.max(ox - 1, 0)
+            ox = math.max(ox - accel, 0)
             accel = accel - speed
             local sbuf = InitBuffer()
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
             Push(sbuf)
-            sleep(1/60* accel)
+            sleep(1/60)
         end        
     else
         while ox < tw do
-            ox = math.min(ox + 1, tw)
+            ox = math.min(ox + accel, tw)
             accel = accel + speed
             local sbuf = InitBuffer()
             Cpy(buf2, sbuf, 0, 0)
             Cpy(buf, sbuf, ox * (dir and -1 or 1), 0)
             Push(sbuf)
-            sleep(1/60 * accel)
+            sleep(1/60)
         end
     end
 end
