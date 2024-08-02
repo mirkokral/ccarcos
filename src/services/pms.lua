@@ -79,14 +79,14 @@ local tic = ui.Label({
 local uic = ui.Label({
     label = " 0% ",
     x = 23,
-    y = 6,
+    y = 8,
     col = ui.UItheme.lighterBg,
 })
 
 local ls = false
 while true do
     local e
-    ls, e = ui.RenderLoop({ table.unpack(screen), teu, ceu, tic, uic}, monitor, ls)
+    ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], teu, ceu, tic, uic}, monitor, ls)
     if e[1] == "timer" then
         ls = true
     end
