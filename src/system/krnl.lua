@@ -326,7 +326,7 @@ setmetatable(_G.dev, {
         local n = ""
         if k == "emodem" or k == "wmodem" or k == "modem" then
             local devBuf = {}
-            local c = __LEGACY.peripheral.find("modem")
+            local c = {__LEGACY.peripheral.find("modem")}
             if not c then return {} end
             for _, p in ipairs(c) do
                 p["origName"] = __LEGACY.peripheral.getName(p)
@@ -343,7 +343,7 @@ setmetatable(_G.dev, {
             return devBuf
         else
             local devBuf = {}
-            local c = __LEGACY.peripheral.find(k)
+            local c = {__LEGACY.peripheral.find(k)}
             if not c then return devBuf end
             for _, p in ipairs(c) do
                 p["origName"] = __LEGACY.peripheral.getName(p)
