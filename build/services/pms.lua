@@ -16,11 +16,11 @@ end
 monitor.setTextScale(0.5)
 tasking.createTask("Energy Detector", function ()
     while true do
-            currentPowerUsage = ed.getTransferRate()
-            total = total + ed.getTransferRate() * 20
-            titemcount = me.getUsedItemStorage()
-            iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
-        sleep(1)
+        currentPowerUsage = ed.getTransferRate()
+        total = total + ed.getTransferRate() * 20
+        titemcount = me.getUsedItemStorage()
+        iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
+        sleep(0.5)
     end    
 end, 1, "root", term, {})
 function formatNum(number)
@@ -44,25 +44,25 @@ local screen = {
     ui.Label({
         label = "Current energy usage",
         x = 2,
-        y = 2,
+        y = 4,
         textCol = ui.UItheme.lightBg
     }),
     ui.Label({
         label = "Total energy usage",
         x = 2,
-        y = 4,
+        y = 6,
         textCol = ui.UItheme.lightBg
     }),
     ui.Label({
         label = "Total ME item count",
         x = 2,
-        y = 6,
+        y = 8,
         textCol = ui.UItheme.lightBg
     }),
     ui.Label({
         label = "Storage used",
         x = 2,
-        y = 8,
+        y = 10,
         textCol = ui.UItheme.lightBg
     })
 }
@@ -90,17 +90,25 @@ local uic = ui.Label({
     y = 8,
     col = ui.UItheme.lighterBg,
 })
+local time = ui.Label({
+    label = "00:00",
+    x = ({ monitor.getSize() })[1]-1-5,
+    y = 2,
+})
 local ls = false
 while rd do
     local e
-    ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], teu, ceu, tic, uic}, monitor, ls)
+    ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic}, monitor, ls)
     if e[1] == "timer" then
         local nf, err = fs.open("/config/pmst", "w")
         if nf then
             nf.write(tostring(total))
             nf.close()
         end
-        sleep(0.3)
+        sleep(0.1)
+        local s = tutils.formatTime(arcos.time("ingame"))
+        time.x = ({ monitor.getSize() })[1]-1-#s
+        time.label = s
         local teufmt, teuext = formatNum(total)
         teu.label = " " .. tostring(teufmt) .. teuext .. "fe "
         teufmt, teuext = formatNum(currentPowerUsage)

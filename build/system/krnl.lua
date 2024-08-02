@@ -89,6 +89,9 @@ _G.arcos = {
             return arcos.ev(filter)
         end
     end,
+    time = function(t)
+        return __LEGACY.os.time(t)
+    end,
     r = function(env, path, ...) 
         assert(type(env) == "table", "Invalid argument: env")
         assert(type(path) == "string", "Invalid argument: path")

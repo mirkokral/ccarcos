@@ -114,6 +114,12 @@ _G.arcos = {
             return arcos.ev(filter)
         end
     end,
+    ---Gets the time
+    ---@param t "ingame"|"utc"|"local"? Timezone
+    ---@return integer
+    time = function(t)
+        return __LEGACY.os.time(t)
+    end,
     ---Runs a program
     ---@param env table Environment
     ---@param path string Path to the executable

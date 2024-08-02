@@ -49,6 +49,14 @@ function join(tab, sep )
     return out:sub(1, #out-1)
 end
 
+---Formats time
+---@param t number
+---@param tfhour boolean
+---@return string
+function formatTime(t, tfhour)
+    return __LEGACY.textutils.formatTine(t, tfhour)
+end
+
 -- C:Exc
 _G.tutils = {
     dJSON = dJSON,
