@@ -149,12 +149,17 @@ _G.arcos = {
         assert(type(api) == "string", "Invalid argument: api")
         arcos.log(api)
         local tabEnv = {}
+        local s = strsplit(api, "/")
+        local v = s[#s]
+        if string.sub(v, #v-3) == ".lua" then
+            v = v:sub(1, #v-4)
+        end 
         setmetatable(tabEnv, {__index = _G})
         local f, e = __LEGACY.fs.open(api, "r")
         if not f then
             error(e)
         end
-        local funcApi, err = load(f.readAll(), api, nil, tabEnv)
+        local funcApi, err = load(f.readAll(), v, nil, tabEnv)
         f.close()
         if funcApi then
             local ok, err = pcall(funcApi)
@@ -170,11 +175,7 @@ _G.arcos = {
                 tAPI[k] =  v
             end
         end
-        local s = strsplit(api, "/")
-        local v = s[#s]
-        if string.sub(v, #v-3) == ".lua" then
-            v = v:sub(1, #v-4)
-        end 
+
         arcos.log("Loaded api " .. v)
         _G[v] = tAPI
     end,
