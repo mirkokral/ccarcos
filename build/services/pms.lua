@@ -85,6 +85,14 @@ while true do
     local e
     ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], teu, ceu, tic, uic}, monitor, ls)
     if e[1] == "timer" then
+        sleep(0.3)
+        local teufmt, teuext = formatNum(total)
+        teu.label = " " .. tostring(teufmt) .. teuext .. "fe "
+        teufmt, teuext = formatNum(currentPowerUsage)
+        ceu.label = " " .. tostring(teufmt) .. teuext .. "fe/t "
+        teufmt, teuext = formatNum(titemcount)
+        tic.label = " " .. tostring(teufmt) .. teuext .. " items "
+        uic.label = " " .. tostring(iup) .. "% "
         ls = true
     end
 end
