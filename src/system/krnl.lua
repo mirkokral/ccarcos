@@ -318,6 +318,37 @@ _G.devices = {
     end
 }
 
+_G.dev = {
+
+}
+setmetatable(_G.dev, {
+    __index = function (t, k)
+        local devBuf = {}
+        local n = ""
+        if k == "emodem" or k == "wmodem" or k == "modem" then
+            for _, p in __LEGACY.peripheral.find("modem") do
+                p["origName"] = __LEGACY.peripheral.getName(p)
+                if k == "emodem" and p.isEnder() then
+                    table.insert(devBuf, p)
+                end
+                if k == "wmodem" and p.isWireless() and not p.isEnder() then
+                    table.insert(devBuf, p)
+                end
+                if k == "modem" and not p.isEnder() and not p.isWireless() then
+                    table.insert(devBuf, p)
+                end
+            end
+        else
+            for _, p in __LEGACY.peripheral.find(k) do
+                
+                p["origName"] = __LEGACY.peripheral.getName(p)
+                table.insert(devBuf, p)
+            end
+        end
+        return devBuf
+    end
+})
+
 local i = 0
 
 while true do
