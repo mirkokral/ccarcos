@@ -326,7 +326,7 @@ setmetatable(_G.dev, {
         local devBuf = {}
         local n = ""
         if k == "emodem" or k == "wmodem" or k == "modem" then
-            for _, p in __LEGACY.peripheral.find("modem") do
+            for _, p in ipairs(__LEGACY.peripheral.find("modem")) do
                 p["origName"] = __LEGACY.peripheral.getName(p)
                 if k == "emodem" and p.isEnder() then
                     table.insert(devBuf, p)
@@ -339,7 +339,7 @@ setmetatable(_G.dev, {
                 end
             end
         else
-            for _, p in __LEGACY.peripheral.find(k) do
+            for _, p in ipairs(__LEGACY.peripheral.find(k)) do
                 
                 p["origName"] = __LEGACY.peripheral.getName(p)
                 table.insert(devBuf, p)
