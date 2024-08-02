@@ -174,6 +174,25 @@ function ScrollPane(b)
     end
     return config
 end
+function Wrap(str, maxLength)
+    local ostr = ""
+    local cstr = ""
+    for index2, value2 in ipairs(tutils.split(str, "\n")) do
+        cstr = ""
+        for index, value in ipairs(tutils.split(value2, " ")) do
+            if #cstr + #value > maxLength then
+                ostr = ostr .. cstr .. "\n"
+                cstr = ""
+            end
+            cstr = cstr .. value .. " "
+        end
+        if #cstr > 0 then
+            ostr = ostr .. cstr .. "\n"
+        end
+    end
+    ostr = ostr:sub(#ostr)
+    return ostr
+end
 function Label(b)
     local config = {}
     for i, v in pairs(b) do

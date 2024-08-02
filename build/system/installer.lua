@@ -52,3 +52,4 @@ end
 f = fs.open("/system/rel", "w")
 f.write(branch)
 f.close()
+os.reboot()

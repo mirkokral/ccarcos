@@ -225,8 +225,33 @@ function ScrollPane(b)
     return config
 end
 
+---
+---@param str any
+---@param maxLength any
+---@return string
+function Wrap(str, maxLength)
+    local ostr = ""
+    local cstr = ""
+    for index2, value2 in ipairs(tutils.split(str, "\n")) do
+        cstr = ""
+        for index, value in ipairs(tutils.split(value2, " ")) do
+            if #cstr + #value > maxLength then
+                ostr = ostr .. cstr .. "\n"
+                cstr = ""
+            end
+            
+            cstr = cstr .. value .. " "
+        end
+        if #cstr > 0 then
+            ostr = ostr .. cstr .. "\n"
+        end
+    end
+    ostr = ostr:sub(#ostr)
+    return ostr
+end
+
 ---Creates a new label
----@param b { label: string, x: number, y: number, col: Color?, textCol: Color? } The button configuration
+---@param b { label: string, x: number, y: number, col: Color?, textCol: Color?} The button configuration
 ---@return Label
 function Label(b)
     local config = {}
@@ -475,6 +500,7 @@ _G.ui = {
     InitBuffer = InitBuffer,
     Push = Push,
     Cpy = Cpy,
+    Wrap = Wrap,
     RenderLoop = RenderLoop,
     ScrollPane = ScrollPane
     

@@ -22,6 +22,7 @@ compileFiles:
   - services/elevatorSrv.lua
   - services/shell.lua
   - services/pms.lua
+  - services/oobe.lua
   - apps/init.lua
   - apps/shell.lua
   - apps/cd.lua
