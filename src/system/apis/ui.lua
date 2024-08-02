@@ -11,9 +11,9 @@ W, H = term.getSize()
 function InitBuffer()
     local buf = {}
     W, H = term.getSize()
-    for i = 1, W, 1 do
+    for i = 1, H, 1 do
         local tb = {}
-        for i = 1, H, 1 do
+        for i = 1, W, 1 do
             table.insert(tb, {col.white, col.black, " "})
         end
         table.insert(buf, tb)
@@ -28,7 +28,7 @@ end
 ---@param buf table Buffer
 local function blitAtPos(x, y, bgCol, forCol, text, buf)
     if x <= W and y <= H and y>0 and x>0 then
-        buf[x][y] = {bgCol, forCol, text}
+        buf[y][x] = {bgCol, forCol, text}
     end
 end
 ---@param x number The X position for the blit
@@ -301,14 +301,21 @@ end
 
 ---Pushes the buffer to the screen, finnalizing rendering. NOTE: this does not reinit the buffer so make sure to reinit it after you're done with pushing.
 ---@param buf table Buffer
----@param ox number Offset X of push
----@param oy number Offset Y of push
-function Push(buf, ox, oy)
-    for ix, vx in ipairs(buf) do
-        for iy, vy in ipairs(vx) do
-            oldBlitAtPos(ix+ox, iy+oy, vy[1], vy[2], vy[3])
+function Push(buf)
+    local blitText = ""
+    local blitColor = ""
+    local blitBgColor = ""
+    for ix, vy in ipairs(buf) do
+        for iy, vx in ipairs(vy) do
+            blitText = blitText .. vx[1]
+            blitColor = blitColor .. vx[2]
+            blitBgColor = blitBgColor .. vx[3]
         end
+        blitText = blitText .. "\n"
+        blitColor = blitColor .. "0"
+        blitBgColor = blitBgColor .. "0"
     end
+    term.blit(blitText, blitColor, blitBgColor)
 end
 
 ---Copies buf 1 to buf 2 with an offset
@@ -369,7 +376,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             local sbuf = InitBuffer()
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
-            Push(sbuf, 0, 0)
+            Push(sbuf)
             sleep(1/60)
         end        
     else
@@ -379,7 +386,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             local sbuf = InitBuffer()
             Cpy(buf2, sbuf, 0, 0)
             Cpy(buf, sbuf, ox * (dir and -1 or 1), 0)
-            Push(sbuf, 0, 0)
+            Push(sbuf)
             sleep(1/60)
         end
     end

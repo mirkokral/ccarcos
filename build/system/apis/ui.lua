@@ -8,9 +8,9 @@ W, H = term.getSize()
 function InitBuffer()
     local buf = {}
     W, H = term.getSize()
-    for i = 1, W, 1 do
+    for i = 1, H, 1 do
         local tb = {}
-        for i = 1, H, 1 do
+        for i = 1, W, 1 do
             table.insert(tb, {col.white, col.black, " "})
         end
         table.insert(buf, tb)
@@ -19,7 +19,7 @@ function InitBuffer()
 end
 local function blitAtPos(x, y, bgCol, forCol, text, buf)
     if x <= W and y <= H and y>0 and x>0 then
-        buf[x][y] = {bgCol, forCol, text}
+        buf[y][x] = {bgCol, forCol, text}
     end
 end
 local function oldBlitAtPos(x, y, bgCol, forCol, text)
@@ -231,12 +231,21 @@ function DirectRender(wr, ox, oy, buf)
         blitAtPos(v.x+ox, v.y+oy, v.bgCol, v.forCol, v.text, buf)
     end
 end
-function Push(buf, ox, oy)
-    for ix, vx in ipairs(buf) do
-        for iy, vy in ipairs(vx) do
-            oldBlitAtPos(ix+ox, iy+oy, vy[1], vy[2], vy[3])
+function Push(buf)
+    local blitText = ""
+    local blitColor = ""
+    local blitBgColor = ""
+    for ix, vy in ipairs(buf) do
+        for iy, vx in ipairs(vy) do
+            blitText = blitText .. vx[1]
+            blitColor = blitColor .. vx[2]
+            blitBgColor = blitBgColor .. vx[3]
         end
+        blitText = blitText .. "\n"
+        blitColor = blitColor .. "0"
+        blitBgColor = blitBgColor .. "0"
     end
+    term.blit(blitText, blitColor, blitBgColor)
 end
 function Cpy(buf1, buf2, ox, oy)
     for ix, vx in ipairs(buf1) do
@@ -277,7 +286,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             local sbuf = InitBuffer()
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
-            Push(sbuf, 0, 0)
+            Push(sbuf)
             sleep(1/60)
         end        
     else
@@ -287,7 +296,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop)
             local sbuf = InitBuffer()
             Cpy(buf2, sbuf, 0, 0)
             Cpy(buf, sbuf, ox * (dir and -1 or 1), 0)
-            Push(sbuf, 0, 0)
+            Push(sbuf)
             sleep(1/60)
         end
     end
