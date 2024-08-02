@@ -21,3 +21,6 @@ function fromBlit(hex)
     if not value then return nil end
     return 2 ^ value
 end
+function toBlit(h)
+    return __LEGACY.colors.toBlit(h)
+end

@@ -1,7 +1,7 @@
 ---@alias Color number
 
 -- C:Exc
----@type {white: Color, orange: Color, magenta: Color, lightBlue: Color, yellow: Color, lime: Color, pink: Color, gray: Color, lightGray: Color, cyan: Color, purple: Color, blue: Color, brown: Color, green: Color, red: Color, black: Color, fromBlit: fun(hex: string): Color}
+---@type {white: Color, orange: Color, magenta: Color, lightBlue: Color, yellow: Color, lime: Color, pink: Color, gray: Color, lightGray: Color, cyan: Color, purple: Color, blue: Color, brown: Color, green: Color, red: Color, black: Color, fromBlit: fun(hex: string): Color, toBlit: fun(c: Color): string}
 _G.col = {}
 -- C:End
 
@@ -80,4 +80,11 @@ function fromBlit(hex)
     if not value then return nil end
 
     return 2 ^ value
+end
+
+---Changes col to blit
+---@param h Color
+---@return string?
+function toBlit(h)
+    return __LEGACY.colors.toBlit(h)
 end
