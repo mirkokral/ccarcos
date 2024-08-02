@@ -311,7 +311,7 @@ function Push(buf)
             blitColor = blitColor .. col.toBlit(vx[2])
             blitText = blitText .. vx[3]
         end
-        term.setCursorPos(1, vy)
+        term.setCursorPos(1, ix)
         term.blit(blitText, blitColor, blitBgColor)
     end
 end
