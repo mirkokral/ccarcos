@@ -103,7 +103,7 @@ table.insert(
         {
             callBack = function ()
                 -- oy = oy + 1
-                ui.PageTransition(pages[1], pages[2], false, 1, true)
+                ui.PageTransition(pages[1], pages[2], false, 1, true, terma)
                 page = 2
                 return true
             end,
@@ -178,7 +178,7 @@ table.insert(
     ui.Button(
         {
             callBack = function ()
-                ui.PageTransition(pages[2], pages[1], false, 1, false)
+                ui.PageTransition(pages[2], pages[1], false, 1, false, terma)
                 page = 1
                 return true
             end,
@@ -191,9 +191,9 @@ table.insert(
     )
 )
 
-ui.RenderLoop(monSelPage, terma, true)
-while selecting do
-    if term then
-        ui.RenderLoop(monSelPage, terma)
+ui.RenderLoop(pages[page], terma, true)
+while true do
+    if terma then
+        ui.RenderLoop(pages[page], terma)
     end
 end
