@@ -31,9 +31,7 @@ tasking.createTask("Energy Detector", function ()
         
             currentPowerUsage = ed.getTransferRate()
             total = total + ed.getTransferRate() * 20
-            if nf then
-                nf.write(tostring(total))
-            end
+
             titemcount = me.getUsedItemStorage()
             iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
         end)
@@ -126,7 +124,11 @@ while rd do
     local e
     ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], teu, ceu, tic, uic}, monitor, ls)
     if e[1] == "timer" then
+        if nf then
+            nf.write(tostring(total))
+        end
         sleep(0.3)
+
         local teufmt, teuext = formatNum(total)
         teu.label = " " .. tostring(teufmt) .. teuext .. "fe "
         teufmt, teuext = formatNum(currentPowerUsage)
