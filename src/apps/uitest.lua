@@ -131,8 +131,8 @@ table.insert(
 )
 function rerender()
     local buf = ui.InitBuffer()
-    ui.RenderWidgets(pages[page], ox, oy, buf)
-    ui.Push(buf)
+    ui.RenderWidgets(pages[page], 0, 0, buf)
+    ui.Push(buf, ox, oy)
 end
 rerender()
 while true do
