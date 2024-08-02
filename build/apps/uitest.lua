@@ -1,7 +1,7 @@
 local monitors = dev.monitor
 local selecting = true
 local terma = term
-term.setPalleteColor(col.lightGray, 0xb5b5b5)
+term.setPaletteColor(col.lightGray, 0xb5b5b5)
 local selection = {
     ui.Button({
         label = "Local",
