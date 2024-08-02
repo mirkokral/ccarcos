@@ -20,15 +20,31 @@ if not nf then
     monitor.setTextColor(ui.UItheme.fg)
     monitor.clear()
     monitor.write(err)
+    while true do
+        sleep(5)
+    end
 end
 tasking.createTask("Energy Detector", function ()
     while true do
-        currentPowerUsage = ed.getTransferRate()
-        total = total + ed.getTransferRate() * 20
-        nf.write(tostring(total))
-        titemcount = me.getUsedItemStorage()
-        iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
+        local ok, err = pcall(function (...)
         
+            currentPowerUsage = ed.getTransferRate()
+            total = total + ed.getTransferRate() * 20
+            if nf then
+                nf.write(tostring(total))
+            end
+            titemcount = me.getUsedItemStorage()
+            iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
+        end)
+        if not ok then 
+            monitor.setBackgroundColor(ui.UItheme.bg)
+            monitor.setTextColor(ui.UItheme.fg)
+            monitor.clear()
+            monitor.write(err)
+            while true do
+                sleep(5)
+            end
+        end
         sleep(1)
     end    
 end, 1, "root", term, {})
