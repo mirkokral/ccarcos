@@ -3,7 +3,7 @@ UItheme = {
     fg = col.white,
     buttonBg = col.cyan,
     buttonFg = col.black,
-    lighterBg = col.gray,
+    lighterBg = col.lightGray,
     lightBg = col.lightGray
 }
 UIthemedefs = {

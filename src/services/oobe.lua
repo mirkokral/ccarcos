@@ -31,7 +31,7 @@ table.insert(pages[1],
         label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
         x = 2,
         y = 4,
-        textCol = col.gray
+        textCol = ui.UItheme.lighterBg
     })
 )
 table.insert(pages[1],
@@ -59,7 +59,7 @@ table.insert(pages[2], ui.Label({
     label = ui.Wrap("An init is the program that gets started on machine boot.", w-2),
     x = 2,
     y = 2,
-    textCol = col.gray
+    textCol = ui.UItheme.lighterBg
 }))
 -- Rendering
 local ls = true
