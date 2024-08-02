@@ -244,10 +244,6 @@ function Push(buf)
         term.setCursorPos(1, ix)
         term.blit(blitText, blitColor, blitBgColor)
     end
-    term.setCursorPos(1, 1)
-    term.setTextColor(col.white)
-    term.setBackgroundColor(col.black)
-    term.write("VX"..tostring(#buf))
 end
 function Cpy(buf1, buf2, ox, oy)
     for iy, vy in ipairs(buf1) do

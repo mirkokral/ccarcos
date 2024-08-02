@@ -314,10 +314,10 @@ function Push(buf)
         term.setCursorPos(1, ix)
         term.blit(blitText, blitColor, blitBgColor)
     end
-    term.setCursorPos(1, 1)
-    term.setTextColor(col.white)
-    term.setBackgroundColor(col.black)
-    term.write("VX"..tostring(#buf))
+    -- term.setCursorPos(1, 1)
+    -- term.setTextColor(col.white)
+    -- term.setBackgroundColor(col.black)
+    -- term.write("VX"..tostring(#buf))
 end
 
 ---Copies buf 1 to buf 2 with an offset
