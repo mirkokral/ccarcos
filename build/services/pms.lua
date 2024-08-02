@@ -36,12 +36,12 @@ tasking.createTask("Energy Detector", function ()
             iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
         end)
         if not ok then 
-            rd = false
-            monitor.setBackgroundColor(ui.UItheme.bg)
-            monitor.setTextColor(ui.UItheme.fg)
-            monitor.clear()
-            monitor.write(err)
             while true do
+                rd = false
+                monitor.setBackgroundColor(ui.UItheme.bg)
+                monitor.setTextColor(ui.UItheme.fg)
+                monitor.clear()
+                monitor.write(err)
                 sleep(5)
             end
         end
