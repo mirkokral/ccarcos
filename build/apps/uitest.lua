@@ -1,11 +1,12 @@
 local monitors = dev.monitor
 local selecting = true
 local terma = term
+term.setPalleteColor(col.lightGray, 0xb5b5b5)
 local selection = {
     ui.Button({
         label = "Local",
-        x = 0,
-        y = 0,
+        x = 1,
+        y = 1,
         callBack = function ()
             terma = term
             selecting = false
@@ -24,8 +25,8 @@ for _, i in ipairs(monitors) do
                 selecting = false
                 return false
             end,
-            x = 0,
-            y = 0,
+            x = 1,
+            y = 1,
             col = col.lightGray,
             textCol = col.black
         })
@@ -129,8 +130,8 @@ local lbls = {}
 for i = 1, 40, 1 do
     table.insert(lbls, ui.Label({
         label = "Hello world: " .. tostring(i),
-        x = 0,
-        y = 0
+        x = 1,
+        y = 1
     }))
 end
 pages[2] = {

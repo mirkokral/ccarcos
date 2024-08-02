@@ -59,8 +59,8 @@ function ScrollPane(b)
                 local rc = value.getDrawCommands()
                 for index, value in ipairs(rc) do
                     table.insert(dcBuf, {
-                        x = config.x + value.x,
-                        y = config.y + value.y - config.scroll + yo,
+                        x = config.x + value.x - 1,
+                        y = config.y + value.y - 1 - config.scroll + yo,
                         text = value.text,
                         bgCol = value.bgCol,
                         forCol = value.forCol
@@ -81,15 +81,15 @@ function ScrollPane(b)
         if config.showScrollBtns then
             table.insert(dcBuf, {
                 text = "^",
-                forCol = UItheme.bg,
-                bgCol = UItheme.fg,
+                forCol = config.col,
+                bgCol = UItheme.bg,
                 x = config.x + config.width,
                 y = config.y
             })
             table.insert(dcBuf, {
                 text = "v",
-                forCol = UItheme.bg,
-                bgCol = UItheme.fg,
+                forCol = config.col,
+                bgCol = UItheme.bg,
                 x = config.x + config.width,
                 y = config.y + 1
             })
@@ -97,8 +97,8 @@ function ScrollPane(b)
         for i = (config.showScrollBtns and 2 or 0), config.height-1, 1 do
             table.insert(dcBuf, {
                 text = "|",
-                forCol = UItheme.bg,
-                bgCol = UItheme.fg,
+                forCol = config.col,
+                bgCol = UItheme.bg,
                 x = config.x + config.width,
                 y = config.y + i
             }) 
