@@ -1,3 +1,21 @@
+
+term.setPaletteColor(col.white, 236/255, 239/255, 244/255)
+term.setPaletteColor(col.orange, 0/255, 0/255, 0/255)
+term.setPaletteColor(col.magenta, 180/255, 142/255, 173/255)
+term.setPaletteColor(col.lightBlue, 0/255, 0/255, 0/255)
+term.setPaletteColor(col.yellow, 235/255, 203/255, 139/255)
+term.setPaletteColor(col.lime, 163/255, 190/255, 140/255)
+term.setPaletteColor(col.pink, 0/255, 0/255, 0/255)
+term.setPaletteColor(col.gray, 174/255, 179/255, 187/255)
+term.setPaletteColor(col.lightGray, 216/255, 222/255, 233/255)
+term.setPaletteColor(col.cyan, 136/255, 192/255, 208/255)
+term.setPaletteColor(col.purple, 0/255, 0/255, 0/255)
+term.setPaletteColor(col.blue, 129/255, 161/255, 193/255)
+term.setPaletteColor(col.brown, 0/255, 0/255, 0/255)
+term.setPaletteColor(col.green, 163/255, 190/255, 140/255)
+term.setPaletteColor(col.red, 191/255, 97/255, 106/255)
+term.setPaletteColor(col.black, 59/255, 66/255, 82/255)
+
 local live = ({ ... })[1] == "live"
 if not live then
   print("Terminate to enter shell or wait 1 second to continue boot")
