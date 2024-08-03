@@ -69,25 +69,28 @@ table.insert(pages[3], ui.Label({
 }))
 local is = {}
 for index, value in ipairs(fs.ls("/services/")) do
-    table.insert(is, ui.Button{
-        callBack = function ()
-            local f, e = fs.open("/services/enabled", "w")
-            if not f then
-                pages[1][2].label = tostring(e)
-                ui.PageTransition(pages[3], pages[1], false, 1, true, term)
-                page = 1
+    if value:sub(#value-3) == ".lua" and value ~= "oobe.lua" then
+        
+        table.insert(is, ui.Button{
+            callBack = function ()
+                local f, e = fs.open("/services/enabled", "w")
+                if not f then
+                    pages[1][2].label = tostring(e)
+                    ui.PageTransition(pages[3], pages[1], false, 1, true, term)
+                    page = 1
+                    return true
+                end
+                f.write("o " .. value)
+                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
+                page = 4
                 return true
-            end
-            f.write("o " .. value)
-            ui.PageTransition(pages[3], pages[4], false, 1, true, term)
-            page = 4
-            return true
-        end,
-        x = 1, y = 1,
-        col = ui.UItheme.lighterBg,
-        textCol = ui.UItheme.bg,
-        label = value:sub(#value-3)
-    })
+            end,
+            x = 1, y = 1,
+            col = ui.UItheme.lighterBg,
+            textCol = ui.UItheme.bg,
+            label = value:sub(1, #value-3)
+        })
+    end
 end
 table.insert(pages[3], ui.ScrollPane({
     x = 2,
