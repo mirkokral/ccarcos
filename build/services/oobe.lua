@@ -97,6 +97,8 @@ table.insert(pages[3], ui.ScrollPane({
     showScrollBtns = false
 }))
 pages[4] = {
+}
+pages[5] = {
     ui.Label{
         label = "All finished!",
         textCol = col.green,
