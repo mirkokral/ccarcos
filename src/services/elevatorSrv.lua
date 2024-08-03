@@ -1,8 +1,8 @@
 local currentFloor = -1
 local doorWaitFloor = 8
 local queue = {}
-local enderModem = devices.get("top")
-local wiredModem = devices.get("right")
+local enderModem = dev.wmodem[1]
+local wiredModem = dev.modem[1]
 wiredModem.open(712)
 wiredModem.open(476)
 enderModem.open(476)
