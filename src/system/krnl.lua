@@ -419,7 +419,7 @@ tasking.createTask("Init", function()
     arcos.log("Starting Init")
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
-        if not ok then
+        if err then
             apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "422")
         else
             apiUtils.kernelPanic("Init Died with no errors.", "Kernel", "422")
