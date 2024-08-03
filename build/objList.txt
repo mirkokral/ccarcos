@@ -4,6 +4,8 @@ d>services
 d>temporary
 d>user
 d>apps
+d>config
+d>config/apps
 f>system/bootloader.lua
 f>system/krnl.lua
 f>system/installer.lua

@@ -7,6 +7,8 @@ mkDirs:
   - temporary
   - user
   - apps
+  - config
+  - config/apps
 compileFiles:
   - system/bootloader.lua
   - system/krnl.lua

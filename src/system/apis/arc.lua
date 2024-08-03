@@ -104,6 +104,7 @@ function install(package)
     checkForCD()
     local repo = getRepo()
     local latestCommit = getLatestCommit()
+    local buildedpl = ""
     if not repo[package] then
         error("Package not found!")
     end
@@ -121,14 +122,20 @@ function install(package)
     local ifx = indexFile.readAll()
     for index, value in ipairs(split(ifx, "\n")) do
         if value:sub(1, 1) == "d" then
-            __LEGACY.fs.makeDir("/" .. value:sub(3))
+            if not __LEGACY.fs.exists("/" .. value:sub(3)) then
+                __LEGACY.fs.makeDir("/" .. value:sub(3))
+                buildedpl = buildedpl .. value .. "\n"
+            end
         elseif value:sub(1, 1) == "f" then
-            local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. value:sub(3))
-            local tfh = __LEGACY.fs.open("/" .. value:sub(3), "w")
-            -- print(value:sub(3))
-            tfh.write(file.readAll())
-            tfh.close()
-            file.close()
+            if not __LEGACY.fs.exists("/" .. value:sub(3)) then
+                local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. value:sub(3))
+                local tfh = __LEGACY.fs.open("/" .. value:sub(3), "w")
+                -- print(value:sub(3))
+                tfh.write(file.readAll())
+                tfh.close()
+                file.close()
+                buildedpl = buildedpl .. value .. "\n"
+            end
         end
     end
     indexFile.close()
@@ -149,6 +156,7 @@ function uninstall(package)
     local f = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "r")
     for value in f.readLine do
         if value == nil then break end
+        
         table.insert(toDelete, 1, "/" .. value:sub(3))
     end
     for index, value in ipairs(toDelete) do
