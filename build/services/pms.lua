@@ -114,10 +114,12 @@ while rd do
             nf.close()
         end
         sleep(0.1)
-        currentPowerUsage = ed.getTransferRate()
-        total = total + ed.getTransferRate() * 10
-        titemcount = me.getUsedItemStorage()
-        iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
+        pcall(function (...)
+            currentPowerUsage = ed.getTransferRate()
+            total = total + ed.getTransferRate() * 10
+            titemcount = me.getUsedItemStorage()
+            iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
+        end)
         local s = tutils.formatTime(arcos.time("ingame"))
         time.x = ({ monitor.getSize() })[1]-1-#s
         time.label = s
