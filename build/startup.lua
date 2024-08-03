@@ -145,7 +145,9 @@ function _G.term.native()
         local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
         local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
         print(err)
-        while true do coroutine.yield() end
+        print("Press any key to continue")
+        __LEGACY.os.pullEvent("key")
+        __LEGACY.os.reboot()
     end
     local oldug = {}
     for k, v in pairs(_G) do
