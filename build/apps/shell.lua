@@ -5,14 +5,30 @@ confile.close()
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
     local cmd = nil
-    for i, v in ipairs(conf["path"]) do
-        for i, s in ipairs(fs.ls(v)) do
-            local t = s
-            if t:sub(#t-3, #t) == ".lua" then
-                t = t:sub(1, #t-4)
-            end
-            if t == a1 then
-                cmd = v .. "/" .. s
+    if a1:sub(1, 1) == "/" then
+        if fs.exists(a1) then
+            cmd = a1
+        else
+            printError("File not found")
+            return false
+        end
+    elseif a1:sub(1, 1) == "./" then
+        if fs.resolve(a1, false)[1] then
+            cmd = fs.resolve(a1, false)[1]
+        else
+            printError("File not found")
+            return false
+        end
+    else
+        for i, v in ipairs(conf["path"]) do
+            for i, s in ipairs(fs.ls(v)) do
+                local t = s
+                if t:sub(#t-3, #t) == ".lua" then
+                    t = t:sub(1, #t-4)
+                end
+                if t == a1 then
+                    cmd = v .. "/" .. s
+                end
             end
         end
     end
