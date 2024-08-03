@@ -4,7 +4,6 @@ local conf = tutils.dJSON(confile.read())
 confile.close()
 local p = fs.open("/rom/modules/main/cc/pretty.lua", "r")
 local pretty = load(p.read(), "pretty", nil, _G)()
-p.close()
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
     local cmd = nil
