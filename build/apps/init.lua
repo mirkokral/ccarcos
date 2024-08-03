@@ -1,5 +1,5 @@
 local servFile, err = fs.open("/services/enabled", "r")
-if not err then
+if err then
     printError(err)
     error()
 end
