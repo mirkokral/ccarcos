@@ -131,7 +131,7 @@ function uninstall(package)
     end
     local toDelete = {"/config/arc/" .. package .. ".uninstallIndex", "/config/arc/" .. package .. ".meta.json"}
     local f = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "r")
-    for index, value in f.readLine do
+    for value in f.readLine do
         if value == nil then break end
         table.insert(toDelete, 1, "/" .. value:sub(3))
     end
