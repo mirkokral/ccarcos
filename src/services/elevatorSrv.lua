@@ -70,7 +70,7 @@ tasking.createTask("PDtask", function ()
         end
         sleep(1)
     end
-end)
+end, 1, "root", term, {})
 while true do
     local event, side, channel, repChannel, msg, dist = arcos.ev("modem_message")
     if channel == 476 and not contains(queue, tonumber(msg+1)) then
