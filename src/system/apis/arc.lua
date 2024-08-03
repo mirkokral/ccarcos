@@ -143,7 +143,7 @@ function install(package)
     insf.write(__LEGACY.textutils.serializeJSON(pkg))
     insf.close()
     local uinsf = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "w")
-    uinsf.write(ifx)
+    uinsf.write(buildedpl)
     uinsf.close()
 end
 
