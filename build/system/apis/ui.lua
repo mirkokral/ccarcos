@@ -199,6 +199,10 @@ function Wrap(str, maxLength)
     environ.ostr = environ.ostr:sub(#environ.ostr)
     return environ.ostr
 end
+function TextInput(b)
+    local config = Label(b)
+    return config
+end
 function Label(b)
     local config = {}
     for i, v in pairs(b) do

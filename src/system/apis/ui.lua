@@ -87,6 +87,9 @@ end
 ---@field scroll number How much scrolled
 ---@field getTotalHeight fun() : number Gets the total height of all the elements
 
+---@class TextInput: Label
+---@field curpos number
+
 ---Create a new scroll pane.
 ---@param b { width: number, height: number, x: number, y: number, col: Color?, children: Widget[], showScrollBtns: boolean?,  }
 ---@return ScrollPane
@@ -229,6 +232,8 @@ function ScrollPane(b)
     return config
 end
 
+
+
 ---
 ---@param str any
 ---@param maxLength any
@@ -256,6 +261,18 @@ function Wrap(str, maxLength)
     return environ.ostr
 end
 
+---Creates a new text input
+---@param b { label: string, x: number, y: number, col: Color?, textCol: Color?} The button configuration
+---@return TextInput
+function TextInput(b)
+    ---@type TextInput
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    local config = Label(b)
+
+    
+
+    return config
+end
 ---Creates a new label
 ---@param b { label: string, x: number, y: number, col: Color?, textCol: Color?} The button configuration
 ---@return Label
