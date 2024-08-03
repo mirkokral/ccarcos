@@ -307,6 +307,7 @@ tasking.createTask("Init", function()
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "173")
 end, 1, "root", __LEGACY.term, {})
+arcos.startTimer(0.2)
 while true do
     if #tasks > 0 then
         ev = { os.pullEventRaw() }
