@@ -20,10 +20,11 @@ elseif cmd == "install" then
     term.setTextColor(col.green)
     print(table.concat(tobeinstalled, " "))
     term.setTextColor(col.white)
-    write("Do you want to proceed? [y/n] ")
+    print("Do you want to proceed? [y/n] ")
     local out = ({ arcos.ev("char") })[2]
     if out == "y" then
         for index, value in ipairs(tobeinstalled) do
+            print("(" .. index .. "/" .. #tobeinstalled .. ") " .. value)
             arc.install(value)
         end
     else
