@@ -61,7 +61,7 @@ _G.arcos = {
     ---Reboots the system
     reboot = function ()
         __LEGACY.os.reboot()
-    end
+    end,
     ---Logs a string
     ---@param txt string String to log
     log = function(txt)
