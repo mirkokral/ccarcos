@@ -201,7 +201,7 @@ function Wrap(str, maxLength)
 end
 function TextInput(b)
     local ca = b
-    if not ca["col"] then ca["col"] = 
+    if not ca["col"] then ca["col"] = col.gray end
     local config = Label(ca)
     return config
 end
