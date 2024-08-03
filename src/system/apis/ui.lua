@@ -181,7 +181,7 @@ function ScrollPane(b)
         if ce[1] == "click" then
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
-                    value.onEvent({"click", ce[2], ce[3] - config.x, ce[4] - config.y})
+                    value.onEvent({"click", ce[2], ce[3] - config.x+1, ce[4] - config.y+1 + config.scroll + index-1})
                 end
             end
             if config.showScrollBtns then

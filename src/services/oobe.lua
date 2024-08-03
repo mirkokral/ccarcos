@@ -88,7 +88,7 @@ for index, value in ipairs(fs.ls("/services/")) do
             x = 1, y = 1,
             col = ui.UItheme.lighterBg,
             textCol = ui.UItheme.bg,
-            label = value:sub(1, #value-3)
+            label = value:sub(1, #value-4)
         })
     end
 end
