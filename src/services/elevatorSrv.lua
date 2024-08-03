@@ -6,6 +6,16 @@ local wiredModem = dev.modem[1]
 wiredModem.open(712)
 wiredModem.open(476)
 enderModem.open(476)
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function contains(table, element)
     for _, value in pairs(table) do
         if value == element then
@@ -52,6 +62,15 @@ tasking.createTask("Queue task", function()
         end
     end
 end, 1, "root", term)
+tasking.createTask("PDtask", function ()
+    local pd = dev.playerDetector[1]
+    while true do
+        if pd.isPlayersInCubic(3, 6, 3) and not currentFloor == 8 and not has_value(queue, 8)  then
+            table.insert(queue, 8)
+        end
+        sleep(1)
+    end
+end)
 while true do
     local event, side, channel, repChannel, msg, dist = arcos.ev("modem_message")
     if channel == 476 and not contains(queue, tonumber(msg+1)) then
