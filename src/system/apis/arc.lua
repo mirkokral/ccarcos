@@ -4,7 +4,19 @@ local methods = {
     OPTIONS = true, PUT = true, DELETE = true,
     PATCH = true, TRACE = true,
 }
-
+local function split(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    if t == {} then
+        t = { inputstr }
+    end
+    return t
+end
 local function check_key(options, key, ty, opt)
     local value = options[key]
     local valueTy = type(value)
@@ -79,8 +91,50 @@ function fetch()
     f.close()
 end
 
+---Gets the repo data
+---@return table
+function getRepo()
+    local f = __LEGACY.fs.open("/config/arc/repo.json", "r")
+    local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
+    f.close()
+    return uj
+end
+
+function install(package)
+    checkForCD()
+    local repo = getRepo()
+    local latestCommit = getLatestCommit()
+    if not repo[package] then
+        error("Package not found!")
+    end
+    local pkg = repo[package]
+    local indexFile = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/index")
+    local ifx = indexFile.readAll()
+    for index, value in ipairs(split(ifx, "\n")) do
+        if value:sub(1, 1) == "d" then
+            __LEGACY.fs.makeDir("/" .. value:sub(3))
+        elseif value:sub(1, 1) == "f" then
+            local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. value:sub(3))
+            local tfh = __LEGACY.fs.open("/" .. value:sub(3), "w")
+            -- print(value:sub(3))
+            tfh.write(file.readAll())
+            tfh.close()
+            file.close()
+        end
+    end
+    indexFile.close()
+    local insf = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json", "w")
+    insf.write(__LEGACY.textutils.serializeJSON(pkg))
+    insf.close()
+    local uinsf = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "w")
+    uinsf.write(ifx)
+    uinsf.close()
+end
+
 -- C:Exc
 _G.arc = {
-    fetch = fetch
+    fetch = fetch,
+    getRepo = getRepo,
+    install = install
 }
 -- C:End
