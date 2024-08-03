@@ -60,8 +60,9 @@ end, 1, "root", term)
 tasking.createTask("PDtask", function ()
     local pd = dev.playerDetector[1]
     while true do
-        if pd.isPlayersInCubic(3, 6, 3) and not currentFloor == 8 and not has_value(queue, 8)  then
+        if pd.isPlayersInCubic(3, 8, 3) and currentFloor ~= 8 and not has_value(queue, 8)  then
             table.insert(queue, 8)
+            print("Sending")
         end
         sleep(1)
     end

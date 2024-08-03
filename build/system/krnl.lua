@@ -191,6 +191,7 @@ _G.tasking = {
             env = env,
             paused = false
         })
+        sleep(0.1) -- Yield so that the task can actually start
         return #tasks
     end,
     killTask = function(pid)

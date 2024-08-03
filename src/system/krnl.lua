@@ -278,6 +278,7 @@ _G.tasking = {
             env = env,
             paused = false
         })
+        sleep(0.1) -- Yield so that the task can actually start
         return #tasks
     end,
     ---Kills task. Can only be current user task if not root
