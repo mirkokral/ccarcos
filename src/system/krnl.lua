@@ -58,7 +58,10 @@ _G.apiUtils = {
 
 }
 _G.arcos = {
-
+    ---Reboots the system
+    reboot = function ()
+        __LEGACY.os.reboot()
+    end
     ---Logs a string
     ---@param txt string String to log
     log = function(txt)

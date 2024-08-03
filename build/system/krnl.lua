@@ -48,6 +48,9 @@ _G.apiUtils = {
     end
 }
 _G.arcos = {
+    reboot = function ()
+        __LEGACY.os.reboot()
+    end
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then

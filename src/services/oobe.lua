@@ -71,11 +71,21 @@ local is = {}
 for index, value in ipairs(fs.ls("/services/")) do
     table.insert(is, ui.Button{
         callBack = function ()
-            local f = 
+            local f, e = fs.open("/services/enabled", "w")
+            if not f then
+                pages[1][2].label = tostring(e)
+                ui.PageTransition(pages[3], pages[1], false, 1, true, term)
+                page = 1
+                return true
+            end
+            f.write("o " .. value)
             ui.PageTransition(pages[3], pages[4], false, 1, true, term)
             page = 3
             return true
         end,
+        x = 1, y = 1,
+        col = ui.UItheme.lighterBg,
+        textCol = ui.UItheme.bg,
         label = value:sub(#value-3)
     })
 end
@@ -88,6 +98,24 @@ table.insert(pages[3], ui.ScrollPane({
     width = w - 2,
     showScrollBtns = false
 }))
+-- Page 3: Finish
+pages[4] = {
+    ui.Label{
+        label = "All finished!",
+        textCol = col.green,
+        x = 2,
+        y = 2
+    },
+    ui.Button{
+        callBack = function ()
+            arcos.reboot()
+            return true
+        end,
+        label = " Reboot ",
+        x = w-1-8,
+        y = h-1
+    }
+}
 -- Rendering
 local ls = true
 while true do
