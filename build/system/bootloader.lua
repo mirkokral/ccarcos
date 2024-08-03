@@ -16,7 +16,7 @@ function main()
     __LEGACY.term.setBackgroundColor(__LEGACY.colors[config["theme"]["bg"]])
     __LEGACY.term.clear()
     __LEGACY.term.setCursorPos(1, 1)
-    local args = ""
+    local args = config["defargs"] or ""
     if not config["skipPrompt"] then
         write("krnl: ")
         args = read()

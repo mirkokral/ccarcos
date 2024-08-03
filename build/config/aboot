@@ -3,5 +3,6 @@
         "fg": "white",
         "bg": "black"
     },
-    "skipPrompt": true
+    "skipPrompt": true,
+    "defargs": ""
 }
