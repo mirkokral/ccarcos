@@ -15,7 +15,7 @@ local function run(a1, ...)
             printError("File not found")
             return false
         end
-    elseif a1:sub(1, 1) == "./" then
+    elseif a1:sub(1, 2) == "./" then
         if fs.resolve(a1, false)[1] then
             cmd = fs.resolve(a1, false)[1]
         else
