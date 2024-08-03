@@ -56,7 +56,7 @@ local function run(a1, ...)
     end
     return ok, err
 end
-
+local history = {}
 while true
 do
     local cTask = arcos.getCurrentTask()
@@ -81,7 +81,8 @@ do
     write(" ")
     write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
     term.setTextColor(col.white)
-    local cmd = read()
+    local cmd = read(nil, history)
+    table.insert(history, cmd)
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
     if not r then
         pcall(printError, k)
