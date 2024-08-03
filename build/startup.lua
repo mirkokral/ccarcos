@@ -16,8 +16,6 @@ term.setPaletteColor(colors.red, 191/255, 97/255, 106/255)
 term.setPaletteColor(colors.black, 59/255, 66/255, 82/255)
 local live = ({ ... })[1] == "live"
 if not live then
-  print("Terminate to enter shell or wait 1 second to continue boot")
-  sleep(1)
   local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
   if f then
     local branch = textutils.unserialiseJSON(f.readAll())["sha"]

@@ -1,4 +1,8 @@
-local servFile = fs.open("/services/enabled", "r")
+local servFile, err = fs.open("/services/enabled", "r")
+if not err then
+    printError(err)
+    error()
+end
 for i in servFile.readLine do
     if i:sub(1, 1) ~= "#" then 
         arcos.log("Starting service: " .. i)
