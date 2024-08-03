@@ -14,15 +14,6 @@ else
     total = 0
 end
 monitor.setTextScale(0.5)
-tasking.createTask("Energy Detector", function ()
-    while true do
-        currentPowerUsage = ed.getTransferRate()
-        total = total + ed.getTransferRate() * 20
-        titemcount = me.getUsedItemStorage()
-        iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
-        sleep(0.5)
-    end    
-end, 1, "root", term, {})
 function formatNum(number)
     local on = number
     local unitprefix = ""
@@ -70,25 +61,25 @@ local ceu = ui.Label({
     label = " 0fe/t ",
     x = 23,
     y = 4,
-    col = ui.UItheme.lighterBg,
+    col = ui.UItheme.lightBg,
 })
 local teu = ui.Label({
     label = " 0fe ",
     x = 23,
     y = 6,
-    col = ui.UItheme.lighterBg,
+    col = ui.UItheme.lightBg,
 })
 local tic = ui.Label({
     label = " 0 items ",
     x = 23,
     y = 8,
-    col = ui.UItheme.lighterBg,
+    col = ui.UItheme.lightBg,
 })
 local uic = ui.Label({
     label = " 0% ",
     x = 23,
     y = 10,
-    col = ui.UItheme.lighterBg,
+    col = ui.UItheme.lightBg,
 })
 local time = ui.Label({
     label = "00:00",
@@ -112,16 +103,21 @@ local btn2 = ui.Button({
     end
 })
 local ls = false
+local tid = arcos.startTimer(0.5)
 while rd do
     local e
     ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic, btn1, btn2}, monitor, ls)
-    if e[1] == "timer" then
+    if e[1] == "timer" and e[2] == tid then
         local nf, err = fs.open("/config/pmst", "w")
         if nf then
             nf.write(tostring(total))
             nf.close()
         end
         sleep(0.1)
+        currentPowerUsage = ed.getTransferRate()
+        total = total + ed.getTransferRate() * 10
+        titemcount = me.getUsedItemStorage()
+        iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
         local s = tutils.formatTime(arcos.time("ingame"))
         time.x = ({ monitor.getSize() })[1]-1-#s
         time.label = s
@@ -133,5 +129,6 @@ while rd do
         tic.label = " " .. tostring(teufmt) .. teuext .. " items "
         uic.label = " " .. tostring(iup) .. "% "
         ls = true
+        tid = arcos.startTimer(0.5)
     end
 end

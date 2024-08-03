@@ -54,7 +54,7 @@ end
 
 ---Formats time
 ---@param t number
----@param tfhour boolean
+---@param tfhour boolean?
 ---@return string
 function formatTime(t, tfhour)
     return __LEGACY.textutils.formatTime(t, tfhour)

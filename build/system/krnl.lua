@@ -7,7 +7,8 @@ local permmatrix
 local config = {
     forceNice = nil,
     init = "/apps/init.lua",
-    printLogToConsole = false
+    printLogToConsole = false,
+    telemetry = true
 }
 local function recursiveRemove(r)
     for _, i in ipairs(__LEGACY.fs.list(r)) do
@@ -275,6 +276,9 @@ while true do
     if arg == "init" then
         i = i + 1
         config["init"] = args[i]
+    end
+    if arg == "noTel" then
+        config.telemetry = false
     end
     if arg == "printLog" then
         config["printLogToConsole"] = true
