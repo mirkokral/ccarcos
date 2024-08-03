@@ -192,15 +192,15 @@ table.insert(
     )
 )
 if terma == term then
-    ui.PageTransition(monSelPage, pages[page], true, 1, true, terma)
+    ui.PageTransition(monSelPage, pages[page], false, 1, true, terma)
 else
     ui.PageTransition(monSelPage, {
         ui.Label{
             label = "Test is being displayed on monitor.",
-            x = 1,
-            y = 1
+            x = 2,
+            y = 2
         }
-    }, true, 1, true, term)
+    }, false, 1, true, term)
 end
 local ls = false
 ui.RenderLoop(pages[page], terma, true)
