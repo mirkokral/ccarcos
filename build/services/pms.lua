@@ -103,7 +103,7 @@ local btn2 = ui.Button({
     end
 })
 local ls = false
-local tid = arcos.startTimer(0.5)
+local tid = arcos.startTimer(2.5)
 while rd do
     local e
     ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic, btn1, btn2}, monitor, ls)
