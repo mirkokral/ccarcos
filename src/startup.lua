@@ -1,20 +1,25 @@
-term.setPaletteColor(colors.white, 236 / 255, 239 / 255, 244 / 255)
-term.setPaletteColor(colors.orange, 0 / 255, 0 / 255, 0 / 255)
-term.setPaletteColor(colors.magenta, 180 / 255, 142 / 255, 173 / 255)
-term.setPaletteColor(colors.lightBlue, 0 / 255, 0 / 255, 0 / 255)
-term.setPaletteColor(colors.yellow, 235 / 255, 203 / 255, 139 / 255)
-term.setPaletteColor(colors.lime, 163 / 255, 190 / 255, 140 / 255)
-term.setPaletteColor(colors.pink, 0 / 255, 0 / 255, 0 / 255)
-term.setPaletteColor(colors.gray, 174 / 255, 179 / 255, 187 / 255)
-term.setPaletteColor(colors.lightGray, 216 / 255, 222 / 255, 233 / 255)
-term.setPaletteColor(colors.cyan, 136 / 255, 192 / 255, 208 / 255)
-term.setPaletteColor(colors.purple, 0 / 255, 0 / 255, 0 / 255)
-term.setPaletteColor(colors.blue, 129 / 255, 161 / 255, 193 / 255)
-term.setPaletteColor(colors.brown, 0 / 255, 0 / 255, 0 / 255)
-term.setPaletteColor(colors.green, 163 / 255, 190 / 255, 140 / 255)
-term.setPaletteColor(colors.red, 191 / 255, 97 / 255, 106 / 255)
-term.setPaletteColor(colors.black, 59 / 255, 66 / 255, 82 / 255)
 
+local UIthemedefs = {
+}
+UIthemedefs[col.white] = {236, 239, 244}
+UIthemedefs[col.orange] = {0, 0, 0}
+UIthemedefs[col.magenta] = {180, 142, 173}
+UIthemedefs[col.lightBlue] = {0, 0, 0}
+UIthemedefs[col.yellow] = {235, 203, 139}
+UIthemedefs[col.lime] = {163, 190, 140}
+UIthemedefs[col.pink] = {0, 0, 0}
+UIthemedefs[col.gray] = {76, 86, 106}
+UIthemedefs[col.lightGray] = {216, 222, 233}
+UIthemedefs[col.cyan] = {136, 192, 208}
+UIthemedefs[col.purple] = {0, 0, 0}
+UIthemedefs[col.blue] = {129, 161, 193}
+UIthemedefs[col.brown] = {0, 0, 0}
+UIthemedefs[col.green] = {163, 190, 140}
+UIthemedefs[col.red] = {191, 97, 106}
+UIthemedefs[col.black] = {59, 66, 82}
+for index, value in pairs(UIthemedefs) do
+    term.setPaletteColor(index, value[1]/255, value[2]/255, value[3]/255) 
+end
 local live = ({ ... })[1] == "live"
 if not live then
   -- print("Terminate to enter shell or wait 1 second to continue boot")

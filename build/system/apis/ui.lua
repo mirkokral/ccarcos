@@ -6,7 +6,7 @@ UItheme = {
     lighterBg = col.gray,
     lightBg = col.lightGray
 }
-UIthemedefs = {
+local UIthemedefs = {
 }
 UIthemedefs[col.white] = {236, 239, 244}
 UIthemedefs[col.orange] = {0, 0, 0}
@@ -24,6 +24,9 @@ UIthemedefs[col.brown] = {0, 0, 0}
 UIthemedefs[col.green] = {163, 190, 140}
 UIthemedefs[col.red] = {191, 97, 106}
 UIthemedefs[col.black] = {59, 66, 82}
+for index, value in pairs(UIthemedefs) do
+    term.setPaletteColor(index, value[1]/255, value[2]/255, value[3]/255) 
+end
 W, H = term.getSize()
 function InitBuffer(mon)
     for index, value in pairs(UIthemedefs) do
