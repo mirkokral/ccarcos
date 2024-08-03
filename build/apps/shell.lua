@@ -2,7 +2,6 @@ print("arcos shell")
 local confile = fs.open("/config/arcshell", "r")
 local conf = tutils.dJSON(confile.read())
 confile.close()
-local pretty = require("cc.pretty")
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
     local cmd = nil
@@ -47,7 +46,7 @@ local function run(a1, ...)
         if not ok then
             printError(err)
         else
-            print(pretty.pretty(err))
+            print(tutils.s(err))
         end
         return ok
     end
