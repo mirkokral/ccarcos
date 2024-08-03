@@ -130,7 +130,7 @@ function uninstall(package)
         error("Package not installed.")
     end
     local toDelete = {"/config/arc/" .. package .. ".uninstallIndex", "/config/arc/" .. package .. ".meta.json"}
-    local f = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex")
+    local f = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "r")
     for index, value in f.readLine do
         table.insert(toDelete, 1, "/" .. value:sub(3))
     end
