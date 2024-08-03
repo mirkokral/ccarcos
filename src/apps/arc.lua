@@ -20,6 +20,7 @@ elseif cmd == "install" then
     term.setTextColor(col.green)
     print(table.concat(tobeinstalled, " "))
     term.setTextColor(col.white)
+    print()
     print("Do you want to proceed? [y/n] ")
     local out = ({ arcos.ev("char") })[2]
     if out == "y" then
@@ -41,6 +42,7 @@ elseif cmd == "uninstall" then
     print()
     term.setTextColor(col.red)
     print(table.concat(args, " "))
+    print()
     term.setTextColor(col.white)
     print("Do you want to proceed? [y/n] ")
     local out = ({ arcos.ev("char") })[2]
@@ -49,7 +51,7 @@ elseif cmd == "uninstall" then
             arc.uninstall(value)
         end
     else
-        print("Installation Aborted.")
+        print("Unistallation Aborted.")
     end
 else
     printError("No command.")
