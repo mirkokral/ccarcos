@@ -1,7 +1,7 @@
 ---@alias Color number
 
 -- C:Exc
----@type {white: Color, orange: Color, magenta: Color, lightBlue: Color, yellow: Color, lime: Color, pink: Color, gray: Color, lightGray: Color, cyan: Color, purple: Color, blue: Color, brown: Color, green: Color, red: Color, black: Color, fromBlit: fun(hex: string): Color, toBlit: fun(c: Color): string}
+---@type {white: Color, orange: Color, magenta: Color, lightBlue: Color, yellow: Color, lime: Color, pink: Color, gray: Color, lightGray: Color, cyan: Color, purple: Color, blue: Color, brown: Color, green: Color, red: Color, black: Color, fromBlit: fun(hex: string): Color; toBlit: fun(c: Color): string}
 _G.col = {}
 -- C:End
 
@@ -73,7 +73,7 @@ black = 0x8000
 ---@param hex string
 ---@return Color?
 function fromBlit(hex)
-    assert(hex == "string")
+    assert(type(hex) == "string")
 
     if #hex ~= 1 then return nil end
     local value = tonumber(hex, 16)

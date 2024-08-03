@@ -131,6 +131,17 @@ function ScrollPane(b)
         end
         return dcBuf
     end
+    config.renderFinish = function (ox, oy)
+        local yo = 0
+        for index, value in ipairs(config.children) do
+            if value.y + yo - config.scroll + value.getWH()[1] > 0 and value.y + yo - config.scroll <= config.height then
+                if value.renderFinish then
+                    value.renderFinish(config.x+ox, config.y+oy-config.scroll)
+                end
+            end
+            yo = yo + value.getWH()[2]
+        end
+    end
     config.onEvent = function (e)
         local ce = e
         if ce[1] == "click" then
@@ -206,6 +217,9 @@ function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
     local config = Label(ca)
+    config.focus = false
+    config.onEvent = function (e)
+    end
     return config
 end
 function Label(b)

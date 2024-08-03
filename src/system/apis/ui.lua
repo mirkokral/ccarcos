@@ -72,6 +72,7 @@ end
 ---@field y number The y position of the widget
 ---@field getDrawCommands fun(): RenderCommand[]
 ---@field onEvent fun(e): boolean?
+---@field renderFinish fun(ox, oy)?
 ---@field getWH fun(): [number, number] Gets the width and height of this element.
 
 ---@class Label: Widget
@@ -92,6 +93,7 @@ end
 
 ---@class TextInput: Label
 ---@field curpos number
+---@field focus boolean
 
 ---Create a new scroll pane.
 ---@param b { width: number, height: number, x: number, y: number, col: Color?, children: Widget[], showScrollBtns: boolean?,  }
@@ -182,6 +184,18 @@ function ScrollPane(b)
         end
         return dcBuf
     end
+    config.renderFinish = function (ox, oy)
+        local yo = 0
+        for index, value in ipairs(config.children) do
+            
+            if value.y + yo - config.scroll + value.getWH()[1] > 0 and value.y + yo - config.scroll <= config.height then
+                if value.renderFinish then
+                    value.renderFinish(config.x+ox, config.y+oy-config.scroll)
+                end
+            end
+            yo = yo + value.getWH()[2]
+        end
+    end
     config.onEvent = function (e)
         local ce = e
         if ce[1] == "click" then
@@ -268,13 +282,15 @@ end
 ---@param b { label: string, x: number, y: number, col: Color?, textCol: Color?} The button configuration
 ---@return TextInput
 function TextInput(b)
-    ---@type TextInput
-    ---@diagnostic disable-next-line: assign-type-mismatch
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
+    ---@type TextInput
+    ---@diagnostic disable-next-line: assign-type-mismatch
     local config = Label(ca)
-
-
+    config.focus = false
+    config.onEvent = function (e)
+        
+    end
 
     return config
 end
@@ -351,6 +367,7 @@ function Button(b)
         end
         return rt
     end
+---@diagnostic disable-next-line: return-type-mismatch
     return o
 end
 ---Render Loop
