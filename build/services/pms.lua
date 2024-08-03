@@ -126,12 +126,19 @@ while rd do
         local s = tutils.formatTime(arcos.time("ingame"))
         time.x = ({ monitor.getSize() })[1]-1-#s
         time.label = s
-        local teufmt, teuext = formatNum(total)
-        teu.label = " " .. tostring(teufmt) .. teuext .. "fe "
-        teufmt, teuext = formatNum(currentPowerUsage)
-        ceu.label = " " .. tostring(teufmt) .. teuext .. "fe/t "
-        teufmt, teuext = formatNum(titemcount)
-        tic.label = " " .. tostring(teufmt) .. teuext .. " items "
+        local teufmt, teuext
+        if total then
+            teufmt, teuext = formatNum(total)
+            teu.label = " " .. tostring(teufmt) .. teuext .. "fe "
+        end
+        if currentPowerUsage then
+            teufmt, teuext = formatNum(currentPowerUsage)
+            ceu.label = " " .. tostring(teufmt) .. teuext .. "fe/t "
+        end
+        if titemcount then
+            teufmt, teuext = formatNum(titemcount)
+            tic.label = " " .. tostring(teufmt) .. teuext .. " items "
+        end
         uic.label = " " .. tostring(iup) .. "% "
         ls = true
         tid = arcos.startTimer(0.5)
