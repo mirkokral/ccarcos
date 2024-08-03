@@ -58,7 +58,8 @@ _G.__LEGACY = {
     textutils = textutils,
     turtle = turtle,
     vector = vector,
-    window = window
+    window = window,
+    require = require
 }
 if live then
   __LEGACY.fs = {
@@ -142,6 +143,8 @@ function _G.term.native()
         oldug["turtle"] = nil
         oldug["vector"] = nil
         oldug["window"] = nil
+        oldug["require"] = __LEGACY.require
+        end
         local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
         local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
         print(err)
