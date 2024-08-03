@@ -1,3 +1,16 @@
+local function split(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    if t == {} then
+        t = { inputstr }
+    end
+    return t
+end
 function open(path, mode)
     local validModes = {"w", "r"}
     local cmodevalid = false
@@ -17,11 +30,14 @@ function open(path, mode)
             file._f.write(towrite)
         end
     elseif mode == "r" then
+        local fd = file._f.readAll()
+        local li = 0
         file.read = function()
-            return file._f.readAll()
+            return fd
         end
         file.readLine = function()
-            return file._f.readLine()
+            li = li + 1
+            return split(fd, "\n")[li]
         end
     end
     return file, nil
