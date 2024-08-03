@@ -125,7 +125,7 @@ function ScrollPane(b)
         end
         local yo = 0
         for index, value in ipairs(config.children) do
-            if value.y - config.scroll + value.getWH()[1] > 0 and value.y - config.scroll <= config.height then
+            if value.y + yo - config.scroll + value.getWH()[1] > 0 and value.y + yo - config.scroll <= config.height then
                 ---@type RenderCommand[]
                 local rc = value.getDrawCommands()
                 for index, value in ipairs(rc) do
