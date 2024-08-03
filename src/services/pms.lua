@@ -17,6 +17,9 @@ end
 monitor.setTextScale(0.5)
 
 function formatNum(number)
+    if not number then
+        return 0, ""
+    end
     local on = number
     local unitprefix = ""
     if on > 1000 then
