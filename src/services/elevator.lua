@@ -10,7 +10,7 @@ if arcos then
     theme = {
         bg = col.black,
         elFloor = col.blue,
-        elFloorSel = col.purple,
+        elFloorSel = col.magenta,
         buttonColor = col.white
     }
 else
