@@ -183,6 +183,10 @@ function ScrollPane(b)
                 for index, value in ipairs(config.children) do
                     value.onEvent({"click", ce[2], ce[3] - config.x+1, ce[4] - config.y + config.scroll - index+2})
                 end
+            else
+                for index, value in ipairs(config.children) do
+                    value.onEvent({"defocus"})
+                end
             end
             if config.showScrollBtns then
                 if ce[3] == config.x+config.width and ce[4] == config.y then

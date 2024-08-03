@@ -1,0 +1,7 @@
+{
+    "test": {
+        "friendlyName": "Test Application",
+        "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
+        "owner": "The ArcOS team"
+    }
+}
