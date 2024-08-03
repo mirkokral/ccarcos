@@ -30,6 +30,27 @@ elseif cmd == "install" then
     else
         print("Installation Aborted.")
     end
+elseif cmd == "uninstall" then
+    for index, value in ipairs(args) do
+        if not __LEGACY.fs.exists("/config/arc/" .. value .. ".uninstallIndex") then
+            error("Package not installed: " .. value)
+        end
+    end
+    term.setTextColor(col.lightGray)
+    print("These packages will be uninstalled:")
+    print()
+    term.setTextColor(col.red)
+    print(table.concat(args, " "))
+    term.setTextColor(col.white)
+    print("Do you want to proceed? [y/n] ")
+    local out = ({ arcos.ev("char") })[2]
+    if out == "y" then
+        for index, value in ipairs(args) do
+            arc.uninstall(value)
+        end
+    else
+        print("Installation Aborted.")
+    end
 else
     printError("No command.")
 end

@@ -107,6 +107,15 @@ function install(package)
     if not repo[package] then
         error("Package not found!")
     end
+    if __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
+        local f = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json")
+        local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
+        if ver < repo[package]["ver"] then
+            uninstall(package)
+        else
+            error("Package already installed!")
+        end
+    end
     local pkg = repo[package]
     local indexFile = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/index")
     local ifx = indexFile.readAll()
@@ -131,10 +140,26 @@ function install(package)
     uinsf.close()
 end
 
+
+function uninstall(package)
+    if not __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex") then
+        error("Package not installed.")
+    end
+    local toDelete = {"/config/arc/" .. package .. ".uninstallIndex", "/config/arc/" .. package .. ".meta.json"}
+    local f = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex")
+    for index, value in f.readLine do
+        table.insert(toDelete, 1, "/" .. value:sub(3))
+    end
+    for index, value in ipairs(toDelete) do
+        __LEGACY.fs.delete(value)
+    end
+end
+
 -- C:Exc
 _G.arc = {
     fetch = fetch,
     getRepo = getRepo,
-    install = install
+    install = install,
+    uninstall = uninstall
 }
 -- C:End
