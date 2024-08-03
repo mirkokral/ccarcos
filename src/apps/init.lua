@@ -7,7 +7,7 @@ for i in servFile.readLine do
     if i:sub(1, 1) ~= "#" then 
         arcos.log("Starting service: " .. i)
         local currentServiceDone = false
-        local threadterm        
+        local threadterm
         
         if i:sub(1,1) == "l" then
             threadterm = {
