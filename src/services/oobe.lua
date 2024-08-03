@@ -51,7 +51,7 @@ table.insert(pages[2],
     ui.Button({
         callBack = function ()
             ui.PageTransition(pages[2], pages[3], false, 1, true, term)
-            page = 2
+            page = 3
             return true
         end,
         label = " Next ",
@@ -80,7 +80,7 @@ for index, value in ipairs(fs.ls("/services/")) do
             end
             f.write("o " .. value)
             ui.PageTransition(pages[3], pages[4], false, 1, true, term)
-            page = 3
+            page = 4
             return true
         end,
         x = 1, y = 1,
