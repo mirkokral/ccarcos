@@ -5,7 +5,7 @@ confile.close()
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
     local cmd = nil
-    if a1 == "" then
+    if not a1 or a1 == "" then
         return true
     end
     if a1:sub(1, 1) == "/" then
