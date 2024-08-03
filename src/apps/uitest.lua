@@ -196,6 +196,6 @@ ui.RenderLoop(pages[page], terma, true)
 while true do
     if terma then
         ls = ui.RenderLoop(pages[page], terma, ls)
-        pages[2][2].label = pages[2][4].scroll
+        pages[2][2].label = tostring(pages[2][5].scroll)
     end
 end
