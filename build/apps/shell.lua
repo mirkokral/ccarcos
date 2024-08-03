@@ -5,7 +5,17 @@ confile.close()
 local p,e = fs.open("/rom/modules/main/cc/pretty.lua", "r")
 local pretty
 if p then
-    pretty = load(p.read(), "pretty", nil, _G)()
+    local pc, e = load(p.read(), "pretty", nil, _G)
+    if not pc then
+        printError(e)
+        error()
+    end
+    local ok, e = pcall(pc)
+    if not ok then
+        printError(e)
+        error()
+    end
+    pretty = e
 else
     print(e)
 end
