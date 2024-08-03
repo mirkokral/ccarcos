@@ -3,8 +3,8 @@
         "friendlyName": "Test Application",
         "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
         "owner": "TNC™ Development and Management Team",
-        "version": "24.08",
-        "vId": 1,
+        "version": "24.08.2",
+        "vId": 2,
         "dependencies": [],
         "isIndependent": true
     }
