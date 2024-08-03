@@ -101,8 +101,12 @@ table.insert(pages[3], ui.ScrollPane({
     width = w - 2,
     showScrollBtns = false
 }))
--- Page 3: Finish
+-- Page 3: Computer name
 pages[4] = {
+    
+}
+-- Page 4: Finish
+pages[5] = {
     ui.Label{
         label = "All finished!",
         textCol = col.green,
