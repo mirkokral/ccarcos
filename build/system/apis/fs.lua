@@ -5,11 +5,11 @@ function open(path, mode)
         if mode == v then cmodevalid = true break end
     end
     if not cmodevalid then error("Mode not valid: " .. mode) end
-    local i = {}
+    local err
     file = {}
-    file._f, i.err = __LEGACY.fs.open(path, mode)
-    if i.err then
-        return nil, i.err
+    file._f, err = __LEGACY.fs.open(path, mode)
+    if not file._f then
+        return nil, err
     end
     file.close = file._f.close
     if mode == "w" then
