@@ -137,7 +137,7 @@ function _G.term.native()
         oldug["window"] = nil
         local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
         local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
-        oldug["__LEGACY"].term.write(err)
+        print(err)
         while true do coroutine.yield() end
     end
     local oldug = {}
