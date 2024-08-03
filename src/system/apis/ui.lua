@@ -137,8 +137,8 @@ function ScrollPane(b)
                         forCol = value.forCol
                     })
                 end
-                yo = yo + value.getWH()[2]
             end
+            yo = yo + value.getWH()[2]
         end
         local rmIndexes = {}
         for index, value in ipairs(dcBuf) do
