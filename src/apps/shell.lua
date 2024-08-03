@@ -70,7 +70,7 @@ do
     if a then
         term.setTextColor(col.gray)
         write("@")
-        term.setTextColor(col.purple)
+        term.setTextColor(col.magenta)
         if not pcall(write, tostring(err)) then
             write("(none)")
         end
