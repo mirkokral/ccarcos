@@ -2,8 +2,13 @@ print("arcos shell")
 local confile = fs.open("/config/arcshell", "r")
 local conf = tutils.dJSON(confile.read())
 confile.close()
-local p = fs.open("/rom/modules/main/cc/pretty.lua", "r")
-local pretty = load(p.read(), "pretty", nil, _G)()
+local p,e = fs.open("/rom/modules/main/cc/pretty.lua", "r")
+local pretty
+if p then
+    pretty = load(p.read(), "pretty", nil, _G)()
+else
+    print(e)
+end
 
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
