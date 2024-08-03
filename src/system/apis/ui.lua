@@ -15,7 +15,7 @@ UIthemedefs[col.lightBlue] = {0, 0, 0}
 UIthemedefs[col.yellow] = {235, 203, 139}
 UIthemedefs[col.lime] = {163, 190, 140}
 UIthemedefs[col.pink] = {0, 0, 0}
-UIthemedefs[col.gray] = {174, 179, 187}
+UIthemedefs[col.gray] = {76, 86, 106}
 UIthemedefs[col.lightGray] = {216, 222, 233}
 UIthemedefs[col.cyan] = {136, 192, 208}
 UIthemedefs[col.purple] = {0, 0, 0}
@@ -267,9 +267,11 @@ end
 function TextInput(b)
     ---@type TextInput
     ---@diagnostic disable-next-line: assign-type-mismatch
-    local config = Label(b)
+    local ca = b
+    if not ca["col"] then ca["col"] = 
+    local config = Label(ca)
 
-    
+
 
     return config
 end
