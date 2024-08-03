@@ -18,16 +18,11 @@ elseif cmd == "install" then
     print("These packages will be installed:")
     print()
     term.setTextColor(col.green)
-    local outstr = table.concat(tobeinstalled, " ")
+    print(table.concat(tobeinstalled, " "))
     term.setTextColor(col.white)
     write("Do you want to proceed? [y/n] ")
-    local out = read(nil, {"n", "y"}, function (c)
-        if c == "" then
-            return {"y", "n"}
-        end
-        return {}
-    end)
-    if out == "y" or out == "" then
+    local out = ({ arcos.ev("char") })[2]
+    if out == "y" then
         for index, value in ipairs(tobeinstalled) do
             arc.install(value)
         end
