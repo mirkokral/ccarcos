@@ -1,6 +1,6 @@
 local w, h = term.getSize()
 local pages = {}
-local page = 1
+local page = 2
 -- Error page
 pages[1] = {
     ui.Label({
