@@ -41,6 +41,7 @@ local oldpe = os.pullEvent
 local oldtr = term.redirect
 local oldst = os.shutdown
 local olderr = error
+
 _G.__LEGACY = {
   colors = colors,
   colours = colours,
@@ -129,41 +130,9 @@ function _G.term.native()
   function os.shutdown()
     os.shutdown = oldst
 
-    local oldug = {}
-
-
-    for k, v in pairs(_G) do
-      oldug[k] = v
-    end
-    oldug["colors"] = nil
-    oldug["colours"] = nil
-    oldug["commands"] = nil
-    oldug["disk"] = nil
-    oldug["fs"] = nil
-    oldug["gps"] = nil
-    oldug["help"] = nil
-    oldug["http"] = nil
-    oldug["io"] = nil
-    oldug["keys"] = nil
-    oldug["os"] = nil
-    oldug["paintutils"] = nil
-    oldug["parallel"] = nil
-    oldug["peripheral"] = nil
-    oldug["pocket"] = nil
-    oldug["rednet"] = nil
-    oldug["redstone"] = nil
-    oldug["settings"] = nil
-    oldug["shell"] = nil
-    oldug["term"] = nil
-    oldug["textutils"] = nil
-    oldug["turtle"] = nil
-    oldug["vector"] = nil
-    oldug["window"] = nil
-    oldug["require"] = __LEGACY.require
-
 
     local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
-    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
+    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
     print(err)
     print("Press any key to continue")
     __LEGACY.os.pullEvent("key")
