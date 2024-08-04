@@ -4,7 +4,7 @@ local sq = {}
 
 local running = true
 local ls = true
-local sel = ""
+local sel = we[1]
 local ceRunning = false
 local uiSelPage
 local loginPage
