@@ -229,6 +229,11 @@ function TextInput(b)
         end
         if e[1] == "click" then
             if e[3] >= config.x and e[4] >= config.y and e[3] < config.x + config.getWH()[1] and e[4] < config.y + config.getWH()[2] then
+                if config.focus then
+                    cursorPos = e[3] - config.x
+                else
+                    cursorPos = #config.text
+                end
                 config.focus = true
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                 config.col = col.lightGray
