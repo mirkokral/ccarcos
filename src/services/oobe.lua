@@ -122,7 +122,7 @@ local function pushPackageWithDependencies(pkg)
         for _, v in ipairs(repo[pkg].dependencies) do
             pushPackageWithDependencies(v)
         end
-        if not arc.isInstalled(pkg) and not has_value(atobeinstalled, pkg) then
+        if (not arc.isInstalled(pkg) or arc.getIdata(pkg)["vId"] < repo[pkg]["vId"]) and not has_value(atobeinstalled, pkg) then
             table.insert(atobeinstalled, pkg)
         end
     end

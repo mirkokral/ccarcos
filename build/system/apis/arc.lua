@@ -84,6 +84,16 @@ end
 function isInstalled(package)
     return __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex")
 end
+function getIdata(package)
+    if not __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
+        return nil
+    end
+    local f, e = __LEGACY.fs.open("/config/arc/".. package .. ".meta.json", "r")
+    if not f then
+        return nil
+    end
+    return __LEGACY.textutils.unserializeJSON(f.readAll())
+end
 function getRepo()
     local f = __LEGACY.fs.open("/config/arc/repo.json", "r")
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
