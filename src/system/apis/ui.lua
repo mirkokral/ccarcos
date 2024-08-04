@@ -579,9 +579,10 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             sleep(1/20)
         end
     else
+        accel = 1.5625
         while ox < tw-0.5 do
             ox = math.max(((ox/tw)+(accel/100))*tw, 0)
-            accel = accel/speed
+            accel = accel*speed
             local sbuf = InitBuffer(terma)
             Cpy(buf2, sbuf, 0, 0)
             Cpy(buf, sbuf, (ox) * (dir and -1 or 1), 0)
