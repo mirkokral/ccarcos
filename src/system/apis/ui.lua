@@ -573,9 +573,9 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             accel = accel/speed
             local sbuf = InitBuffer(terma)
             Cpy(buf, sbuf, 0, 0)
-            Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
+            Cpy(buf2, sbuf, (tw - ox) * (dir and -1 or 1), 0)
             Push(sbuf, terma)
-            print(math.floor(ox+0.1), math.floor(ox+0.1) < tw, accel, tw)
+            -- print(math.floor(ox+0.1), math.floor(ox+0.1) < tw, accel, tw)
             
             sleep(1/20)
         end
