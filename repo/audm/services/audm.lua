@@ -90,6 +90,10 @@ local user = loginPage[2].label
 tasking.createTask("s", function ()
     local f, e = fs.open("/config/desktops/" .. sel, "r")
     if f then
+        term.clear()
+        term.setCursorPos(1, 1)
+        term.setBackgroundColor(col.black)
+        term.setTextColor(col.white)
         arcos.r({}, f.read())
     end
 end, 1, user, term, environ)
