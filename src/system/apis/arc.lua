@@ -130,7 +130,7 @@ function install(package)
         error("Package not found!")
     end
     if __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
-        local f = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json")
+        local f = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json", "r")
         local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
         if ver < repo[package]["ver"] then
             uninstall(package)
