@@ -14,36 +14,6 @@ term.setPaletteColor(colors.brown, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.green, 163/255, 190/255, 140/255)
 term.setPaletteColor(colors.red, 191/255, 97/255, 106/255)
 term.setPaletteColor(colors.black, 59/255, 66/255, 82/255)
-
-if not fs.exists("/system/krnl.lua") then
-    for _, i in ipairs(fs.list("/")) do
-        if not i == "rom" then fs.delete(i) end
-    end
-else
-    fs.delete("/system")
-end
-function _G.strsplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
--- shell.run("rm /*")
-local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
-local branch
-if fr then
-    branch = textutils.unserialiseJSON(fr.readAll())["sha"]
-else
-    write(">")
-    branch = read()
-end
-file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
-cont = file.readAll()
-file.close()
 local loaderLoaded = 0
 function drawLoader()
     local w, h = term.getSize()
@@ -75,6 +45,37 @@ function drawLoader()
     term.write("  ")
     loaderLoaded = (loaderLoaded + 1) % 8
 end
+drawLoader()
+if not fs.exists("/system/krnl.lua") then
+    for _, i in ipairs(fs.list("/")) do
+        if not i == "rom" then fs.delete(i) end
+    end
+else
+    fs.delete("/system")
+end
+function _G.strsplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
+-- shell.run("rm /*")
+local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+local branch
+if fr then
+    branch = textutils.unserialiseJSON(fr.readAll())["sha"]
+else
+    write(">")
+    branch = read()
+end
+file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
+cont = file.readAll()
+file.close()
+
 for _,i in ipairs(strsplit(cont, "\n")) do
     -- print(i)
     drawLoader()
