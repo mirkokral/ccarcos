@@ -16,7 +16,7 @@ for index, value in ipairs(we) do
         y = 1,
         callBack = function ()
             sel = value
-            ui.PageTransition(uiSelPage, loginPage, true, 1, false, term)
+            ui.PageTransition(uiSelPage, loginPage, false, 1, false, term)
             ceRunning = false
             return true
         end
