@@ -43,7 +43,9 @@ function InitBuffer(mon)
     end
     return buf
 end
-local function blitAtPos(x, y, bgCol, forCol, text, buf)
+local function blitAtPos(sx, sy, bgCol, forCol, text, buf)
+    local x = math.floor(sx+0.5)
+    local y = math.floor(sy+0.5)
     if x <= #buf[1] and y <= #buf and y>0 and x>0 then
         buf[y][x] = {bgCol, forCol, text}
     end

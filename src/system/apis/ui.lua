@@ -49,13 +49,15 @@ function InitBuffer(mon)
     end
     return buf
 end
----@param x number The X position for the blit
----@param y number The Y position for the blit
+---@param sx number The X position for the blit
+---@param sy number The Y position for the blit
 ---@param bgCol Color The background color
 ---@param forCol Color The foreground color
 ---@param text string The text
 ---@param buf table Buffer
-local function blitAtPos(x, y, bgCol, forCol, text, buf)
+local function blitAtPos(sx, sy, bgCol, forCol, text, buf)
+    local x = math.floor(sx+0.5)
+    local y = math.floor(sy+0.5)
     if x <= #buf[1] and y <= #buf and y>0 and x>0 then
         buf[y][x] = {bgCol, forCol, text}
     end
