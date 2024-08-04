@@ -440,14 +440,14 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
         RenderWidgets(widgets1, 0, 0, buf)
         RenderWidgets(widgets2, 0, 0, buf2)
         speed = speed + 1
-        while math.floor(ox) < tw do
+        while ox < tw-0.5 do
             ox = math.max(((ox/tw)+(accel/100))*tw, 0)
             accel = accel/speed
             local sbuf = InitBuffer(terma)
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
             Push(sbuf, terma)
-            print(math.floor(ox), math.floor(ox) < tw, accel, tw)
+            print(math.floor(ox+0.1), math.floor(ox+0.1) < tw, accel, tw)
             sleep(1/20)
         end
     else
