@@ -287,6 +287,7 @@ function TextInput(b)
     ---@type TextInput
     ---@diagnostic disable-next-line: assign-type-mismatch
     local config = Label(ca)
+    local cursorPos = 1
     config.focus = false
     config.onEvent = function (e)
         if e[1] == "defocus" then
@@ -308,7 +309,18 @@ function TextInput(b)
             end
         end
         if e[1] == "char" and config.focus then
-            config.label = config.label .. e[2]
+            
+            config.label = config.label:sub(0, cursorPos) .. e[2] .. config.label:sub(cursorPos)
+            cursorPos = cursorPos + 1
+            return true
+        end
+        if e[1] == "key" and config.focus then
+            if e[2] == __LEGACY.keys.enter then
+                config.focus = false
+            end
+            if e[2] == __LEGACY.keys.backspace then
+                config.label = config.label:sub(0, cursorPos-1) .. config.label:sub(cursorPos)
+            end
             return true
         end
     end
