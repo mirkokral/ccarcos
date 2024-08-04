@@ -254,31 +254,37 @@ end
 
 
 
----
+---Wrap a string
 ---@param str any
 ---@param maxLength any
 ---@return string
 function Wrap(str, maxLength)
-    environ.ostr = ""
-    environ.cstr = ""
+    local ostr = ""
+    local cstr = ""
+    print(ostr)
     for index2, value2 in ipairs(tutils.split(str, "\n")) do
         for index, value in ipairs(tutils.split(value2, " ")) do
-            if #environ.cstr + #value > maxLength then
-                environ.ostr = environ.ostr .. environ.cstr .. "\n"
-                environ.cstr = ""
+            if #cstr + #value > maxLength then
+                ostr = ostr .. cstr .. "\n"
+                print(ostr)
+                cstr = ""
             end
             
-            environ.cstr = environ.cstr .. value .. " "
+            cstr = cstr .. value .. " "
         end
-        if #environ.cstr > 0 then
-            environ.ostr = environ.ostr .. environ.cstr .. "\n"
+        if #cstr > 0 then
+            ostr = ostr .. cstr .. "\n"
+            print(ostr)
         end
     end
-    if #environ.cstr > 0 then
-        environ.ostr = environ.ostr .. environ.cstr .. "\n"
+    print(ostr)
+    if #cstr > 0 then
+        ostr = ostr .. cstr .. "\n"
+        print(ostr)
     end
-    environ.ostr = environ.ostr:sub(#environ.ostr)
-    return environ.ostr
+    print(ostr)
+    ostr = ostr:sub(#ostr)
+    return ostr
 end
 
 ---Creates a new text input
