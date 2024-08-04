@@ -8,7 +8,7 @@ local function getTBI(a, b)
     for index, value in ipairs(repo[a]["dependencies"]) do
         getTBI(a, b)
     end
-    if not arc.isInstalled(a) or arc.getIdata(a)["vId"] < repo[a]["vId"] then
+    if (not arc.isInstalled(a)) or arc.getIdata(a)["vId"] < repo[a]["vId"] then
         table.insert(b, a)
     end
 end
@@ -20,12 +20,7 @@ elseif cmd == "install" then
         if not repo[value] then
             error("Package not found: " .. value)
         end
-        for index, value in ipairs(repo[value]["dependencies"]) do
-            getTBI(value, tobeinstalled)
-        end
-        if not arc.isInstalled(value) then
-            table.insert(tobeinstalled, value)
-        end
+        getTBI(value, tobeinstalled)
     end
     if #tobeinstalled > 0 then
         term.setTextColor(col.lightGray)

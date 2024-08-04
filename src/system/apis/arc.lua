@@ -191,6 +191,7 @@ _G.arc = {
     getRepo = getRepo,
     install = install,
     uninstall = uninstall,
-    isInstalled = isInstalled
+    isInstalled = isInstalled,
+    getIdata = getIdata
 }
 -- C:End
