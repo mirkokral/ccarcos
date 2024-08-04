@@ -101,7 +101,7 @@ table.insert(pages[3], ui.ScrollPane({
             y = 1
         }
     },
-    height = h - 5,
+    height = h - 4,
     width = w - 2,
     showScrollBtns = false
 }))
@@ -143,7 +143,7 @@ pages[4] = {
         label = "Done",
         callBack = function ()
             if pages[4][2].label ~= "" then
-                arcos.setName(pages[4][2])
+                arcos.setName(pages[4][2].label)
             end
             for index, value in ipairs(tobeinstalled) do
                 pushPackageWithDependencies(value)
@@ -161,7 +161,7 @@ pages[4] = {
 
         end,
         x = w-2-4,
-        y = h-2
+        y = h-1
     }
 }
 -- Page 4: Installing packages
