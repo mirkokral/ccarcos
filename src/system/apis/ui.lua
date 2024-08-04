@@ -274,6 +274,7 @@ function Wrap(str, maxLength)
         end
         if #cstr > 0 then
             ostr = ostr .. cstr .. "\n"
+            cstr = ""
             print(ostr)
         end
     end
@@ -283,7 +284,7 @@ function Wrap(str, maxLength)
         print(ostr)
     end
     print(ostr)
-    ostr = ostr:sub(#ostr)
+    ostr = ostr:sub(1, #ostr-1)
     return ostr
 end
 
