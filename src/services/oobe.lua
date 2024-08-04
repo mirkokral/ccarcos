@@ -193,6 +193,9 @@ pages[5] = {
             for index, value in ipairs(atobeinstalled) do
                 arc.install(value)
             end
+            local f, e = fs.open("/services/enabled", "w")
+            f.write("o " .. init)
+            f.close()
             ui.PageTransition(pages[5], pages[6], false, 1, true, term)
             page = 6
             return true
