@@ -317,8 +317,8 @@ function TextInput(b)
         if e[1] == "char" and config.focus then
             
             config.text = config.text:sub(0, cursorPos) .. e[2] .. config.text:sub(cursorPos+1)
-            config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             cursorPos = cursorPos + 1
+            config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             return true
         end
         if e[1] == "key" and config.focus then
