@@ -86,7 +86,7 @@ while running do
     end
 end
 
-local user = loginPage[2].label
+local user = loginPage[2].text
 tasking.createTask("s", function ()
     local f, e = fs.open("/config/desktops/" .. sel, "r")
     if f then

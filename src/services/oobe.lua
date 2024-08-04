@@ -143,7 +143,7 @@ pages[4] = {
         label = "Done",
         callBack = function ()
             if pages[4][2].label ~= "" then
-                arcos.setName(pages[4][2].label)
+                arcos.setName(pages[4][2].text)
             end
             for index, value in ipairs(tobeinstalled) do
                 pushPackageWithDependencies(value)
