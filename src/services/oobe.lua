@@ -106,7 +106,7 @@ table.insert(pages[3], ui.ScrollPane({
             y = 1
         }
     },
-    height = h - 4,
+    height = h - 4-pages[3][2].getWH()[2],
     width = w - 2,
     showScrollBtns = false
 }))
