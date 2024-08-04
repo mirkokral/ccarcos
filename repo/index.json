@@ -16,5 +16,13 @@
         "vId": 5,
         "dependencies": [],
         "isIndependable": true
+    },
+    "gconfig": {
+        "friendlyName": "Graphical System Configurator",
+        "description": "A graphical application for system configuration",
+        "owner": "TNC™ Development and Management Team",
+        "version": "24.08",
+        "vId": 1,
+        "dependencies": []
     }
 }
