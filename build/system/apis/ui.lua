@@ -236,8 +236,9 @@ function TextInput(b)
                 return true
             end
         end
-        if e[1] == "char" then
+        if e[1] == "char" and config.focus then
             config.label = config.label .. e[2]
+            return true
         end
     end
     return config
