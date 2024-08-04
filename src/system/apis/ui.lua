@@ -288,7 +288,7 @@ function TextInput(b)
     ---@type TextInput
     ---@diagnostic disable-next-line: assign-type-mismatch
     local config = Label(ca)
-    local config.text = ""
+    config.text = ""
     local cursorPos = 1
     config.focus = false
     config.onEvent = function (e)

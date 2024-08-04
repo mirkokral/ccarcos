@@ -217,7 +217,7 @@ function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
     local config = Label(ca)
-    local config.text = ""
+    config.text = ""
     local cursorPos = 1
     config.focus = false
     config.onEvent = function (e)
