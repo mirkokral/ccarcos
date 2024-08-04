@@ -572,7 +572,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
             Push(sbuf, terma)
-            print(ox, accel)
+            print(ox, accel, tw)
             sleep(1/20)
         end        
     else
