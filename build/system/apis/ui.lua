@@ -219,6 +219,19 @@ function TextInput(b)
     local config = Label(ca)
     config.focus = false
     config.onEvent = function (e)
+        if e[1] == "defocus" then
+            config.focus = false
+            return true
+        end
+        if e[1] == "click" then
+            if e[3] >= config.x and e[4] >= config.y and e[3] < config.x + config.getWH()[1] and e[4] < config.y + config.getWH()[2] then
+                config.focus = true
+                return true
+            else
+                config.focus = false
+                return true
+            end
+        end
     end
     return config
 end
