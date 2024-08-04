@@ -576,10 +576,10 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             Push(sbuf, terma)
             -- print(math.floor(ox+0.1), math.floor(ox+0.1) < tw, accel, tw)
             
-            sleep(1/40)
+            sleep(1/20)
         end
     else
-        accel = 1.5625/2
+        accel = 1.5625
         while ox < tw-0.5 do
             ox = math.max(((ox/tw)+(accel/100))*tw, 0)
             accel = accel*speed
@@ -589,7 +589,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             Push(sbuf, terma)
             -- print(math.floor(ox+0.1), math.floor(ox+0.1) < tw, accel, tw)
             
-            sleep(1/40)
+            sleep(1/20)
         end
     end
 end
