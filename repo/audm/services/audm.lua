@@ -85,3 +85,11 @@ while running do
         ls = ui.RenderLoop(loginPage, term, ls)
     end
 end
+
+local user = loginPage[2].label
+tasking.createTask("s", function ()
+    local f, e = fs.open("/config/desktops/" .. sel, "r")
+    if f then
+        arcos.r({}, f.read())
+    end
+end, 1, user, term, environ)

@@ -12,8 +12,8 @@
         "friendlyName": "arcui Display Manager",
         "description": "A display manager that uses the UI library",
         "owner": "TNC™ Development and Management Team",
-        "version": "24.08",
-        "vId": 2,
+        "version": "24.08.3",
+        "vId": 3,
         "dependencies": [],
         "isIndependable": true
     }
