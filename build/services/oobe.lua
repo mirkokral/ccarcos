@@ -162,7 +162,7 @@ pages[5] = {
         y = 2
     },
     ui.ScrollPane{
-        height = h - 7,
+        height = h - 6,
         width = w - 2,
         x = 2,
         y = 4,
@@ -171,10 +171,10 @@ pages[5] = {
     },
     ui.Button{
         label = " Install ",
-        x = w-2-9,
-        y = h-2,
+        x = w-9,
+        y = h-1,
         callBack = function ()
-            term.setCursorPos(w-2-10, h-2)
+            term.setCursorPos(w-10, h-1)
             term.setBackgroundColor(col.gray)
             term.setTextColor(col.white)
             term.write("Installing")
