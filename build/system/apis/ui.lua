@@ -257,9 +257,11 @@ function TextInput(b)
                 config.focus = false
             end
             if e[2] == __LEGACY.keys.backspace then
-                config.text = config.text:sub(0, cursorPos-1) .. config.text:sub(cursorPos+1)
-                cursorPos = cursorPos - 1
-                config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
+                if cursorPos > 0 then
+                    config.text = config.text:sub(0, cursorPos-1) .. config.text:sub(cursorPos+1)
+                    cursorPos = cursorPos - 1
+                    config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
+                end
             end
             if e[2] == __LEGACY.keys.left then
                 cursorPos = math.max(cursorPos-1, 1)
