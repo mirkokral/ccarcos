@@ -555,7 +555,7 @@ end
 function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local tw, th = terma.getSize()
     local ox = 0
-    local accel = 0
+    local accel = 1
     local buf = InitBuffer(terma)
     local buf2 = InitBuffer(terma)
     RenderWidgets(widgets1, 0, 0, buf)
