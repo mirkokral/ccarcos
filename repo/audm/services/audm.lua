@@ -56,7 +56,7 @@ loginPage = {
         y = 6
     },
     ui.Button{
-        label = "Login",
+        label = " Login ",
         x = 2,
         y = 8,
         callBack = function ()
@@ -68,8 +68,8 @@ loginPage = {
         end
     },
     ui.Button{
-        label = "\x04",
-        x = 8,
+        label = " \x04 ",
+        x = 10,
         y = 8,
         callBack = function ()
             ui.PageTransition(loginPage, uiSelPage, false, 1, true, term)
