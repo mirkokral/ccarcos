@@ -307,6 +307,9 @@ function TextInput(b)
                 return true
             end
         end
+        if e[1] == "char" then
+            config.label = config.label .. e[2]
+        end
     end
 
     return config
