@@ -1,4 +1,5 @@
-print("arcos shell")
+term.setTextColor(col.blue)
+print(arcos.version())
 local confile = fs.open("/config/arcshell", "r")
 local conf = tutils.dJSON(confile.read())
 confile.close()

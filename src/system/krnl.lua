@@ -70,6 +70,11 @@ _G.arcos = {
             print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
     end,
+    ---Returns the arcos version
+    ---@return string
+    version = function ()
+        return "arcos 24.08 \"Vertica\" (Alpha release)"
+    end,
     ---Gets the computer name
     ---@return string
     getName = function()
