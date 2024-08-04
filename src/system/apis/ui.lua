@@ -562,7 +562,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     RenderWidgets(widgets2, 0, 0, buf2)
     if ontop then
         while ox < tw do
-            ox = ox + accel
+            ox = math.min(ox + accel, tw)
             accel = accel + speed
             
         end
