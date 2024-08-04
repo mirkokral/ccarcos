@@ -150,7 +150,9 @@ pages[4] = {
             ui.PageTransition(pages[4], pages[5], false, 1, true, term)
             page = 5
             return true
-        end        
+        end,
+        x = w-2-4,
+        y = h-2
     }
 }
 pages[5] = {
@@ -166,10 +168,10 @@ pages[5] = {
     },
     ui.Button{
         label = " Install ",
-        x = w-1-9,
+        x = w-2-9,
         y = h-2,
         callBack = function ()
-            term.setCursorPos(w-1-10, h-2)
+            term.setCursorPos(w-2-10, h-2)
             term.setBackgroundColor(col.gray)
             term.setTextColor(col.white)
             term.write("Installing")
