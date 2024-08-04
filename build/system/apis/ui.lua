@@ -264,7 +264,7 @@ function TextInput(b)
                 end
             end
             if e[2] == __LEGACY.keys.left then
-                cursorPos = math.max(cursorPos-1, 1)
+                cursorPos = math.max(cursorPos-1, 0)
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             end
             if e[2] == __LEGACY.keys.right then
@@ -433,19 +433,20 @@ end
 function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     RenderWidgets(widgets1, 0, 0, buf)
     RenderWidgets(widgets2, 0, 0, buf2)
+    speed = speed + 1
+    local tw, th = terma.getSize()
+    local ox = 0
+    local buf = InitBuffer(terma)
+    local buf2 = InitBuffer(terma)
+    local accel = 10
     if ontop then
-        local tw, th = terma.getSize()
-        local ox = 0
-        local buf = InitBuffer(terma)
-        local buf2 = InitBuffer(terma)
-        local accel = 0
         while ox < tw do
             ox = ox + accel
             accel = accel + speed
         end
         while ox > 0 do
             ox = math.max(ox - accel, 0)
-            accel = accel - speed
+            accel = accel / speed
             local sbuf = InitBuffer(terma)
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
@@ -453,14 +454,9 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             sleep(1/20)
         end        
     else
-        local tw, th = terma.getSize()
-        local ox = 0
-        local buf = InitBuffer(terma)
-        local buf2 = InitBuffer(terma)
-        local accel = 0
         while ox < tw do
-            accel = accel + speed
             ox = math.min(ox + accel, tw)
+            accel = accel * speed
             local sbuf = InitBuffer(terma)
             Cpy(buf2, sbuf, 0, 0)
             Cpy(buf, sbuf, ox * (dir and -1 or 1), 0)
