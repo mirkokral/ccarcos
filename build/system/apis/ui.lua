@@ -435,7 +435,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local ox = 0
     local buf = InitBuffer(terma)
     local buf2 = InitBuffer(terma)
-    local accel = 10        
+    local accel = tw        
     RenderWidgets(widgets1, 0, 0, buf)
     RenderWidgets(widgets2, 0, 0, buf2)
     speed = speed + 1
