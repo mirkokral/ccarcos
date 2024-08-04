@@ -431,15 +431,15 @@ function RenderWidgets(wdg, ox, oy, buf)
     end
 end
 function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
-    local tw, th = terma.getSize()
-    local ox = 0
-    local buf = InitBuffer(terma)
-    local buf2 = InitBuffer(terma)
-    local accel = 50
-    RenderWidgets(widgets1, 0, 0, buf)
-    RenderWidgets(widgets2, 0, 0, buf2)
-    speed = speed + 1
     if ontop then
+        local tw, th = terma.getSize()
+        local ox = 0
+        local buf = InitBuffer(terma)
+        local buf2 = InitBuffer(terma)
+        local accel = 50
+        RenderWidgets(widgets1, 0, 0, buf)
+        RenderWidgets(widgets2, 0, 0, buf2)
+        speed = speed + 1
         while math.floor(ox) < tw do
             ox = math.max(((ox/tw)+(accel/100))*tw, 0)
             accel = accel/speed
@@ -449,7 +449,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             Push(sbuf, terma)
             print(ox, accel, tw)
             sleep(1/20)
-        end        
+        end
     else
         while ox < tw do
             ox = math.min(ox + accel, tw)
