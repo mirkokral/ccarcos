@@ -294,12 +294,16 @@ function TextInput(b)
             return true
         end
         if e[1] == "click" then
-            print(e[3], e[4])
+            print(e[3], e[4], config.getWH()[1], config.getWH()[2])
             if e[3] >= config.x and e[4] >= config.y and e[3] < config.x + config.getWH()[1] and e[4] < config.y + config.getWH()[2] then
                 config.focus = true
+                config.col = col.lightGray
+                config.textCol = col.black
                 return true
             else
                 config.focus = false
+                config.col = col.gray
+                config.textCol = col.white
                 return true
             end
         end
