@@ -437,8 +437,8 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     RenderWidgets(widgets1, 0, 0, buf)
     RenderWidgets(widgets2, 0, 0, buf2)
     if ontop then
-        while ox > 0 do
-            ox = math.max(ox - accel, 0)
+        while ox > -tw do
+            ox = math.max(ox - accel, -tw)
             accel = accel - speed
             local sbuf = InitBuffer(terma)
             Cpy(buf, sbuf, 0, 0)
