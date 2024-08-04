@@ -174,6 +174,8 @@ pages[5] = {
     ui.ScrollPane{
         height = h - 7,
         width = w - 2,
+        x = 2,
+        y = 4,
         children = ipchildren
     },
     ui.Button{
