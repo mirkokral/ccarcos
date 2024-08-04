@@ -440,10 +440,6 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local buf2 = InitBuffer(terma)
     local accel = 10
     if ontop then
-        while ox < tw do
-            ox = ox + accel
-            accel = accel + speed
-        end
         while ox > 0 do
             ox = math.max(ox - accel, 0)
             accel = accel / speed
