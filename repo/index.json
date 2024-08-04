@@ -6,6 +6,15 @@
         "version": "24.08.2",
         "vId": 2,
         "dependencies": [],
-        "isIndependent": true
+        "isIndependable": true
+    },
+    "audm": {
+        "friendlyName": "arcui Display Manager",
+        "description": "A display manager that uses the UI library",
+        "owner": "TNC™ Development and Management Team",
+        "version": "24.08",
+        "vId": 1,
+        "dependencies": [],
+        "isIndependable": true
     }
 }

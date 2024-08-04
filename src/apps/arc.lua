@@ -10,30 +10,37 @@ elseif cmd == "install" then
             error("Package not found: " .. value)
         end
         for index, value in ipairs(repo[value]["dependencies"]) do
+            if not arc.isInstalled(value) then
+                table.insert(tobeinstalled, value)
+            end
+        end
+        if not arc.isInstalled(value) then
             table.insert(tobeinstalled, value)
         end
-        table.insert(tobeinstalled, value)
     end
-    term.setTextColor(col.lightGray)
-    print("These packages will be installed:")
-    print()
-    term.setTextColor(col.green)
-    print(table.concat(tobeinstalled, " "))
-    term.setTextColor(col.white)
-    print()
-    print("Do you want to proceed? [y/n] ")
-    local out = ({ arcos.ev("char") })[2]
-    if out == "y" then
-        for index, value in ipairs(tobeinstalled) do
-            print("(" .. index .. "/" .. #tobeinstalled .. ") " .. value)
-            arc.install(value)
+    if #tobeinstalled > 0 then
+        term.setTextColor(col.lightGray)
+        print("These packages will be installed:")
+        print()
+        term.setTextColor(col.green)
+        print(table.concat(tobeinstalled, " "))
+        term.setTextColor(col.white)
+        print()
+        print("Do you want to proceed? [y/n] ")
+        local out = ({ arcos.ev("char") })[2]
+        if out == "y" then
+            for index, value in ipairs(tobeinstalled) do
+                print("(" .. index .. "/" .. #tobeinstalled .. ") " .. value)
+                arc.install(value)
+            end
+        else
+            print("Installation Aborted.")
         end
-    else
-        print("Installation Aborted.")
     end
+    print("Done")
 elseif cmd == "uninstall" then
     for index, value in ipairs(args) do
-        if not __LEGACY.fs.exists("/config/arc/" .. value .. ".uninstallIndex") then
+        if not arc.isInstalled(value) then
             error("Package not installed: " .. value)
         end
     end

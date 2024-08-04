@@ -81,6 +81,9 @@ function fetch()
     fa.close()
     f.close()
 end
+function isInstalled(package)
+    return __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex")
+end
 function getRepo()
     local f = __LEGACY.fs.open("/config/arc/repo.json", "r")
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())

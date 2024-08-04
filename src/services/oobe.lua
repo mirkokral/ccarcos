@@ -1,6 +1,11 @@
+arc.fetch()
 local w, h = term.getSize()
 local pages = {}
 local page = 2
+local tobeinstalled = {}
+local atobeinstalled = {}
+local ipchildren = {}
+local init = "shell.lua"
 -- Error page
 pages[1] = {
     ui.Label({
@@ -63,50 +68,134 @@ table.insert(pages[2],
 pages[3] = {}
 
 table.insert(pages[3], ui.Label({
-    label = "Select an init",
+    label = "Select a login screen.",
     x = 2,
     y = 2
 }))
-local is = {}
-for index, value in ipairs(fs.ls("/services/")) do
-    if value:sub(#value-3) == ".lua" and value ~= "oobe.lua" then
-        
-        table.insert(is, ui.Button{
-            callBack = function ()
-                local f, e = fs.open("/services/enabled", "w")
-                if not f then
-                    pages[1][2].label = tostring(e)
-                    ui.PageTransition(pages[3], pages[1], false, 1, true, term)
-                    page = 1
-                    return true
-                end
-                f.write("o " .. value)
-                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
-                page = 4
-                return true
-            end,
-            x = 1, y = 1,
-            col = ui.UItheme.lighterBg,
-            textCol = ui.UItheme.bg,
-            label = value:sub(1, #value-4)
-        })
-    end
-end
 table.insert(pages[3], ui.ScrollPane({
     x = 2,
     y = 4,
     col = ui.UItheme.lighterBg,
-    children = is,
+    children = {
+        ui.Button{
+            label = "audm",
+            callBack = function ()
+                table.insert(tobeinstalled, "audm")
+                init = "audm.lua"
+                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
+                page = 4
+                return true
+            end,
+            x = 1,
+            y = 1
+        },
+        ui.Button{
+            label = "Shell",
+            callBack = function ()
+                init = "shell.lua"
+                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
+                page = 4
+                return true
+            end,
+            x = 1,
+            y = 1
+        }
+    },
     height = h - 5,
     width = w - 2,
     showScrollBtns = false
 }))
+-- function
+local repo = arc.getRepo()
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function pushPackageWithDependencies(pkg)
+    if repo[pkg] then
+        for _, v in repo[pkg].dependencies do
+            pushPackageWithDependencies(v)
+        end
+        if not arc.isInstalled(pkg) and not has_value(atobeinstalled, pkg) then
+            table.insert(atobeinstalled, pkg)
+        end
+    end
+end
 -- Page 3: Computer name
 pages[4] = {
-    
+    ui.Label{
+        label = "Set computer label",
+        x = 2,
+        y = 2
+    },
+    ui.TextInput{
+        label = "arcos",
+        x = 2,
+        y = 4
+    },
+    ui.Button{
+        label = "Done",
+        callBack = function ()
+            if pages[4][2].label ~= "" then
+                arcos.setName(pages[4][2])
+            end
+            for index, value in ipairs(tobeinstalled) do
+                pushPackageWithDependencies(value)
+            end
+            for index, value in ipairs(atobeinstalled) do
+                table.insert(ipchildren, ui.Label{
+                    label = value,
+                    x = 1,
+                    y = 1
+                })
+            end
+            ui.PageTransition(pages[4], pages[5], false, 1, true, term)
+            page = 5
+            return true
+
+        end        
+    }
 }
--- Page 4: Finish
+-- Page 4: Installing packages
 pages[5] = {
+    ui.Label{
+        label = "Install packages",
+        x = 2,
+        y = 2
+    },
+    ui.ScrollPane{
+        height = h - 7,
+        width = w - 2,
+        children = ipchildren
+    },
+    ui.Button{
+        label = " Install ",
+        x = w-1-9,
+        y = h-2,
+        callBack = function ()
+            term.setCursorPos(w-1-10, h-2)
+            term.setBackgroundColor(col.gray)
+            term.setTextColor(col.white)
+            term.write("Installing")
+            term.setBackgroundColor(col.black)
+            term.setTextColor(col.white)
+            for index, value in ipairs(atobeinstalled) do
+                arc.install(value)
+            end
+            ui.PageTransition(pages[4], pages[5], false, 1, true, term)
+            page = 5
+            return true
+        end
+    }
+}
+-- Page 5: Finish
+pages[6] = {
     ui.Label{
         label = "All finished!",
         textCol = col.green,

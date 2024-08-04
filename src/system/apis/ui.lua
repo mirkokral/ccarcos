@@ -547,7 +547,8 @@ _G.ui = {
     Cpy = Cpy,
     Wrap = Wrap,
     RenderLoop = RenderLoop,
-    ScrollPane = ScrollPane
+    ScrollPane = ScrollPane,
+    TextInput = TextInput
     
 }
 -- C:End

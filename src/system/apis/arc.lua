@@ -91,6 +91,12 @@ function fetch()
     f.close()
 end
 
+---Get if package installed
+---@param package string
+---@return boolean
+function isInstalled(package)
+    return __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex")
+end
 ---Gets the repo data
 ---@return table
 function getRepo()
@@ -169,6 +175,7 @@ _G.arc = {
     fetch = fetch,
     getRepo = getRepo,
     install = install,
-    uninstall = uninstall
+    uninstall = uninstall,
+    isInstalled = isInstalled
 }
 -- C:End
