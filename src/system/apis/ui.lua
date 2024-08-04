@@ -286,7 +286,6 @@ function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
     local defaultText = ca.label
-    ca.label = ""
     ---@type TextInput
     ---@diagnostic disable-next-line: assign-type-mismatch
     local config = Label(ca)

@@ -217,7 +217,6 @@ function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
     local defaultText = ca.label
-    ca.label = ""
     local config = Label(ca)
     config.text = defaultText or ""
     local cursorPos = 1
