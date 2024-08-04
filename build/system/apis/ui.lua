@@ -197,12 +197,10 @@ end
 function Wrap(str, maxLength)
     local ostr = ""
     local cstr = ""
-    print(ostr)
     for index2, value2 in ipairs(tutils.split(str, "\n")) do
         for index, value in ipairs(tutils.split(value2, " ")) do
             if #cstr + #value > maxLength then
                 ostr = ostr .. cstr .. "\n"
-                print(ostr)
                 cstr = ""
             end
             cstr = cstr .. value .. " "
@@ -210,15 +208,11 @@ function Wrap(str, maxLength)
         if #cstr > 0 then
             ostr = ostr .. cstr .. "\n"
             cstr = ""
-            print(ostr)
         end
     end
-    print(ostr)
     if #cstr > 0 then
         ostr = ostr .. cstr .. "\n"
-        print(ostr)
     end
-    print(ostr)
     ostr = ostr:sub(1, #ostr-1)
     return ostr
 end
