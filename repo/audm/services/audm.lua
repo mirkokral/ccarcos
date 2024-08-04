@@ -1,6 +1,9 @@
 local user = ""
 local we = fs.ls("/config/desktops")
 local sq = {}
+
+local running = true
+local ls = true
 local sel = ""
 local ceRunning = false
 local uiSelPage
@@ -75,8 +78,6 @@ loginPage = {
         end
     }
 }
-local running = true
-local ls = true
 while running do
     if ceRunning then
         ls = ui.RenderLoop(uiSelPage, term, ls)
