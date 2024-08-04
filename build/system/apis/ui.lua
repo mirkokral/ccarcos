@@ -216,8 +216,10 @@ end
 function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
+    local defaultText = ca.label
+    ca.label = ""
     local config = Label(ca)
-    config.text = ""
+    config.text = defaultText or ""
     local cursorPos = 1
     config.focus = false
     config.onEvent = function (e)
@@ -249,7 +251,7 @@ function TextInput(b)
                 config.focus = false
             end
             if e[2] == __LEGACY.keys.backspace then
-                config.text = config.text:sub(0, cursorPos-1) .. config.text:sub(cursorPos+1)
+                config.text = config.text:sub(0, cursorPos-2) .. config.text:sub(cursorPos)
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             end
             return true
