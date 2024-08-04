@@ -559,7 +559,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local ox = 0
     local buf = InitBuffer(terma)
     local buf2 = InitBuffer(terma)
-    local accel = tw        
+    local accel = 50
     RenderWidgets(widgets1, 0, 0, buf)
     RenderWidgets(widgets2, 0, 0, buf2)
     speed = speed + 1
@@ -567,8 +567,8 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     if ontop then
         ox=tw
         while ox > 0 do
-            ox = math.max(ox - accel, 0)
-            accel = accel / speed
+            ox = math.max(((ox/tw)+(accel/100))*tw, 0)
+            accel = accel - speed
             local sbuf = InitBuffer(terma)
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
