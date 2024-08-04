@@ -441,6 +441,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             ox = ox + accel
             accel = accel + speed
         end
+        ox = ox + 5
         while ox > 0 do
             ox = math.max(ox - accel, 0)
             accel = accel - speed
