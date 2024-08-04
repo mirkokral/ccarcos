@@ -111,7 +111,7 @@ function install(package)
     if __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
         local f = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json", "r")
         local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
-        if ver < repo[package]["ver"] then
+        if ver < repo[package]["vId"] then
             uninstall(package)
         else
             error("Package already installed!")
