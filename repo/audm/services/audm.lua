@@ -5,6 +5,7 @@ local sel = ""
 local ceRunning = false
 local uiSelPage
 local loginPage
+local w, h = term.getSize()
 for index, value in ipairs(we) do
     table.insert(sq, ui.Button{
         label = value,

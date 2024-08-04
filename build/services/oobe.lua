@@ -183,8 +183,8 @@ pages[5] = {
             for index, value in ipairs(atobeinstalled) do
                 arc.install(value)
             end
-            ui.PageTransition(pages[4], pages[5], false, 1, true, term)
-            page = 5
+            ui.PageTransition(pages[5], pages[6], false, 1, true, term)
+            page = 6
             return true
         end
     }
