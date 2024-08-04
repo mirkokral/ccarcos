@@ -315,7 +315,7 @@ function TextInput(b)
                 return true
             else
                 config.focus = false
-                config.label = config.text
+                config.label = #config.text > 0 and config.text or " "
                 config.col = col.gray
                 config.textCol = col.white
                 return true

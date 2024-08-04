@@ -71,7 +71,8 @@ table.insert(pages[3], ui.Label({
 table.insert(pages[3], ui.Label({
     label = ui.Wrap("A login screen is the program you see right after the init system.", w-2),
     x = 2,
-    y = 3
+    y = 3,
+    col = ui.UItheme.lightBg
 }))
 table.insert(pages[3], ui.ScrollPane({
     x = 2,
