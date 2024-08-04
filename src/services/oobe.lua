@@ -119,7 +119,7 @@ end
 
 local function pushPackageWithDependencies(pkg)
     if repo[pkg] then
-        for _, v in repo[pkg].dependencies do
+        for _, v in ipairs(repo[pkg].dependencies) do
             pushPackageWithDependencies(v)
         end
         if not arc.isInstalled(pkg) and not has_value(atobeinstalled, pkg) then
@@ -160,7 +160,7 @@ pages[4] = {
             return true
 
         end,
-        x = w-2-4,
+        x = w-4,
         y = h-1
     }
 }
