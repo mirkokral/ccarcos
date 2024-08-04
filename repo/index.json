@@ -13,7 +13,7 @@
         "description": "A display manager that uses the UI library",
         "owner": "TNC™ Development and Management Team",
         "version": "24.08",
-        "vId": 1,
+        "vId": 2,
         "dependencies": [],
         "isIndependable": true
     }
