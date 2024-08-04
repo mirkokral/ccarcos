@@ -404,7 +404,7 @@ function Push(buf, terma)
         for iy, vx in ipairs(vy) do
             blitBgColor = blitBgColor .. col.toBlit(vx[1])
             blitColor = blitColor .. col.toBlit(vx[2])
-            blitText = blitText .. vx[3]
+            blitText = blitText .. vx[3]    
         end
         terma.setCursorPos(1, ix)
         terma.blit(blitText, blitColor, blitBgColor)
@@ -447,7 +447,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             Cpy(buf, sbuf, 0, 0)
             Cpy(buf2, sbuf, ox * (dir and -1 or 1), 0)
             Push(sbuf, terma)
-            print(ox, accel, tw)
+            print(math.floor(ox), math.floor(ox) < tw, accel, tw)
             sleep(1/20)
         end
     else
