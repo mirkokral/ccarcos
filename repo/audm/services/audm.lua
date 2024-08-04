@@ -23,6 +23,7 @@ uiSelPage = {
         children = sq,
         height = h,
         width  = w,
+        col = col.gray,
         x = 1,
         y = 1
     }

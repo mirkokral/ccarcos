@@ -176,7 +176,8 @@ pages[5] = {
         width = w - 2,
         x = 2,
         y = 4,
-        children = ipchildren
+        children = ipchildren,
+        col = col.gray
     },
     ui.Button{
         label = " Install ",
