@@ -47,7 +47,7 @@ table.insert(pages[2],
         label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
         x = 2,
         y = 4,
-        textCol = ui.UItheme.lighterBg
+        textCol = ui.UItheme.lightBg
     })
 )
 table.insert(pages[2],
@@ -68,9 +68,14 @@ table.insert(pages[3], ui.Label({
     x = 2,
     y = 2
 }))
+table.insert(pages[3], ui.Label({
+    label = ui.Wrap("A login screen is the program you see right after the init system.", w-2),
+    x = 2,
+    y = 3
+}))
 table.insert(pages[3], ui.ScrollPane({
     x = 2,
-    y = 4,
+    y = 4+pages[3][2].getWH()[2],
     col = ui.UItheme.lighterBg,
     children = {
         ui.Button{
@@ -126,10 +131,16 @@ pages[4] = {
         x = 2,
         y = 2
     },
+    ui.Label{
+        label = ui.Wrap("A computer label sets the computer's name in the inventory, and with mods like Jade also shows on the blockinfo.", w-2),
+        x = 2,
+        y = 3,
+        textCol = ui.UItheme.lightBg
+    },
     ui.TextInput{
         label = "arcos",
         x = 2,
-        y = 4
+        y = 3
     },
     ui.Button{
         label = "Done",
@@ -155,6 +166,7 @@ pages[4] = {
         y = h-1
     }
 }
+pages[4][3].y = 4 + pages[4][2].getWH()[2]
 pages[5] = {
     ui.Label{
         label = "Install packages",
