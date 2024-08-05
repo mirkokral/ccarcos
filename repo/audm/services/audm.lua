@@ -42,13 +42,15 @@ loginPage = {
     ui.TextInput{
         label = "",
         x = 2,
-        y = 3
+        y = 3,
+        width = 10
     },
     ui.Label{
         label = "Password",
         textCol = col.gray,
         x = 2,
-        y = 5
+        y = 5,
+        width = 10
     },
     ui.TextInput{
         label = "",
