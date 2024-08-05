@@ -10,6 +10,7 @@ for index, value in ipairs(fs.ls("/services/enabled")) do
             local currentServiceDone = false
             local threadterm
             if i:sub(1,1) == "l" then
+                local ttcp = {1, 1}
                 threadterm = {
                     native = function()
                         return term
@@ -31,8 +32,8 @@ for index, value in ipairs(fs.ls("/services/enabled")) do
                     getBackgroundColour = function() return col.black end,
                     getTextColor = function() return col.white end,
                     getBackgroundColor = function() return col.black end,
-                    setCursorPos = function(cx, cy) end,
-                    getCursorPos = function() return 1, 1 end,
+                    setCursorPos = function(cx, cy) ttcp = {cx, cy} end,
+                    getCursorPos = function() return ttcp[1], ttcp[2] end,
                     scroll = function(sx) end,
                     clear = function() end,
                     isColor = function() return false end,
