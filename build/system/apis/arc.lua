@@ -137,6 +137,15 @@ function install(package)
             end
         end
     end
+    if pkg["postInstScript"] then
+        local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
+        local fd = file.readAll()
+        file.close()
+        local tf = __LEGACY.fs.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+        tf.write(fd)
+        tf.close()
+        arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+    end
     indexFile.close()
     local insf = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json", "w")
     insf.write(__LEGACY.textutils.serializeJSON(pkg))
