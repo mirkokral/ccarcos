@@ -4,7 +4,7 @@ if not file then
 end
 local qf = fs.resolve(file, true)[1]
 local lx = {}
-local w = term.getSize()
+local w, h = term.getSize()
 local function genLX()
     if fs.exists(qf) then
         local f = fs.open(qf, "r")
