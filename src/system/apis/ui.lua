@@ -296,8 +296,8 @@ function TextInput(b)
     ---@diagnostic disable-next-line: assign-type-mismatch
     local config = Label(ca)
     -- config.width = b.width
-    config.textScroll = math.max(#config.text - config.width, 1)
     config.text = defaultText or ""
+    config.textScroll = math.max(#config.text - config.width, 1)
     config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
     local cursorPos = 1
     

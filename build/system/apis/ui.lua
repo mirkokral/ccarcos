@@ -221,8 +221,8 @@ function TextInput(b)
     if not ca["col"] then ca["col"] = col.gray end
     local defaultText = ca.label
     local config = Label(ca)
-    config.textScroll = math.max(#config.text - config.width, 1)
     config.text = defaultText or ""
+    config.textScroll = math.max(#config.text - config.width, 1)
     config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
     local cursorPos = 1
     config.focus = false
