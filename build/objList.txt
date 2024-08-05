@@ -17,6 +17,7 @@ f>system/apis/fs.lua
 f>system/apis/tutils.lua
 f>system/apis/ui.lua
 f>system/apis/arc.lua
+f>system/apis/hashing.lua
 f>services/elevator.lua
 f>services/elevatorStep.lua
 f>services/elevatorSrv.lua

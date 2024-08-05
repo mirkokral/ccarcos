@@ -21,6 +21,7 @@ compileFiles:
   - system/apis/tutils.lua
   - system/apis/ui.lua
   - system/apis/arc.lua
+  - system/apis/hashing.lua
   - services/elevator.lua
   - services/elevatorStep.lua
   - services/elevatorSrv.lua
