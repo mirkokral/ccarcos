@@ -40,7 +40,7 @@ loginPage = {
         y = 2
     },
     ui.TextInput{
-        label = "root",
+        label = "",
         x = 2,
         y = 3
     },
@@ -51,7 +51,7 @@ loginPage = {
         y = 5
     },
     ui.TextInput{
-        label = "toor",
+        label = "",
         x = 2,
         y = 6
     },
@@ -61,9 +61,34 @@ loginPage = {
         y = 8,
         callBack = function ()
             -- TODO: Add login validation
-            if true then
+            if arcos.validateUser(loginPage[2].text, loginPage[4].text) then
                 running = false
                 return false
+            else
+                local frunnin = true
+                local w = {
+                    ui.Label{
+                        label = "Incorrect Password!",
+                        x = 2,
+                        y = 2,
+                        textCol = col.red
+                    },
+                    ui.Button{
+                        label = " OK ",
+                        x = w-1-4,
+                        y = h-2,
+                        callBack = function ()
+                            ui.PageTransition(w, loginPage, false, 1, false, term)
+                            frunnin = false
+                            return true
+                        end
+                    }
+                }
+                ui.PageTransition(loginPage, w, false, 1, true, term)
+                local frls = true
+                while frunnin do
+                    ui.RenderLoop(w, term, frls)
+                end
             end
         end
     },
