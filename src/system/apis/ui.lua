@@ -306,8 +306,8 @@ function TextInput(b)
     
     config.onEvent = function (e)
         local function reRender()
-            print(cursorPos - config.textScroll)
-            sleep(1)
+            -- print(cursorPos - config.textScroll)
+            -- sleep(1)
             if config.focus then
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                 while cursorPos - config.textScroll < 1 do
@@ -316,6 +316,7 @@ function TextInput(b)
                 while cursorPos - config.textScroll > config.width do
                     config.textScroll = config.textScroll + 1
                 end
+                config.textScroll = math.min(config.textScroll, 1)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.lightGray
@@ -329,6 +330,7 @@ function TextInput(b)
                 while cursorPos - config.textScroll > config.width do
                     config.textScroll = config.textScroll + 1
                 end
+                config.textScroll = math.min(config.textScroll, 1)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.gray
