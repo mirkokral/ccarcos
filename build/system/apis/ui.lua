@@ -228,6 +228,33 @@ function TextInput(b)
     local cursorPos = 1
     config.focus = false
     config.onEvent = function (e)
+        local function reRender()
+            if config.focus then
+                config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
+                while cursorPos - config.textScroll < 1 do
+                    config.textScroll = config.textScroll - 1
+                end
+                while cursorPos - config.textScroll > config.width do
+                    config.textScroll = config.textScroll + 1
+                end
+                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+                config.col = col.lightGray
+                config.textCol = col.black
+            else
+                config.label = #config.text > 0 and config.text or " "
+                while cursorPos - config.textScroll < 1 do
+                    config.textScroll = config.textScroll - 1
+                end
+                while cursorPos - config.textScroll > config.width do
+                    config.textScroll = config.textScroll + 1
+                end
+                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+                config.col = col.gray
+                config.textCol = col.white
+            end
+        end
         if e[1] == "defocus" then
             config.focus = false
             return true
@@ -240,58 +267,39 @@ function TextInput(b)
                     cursorPos = #config.text
                 end
                 config.focus = true
-                config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
-                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-                config.col = col.lightGray
-                config.textCol = col.black
+                reRender()
                 return true
             else
                 config.focus = false
-                config.label = #config.text > 0 and config.text or " "
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
-                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-                config.col = col.gray
-                config.textCol = col.white
+                reRender()
                 return true
             end
         end
         if e[1] == "char" and config.focus then
             config.text = config.text:sub(0, cursorPos) .. e[2] .. config.text:sub(cursorPos+1)
             cursorPos = cursorPos + 1
-            config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-            config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
-            config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-            config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
+            reRender()
             return true
         end
         if e[1] == "key" and config.focus then
             if e[2] == __LEGACY.keys.enter then
                 config.focus = false
+                reRender()
             end
             if e[2] == __LEGACY.keys.backspace then
                 if cursorPos > 0 then
                     config.text = config.text:sub(0, cursorPos-1) .. config.text:sub(cursorPos+1)
                     cursorPos = cursorPos - 1
-                    config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                    config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
-                    config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
-                    config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+                    reRender()
                 end
             end
             if e[2] == __LEGACY.keys.left then
                 cursorPos = math.max(cursorPos-1, 0)
-                config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
-                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+                reRender()
             end
             if e[2] == __LEGACY.keys.right then
                 cursorPos = math.min(cursorPos+1, #config.text)
-                config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
-                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+                reRender()
             end
             return true
         end
