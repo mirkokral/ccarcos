@@ -231,14 +231,14 @@ function TextInput(b)
         local function reRender()
             if config.focus then
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                config.textScroll = math.max(math.min(#config.text-config.width-2, cursorPos),1)
+                config.textScroll = math.max(math.min(#config.text-config.width+2, cursorPos),1)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.lightGray
                 config.textCol = col.black
             else
                 config.label = #config.text > 0 and config.text or " "
-                config.textScroll = math.max(math.min(#config.text-config.width-1, cursorPos),1)
+                config.textScroll = math.max(math.min(#config.text-config.width+1, cursorPos),1)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.gray
