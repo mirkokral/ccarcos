@@ -238,6 +238,8 @@ function TextInput(b)
                     config.textScroll = config.textScroll + 1
                 end
                 config.textScroll = math.min(config.textScroll, 1)
+                print(config.textScroll)
+                sleep(0.5)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.lightGray
