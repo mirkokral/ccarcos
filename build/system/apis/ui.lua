@@ -262,7 +262,7 @@ function TextInput(b)
             config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
             config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-            config.textScroll = math.max(math.min(config.textScroll, cursorPos), cursorPos-config.width)
+            config.textScroll = math.max(math.min(config.textScroll, cursorPos-1), cursorPos-1-config.width)
             return true
         end
         if e[1] == "key" and config.focus then
