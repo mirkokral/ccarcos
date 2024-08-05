@@ -298,10 +298,10 @@ for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
 end 
 local passwdFile = fs.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
-print(tutils.s(users))
-sleep(5)
 _G.arcos.validateUser = function (user, password)
     for index, value in ipairs(users) do
+        print(value.password)
+        print(hashing.sha256(password))
         if value.user == user and value.password == hashing.sha256(password) then
             return true
         end
