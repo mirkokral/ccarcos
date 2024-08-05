@@ -262,6 +262,7 @@ function TextInput(b)
             config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
             config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+            config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
             return true
         end
         if e[1] == "key" and config.focus then
@@ -273,7 +274,7 @@ function TextInput(b)
                     config.text = config.text:sub(0, cursorPos-1) .. config.text:sub(cursorPos+1)
                     cursorPos = cursorPos - 1
                     config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                    config.textScroll = cursorPos-3
+                    config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
                     config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                     config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 end
@@ -281,14 +282,14 @@ function TextInput(b)
             if e[2] == __LEGACY.keys.left then
                 cursorPos = math.max(cursorPos-1, 0)
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                config.textScroll = cursorPos-3
+                config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
             end
             if e[2] == __LEGACY.keys.right then
                 cursorPos = math.min(cursorPos+1, #config.text)
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                config.textScroll = cursorPos-3
+                config.textScroll = math.max(cursorPos+config.width, math.min(config.textScroll, cursorPos))
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
             end
