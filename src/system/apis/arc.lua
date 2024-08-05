@@ -186,7 +186,7 @@ function getUpdatable()
         if value:sub(#value-14) == ".uninstallIndex" then
             local pk = value:sub(0, #value-15)
             print(pk)
-            local pf = __LEGACY.fs.open("/config/arc/" .. value, "r")
+            local pf = __LEGACY.fs.open("/config/arc/" .. pk .. ".meta.json", "r")
             local at = pf.readAll()
             print(at)
             local af = __LEGACY.textutils.unserializeJSON(at)
