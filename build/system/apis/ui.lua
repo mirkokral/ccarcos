@@ -265,7 +265,7 @@ function TextInput(b)
             while (cursorPos - config.textScroll) < 0 do
                 config.textScroll = config.textScroll - 1
             end
-            while (cursorPos - config.textScroll) > config.width do
+            while (cursorPos - config.textScroll) > config.width-2 do
                 config.textScroll = config.textScroll + 1
             end
             return true
@@ -298,7 +298,7 @@ function TextInput(b)
             while (cursorPos - config.textScroll) < 0 do
                 config.textScroll = config.textScroll - 1
             end
-            while (cursorPos - config.textScroll) > config.width do
+            while (cursorPos - config.textScroll) > config.width-2 do
                 config.textScroll = config.textScroll + 1
             end
             return true
