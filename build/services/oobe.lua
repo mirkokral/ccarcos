@@ -146,7 +146,7 @@ pages[4] = {
     ui.Button{
         label = "Done",
         callBack = function ()
-            if pages[4][2].label ~= "" then
+            if pages[4][2].text ~= "" then
                 arcos.setName(pages[4][2].text)
             end
             for index, value in ipairs(tobeinstalled) do
