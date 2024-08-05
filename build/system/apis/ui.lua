@@ -235,7 +235,7 @@ function TextInput(b)
         if e[1] == "click" then
             if e[3] >= config.x and e[4] >= config.y and e[3] < config.x + config.getWH()[1] and e[4] < config.y + config.getWH()[2] then
                 if config.focus then
-                    cursorPos = e[3] - config.x
+                    cursorPos = config.textScroll + e[3] - config.x
                 else
                     cursorPos = #config.text
                 end
@@ -262,12 +262,7 @@ function TextInput(b)
             config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
             config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-            while (cursorPos - config.textScroll) < 0 do
-                config.textScroll = config.textScroll - 1
-            end
-            while (cursorPos - config.textScroll) > config.width-2 do
-                config.textScroll = config.textScroll + 1
-            end
+            config.textScroll = math.max(math.min(config.textScroll, cursorPos), cursorPos-config.width)
             return true
         end
         if e[1] == "key" and config.focus then
