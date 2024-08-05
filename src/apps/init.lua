@@ -34,6 +34,7 @@ for index, value in ipairs(fs.ls("/services/enabled")) do
                     getTextColor = function() return col.white end,
                     getBackgroundColor = function() return col.black end,
                     setCursorPos = function(cx, cy) end,
+                    getCursorPos = function() return 1, 1 end,
                     scroll = function(sx) end,
                     clear = function() end,
                     isColor = function() return false end,
