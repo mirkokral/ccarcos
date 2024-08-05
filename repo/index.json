@@ -18,11 +18,20 @@
         "isIndependable": true
     },
     "gconfig": {
-        "friendlyName": "Graphical System Configurator",
-        "description": "A graphical application for system configuration",
+        "friendlyName": "Tweaks",
+        "description": "A graphical application for tweaking the system configuration",
         "owner": "TNC™ Development and Management Team",
         "version": "24.08.7",
         "vId": 7,
         "dependencies": []
+    },
+    "ged": {
+        "friendlyName": "Editor",
+        "description": "A simple WIP editor.",
+        "owner": "TNC™ Development and Management Team",
+        "version": "24.08",
+        "vId": 1,
+        "dependencies": []
     }
+    
 }
