@@ -15,17 +15,6 @@ configs = {
             x = 2,
             y = 2
         },
-        ui.Button{
-            label = "Quit",
-            x = w-5,
-            y = h-2,
-            callBack = function ()
-                running = false
-                return false
-            end,
-            col = col.gray,
-            textCol = col.white
-        },
         ui.ScrollPane{
             x = 2,
             y = 4,
@@ -44,7 +33,18 @@ configs = {
                 }
             },
             showScrollBtns = true
-        }
+        },
+        ui.Button{
+            label = "Quit",
+            x = w-5,
+            y = h-2,
+            callBack = function ()
+                running = false
+                return false
+            end,
+            col = col.gray,
+            textCol = col.white
+        },
     },
     bl = {
         ui.Label{
