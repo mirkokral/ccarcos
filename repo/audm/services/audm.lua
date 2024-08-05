@@ -50,12 +50,12 @@ loginPage = {
         textCol = col.gray,
         x = 2,
         y = 5,
-        width = 10
     },
     ui.TextInput{
         label = "",
         x = 2,
-        y = 6
+        y = 6,
+        width = 10
     },
     ui.Button{
         label = " Login ",
