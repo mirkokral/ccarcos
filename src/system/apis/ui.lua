@@ -209,13 +209,16 @@ function ScrollPane(b)
     config.onEvent = function (e)
         local ce = e
         if ce[1] == "click" then
+            local ret = false
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
-                    value.onEvent({"click", ce[2], ce[3] - config.x+1, ce[4] - config.y + config.scroll - index+2})
+                    if value.onEvent({"click", ce[2], ce[3] - config.x+1, ce[4] - config.y + config.scroll - index+2}) then
+                        ret = true
+                    end
                 end
             else
                 for index, value in ipairs(config.children) do
-                    value.onEvent({"defocus"})
+                    if value.onEvent({"defocus"}) then ret = true end
                 end
             end
             if config.showScrollBtns then
@@ -232,6 +235,7 @@ function ScrollPane(b)
             end
             mbpressedatm = true
             lastx, lasty = ce[3], ce[4]
+            return ret
         end
         if ce[1] == "drag" then
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
@@ -250,7 +254,7 @@ function ScrollPane(b)
         if ce[1] == "up" then
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
-                    value.onEvent({"up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index+2})
+                    if value.onEvent({"up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index+2})
                 end
             end
             mbpressedatm = false
@@ -258,8 +262,9 @@ function ScrollPane(b)
         if ce[1] == "scroll" then
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
                 config.scroll = config.scroll + ce[2]
+                return true
             end
-            mbpressedatm = false
+            
         end
     end
     return config
