@@ -301,6 +301,7 @@ users = tutils.dJSON(passwdFile.read())
 _G.arcos.validateUser = function (user, password)
     for index, value in ipairs(users) do
         print(value.password)
+        print(value.user)
         print(hashing.sha256(password))
         if value.user == user and value.password == hashing.sha256(password) then
             return true
