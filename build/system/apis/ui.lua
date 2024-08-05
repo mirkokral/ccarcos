@@ -279,7 +279,7 @@ function TextInput(b)
                 end
             end
             if e[2] == __LEGACY.keys.left then
-                cursorPos = math.max(cursorPos-1, 0)
+                cursorPos = math.max(cursorPos-1, 1)
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
