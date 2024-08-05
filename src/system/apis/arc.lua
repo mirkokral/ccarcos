@@ -121,6 +121,9 @@ function getRepo()
     return uj
 end
 
+---Install a package
+---@param package string
+---@return function
 function install(package)
     checkForCD()
     local repo = getRepo()
@@ -160,13 +163,15 @@ function install(package)
         end
     end
     if pkg["postInstScript"] then
-        local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
-        local fd = file.readAll()
-        file.close()
-        local tf = __LEGACY.fs.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
-        tf.write(fd)
-        tf.close()
-        arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+        return function()
+            local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
+            local fd = file.readAll()
+            file.close()
+            local tf = __LEGACY.fs.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+            tf.write(fd)
+            tf.close()
+            arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+        end
         
     end
     indexFile.close()
@@ -176,6 +181,9 @@ function install(package)
     local uinsf = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "w")
     uinsf.write(buildedpl)
     uinsf.close()
+    return function ()
+        
+    end
 end
 
 ---Gets the updatable packages

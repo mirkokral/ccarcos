@@ -138,13 +138,15 @@ function install(package)
         end
     end
     if pkg["postInstScript"] then
-        local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
-        local fd = file.readAll()
-        file.close()
-        local tf = __LEGACY.fs.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
-        tf.write(fd)
-        tf.close()
-        arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+        return function()
+            local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
+            local fd = file.readAll()
+            file.close()
+            local tf = __LEGACY.fs.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+            tf.write(fd)
+            tf.close()
+            arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+        end
     end
     indexFile.close()
     local insf = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json", "w")
@@ -153,6 +155,8 @@ function install(package)
     local uinsf = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "w")
     uinsf.write(buildedpl)
     uinsf.close()
+    return function ()
+    end
 end
 function getUpdatable()
     local updatable = {}

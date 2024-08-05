@@ -17,6 +17,7 @@ if cmd == "fetch" then
     arc.fetch()
 elseif cmd == "install" then
     local tobeinstalled = {}
+    local afterFunctions = {}
     for index, value in ipairs(args) do
         if not repo[value] then
             error("Package not found: " .. value)
@@ -37,10 +38,13 @@ elseif cmd == "install" then
         if out == "y" then
             for index, value in ipairs(tobeinstalled) do
                 print("(" .. index .. "/" .. #tobeinstalled .. ") " .. value)
-                arc.install(value)
+                table.insert(afterFunctions, arc.install(value))
             end
         else
             print("Installation Aborted.")
+        end
+        for index, value in ipairs(afterFunctions) do
+            value()
         end
     end
     print("Done")

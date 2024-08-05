@@ -203,8 +203,12 @@ pages[5] = {
             term.write("Installing")
             term.setBackgroundColor(col.black)
             term.setTextColor(col.white)
+            local afi = {}
             for index, value in ipairs(atobeinstalled) do
-                arc.install(value)
+                table.insert(afi, arc.install(value))
+            end
+            for index, value in ipairs(afi) do
+                value()
             end
             local f, e = fs.open("/services/enabled/login", "w")
             f.write("o " .. init)
