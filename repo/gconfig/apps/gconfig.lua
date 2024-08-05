@@ -36,8 +36,8 @@ configs = {
         },
         ui.Button{
             label = "Quit",
-            x = w-5,
-            y = h-2,
+            x = w-4,
+            y = h-1,
             callBack = function ()
                 running = false
                 return false
@@ -71,12 +71,12 @@ configs = {
             label = blc["defargs"],
             x = 16,
             y = 4,
-            width = w - 17
+            width = w - 16
         },
         ui.Button{
             label = "Save & Back",
-            x = w-12,
-            y = h-2,
+            x = w-11,
+            y = h-1,
             callBack = function ()
                 blc["defargs"] = configs.bl[4].text
                 local f = fs.open("/config/aboot", "w")
