@@ -154,6 +154,22 @@ function install(package)
     uinsf.write(buildedpl)
     uinsf.close()
 end
+function getUpdatable()
+    local updatable = {}
+    for index, value in ipairs(fs.ls("/config/arc/")) do
+        if value:sub(#value-14) == ".uninstallIndex" then
+            local pk = value:sub(0, #value-15)
+            print(pk)
+            local pf = __LEGACY.fs.open("/config/arc/" .. value, "r")
+            local af = __LEGACY.textutils.unserializeJSON(pf.readAll())
+            pf.close()
+            if af["vId"] < getRepo()[pk]["vId"] then
+                table.insert(updatable, pk)
+            end
+        end
+    end
+    return updatable
+end
 function uninstall(package)
     if not __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
