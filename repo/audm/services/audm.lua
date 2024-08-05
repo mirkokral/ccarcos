@@ -87,7 +87,7 @@ loginPage = {
                 ui.PageTransition(loginPage, w, false, 1, true, term)
                 local frls = true
                 while frunnin do
-                    ui.RenderLoop(w, term, frls)
+                    frls = ui.RenderLoop(w, term, frls)
                 end
             end
         end
