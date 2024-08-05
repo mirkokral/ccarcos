@@ -20,6 +20,7 @@ configs = {
             y = 4,
             width = w-1,
             height = h-4,
+            col = col.black,
             children = {
                 ui.Button {
                     label = "Bootloader",
