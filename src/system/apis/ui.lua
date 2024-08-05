@@ -341,7 +341,7 @@ function TextInput(b)
             config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
             config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
-            if cursorPos == #config.text then
+            if cursorPos == #config.text and (cursorPos - config.textScroll) == config.width then
                 config.textScroll = config.textScroll + 1
             end
             return true
