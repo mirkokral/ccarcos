@@ -374,7 +374,7 @@ function TextInput(b)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
             end
-            config.textScroll = math.max(math.min(config.textScroll, cursorPos-config.width), cursorPos)
+            config.textScroll = math.max(math.min(config.textScroll, cursorPos), cursorPos-config.width)
             
             return true
         end
