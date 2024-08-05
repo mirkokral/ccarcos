@@ -306,6 +306,8 @@ function TextInput(b)
     
     config.onEvent = function (e)
         local function reRender()
+            print(cursorPos - config.textScroll)
+            sleep(1)
             if config.focus then
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                 while cursorPos - config.textScroll < 1 do
