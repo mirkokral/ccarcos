@@ -78,7 +78,6 @@ loginPage = {
                         x = w-1-4,
                         y = h-2,
                         callBack = function ()
-                            ui.PageTransition(w, loginPage, false, 1, false, term)
                             frunnin = false
                             return true
                         end
@@ -89,6 +88,8 @@ loginPage = {
                 while frunnin do
                     frls = ui.RenderLoop(w, term, frls)
                 end
+                ui.PageTransition(w, loginPage, false, 1, false, term)
+                return true
             end
         end
     },
