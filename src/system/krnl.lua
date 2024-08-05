@@ -246,6 +246,7 @@ function _G.printError(...)
     term.setTextColor(oldtc)
 end
 _G.tasking = {
+
     ---Creates a task
     ---@param name string Task name
     ---@param callback function The actual code that the task runs
@@ -400,6 +401,18 @@ for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     arcos.loadAPI("/system/apis/" .. v)
     
 end 
+local passwdFile = fs.open("/config/passwd", "r")
+users = tutils.dJSON(passwdFile.read())
+print(tutils.s(users))
+sleep(5)
+_G.arcos.validateUser = function (user, password)
+    for index, value in ipairs(users) do
+        if value.user == user and value.password == hashing.sha256(password) then
+            return true
+        end
+    end
+    return false
+end
 -- C:Exc
 ---Prints something
 ---@param ... string
