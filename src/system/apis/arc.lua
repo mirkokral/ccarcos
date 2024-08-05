@@ -193,10 +193,10 @@ function getUpdatable()
     for index, value in ipairs(fs.ls("/config/arc/")) do
         if value:sub(#value-14) == ".uninstallIndex" then
             local pk = value:sub(0, #value-15)
-            print(pk)
+            -- print(pk)
             local pf = __LEGACY.fs.open("/config/arc/" .. pk .. ".meta.json", "r")
             local at = pf.readAll()
-            print(at)
+            -- print(at)
             local af = __LEGACY.textutils.unserializeJSON(at)
             pf.close()
             if af["vId"] < getRepo()[pk]["vId"] then

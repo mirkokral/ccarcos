@@ -61,14 +61,33 @@ elseif cmd == "uninstall" then
     print(table.concat(args, " "))
     print()
     term.setTextColor(col.white)
-    print("Do you want to proceed? [y/n] ")
+    write("Do you want to proceed? [y/n] ")
     local out = ({ arcos.ev("char") })[2]
+    print()
     if out == "y" then
         for index, value in ipairs(args) do
             arc.uninstall(value)
         end
     else
         print("Unistallation Aborted.")
+    end
+elseif cmd == "update" then
+    local toUpdate = arc.getUpdatable()
+    print("These packages will be updated:")
+    print()
+    term.setTextColor(col.magenta)
+    print(table.concat(toUpdate, " "))
+    print()
+    term.setTextColor(col.white)
+    write("Do you want to proceed? [y/n] ")
+    local out = ({ arcos.ev("char") })[2]
+    print()
+    if out == "y" then
+        for index, value in ipairs(toUpdate) do
+            arc.install(value)
+        end
+    else
+        print("Update Aborted.")
     end
 else
     printError("No command.")
