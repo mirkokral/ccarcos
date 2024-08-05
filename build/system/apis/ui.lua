@@ -224,6 +224,7 @@ function TextInput(b)
     config.text = defaultText or ""
     config.textScroll = math.max(#config.text - config.width, 1)
     config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+    config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
     local cursorPos = 1
     config.focus = false
     config.onEvent = function (e)
@@ -241,7 +242,7 @@ function TextInput(b)
                 config.focus = true
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+                config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
                 config.col = col.lightGray
                 config.textCol = col.black
                 return true
@@ -249,7 +250,7 @@ function TextInput(b)
                 config.focus = false
                 config.label = #config.text > 0 and config.text or " "
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+                config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
                 config.col = col.gray
                 config.textCol = col.white
                 return true
@@ -260,7 +261,7 @@ function TextInput(b)
             cursorPos = cursorPos + 1
             config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-            config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+            config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
             return true
         end
         if e[1] == "key" and config.focus then
@@ -273,20 +274,20 @@ function TextInput(b)
                     cursorPos = cursorPos - 1
                     config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                     config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-                    config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+                    config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
                 end
             end
             if e[2] == __LEGACY.keys.left then
                 cursorPos = math.max(cursorPos-1, 0)
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+                config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
             end
             if e[2] == __LEGACY.keys.right then
                 cursorPos = math.min(cursorPos+1, #config.text)
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-                config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
+                config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
             end
             return true
         end
