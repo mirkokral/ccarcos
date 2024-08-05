@@ -4,6 +4,7 @@ mkDirs:
   - system
   - system/apis
   - services
+  - services/enabled
   - temporary
   - user
   - apps
@@ -40,7 +41,7 @@ compileFiles:
   - apps/arc.lua
   - startup.lua
 nrFiles:
-  - services/enabled
+  - services/enabled/login
   - config/passwd
   - config/aboot
   - config/arcshell

@@ -1,6 +1,7 @@
 d>system
 d>system/apis
 d>services
+d>services/enabled
 d>temporary
 d>user
 d>apps
@@ -35,7 +36,7 @@ f>apps/uitest.lua
 f>apps/kmsg.lua
 f>apps/arc.lua
 f>startup.lua
-r>services/enabled
+r>services/enabled/login
 r>config/passwd
 r>config/aboot
 r>config/arcshell
