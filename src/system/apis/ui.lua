@@ -341,7 +341,10 @@ function TextInput(b)
             config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
             config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
             config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
-            if cursorPos+1 == #config.text and (cursorPos - config.textScroll+1) == config.width then
+            while (cursorPos - config.textScroll) < 0 do
+                config.textScroll = config.textScroll - 1
+            end
+            while (cursorPos - config.textScroll) > config.width do
                 config.textScroll = config.textScroll + 1
             end
             return true
@@ -371,8 +374,15 @@ function TextInput(b)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
             end
+            while (cursorPos - config.textScroll) < 0 do
+                config.textScroll = config.textScroll - 1
+            end
+            while (cursorPos - config.textScroll) > config.width do
+                config.textScroll = config.textScroll + 1
+            end
             return true
         end
+
     end
 
     return config
