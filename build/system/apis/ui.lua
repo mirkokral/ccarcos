@@ -192,12 +192,16 @@ function ScrollPane(b)
             return ret
         end
         if ce[1] == "up" then
+            local ret = false
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
-                    if value.onEvent({"up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index+2})
+                    if value.onEvent({"up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index+2}) then
+                        ret = ture
+                    end
                 end
             end
             mbpressedatm = false
+            return ret
         end
         if ce[1] == "scroll" then
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
