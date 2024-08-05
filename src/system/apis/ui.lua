@@ -290,11 +290,13 @@ end
 function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
+    
     local defaultText = ca.label
     ---@type TextInput
     ---@diagnostic disable-next-line: assign-type-mismatch
     local config = Label(ca)
     -- config.width = b.width
+    config.textScroll = math.max(#config.text - config.width, 1)
     config.text = defaultText or ""
     config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
     local cursorPos = 1
