@@ -193,7 +193,7 @@ function ScrollPane(b)
         end
         if ce[1] == "up" then
             local ret = false
-            if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
+            if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[4] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
                     if value.onEvent({"up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index+2}) then
                         ret = ture
@@ -206,7 +206,7 @@ function ScrollPane(b)
         if ce[1] == "scroll" then
             print(ce[2], ce[3], ce[4])
             sleep(1)
-            if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
+            if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[4] <= config.y + config.height then
                 config.scroll = config.scroll + ce[2]
                 return true
             end
