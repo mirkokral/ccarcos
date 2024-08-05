@@ -149,7 +149,8 @@ pages[4] = {
     ui.TextInput{
         label = "arcos",
         x = 2,
-        y = 3
+        y = 3,
+        width = w-2
     },
     ui.Button{
         label = "Done",

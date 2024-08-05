@@ -222,6 +222,7 @@ function TextInput(b)
     local defaultText = ca.label
     local config = Label(ca)
     config.text = defaultText or ""
+    config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
     local cursorPos = 1
     config.focus = false
     config.onEvent = function (e)
@@ -238,12 +239,14 @@ function TextInput(b)
                 end
                 config.focus = true
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
+                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.lightGray
                 config.textCol = col.black
                 return true
             else
                 config.focus = false
                 config.label = #config.text > 0 and config.text or " "
+                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.gray
                 config.textCol = col.white
                 return true

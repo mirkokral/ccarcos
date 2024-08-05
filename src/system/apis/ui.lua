@@ -95,8 +95,10 @@ end
 
 ---@class TextInput: Label
 ---@field curpos number
+---@field width number
 ---@field focus boolean
 ---@field text string
+---@field textScroll number
 
 ---Create a new scroll pane.
 ---@param b { width: number, height: number, x: number, y: number, col: Color?, children: Widget[], showScrollBtns: boolean?,  }
@@ -283,7 +285,7 @@ function Wrap(str, maxLength)
 end
 
 ---Creates a new text input
----@param b { label: string, x: number, y: number, col: Color?, textCol: Color?} The button configuration
+---@param b { label: string, x: number, y: number, width: number, col: Color?, textCol: Color?} The button configuration
 ---@return TextInput
 function TextInput(b)
     local ca = b
@@ -292,9 +294,12 @@ function TextInput(b)
     ---@type TextInput
     ---@diagnostic disable-next-line: assign-type-mismatch
     local config = Label(ca)
+    -- config.width = b.width
     config.text = defaultText or ""
+    config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
     local cursorPos = 1
     config.focus = false
+    
     config.onEvent = function (e)
         if e[1] == "defocus" then
             config.focus = false
@@ -310,12 +315,14 @@ function TextInput(b)
                 end
                 config.focus = true
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
+                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.lightGray
                 config.textCol = col.black
                 return true
             else
                 config.focus = false
                 config.label = #config.text > 0 and config.text or " "
+                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.gray
                 config.textCol = col.white
                 return true
