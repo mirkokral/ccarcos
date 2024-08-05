@@ -231,7 +231,7 @@ function TextInput(b)
         local function reRender()
             if config.focus then
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                config.textScroll = math.min(#config.text-config.width, cursorPos)
+                config.textScroll = math.max(math.min(#config.text-config.width, cursorPos),1)
                 print(config.textScroll)
                 sleep(0.5)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
@@ -240,7 +240,7 @@ function TextInput(b)
                 config.textCol = col.black
             else
                 config.label = #config.text > 0 and config.text or " "
-                config.textScroll = math.min(#config.text-config.width, cursorPos)
+                config.textScroll = math.max(math.min(#config.text-config.width, cursorPos),1)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.gray
