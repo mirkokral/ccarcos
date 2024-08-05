@@ -1,6 +1,6 @@
 local w, h = term.getSize()
 local currentScreen = "main"
-
+local running = true
 local blcf = fs.open("/config/aboot", "r")
 local blc = tutils.dJSON(blcf.read())
 
@@ -14,6 +14,17 @@ configs = {
             label = "Select what to configure",
             x = 2,
             y = 2
+        },
+        ui.Button{
+            label = "Quit",
+            x = w-5,
+            y = h-2,
+            callBack = function ()
+                running = false
+                return false
+            end,
+            col = col.gray,
+            textCol = col.white
         },
         ui.ScrollPane{
             x = 2,
@@ -80,6 +91,6 @@ configs = {
 
 
 local ls = true
-while true do
+while running do
     ls = ui.RenderLoop(configs[currentScreen], term, ls)
 end

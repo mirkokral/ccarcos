@@ -1,0 +1,5 @@
+{
+    "name": "Tweaks",
+    "execute": "/apps/gconfig.lua",
+    "icon": "+------+\n| \\  \/ |\n|  \\\/  |\n|  \/\\  |\n| \/  \\ |\n+------+"
+}

@@ -401,6 +401,7 @@ for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     arcos.loadAPI("/system/apis/" .. v)
     
 end 
+_G.window = __LEGACY.window
 local passwdFile = fs.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.validateUser = function (user, password)

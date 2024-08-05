@@ -596,6 +596,33 @@ function RenderWidgets(wdg, ox, oy, buf)
         ui.DirectRender(value, ox, oy, buf)
     end
 end
+
+---Lerps
+---@param callback fun(n: number)
+---@param speed number
+---@param deAccelAtEnd boolean?
+function Lerp(callback, speed, deAccelAtEnd)
+    local accel = 50
+    local ox = 0
+    if deAccelAtEnd then
+        while ox < 100 do
+            ox = math.max(ox+accel, 0)
+            accel = accel/speed
+            callback(ox)
+            
+            sleep(1/20)
+        end
+    else
+        accel = 1.5625
+        while ox < 100 do
+            ox = math.max(ox+accel, 0)
+            accel = accel*speed
+            callback(ox)
+            sleep(1/20)
+        end
+    end
+end
+
 ---Play a transition between widget sets 1 and 2
 ---@param widgets1 Widget[]
 ---@param widgets2 Widget[]

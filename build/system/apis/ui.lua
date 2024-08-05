@@ -465,6 +465,26 @@ function RenderWidgets(wdg, ox, oy, buf)
         ui.DirectRender(value, ox, oy, buf)
     end
 end
+function Lerp(callback, speed, deAccelAtEnd)
+    local accel = 50
+    local ox = 0
+    if deAccelAtEnd then
+        while ox < 100 do
+            ox = math.max(ox+accel, 0)
+            accel = accel/speed
+            callback(ox)
+            sleep(1/20)
+        end
+    else
+        accel = 1.5625
+        while ox < 100 do
+            ox = math.max(ox+accel, 0)
+            accel = accel*speed
+            callback(ox)
+            sleep(1/20)
+        end
+    end
+end
 function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local tw, th = terma.getSize()
     local ox = 0
