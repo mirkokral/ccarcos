@@ -89,7 +89,8 @@ end
 ---@field height number The height of the pane.
 ---@field col Color The background color of the scroll pane
 ---@field children Widget[] The children.
----@field showScrollbar boolean Wether to show the scroll bar
+---@field hideScrollbar boolean Wether to show the scroll bar
+---@field showScrollbBtns boolean Wether to show the scroll bar
 ---@field scroll number How much scrolled
 ---@field getTotalHeight fun() : number Gets the total height of all the elements
 
@@ -101,7 +102,7 @@ end
 ---@field textScroll number
 
 ---Create a new scroll pane.
----@param b { width: number, height: number, x: number, y: number, col: Color?, children: Widget[], showScrollBtns: boolean?,  }
+---@param b { width: number, height: number, x: number, y: number, col: Color?, children: Widget[], showScrollBtns: boolean?,  hideScrollbar: boolean? }
 ---@return ScrollPane
 function ScrollPane(b)
     local config = {}
@@ -109,7 +110,9 @@ function ScrollPane(b)
         config[key] = value
     end
     config.scroll = 0
-    config.width = config.width - 1
+    if not config.hideScrollbar then
+        config.width = config.width - 1
+    end
     config.getTotalHeight = function ()
         local h = 0
         for index, value in ipairs(config.children) do
@@ -178,14 +181,16 @@ function ScrollPane(b)
                 y = config.y + 1
             })
         end
-        for i = (config.showScrollBtns and 2 or 0), config.height-1, 1 do
-            table.insert(dcBuf, {
-                text = "|",
-                forCol = config.col,
-                bgCol = UItheme.bg,
-                x = config.x + config.width,
-                y = config.y + i
-            }) 
+        if not config.hideScrollbar then
+            for i = (config.showScrollBtns and 2 or 0), config.height-1, 1 do
+                table.insert(dcBuf, {
+                    text = "|",
+                    forCol = config.col,
+                    bgCol = UItheme.bg,
+                    x = config.x + config.width,
+                    y = config.y + i
+                }) 
+            end
         end
         return dcBuf
     end
@@ -247,6 +252,12 @@ function ScrollPane(b)
                 for index, value in ipairs(config.children) do
                     value.onEvent({"up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index+2})
                 end
+            end
+            mbpressedatm = false
+        end
+        if ce[1] == "scroll" then
+            if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
+                config.scroll = config.scroll + ce[2]
             end
             mbpressedatm = false
         end
@@ -487,6 +498,10 @@ function RenderLoop(toRender, outTerm, f)
         elseif ev[1] == "mouse_up" then
             for i, v in ipairs(toRender) do
                 if v.onEvent({"up", ev[2], ev[3]-0, ev[4]-0}) then red = true end
+            end
+        elseif ev[1] == "mouse_scroll" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({"scroll", ev[2], ev[3]-0, ev[4]-0}) then red = true end
             end
         else
 
