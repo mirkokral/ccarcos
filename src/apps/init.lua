@@ -36,12 +36,12 @@ for index, value in ipairs(fs.ls("/services/enabled")) do
                     getBackgroundColor = function() return col.black end,
                     setCursorPos = function(cx, cy) ttcp = {cx, cy} end,
                     getCursorPos = function() return ttcp[1], ttcp[2] end,
-                    scroll = function(sx) end,
+                    scroll = function(sx) ttcp[2] = ttcp[2] - sx end,
                     clear = function() end,
                     isColor = function() return false end,
                     isColour = function() return false end,
                     getSize = function ()
-                        return 0, 0
+                        return 51, 19
                     end
                 }
             else
