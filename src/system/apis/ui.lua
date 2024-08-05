@@ -310,13 +310,7 @@ function TextInput(b)
             -- sleep(1)
             if config.focus then
                 config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos+1)
-                while cursorPos - config.textScroll < 1 do
-                    config.textScroll = config.textScroll - 1
-                end
-                while cursorPos - config.textScroll > config.width do
-                    config.textScroll = config.textScroll + 1
-                end
-                config.textScroll = math.min(config.textScroll, 1)
+                config.textScroll = math.min(#config.text-config.width, cursorPos)
                 print(config.textScroll)
                 sleep(0.5)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
@@ -326,13 +320,7 @@ function TextInput(b)
 
             else
                 config.label = #config.text > 0 and config.text or " "
-                while cursorPos - config.textScroll < 1 do
-                    config.textScroll = config.textScroll - 1
-                end
-                while cursorPos - config.textScroll > config.width do
-                    config.textScroll = config.textScroll + 1
-                end
-                config.textScroll = math.min(config.textScroll, 1)
+                config.textScroll = math.min(#config.text-config.width, cursorPos)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll)
                 config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
                 config.col = col.gray
