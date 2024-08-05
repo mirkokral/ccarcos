@@ -204,10 +204,8 @@ function ScrollPane(b)
             return ret
         end
         if ce[1] == "scroll" then
-            print(ce[2], ce[3], ce[4])
-            sleep(1)
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[4] <= config.y + config.height then
-                config.scroll = config.scroll + ce[2]
+                config.scroll = math.min(math.max(config.scroll + ce[2], 0), config.getTotalHeight() - config.height)
                 return true
             end
         end
