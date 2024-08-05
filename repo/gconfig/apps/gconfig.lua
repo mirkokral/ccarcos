@@ -76,3 +76,9 @@ configs = {
         },
     }
 }
+
+
+local ls = true
+while true do
+    ls = ui.RenderLoop(configs[currentScreen], term, ls)
+end
