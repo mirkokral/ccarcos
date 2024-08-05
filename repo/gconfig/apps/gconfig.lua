@@ -5,7 +5,7 @@ local blcf = fs.open("/config/aboot", "r")
 local blc = tutils.dJSON(blcf.read())
 
 local function changeScreens(new, ot)
-    ui.PageTransition(configs[currentScreen], new, false, 1, ot, term)
+    ui.PageTransition(configs[currentScreen], configs[new], false, 1, ot, term)
     currentScreen = new
 end
 configs = {
