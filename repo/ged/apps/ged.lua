@@ -18,12 +18,13 @@ local siq = {
     }
 }
 local function genLX()
+    lx = {}
     if fs.exists(qf) then
         local f = fs.open(qf, "r")
         for i in f.readLine do
             table.insert(lx, ui.TextInput{
                 label = i,
-                width = w-1,
+                width = w-2,
                 x = 1,
                 y = 1
             })
@@ -32,7 +33,7 @@ local function genLX()
         lx = {
             ui.TextInput{
                 label = "",
-                width = w-1,
+                width = w-2,
                 x = 1,
                 y = 1
             }
