@@ -113,7 +113,7 @@ while running do
     else
         local e
         ls, e = ui.RenderLoop(loginPage, term, ls)
-        print(e[1])
+        print(e[1], e[2])
         if e[1] == "key" and (e[2] == 258 or e[2] == 257) and loginPage[2].focus then
             loginPage[2].focus = false
             loginPage[4].focus = true
