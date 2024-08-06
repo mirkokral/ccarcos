@@ -20,14 +20,15 @@ local function genLX()
     lx = {}
     if fs.exists(qf) then
         local f = fs.open(qf, "r")
-        for i in f.readLine do
-            table.insert(lx, ui.TextInput{
-                label = i,
+        
+        lx = {
+            ui.TextInput{
+                label = f.read(),
                 width = w-1,
                 x = 1,
                 y = 1
-            })
-        end
+            }
+        }
     else
         lx = {
             ui.TextInput{

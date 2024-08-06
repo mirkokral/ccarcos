@@ -336,7 +336,13 @@ function TextInput(b)
                 -- print(config.textScroll)
                 -- sleep(0.5)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
-                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+                local lout = ""
+                for index, value in ipairs(tutils.split(config.label, "\n")) do
+                    
+                    lout = lout .. value .. string.rep(" ", math.max(config.width - #config.label, 0 )) .. "\n"
+                end
+                lout = lout:sub(0, #lout-1)
+                config.label = lout
                 config.col = col.lightGray
                 config.textCol = col.black
 
@@ -344,7 +350,13 @@ function TextInput(b)
                 config.label = #config.text > 0 and config.text or " "
                 config.textScroll = math.max(math.min(#config.text-config.width+1, cursorPos),1)
                 config.label = config.label:sub(config.textScroll, config.width+config.textScroll-1)
-                config.label = config.label .. string.rep(" ", math.max(config.width - #config.label, 0 ))
+                local lout = ""
+                for index, value in ipairs(tutils.split(config.label, "\n")) do
+                    
+                    lout = lout .. value .. string.rep(" ", math.max(config.width - #config.label, 0 )) .. "\n"
+                end
+                lout = lout:sub(0, #lout-1)
+                config.label = lout
                 config.col = col.gray
                 config.textCol = col.white
             end
