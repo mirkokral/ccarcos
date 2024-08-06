@@ -106,14 +106,27 @@ loginPage = {
         end
     }
 }
+loginPage[2].focus = true
 while running do
     if ceRunning then
         ls = ui.RenderLoop(uiSelPage, term, ls)
     else
-        ls = ui.RenderLoop(loginPage, term, ls)
+        local e
+        ls, e = ui.RenderLoop(loginPage, term, ls)
+        if e[1] == "key" and (e[2] == 258 or e[2] == 257) and loginPage[2].focus then
+            loginPage[2].focus = false
+            loginPage[4].focus = true
+            ls = true
+        end
+        if e[1] == "key" and e[2] == 257 and loginPage[4].focus then
+            loginPage[2].focus = false
+            loginPage[4].focus = false
+            if loginPage[5].callback() then
+                ls = true
+            end
+        end
     end
 end
-
 local user = loginPage[2].text
 tasking.createTask("s", function ()
     local f, e = fs.open("/config/desktops/" .. sel, "r")

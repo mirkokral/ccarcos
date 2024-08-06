@@ -363,6 +363,7 @@ function TextInput(b)
         end
         if e[1] == "defocus" then
             config.focus = false
+            reRender()
             return true
         end
         if e[1] == "click" then
@@ -392,24 +393,20 @@ function TextInput(b)
         if e[1] == "key" and config.focus then
             if e[2] == __LEGACY.keys.enter then
                 config.focus = false
-                reRender()
             end
             if e[2] == __LEGACY.keys.backspace then
                 if cursorPos > 0 then
                     config.text = config.text:sub(0, cursorPos-1) .. config.text:sub(cursorPos+1)
                     cursorPos = cursorPos - 1
-                    reRender()
                 end
             end
             if e[2] == __LEGACY.keys.left then
                 cursorPos = math.max(cursorPos-1, 0)
-                reRender()
             end
             if e[2] == __LEGACY.keys.right then
                 cursorPos = math.min(cursorPos+1, #config.text)
-                reRender()
             end
-            
+            reRender()            
             return true
         end
 
