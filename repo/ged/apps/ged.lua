@@ -5,6 +5,18 @@ end
 local qf = fs.resolve(file, true)[1]
 local lx = {}
 local w, h = term.getSize()
+local siq = {
+    ui.ScrollPane{
+        children = lx,
+        height = h,
+        width = w,
+        x = 1,
+        y = 1,
+        col = col.black,
+        hideScrollbar = false,
+        showScrollBtns = true
+    }
+}
 local function genLX()
     if fs.exists(qf) then
         local f = fs.open(qf, "r")
@@ -26,20 +38,10 @@ local function genLX()
             }
         }
     end
+    siq[1].children = lx
 end
 genLX()
 local ls = true
 while true do
-    ls = ui.RenderLoop({
-        ui.ScrollPane{
-            children = lx,
-            height = h,
-            width = w,
-            x = 1,
-            y = 1,
-            col = col.black,
-            hideScrollbar = false,
-            showScrollBtns = true
-        }
-    }, term, ls)
+    ls = ui.RenderLoop(siq, term, ls)
 end
