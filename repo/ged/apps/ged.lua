@@ -13,7 +13,6 @@ local siq = {
         x = 1,
         y = 1,
         col = col.black,
-        hideScrollbar = false,
         showScrollBtns = true
     }
 }
@@ -24,7 +23,7 @@ local function genLX()
         for i in f.readLine do
             table.insert(lx, ui.TextInput{
                 label = i,
-                width = w-2,
+                width = w-1,
                 x = 1,
                 y = 1
             })
@@ -33,7 +32,7 @@ local function genLX()
         lx = {
             ui.TextInput{
                 label = "",
-                width = w-2,
+                width = w-1,
                 x = 1,
                 y = 1
             }
