@@ -484,16 +484,16 @@ function Lerp(callback, speed, deAccelAtEnd)
     local ox = 0
     speed = speed + 1
     if deAccelAtEnd then
-        while ox < 100 do
-            ox = math.max(ox + accel, 0)
+        while ox < 99.5 do
+            ox = math.min(math.max(ox + accel, 0), 100)
             accel = accel / speed
             callback(ox)
             sleep(1 / 20)
         end
     else
         accel = 1.5625
-        while ox < 100 do
-            ox = math.max(ox + accel, 0)
+        while ox < 99.5 do
+            ox = math.min(math.max(ox + accel, 0), 100)
             accel = accel * speed
             callback(ox)
             sleep(1 / 20)
