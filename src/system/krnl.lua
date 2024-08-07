@@ -138,10 +138,15 @@ _G.arcos = {
     r = function(env, path, ...) 
         assert(type(env) == "table", "Invalid argument: env")
         assert(type(path) == "string", "Invalid argument: path")
-        local compEnv = env
+        local compEnv
+        for k, v in pairs(_G) do
+            compEnv[k] = v
+        end
+        for k, v in pairs(env) do
+            compEnv[k] = v
+        end
         compEnv["__LEGACY"] = nil
         compEnv["apiUtils"] = nil
-        setmetatable(compEnv, {__index = _G})
         local f = __LEGACY.fs.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
         f.close()

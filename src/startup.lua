@@ -132,17 +132,13 @@ function _G.term.native()
 
     local oldug = {}
 
-    for k, v in pairs(__LEGACY) do
-      oldug[k] = v
-    end
-
     for k, v in pairs(_G) do
       oldug[k] = v
     end
   
 
     local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
-    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
+    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
     print(err)
     print("Press any key to continue")
     __LEGACY.os.pullEvent("key")
