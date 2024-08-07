@@ -102,7 +102,7 @@ _G.arcos = {
     r = function(env, path, ...) 
         assert(type(env) == "table", "Invalid argument: env")
         assert(type(path) == "string", "Invalid argument: path")
-        local compEnv
+        local compEnv = {}
         for k, v in pairs(_G) do
             compEnv[k] = v
         end
