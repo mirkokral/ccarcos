@@ -109,6 +109,8 @@ _G.arcos = {
         for k, v in pairs(env) do
             compEnv[k] = v
         end
+        compEnv["apiUtils"] = nil
+        compEnv["__LEGACY"] = nil
         local f = __LEGACY.fs.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
         f.close()
