@@ -121,16 +121,19 @@ function _G.term.native()
   term.setTextColor(__LEGACY.colors.white)
   function os.shutdown()
     os.shutdown = oldst
+    local oldug = {}
+    for k, v in pairs(__LEGACY) do
+      oldug[k] = v
+    end
+    for k, v in pairs(_G) do
+      oldug[k] = v
+    end
     local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
     local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
     print(err)
     print("Press any key to continue")
     __LEGACY.os.pullEvent("key")
     __LEGACY.os.reboot()
-  end
-  local oldug = {}
-  for k, v in pairs(_G) do
-    oldug[k] = v
   end
 end
 coroutine.yield()

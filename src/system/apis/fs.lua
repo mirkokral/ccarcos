@@ -46,15 +46,35 @@ function open(path, mode)
         file.write = function(towrite)
             file._f.write(towrite)
         end
+        file.writeLine = function(towrite)
+            file._f.writeLine(towrite)
+        end
+        file.flush = function(towrite)
+            file._f.write(towrite)
+        end
+        file.seekBytes = function(b)
+            return file._f.seek(b)
+        end
     elseif mode == "r" then
         local fd = file._f.readAll()
         local li = 0
+        file.readBytes = function(b)
+            return file._f.read(b)
+        end
+        file.seekBytes = function(b)
+            return file._f.seek(b)
+        end
         file.read = function()
             return fd
         end
-        file.readLine = function()
+        file.readLine = function(withTrailing)
             li = li + 1
-            return split(fd, "\n")[li]
+            if withTrailing then
+                return split(fd, "\n")[li] .. "\n"
+                
+            else
+                return split(fd, "\n")[li]
+            end
         end
     end
     return file, nil

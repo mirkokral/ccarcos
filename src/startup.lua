@@ -130,6 +130,16 @@ function _G.term.native()
   function os.shutdown()
     os.shutdown = oldst
 
+    local oldug = {}
+
+    for k, v in pairs(__LEGACY) do
+      oldug[k] = v
+    end
+
+    for k, v in pairs(_G) do
+      oldug[k] = v
+    end
+  
 
     local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
     local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
@@ -139,12 +149,6 @@ function _G.term.native()
     __LEGACY.os.reboot()
   end
 
-  local oldug = {}
-
-
-  for k, v in pairs(_G) do
-    oldug[k] = v
-  end
 end
 
 coroutine.yield()
