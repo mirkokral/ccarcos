@@ -117,6 +117,7 @@ _G.arcos = {
         if compFunc == nil then
             return false, "Failed to load function: " .. err 
         else
+            setfenv(compFunc, compEnv)
             local ok, err = pcall(compFunc, ...)
             return ok, err
         end
