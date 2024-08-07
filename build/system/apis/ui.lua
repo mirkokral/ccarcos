@@ -482,6 +482,7 @@ end
 function Lerp(callback, speed, deAccelAtEnd)
     local accel = 50
     local ox = 0
+    speed = speed + 1
     if deAccelAtEnd then
         while ox < 100 do
             ox = math.max(ox + accel, 0)

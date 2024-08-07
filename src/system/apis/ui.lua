@@ -496,6 +496,7 @@ function RenderLoop(toRender, outTerm, f)
         ui.Push(buf, outTerm)
         buf = nil
     end
+    
     if f then reRender() end
     local ev = { arcos.ev() }
     local red = false
@@ -615,6 +616,7 @@ end
 function Lerp(callback, speed, deAccelAtEnd)
     local accel = 50
     local ox = 0
+    speed = speed + 1
     if deAccelAtEnd then
         while ox < 100 do
             ox = math.max(ox + accel, 0)
@@ -694,7 +696,8 @@ _G.ui = {
     Wrap = Wrap,
     RenderLoop = RenderLoop,
     ScrollPane = ScrollPane,
-    TextInput = TextInput
+    TextInput = TextInput,
+    Lerp = Lerp,
 
 }
 -- C:End
