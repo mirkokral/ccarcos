@@ -142,7 +142,7 @@ function _G.term.native()
   
 
     local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
-    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
+    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
     print(err)
     print("Press any key to continue")
     __LEGACY.os.pullEvent("key")
