@@ -560,7 +560,7 @@ craftos_env.redstone = {
 craftos_env.dofile = function(file)
     local f, e = fs.open(file, "r")
     if not f then error(e) end
-    local funct, ferr = load(f.read(), file, nil, craftos_env)
+    local funct, ferr = load(f.read(), fs.name(file), nil, craftos_env)
     if not funct then
         error(ferr)
     end
