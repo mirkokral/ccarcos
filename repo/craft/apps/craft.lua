@@ -557,6 +557,15 @@ craftos_env.redstone = {
     end
         
 }
+craftos_env.dofile = function(file)
+    local f, e = fs.open(file, "r")
+    if not f then error(e) end
+    local funct, ferr = load(f.read())
+    if not funct then
+        error(ferr)
+    end
+    funct()
+end
 
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua")
 if not ok then printError(err) end
