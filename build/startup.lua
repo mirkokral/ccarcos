@@ -108,8 +108,7 @@ local t = {}
 for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
 for _, k in ipairs(t) do _G[k] = nil end
 local native = _G.term.native()
-for _, method in ipairs { "nativePaletteColor", "nativePaletteColour", "screenshot" } do native[method] = _G.term
-  [method] end
+for _, method in ipairs { "nativePaletteColor", "nativePaletteColour", "screenshot" } do native[method] = _G.term[method] end
 _G.term = native
 _G.http.checkURL = _G.http.checkURLAsync
 _G.http.websocket = _G.http.websocketAsync

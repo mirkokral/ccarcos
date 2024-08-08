@@ -157,7 +157,48 @@ local function fromBlit(hex)
 
     return 2 ^ value
 end
+local function get_display_type(value, t)
+    -- Lua is somewhat inconsistent in whether it obeys __name just for values which
+    -- have a per-instance metatable (so tables/userdata) or for everything. We follow
+    -- Cobalt and only read the metatable for tables/userdata.
+    if t ~= "table" and t ~= "userdata" then return t end
 
+    local metatable = debug.getmetatable(value)
+    if not metatable then return t end
+
+    local name = rawget(metatable, "__name")
+    if type(name) == "string" then return name else return t end
+end
+local function get_type_names(...)
+    local types = table.pack(...)
+    for i = types.n, 1, -1 do
+        if types[i] == "nil" then table.remove(types, i) end
+    end
+
+    if #types <= 1 then
+        return tostring(...)
+    else
+        return table.concat(types, ", ", 1, #types - 1) .. " or " .. types[#types]
+    end
+end
+local function field(tbl, index, ...)
+    expect(1, tbl, "table")
+    expect(2, index, "string")
+
+    local value = tbl[index]
+    local t = type(value)
+    for i = 1, select("#", ...) do
+        if t == select(i, ...) then return value end
+    end
+
+    t = get_display_type(value, t)
+
+    if value == nil then
+        error(("field '%s' missing from table"):format(index), 3)
+    else
+        error(("bad field '%s' (%s expected, got %s)"):format(index, get_type_names(...), t), 3)
+    end
+end
 
 return {
     white = white,
@@ -186,5 +227,6 @@ return {
     rgb8 = rgb8,
     toBlit = toBlit,
     fromBlit = fromBlit,
-    expect = expect
+    expect = expect,
+    field = field
 }

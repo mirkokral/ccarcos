@@ -171,27 +171,162 @@ local function c(t, d)
     return __LEGACY.fs.copy(t, d)
 end
 
+local expect = col.expect
+local field = col.field
+
 ---Completes path at locale
----@param path string
----@param loc string
----@param ... any
+---@param sPath string
+---@param sLocation string
+---@param bIncludeFiles boolean
+---@param bIncludeDirs boolean
 ---@return string[]
-local function complete(path, loc, ...)
-    return getfenv(utd).fs.complete(path, loc, ...)
+local function complete(sPath, sLocation, bIncludeFiles, bIncludeDirs)
+
+    expect(1, sPath, "string")
+    expect(2, sLocation, "string")
+    local bIncludeHidden = nil
+    if type(bIncludeFiles) == "table" then
+        bIncludeDirs = field(bIncludeFiles, "include_dirs", "boolean", "nil")
+        bIncludeHidden = field(bIncludeFiles, "include_hidden", "boolean", "nil")
+        bIncludeFiles = field(bIncludeFiles, "include_files", "boolean", "nil")
+    else
+        expect(3, bIncludeFiles, "boolean", "nil")
+        expect(4, bIncludeDirs, "boolean", "nil")
+    end
+
+    bIncludeHidden = bIncludeHidden ~= false
+    bIncludeFiles = bIncludeFiles ~= false
+    bIncludeDirs = bIncludeDirs ~= false
+    local sDir = sLocation
+    local nStart = 1
+    local nSlash = string.find(sPath, "[/\\]", nStart)
+    if nSlash == 1 then
+        sDir = ""
+        nStart = 2
+    end
+    local sName
+    while not sName do
+        local nSlash = string.find(sPath, "[/\\]", nStart)
+        if nSlash then
+            local sPart = string.sub(sPath, nStart, nSlash - 1)
+            sDir = fs.combine(sDir, sPart)
+            nStart = nSlash + 1
+        else
+            sName = string.sub(sPath, nStart)
+        end
+    end
+
+    if fs.dir(sDir) then
+        local tResults = {}
+        if bIncludeDirs and sPath == "" then
+            table.insert(tResults, ".")
+        end
+        if sDir ~= "" then
+            if sPath == "" then
+                table.insert(tResults, bIncludeDirs and ".." or "../")
+            elseif sPath == "." then
+                table.insert(tResults, bIncludeDirs and "." or "./")
+            end
+        end
+        local tFiles = fs.ls(sDir)
+        for n = 1, #tFiles do
+            local sFile = tFiles[n]
+            if #sFile >= #sName and string.sub(sFile, 1, #sName) == sName and (
+                bIncludeHidden or sFile:sub(1, 1) ~= "." or sName:sub(1, 1) == "."
+            ) then
+                local bIsDir = fs.dir(fs.combine(sDir, sFile))
+                local sResult = string.sub(sFile, #sName + 1)
+                if bIsDir then
+                    table.insert(tResults, sResult .. "/")
+                    if bIncludeDirs and #sResult > 0 then
+                        table.insert(tResults, sResult)
+                    end
+                else
+                    if bIncludeFiles and #sResult > 0 then
+                        table.insert(tResults, sResult)
+                    end
+                end
+            end
+        end
+        return tResults
+    end
+
+    return {}
 end
 
+local function find_aux(path, parts, i, out)
+    local part = parts[i]
+    if not part then
+        -- If we're at the end of the pattern, ensure our path exists and append it.
+        if fs.exists(path) then out[#out + 1] = path end
+    elseif part.exact then
+        -- If we're an exact match, just recurse into this directory.
+        return find_aux(fs.combine(path, part.contents), parts, i + 1, out)
+    else
+        -- Otherwise we're a pattern. Check we're a directory, then recurse into each
+        -- matching file.
+        if not fs.dir(path) then return end
+
+        local files = fs.ls(path)
+        for j = 1, #files do
+            local file = files[j]
+            if file:find(part.contents) then find_aux(fs.combine(path, file), parts, i + 1, out) end
+        end
+    end
+end
+
+local find_escape = {
+    -- Escape standard Lua pattern characters
+    ["^"] = "%^", ["$"] = "%$", ["("] = "%(", [")"] = "%)", ["%"] = "%%",
+    ["."] = "%.", ["["] = "%[", ["]"] = "%]", ["+"] = "%+", ["-"] = "%-",
+    -- Aside from our wildcards.
+    ["*"] = ".*",
+    ["?"] = ".",
+}
+
 ---Wildcards a path
----@param path string
+---@param pattern string
 ---@return string[]
-local function find(path)
-    return __LEGACY.fs.find(path)
+local function find(pattern)
+    expect(1, pattern, "string")
+
+    pattern = fs.combine(pattern) -- Normalise the path, removing ".."s.
+
+    -- If the pattern is trying to search outside the computer root, just abort.
+    -- This will fail later on anyway.
+    if pattern == ".." or pattern:sub(1, 3) == "../" then
+        error("/" .. pattern .. ": Invalid Path", 2)
+    end
+
+    -- If we've no wildcards, just check the file exists.
+    if not pattern:find("[*?]") then
+        if fs.exists(pattern) then return { pattern } else return {} end
+    end
+
+    local parts = {}
+    for part in pattern:gmatch("[^/]+") do
+        if part:find("[*?]") then
+            parts[#parts + 1] = {
+                exact = false,
+                contents = "^" .. part:gsub(".", find_escape) .. "$",
+            }
+        else
+            parts[#parts + 1] = { exact = true, contents = part }
+        end
+    end
+
+    local out = {}
+    find_aux("", parts, 1, out)
+    return out
 end
 
 ---Returns true if a path is a filesystem
----@param path string
+---@param sPath string
 ---@return boolean
-local function driveRoot(path)
-    return __LEGACY.fs.isDriveRoot(path)
+local function driveRoot(sPath)
+    expect(1, sPath, "string")
+    -- Force the root directory to be a mount.
+    return fs.par(sPath) == ".." or fs.drive(sPath) ~= fs.drive(fs.par(sPath))
 end
 ---Combine paths
 ---@param ... string
