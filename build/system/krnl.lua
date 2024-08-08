@@ -369,7 +369,8 @@ end
 for i, v in ipairs(fs.ls("/apis/")) do
     arcos.log("Loading UserAPI: " .. v)
     arcos.loadAPI("/apis/" .. v)
-end 
+end
+setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 _G.window = debug.getfenv(utd).window
 local passwdFile = fs.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())

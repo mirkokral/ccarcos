@@ -439,6 +439,9 @@ _G.devices = {
 _G.dev = {
 
 }
+
+
+
 setmetatable(_G.dev, {
     __index = function (t, k)
         local n = ""
@@ -505,7 +508,11 @@ for i, v in ipairs(fs.ls("/apis/")) do
     arcos.log("Loading UserAPI: " .. v)
     arcos.loadAPI("/apis/" .. v)
     
-end 
+end
+
+-- Small fix
+setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
+
 -- C:Exc
 ---@module "src.system.apis.arc"
 _G.arc = nil
