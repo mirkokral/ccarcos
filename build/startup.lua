@@ -40,34 +40,10 @@ local oldpe = os.pullEvent
 local oldtr = term.redirect
 local oldst = os.shutdown
 local olderr = error
-_G.__LEGACY = {
-  colors = colors,
-  colours = colours,
-  commands = commands,
-  disk = disk,
-  fs = fs,
-  ofs = fs,
-  gps = gps,
-  help = help,
-  http = http,
-  io = io,
-  keys = keys,
-  os = os,
-  paintutils = paintutils,
-  parallel = parallel,
-  peripheral = peripheral,
-  pocket = pocket,
-  rednet = rednet,
-  redstone = redstone,
-  settings = settings,
-  shell = shell,
-  term = term,
-  textutils = textutils,
-  turtle = turtle,
-  vector = vector,
-  window = window,
-  require = require
-}
+_G.__LEGACY = {}
+for key, value in pairs(_G) do
+  __LEGACY[key] = value
+end
 if live then
   __LEGACY.fs = {
     list = function(f)
@@ -143,6 +119,7 @@ local delete = { os = { "version", "pullEventRaw", "pullEvent", "run", "loadAPI"
 for k, v in pairs(delete) do for _, a in ipairs(v) do _G[k][a] = nil end end
 _G.term.redirect = function() end
 _G.error = function() end
+setfenv(utd, __LEGACY)
 function _G.term.native()
   _G.error = olderr
   _G.term.redirect = oldtr
