@@ -569,11 +569,11 @@ craftos_env.require = nil
 craftos_env.dofile = function(file)
     local f, e = fs.open(file, "r")
     if not f then error(e) end
-    local funct, ferr = load(f.read(), fs.name(file), nil, craftos_env)
+    local funct, ferr = load("return (function() " ..  f.read() .. " end)", fs.name(file), nil, craftos_env)
     if not funct then
         error(ferr)
     end
-    local ret = funct()
+    local ret = funct()()
     print(ret)
     return ret
 end
