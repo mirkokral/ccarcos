@@ -576,7 +576,7 @@ craftos_env.loadfile = function(file, mode, env)
     return funct()
 end
 craftos_env.dofile = function(file)
-    return craftos_env.loadfile(file, nil, _G)()
+    return craftos_env.loadfile(file, nil, craftos_env)()
 end
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua")
 if not ok then printError(err) end
