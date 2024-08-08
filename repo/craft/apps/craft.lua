@@ -567,5 +567,10 @@ craftos_env.dofile = function(file)
     funct()
 end
 craftos_env._G = setmetatable({}, {__index = craftos_env, __newindex = craftos_env})
+craftos_env.getmetatable = debug.getmetatable
+craftos_env.setmetatable = debug.setmetatable
+craftos_env.setfenv = debug.setfenv
+craftos_env.getfenv = debug.getfenv
+craftos_env.getupvalue = debug.getupvalue
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua")
 if not ok then printError(err) end
