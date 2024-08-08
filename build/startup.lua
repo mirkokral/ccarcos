@@ -44,6 +44,7 @@ _G.__LEGACY = {}
 for key, value in pairs(_G) do
   __LEGACY[key] = value
 end
+__LEGACY.files = __LEGACY.fs
 if live then
   __LEGACY.files = {
     list = function(f)
