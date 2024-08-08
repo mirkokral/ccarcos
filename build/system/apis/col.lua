@@ -16,7 +16,7 @@ local red = 0x4000
 local black = 0x8000
 local function expect(n, v, ...)
     r = false
-    for index, value in ipairs(...) do
+    for index, value in ipairs({ ... }) do
         if type(v) == value then
             r = true
             break
