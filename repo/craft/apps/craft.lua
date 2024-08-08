@@ -566,11 +566,10 @@ craftos_env.getfenv = getfenv
 craftos_env.getupvalue = debug.getupvalue
 craftos_env.expect = col.expect
 craftos_env.shell = nil
-craftos_env.require = nil
 craftos_env.loadfile = function(file)
     local f, e = fs.open(file, "r")
     if not f then error(e) end
-    local funct, ferr = load("return (function() " ..  f.read() .. " end)", fs.name(file), nil, craftos_env)
+    local funct, ferr = load("return (function() " ..  f.read() .. " end)", fs.name(file), nil, getfenv(2))
     if not funct then
         error(ferr)
     end
