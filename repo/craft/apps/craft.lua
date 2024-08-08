@@ -1,5 +1,6 @@
 local craftos_env = {}
 for index, value in pairs(_G) do
+    print(index, value)
     craftos_env[index] = value
 end
 
