@@ -153,7 +153,7 @@ craftos_env.os = {
 
 local function makeRt(s)
     local rt = {}
-    rt._closed = not f.open
+    rt._closed = not s.open or false
     rt._autoclose = false
     rt.close = function(self) self.f.close() rt._closed = not f.open end
     rt.flush = function(self) self.f.flush() end
