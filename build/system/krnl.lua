@@ -132,13 +132,17 @@ _G.arcos = {
         end
         compEnv["apiUtils"] = nil
         compEnv["__LEGACY"] = nil
-        compEnv["_G"] = {}
-        setmetatable(compEnv["_G"], {
+        compEnv["_G"] = nil
+        setmetatable(compEnv, {
             __index = function (t, k)
-                return compEnv[k]
+                if k == "_G" then
+                    return compEnv
+                end
             end,
             __newindex = function (t, k, v)
-                compEnv[k] = v
+                if k == "_G" then
+                    compEnv[k] = v
+                end
             end
         })
         local f = __LEGACY.fs.open(path, "r")

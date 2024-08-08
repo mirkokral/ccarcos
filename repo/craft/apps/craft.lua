@@ -1,7 +1,7 @@
 local craftos_env = {}
-for index, value in pairs(_G) do
-    print(index, value)
-    craftos_env[index] = value
+for key, value in pairs(_G) do
+    print(key, value)
+    craftos_env[key] = value
 end
 
 craftos_env.colors = col
