@@ -6,7 +6,7 @@ local function getTBI(a, b)
         error("Package not found: " .. a)
     end
     for index, value in ipairs(repo[a]["dependencies"]) do
-        getTBI(a, b)
+        getTBI(value, b)
     end
     if (not arc.isInstalled(a)) or arc.getIdata(a)["vId"] < repo[a]["vId"] then
         table.insert(b, a)
