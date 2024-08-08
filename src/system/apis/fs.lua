@@ -177,7 +177,7 @@ end
 ---@param ... any
 ---@return string[]
 local function complete(path, loc, ...)
-    return __LEGACY.fs.complete(path, loc, ...)
+    return getfenv(utd).fs.complete(path, loc, ...)
 end
 
 ---Wildcards a path

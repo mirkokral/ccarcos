@@ -116,7 +116,7 @@ local function c(t, d)
     return __LEGACY.fs.copy(t, d)
 end
 local function complete(path, loc, ...)
-    return __LEGACY.fs.complete(path, loc, ...)
+    return getfenv(utd).fs.complete(path, loc, ...)
 end
 local function find(path)
     return __LEGACY.fs.find(path)
