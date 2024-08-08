@@ -152,7 +152,8 @@ function install(package)
             end
         elseif value:sub(1, 1) == "f" then
             if not __LEGACY.fs.exists("/" .. value:sub(3)) then
-                local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. value:sub(3))
+                
+                local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. value:sub(3):gsub("%s", "%%20"))
                 local tfh = __LEGACY.fs.open("/" .. value:sub(3), "w")
                 -- print(value:sub(3))
                 tfh.write(file.readAll())
