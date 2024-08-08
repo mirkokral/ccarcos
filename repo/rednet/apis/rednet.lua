@@ -55,7 +55,7 @@ end
 function send(recipient, message, protocol)
     assert(type(recipient) == "number")
     assert(type(protocol) == "string" or type(protocol) == "nil")
-    local mId = math.random(1, 2147483647)
+    local mId = math.random(2, 2147483647)
     recMsgs[mId] = arcos.clock() + 14.5
     if not pruneRecvTimer then pruneRecvTimer = arcos.startTimer(15) end
 
