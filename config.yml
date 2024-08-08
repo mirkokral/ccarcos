@@ -18,7 +18,7 @@ compileFiles:
   - system/liveinst.lua
   - system/apis/col.lua
   - system/apis/rd.lua
-  - system/apis/fs.lua
+  - system/apis/files.lua
   - system/apis/tutils.lua
   - system/apis/ui.lua
   - system/apis/arc.lua

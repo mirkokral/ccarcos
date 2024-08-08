@@ -14,7 +14,7 @@ f>system/installer.lua
 f>system/liveinst.lua
 f>system/apis/col.lua
 f>system/apis/rd.lua
-f>system/apis/fs.lua
+f>system/apis/files.lua
 f>system/apis/tutils.lua
 f>system/apis/ui.lua
 f>system/apis/arc.lua
