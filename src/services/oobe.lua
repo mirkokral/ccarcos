@@ -211,7 +211,7 @@ pages[5] = {
             for index, value in ipairs(afi) do
                 value()
             end
-            local f, e = fs.open("/services/enabled/login", "w")
+            local f, e = files.open("/services/enabled/login", "w")
             f.write("o " .. init)
             f.close()
             ui.PageTransition(pages[5], pages[6], false, 1, true, term)

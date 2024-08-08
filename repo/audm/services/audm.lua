@@ -1,5 +1,5 @@
 local user = ""
-local we = fs.ls("/config/desktops")
+local we = files.ls("/config/desktops")
 local sq = {}
 
 local running = true
@@ -129,7 +129,7 @@ while running do
 end
 local user = loginPage[2].text
 tasking.createTask("s", function ()
-    local f, e = fs.open("/config/desktops/" .. sel, "r")
+    local f, e = files.open("/config/desktops/" .. sel, "r")
     if f then
         term.clear()
         term.setCursorPos(1, 1)

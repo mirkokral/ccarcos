@@ -2,7 +2,7 @@ local file = ...
 if not file then
     error("No file specified")
 end
-local qf = fs.resolve(file, true)[1]
+local qf = files.resolve(file, true)[1]
 local lx = {}
 local w, h = term.getSize()
 local siq = {
@@ -18,8 +18,8 @@ local siq = {
 }
 local function genLX()
     lx = {}
-    if fs.exists(qf) then
-        local f = fs.open(qf, "r")
+    if files.exists(qf) then
+        local f = files.open(qf, "r")
         
         lx = {
             ui.TextInput{

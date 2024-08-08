@@ -28,7 +28,7 @@ if not live then
   local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
   if f then
     local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-    local cur = fs.open("/system/rel", "r")
+    local cur = files.open("/system/rel", "r")
     if cur and cur.readAll() ~= branch then
       shell.run("/system/installer.lua")
     end
@@ -48,7 +48,7 @@ for key, value in pairs(_G) do
   __LEGACY[key] = value
 end
 if live then
-  __LEGACY.fs = {
+  __LEGACY.files = {
     list = function(f)
       return __LEGACY.ofs.list("/.arcliveenv/" .. f)
     end,
@@ -144,7 +144,7 @@ function _G.term.native()
     end
   
 
-    local f = __LEGACY.fs.open("/system/bootloader.lua", "r")
+    local f = __LEGACY.files.open("/system/bootloader.lua", "r")
     local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
     print(err)
     print("Press any key to continue")

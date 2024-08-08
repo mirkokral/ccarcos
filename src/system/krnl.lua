@@ -13,15 +13,15 @@ local config = {
 
 
 local function recursiveRemove(r)
-    for _, i in ipairs(__LEGACY.fs.list(r)) do
-        if __LEGACY.fs.isDir(i) then
+    for _, i in ipairs(__LEGACY.files.list(r)) do
+        if __LEGACY.files.isDir(i) then
             recursiveRemove(i)
         else
-            __LEGACY.fs.remove(i)
+            __LEGACY.files.remove(i)
         end
     end
 end
-for _, i in ipairs(__LEGACY.fs.list("/temporary/")) do
+for _, i in ipairs(__LEGACY.files.list("/temporary/")) do
     recursiveRemove("/temporary/" .. i)
 end
 local users = {}
@@ -198,7 +198,7 @@ _G.arcos = {
                 end
             end
         })
-        local f = __LEGACY.fs.open(path, "r")
+        local f = __LEGACY.files.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
         f.close()
         if compFunc == nil then
@@ -231,7 +231,7 @@ _G.arcos = {
             v = v:sub(1, #v-4)
         end 
         setmetatable(tabEnv, {__index = _G})
-        local f, e = __LEGACY.fs.open(api, "r")
+        local f, e = __LEGACY.files.open(api, "r")
         if not f then
             error(e)
         end
@@ -499,12 +499,12 @@ while true do
     end
 end
 arcos.log("Seems like it works")
-for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
+for i, v in ipairs(__LEGACY.files.list("/system/apis/")) do
     arcos.log("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
     
 end 
-for i, v in ipairs(fs.ls("/apis/")) do
+for i, v in ipairs(files.ls("/apis/")) do
     arcos.log("Loading UserAPI: " .. v)
     arcos.loadAPI("/apis/" .. v)
     
@@ -519,7 +519,7 @@ _G.arc = nil
 ---@module "src.system.apis.col"
 _G.col = nil
 ---@module "src.system.apis.fs"
-_G.fs = nil
+_G.files = nil
 ---@module "src.system.apis.hashing"
 _G.hashing = nil
 ---@module "src.system.apis.rd"
@@ -530,7 +530,7 @@ _G.tutils = nil
 _G.ui = nil
 -- C:End
 _G.window = debug.getfenv(utd).window
-local passwdFile = fs.open("/config/passwd", "r")
+local passwdFile = files.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.validateUser = function (user, password)
     for index, value in ipairs(users) do
@@ -555,7 +555,7 @@ _G.write = function(...) end
 _G.read = function(r, v, a) return "" end
 -- C:End
 
-local f, err = fs.open("/config/passwd", "r")
+local f, err = files.open("/config/passwd", "r")
 local tab
 if f then
     tab = tutils.dJSON(f.read())

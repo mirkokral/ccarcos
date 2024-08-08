@@ -1,7 +1,7 @@
 local w, h = term.getSize()
 local currentScreen = "main"
 local running = true
-local blcf = fs.open("/config/aboot", "r")
+local blcf = files.open("/config/aboot", "r")
 local blc = tutils.dJSON(blcf.read())
 
 local function changeScreens(new, ot)
@@ -79,7 +79,7 @@ configs = {
             y = h-1,
             callBack = function ()
                 blc["defargs"] = configs.bl[4].text
-                local f = fs.open("/config/aboot", "w")
+                local f = files.open("/config/aboot", "w")
                 f.write(tutils.sJSON(blc))
                 f.close()
                 changeScreens("main", false)

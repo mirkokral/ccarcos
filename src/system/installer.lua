@@ -46,12 +46,12 @@ function drawLoader()
     loaderLoaded = (loaderLoaded + 1) % 8
 end
 drawLoader()
-if not fs.exists("/system/krnl.lua") then
-    for _, i in ipairs(fs.list("/")) do
-        if not i == "rom" then fs.delete(i) end
+if not files.exists("/system/krnl.lua") then
+    for _, i in ipairs(files.list("/")) do
+        if not i == "rom" then files.delete(i) end
     end
 else
-    fs.delete("/system")
+    files.delete("/system")
 end
 function _G.strsplit(inputstr, sep)
     if sep == nil then
@@ -82,20 +82,20 @@ for _,i in ipairs(strsplit(cont, "\n")) do
     action = string.sub(i, 1, 1)
     filename = string.sub(i, 3)
     if action == "d" then
-        fs.makeDir("/" .. filename)
+        files.makeDir("/" .. filename)
     end
     if action == "f" then
-        fs.delete("/" .. filename)
-        f = fs.open(filename, "w")
+        files.delete("/" .. filename)
+        f = files.open(filename, "w")
         hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
         f.close()
     end
-    if action == "r" and not fs.exists("/" .. filename) then
+    if action == "r" and not files.exists("/" .. filename) then
         -- shell.run("rm /" .. filename)
         
-        f = fs.open(filename, "w")
+        f = files.open(filename, "w")
         hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
         f.write(hf.readAll())
         hf.close()
@@ -103,7 +103,7 @@ for _,i in ipairs(strsplit(cont, "\n")) do
         
     end
 end
-f = fs.open("/system/rel", "w")
+f = files.open("/system/rel", "w")
 f.write(branch)
 f.close()
 os.reboot()

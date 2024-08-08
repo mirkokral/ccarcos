@@ -77,15 +77,15 @@ local function getLatestCommit()
     return rp
 end
 local function checkForCD()
-    if not __LEGACY.fs.exists("/config/arc") then
-        __LEGACY.fs.makeDir("/config/arc")
+    if not __LEGACY.files.exists("/config/arc") then
+        __LEGACY.files.makeDir("/config/arc")
     end
 end
 ---Fetches arc repos
 local function fetch()
     checkForCD()
     local f = get("https://raw.githubusercontent.com/mirkokral/ccarcos/".. getLatestCommit() .."/repo/index.json")
-    local fa = __LEGACY.fs.open("/config/arc/repo.json", "w")
+    local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
     fa.write(f.readAll())
     fa.close()
     f.close()
@@ -95,17 +95,17 @@ end
 ---@param package string
 ---@return boolean
 local function isInstalled(package)
-    return __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex")
+    return __LEGACY.files.exists("/config/arc/" .. package .. ".uninstallIndex")
 end
 
 ---Get installation data
 ---@param package string
 ---@return table?
 local function getIdata(package)
-    if not __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
+    if not __LEGACY.files.exists("/config/arc/" .. package .. ".meta.json") then
         return nil
     end
-    local f, e = __LEGACY.fs.open("/config/arc/".. package .. ".meta.json", "r")
+    local f, e = __LEGACY.files.open("/config/arc/".. package .. ".meta.json", "r")
     if not f then
         return nil
     end
@@ -115,7 +115,7 @@ end
 ---Gets the repo data
 ---@return table
 local function getRepo()
-    local f = __LEGACY.fs.open("/config/arc/repo.json", "r")
+    local f = __LEGACY.files.open("/config/arc/repo.json", "r")
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
     f.close()
     return uj
@@ -124,18 +124,18 @@ end
 ---Uninstall a package
 ---@param package string
 local function uninstall(package)
-    if not __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex") then
+    if not __LEGACY.files.exists("/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
     local toDelete = {"/config/arc/" .. package .. ".uninstallIndex", "/config/arc/" .. package .. ".meta.json"}
-    local f = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "r")
+    local f = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "r")
     for value in f.readLine do
         if value == nil then break end
         
         table.insert(toDelete, 1, "/" .. value:sub(3))
     end
     for index, value in ipairs(toDelete) do
-        __LEGACY.fs.delete(value)
+        __LEGACY.files.delete(value)
     end
 end
 
@@ -150,8 +150,8 @@ local function install(package)
     if not repo[package] then
         error("Package not found!")
     end
-    if __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
-        local f = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json", "r")
+    if __LEGACY.files.exists("/config/arc/" .. package .. ".meta.json") then
+        local f = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "r")
         local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
         if ver < repo[package]["vId"] then
             uninstall(package)
@@ -164,15 +164,15 @@ local function install(package)
     local ifx = indexFile.readAll()
     for index, value in ipairs(split(ifx, "\n")) do
         if value:sub(1, 1) == "d" then
-            if not __LEGACY.fs.exists("/" .. value:sub(3)) then
-                __LEGACY.fs.makeDir("/" .. value:sub(3))
+            if not __LEGACY.files.exists("/" .. value:sub(3)) then
+                __LEGACY.files.makeDir("/" .. value:sub(3))
                 buildedpl = buildedpl .. value .. "\n"
             end
         elseif value:sub(1, 1) == "f" then
-            if not __LEGACY.fs.exists("/" .. value:sub(3)) then
+            if not __LEGACY.files.exists("/" .. value:sub(3)) then
                 
                 local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. value:sub(3):gsub("%s", "%%20"))
-                local tfh = __LEGACY.fs.open("/" .. value:sub(3), "w")
+                local tfh = __LEGACY.files.open("/" .. value:sub(3), "w")
                 -- print(value:sub(3))
                 tfh.write(file.readAll())
                 tfh.close()
@@ -186,7 +186,7 @@ local function install(package)
             local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
             local fd = file.readAll()
             file.close()
-            local tf = __LEGACY.fs.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+            local tf = __LEGACY.files.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
             tf.write(fd)
             tf.close()
             arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
@@ -194,10 +194,10 @@ local function install(package)
         
     end
     indexFile.close()
-    local insf = __LEGACY.fs.open("/config/arc/" .. package .. ".meta.json", "w")
+    local insf = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "w")
     insf.write(__LEGACY.textutils.serializeJSON(pkg))
     insf.close()
-    local uinsf = __LEGACY.fs.open("/config/arc/" .. package .. ".uninstallIndex", "w")
+    local uinsf = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "w")
     uinsf.write(buildedpl)
     uinsf.close()
     return function ()
@@ -209,11 +209,11 @@ end
 ---@return string[]
 local function getUpdatable()
     local updatable = {}
-    for index, value in ipairs(fs.ls("/config/arc/")) do
+    for index, value in ipairs(files.ls("/config/arc/")) do
         if value:sub(#value-14) == ".uninstallIndex" then
             local pk = value:sub(0, #value-15)
             -- print(pk)
-            local pf = __LEGACY.fs.open("/config/arc/" .. pk .. ".meta.json", "r")
+            local pf = __LEGACY.files.open("/config/arc/" .. pk .. ".meta.json", "r")
             local at = pf.readAll()
             -- print(at)
             local af = __LEGACY.textutils.unserializeJSON(at)

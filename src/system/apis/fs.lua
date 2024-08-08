@@ -39,7 +39,7 @@ local function open(path, mode)
     if not cmodevalid then error("Mode not valid: " .. mode) end
     local err
     file = {}
-    file._f, err = __LEGACY.fs.open(path, mode)
+    file._f, err = __LEGACY.files.open(path, mode)
     if not file._f then
         return nil, err
     end
@@ -86,14 +86,14 @@ end
 ---@param dir string
 ---@return string[]
 local function ls(dir)
-    return __LEGACY.fs.list(dir)
+    return __LEGACY.files.list(dir)
 end
 
 ---Removes a file
 ---@param f string
 ---@return nil
 local function rm(f)
-    return __LEGACY.fs.delete(f)
+    return __LEGACY.files.delete(f)
 end
 
 ---Returns a boolean if a file exists
@@ -101,12 +101,12 @@ end
 ---@return boolean
 local function exists(f)
     if d == "" or d == "/" then return true end
-    return __LEGACY.fs.exists(f)
+    return __LEGACY.files.exists(f)
 end
 ---Makes a directory
 ---@param d string Dir path
 local function mkDir(d)
-    return __LEGACY.fs.makeDir(d)
+    return __LEGACY.files.makeDir(d)
 end
 
 ---Resolves a relative path.
@@ -141,7 +141,7 @@ local function resolve(f, keepNonExistent)
             
         end
     end
-    if not keepNonExistent and not fs.exists("/" .. tutils.join(out, "/")) then return {} end
+    if not keepNonExistent and not files.exists("/" .. tutils.join(out, "/")) then return {} end
     for _, rmi in ipairs(frmItems) do
         
         table.remove(out, rmi)
@@ -154,21 +154,21 @@ end
 ---@return boolean
 local function dir(d) 
     if d == "" or d == "/" then return true end
-    return __LEGACY.fs.isDir(d)
+    return __LEGACY.files.isDir(d)
 end
 ---Moves t to d
 ---@param t string
 ---@param d string
 ---@return nil
 local function m(t, d) 
-    return __LEGACY.fs.move(t, d)
+    return __LEGACY.files.move(t, d)
 end
 ---Copies t to d
 ---@param t string
 ---@param d string
 ---@return nil
 local function c(t, d)
-    return __LEGACY.fs.copy(t, d)
+    return __LEGACY.files.copy(t, d)
 end
 
 local expect = col.expect
@@ -209,14 +209,14 @@ local function complete(sPath, sLocation, bIncludeFiles, bIncludeDirs)
         local nSlash = string.find(sPath, "[/\\]", nStart)
         if nSlash then
             local sPart = string.sub(sPath, nStart, nSlash - 1)
-            sDir = fs.combine(sDir, sPart)
+            sDir = files.combine(sDir, sPart)
             nStart = nSlash + 1
         else
             sName = string.sub(sPath, nStart)
         end
     end
 
-    if fs.dir(sDir) then
+    if files.dir(sDir) then
         local tResults = {}
         if bIncludeDirs and sPath == "" then
             table.insert(tResults, ".")
@@ -228,13 +228,13 @@ local function complete(sPath, sLocation, bIncludeFiles, bIncludeDirs)
                 table.insert(tResults, bIncludeDirs and "." or "./")
             end
         end
-        local tFiles = fs.ls(sDir)
+        local tFiles = files.ls(sDir)
         for n = 1, #tFiles do
             local sFile = tFiles[n]
             if #sFile >= #sName and string.sub(sFile, 1, #sName) == sName and (
                 bIncludeHidden or sFile:sub(1, 1) ~= "." or sName:sub(1, 1) == "."
             ) then
-                local bIsDir = fs.dir(fs.combine(sDir, sFile))
+                local bIsDir = files.dir(files.combine(sDir, sFile))
                 local sResult = string.sub(sFile, #sName + 1)
                 if bIsDir then
                     table.insert(tResults, sResult .. "/")
@@ -258,19 +258,19 @@ local function find_aux(path, parts, i, out)
     local part = parts[i]
     if not part then
         -- If we're at the end of the pattern, ensure our path exists and append it.
-        if fs.exists(path) then out[#out + 1] = path end
+        if files.exists(path) then out[#out + 1] = path end
     elseif part.exact then
         -- If we're an exact match, just recurse into this directory.
-        return find_aux(fs.combine(path, part.contents), parts, i + 1, out)
+        return find_aux(files.combine(path, part.contents), parts, i + 1, out)
     else
         -- Otherwise we're a pattern. Check we're a directory, then recurse into each
         -- matching file.
-        if not fs.dir(path) then return end
+        if not files.dir(path) then return end
 
-        local files = fs.ls(path)
+        local files = files.ls(path)
         for j = 1, #files do
             local file = files[j]
-            if file:find(part.contents) then find_aux(fs.combine(path, file), parts, i + 1, out) end
+            if file:find(part.contents) then find_aux(files.combine(path, file), parts, i + 1, out) end
         end
     end
 end
@@ -290,7 +290,7 @@ local find_escape = {
 local function find(pattern)
     expect(1, pattern, "string")
 
-    pattern = fs.combine(pattern) -- Normalise the path, removing ".."s.
+    pattern = files.combine(pattern) -- Normalise the path, removing ".."s.
 
     -- If the pattern is trying to search outside the computer root, just abort.
     -- This will fail later on anyway.
@@ -300,7 +300,7 @@ local function find(pattern)
 
     -- If we've no wildcards, just check the file exists.
     if not pattern:find("[*?]") then
-        if fs.exists(pattern) then return { pattern } else return {} end
+        if files.exists(pattern) then return { pattern } else return {} end
     end
 
     local parts = {}
@@ -326,61 +326,61 @@ end
 local function driveRoot(sPath)
     expect(1, sPath, "string")
     -- Force the root directory to be a mount.
-    return fs.par(sPath) == ".." or fs.drive(sPath) ~= fs.drive(fs.par(sPath))
+    return files.par(sPath) == ".." or files.drive(sPath) ~= files.drive(files.par(sPath))
 end
 ---Combine paths
 ---@param ... string
 ---@return string
 local function combine(...)
-    return __LEGACY.fs.combine(...)
+    return __LEGACY.files.combine(...)
 end
 ---Gets the name of a filepath
 ---@param path string
 ---@return string
 local function name(path)
-    return __LEGACY.fs.getName(path)
+    return __LEGACY.files.getName(path)
 end
 ---Gets the parent dir of a filepath
 ---@param path string
 ---@return string
 local function par(path)
-    return __LEGACY.fs.getDir(path)
+    return __LEGACY.files.getDir(path)
 end
 ---Gets the size of a file
 ---@param path string
 ---@return number   
 local function size(path)
-    return __LEGACY.fs.getSize(path)
+    return __LEGACY.files.getSize(path)
 end
 ---Gets the readonly status of a file
 ---@param path string
 ---@return boolean
 local function readonly(path)
-    return __LEGACY.fs.isReadOnly(path)
+    return __LEGACY.files.isReadOnly(path)
 end
 ---Gets the drive path for path
 ---@param path string
 ---@return string
 local function drive(path)
-    return __LEGACY.fs.getDrive(path)
+    return __LEGACY.files.getDrive(path)
 end
 ---Gets free space at path
 ---@param path string
 ---@return number
 local function freeSpace(path)
-    return __LEGACY.fs.getFreeSpace(path)
+    return __LEGACY.files.getFreeSpace(path)
 end
 ---Gets path capacity
 ---@param path string
 ---@return number
 local function capacity(path)
-    return __LEGACY.fs.getCapacity(path)
+    return __LEGACY.files.getCapacity(path)
 end
 ---Gets path attributes
 ---@param path string
 ---@return {size: number, isDir: number, isReadOnly: number, created: number, modified: number}
 local function attributes(path)
-    return __LEGACY.fs.attributes(path)
+    return __LEGACY.files.attributes(path)
 end
 
 

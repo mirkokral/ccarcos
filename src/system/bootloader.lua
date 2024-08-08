@@ -10,7 +10,7 @@ function mysplit(inputstr, sep)
   end
 
 function main()
-    local cf = __LEGACY.fs.open("/config/aboot", "r")
+    local cf = __LEGACY.files.open("/config/aboot", "r")
     local config = __LEGACY.textutils.unserialiseJSON(cf.readAll())
     cf.close()
     -- print(__LEGACY.textutils.serialize(config))
@@ -24,7 +24,7 @@ function main()
         write("krnl: ")
         args = read()
     end
-    local f = __LEGACY.fs.open("/system/krnl.lua", "r")
+    local f = __LEGACY.files.open("/system/krnl.lua", "r")
     load(f.readAll(), "/system/krnl.lua", nil, setmetatable({}, {__index = _G}))(table.unpack(mysplit(args, " ")))
 end
 main()

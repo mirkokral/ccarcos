@@ -2,5 +2,5 @@ local f = ...
 if not f then
     error("No file specified")
 end
-local rf = fs.resolve(f, true)[1]
-fs.mkDir(rf)
+local rf = files.resolve(f, true)[1]
+files.mkDir(rf)

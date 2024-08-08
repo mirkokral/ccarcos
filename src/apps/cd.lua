@@ -3,13 +3,13 @@ if not path then
     error("No directory specified!")
 end
 
-local p = fs.resolve(path)[1]
+local p = files.resolve(path)[1]
 
-if not fs.exists(p) then
+if not files.exists(p) then
     error(p .. ": Specified directory does not exist")
 end
 
-if not fs.dir(p) then
+if not files.dir(p) then
     error(p .. ": Specified path is not a directory.")
 end
 

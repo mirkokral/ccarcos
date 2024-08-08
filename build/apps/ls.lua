@@ -1,10 +1,10 @@
 local path = ... or environ.workDir
-local f = fs.resolve(path)
+local f = files.resolve(path)
 for _, fp in ipairs(f) do
-    if fs.exists(fp) then
-        if fs.dir(fp) then
-            for _, i in ipairs(fs.ls(fp)) do
-                if fs.dir(fp) then
+    if files.exists(fp) then
+        if files.dir(fp) then
+            for _, i in ipairs(files.ls(fp)) do
+                if files.dir(fp) then
                     term.setTextColor(col.green)
                 else
                     term.setTextColor(col.white)

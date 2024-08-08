@@ -1,6 +1,6 @@
-for index, value in ipairs(fs.ls("/services/enabled")) do
+for index, value in ipairs(files.ls("/services/enabled")) do
     
-    local servFile, err = fs.open("/services/enabled/"..value, "r")
+    local servFile, err = files.open("/services/enabled/"..value, "r")
     if not servFile then
         printError(err)
         error()

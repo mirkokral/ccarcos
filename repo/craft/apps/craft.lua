@@ -86,23 +86,23 @@ craftos_env.disk = {
 }
 
 craftos_env.fs = {
-    complete = fs.complete,
-    find = fs.find,
-    isDriveRoot = fs.driveRoot,
-    list = fs.ls,
-    combine = fs.combine,
-    getName = fs.name,
-    getDir = fs.par,
-    getSize = fs.size,
-    exists = fs.exists,
-    isDir = fs.dir,
-    isReadOnly = fs.readonly,
-    makeDir = fs.mkDir,
-    move = fs.m,
-    copy = fs.c,
-    delete = fs.rm,
+    complete = files.complete,
+    find = files.find,
+    isDriveRoot = files.driveRoot,
+    list = files.ls,
+    combine = files.combine,
+    getName = files.name,
+    getDir = files.par,
+    getSize = files.size,
+    exists = files.exists,
+    isDir = files.dir,
+    isReadOnly = files.readonly,
+    makeDir = files.mkDir,
+    move = files.m,
+    copy = files.c,
+    delete = files.rm,
     open = function (path, mode)
-        local f, e = fs.open(path, mode)
+        local f, e = files.open(path, mode)
         if not f then return f, e end
         local rt = {}
         rt.close = f.close
@@ -116,10 +116,10 @@ craftos_env.fs = {
         return rt
 
     end,
-    getDrive = fs.drive,
-    getFreeSpace = fs.freeSpace,
-    getCapacity = fs.capacity,
-    attributes = fs.attributes
+    getDrive = files.drive,
+    getFreeSpace = files.freeSpace,
+    getCapacity = files.capacity,
+    attributes = files.attributes
 }
 craftos_env.os = {
     loadAPI = function (...)
@@ -247,7 +247,7 @@ craftos_env.io = {
     stdErr = makeRt({write = _G.write }),
     open = function (fname, mode)
         if not mode then mode = "r" end
-        local f, e = fs.open(fname, mode)
+        local f, e = files.open(fname, mode)
         if not f then return f, e end
         return makeRt(f)
     end,
@@ -567,9 +567,9 @@ craftos_env.getupvalue = debug.getupvalue
 craftos_env.expect = col.expect
 craftos_env.shell = nil
 craftos_env.loadfile = function(file, mode, env)
-    local f, e = fs.open(file, "r")
+    local f, e = files.open(file, "r")
     if not f then error(e) end
-    local funct, ferr = load("return (function() " ..  f.read() .. " end)", fs.name(file), nil, env)
+    local funct, ferr = load("return (function() " ..  f.read() .. " end)", files.name(file), nil, env)
     if not funct then
         error(ferr)
     end

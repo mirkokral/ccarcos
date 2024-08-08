@@ -11,15 +11,15 @@ local config = {
     telemetry = true
 }
 local function recursiveRemove(r)
-    for _, i in ipairs(__LEGACY.fs.list(r)) do
-        if __LEGACY.fs.isDir(i) then
+    for _, i in ipairs(__LEGACY.files.list(r)) do
+        if __LEGACY.files.isDir(i) then
             recursiveRemove(i)
         else
-            __LEGACY.fs.remove(i)
+            __LEGACY.files.remove(i)
         end
     end
 end
-for _, i in ipairs(__LEGACY.fs.list("/temporary/")) do
+for _, i in ipairs(__LEGACY.files.list("/temporary/")) do
     recursiveRemove("/temporary/" .. i)
 end
 local users = {}
@@ -145,7 +145,7 @@ _G.arcos = {
                 end
             end
         })
-        local f = __LEGACY.fs.open(path, "r")
+        local f = __LEGACY.files.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
         f.close()
         if compFunc == nil then
@@ -170,7 +170,7 @@ _G.arcos = {
             v = v:sub(1, #v-4)
         end 
         setmetatable(tabEnv, {__index = _G})
-        local f, e = __LEGACY.fs.open(api, "r")
+        local f, e = __LEGACY.files.open(api, "r")
         if not f then
             error(e)
         end
@@ -362,17 +362,17 @@ while true do
     end
 end
 arcos.log("Seems like it works")
-for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
+for i, v in ipairs(__LEGACY.files.list("/system/apis/")) do
     arcos.log("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
 end 
-for i, v in ipairs(fs.ls("/apis/")) do
+for i, v in ipairs(files.ls("/apis/")) do
     arcos.log("Loading UserAPI: " .. v)
     arcos.loadAPI("/apis/" .. v)
 end
 setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 _G.window = debug.getfenv(utd).window
-local passwdFile = fs.open("/config/passwd", "r")
+local passwdFile = files.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.validateUser = function (user, password)
     for index, value in ipairs(users) do
@@ -382,7 +382,7 @@ _G.arcos.validateUser = function (user, password)
     end
     return false
 end
-local f, err = fs.open("/config/passwd", "r")
+local f, err = files.open("/config/passwd", "r")
 local tab
 if f then
     tab = tutils.dJSON(f.read())

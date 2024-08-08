@@ -1,5 +1,5 @@
 local currentPowerUsage = 0
-local f, e = fs.open("/config/pmst", "r")
+local f, e = files.open("/config/pmst", "r")
 local titemcount = 0
 local iup = 0
 local monitor = devices.get("left")
@@ -111,7 +111,7 @@ while rd do
     local e
     ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic, btn1, btn2}, monitor, ls)
     if e[1] == "timer" and e[2] == tid then
-        local nf, err = fs.open("/config/pmst", "w")
+        local nf, err = files.open("/config/pmst", "w")
         if nf then
             nf.write(tostring(total))
             nf.close()
