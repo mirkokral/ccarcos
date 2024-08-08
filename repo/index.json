@@ -45,8 +45,8 @@
         "friendlyName": "RedNet",
         "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
         "owner":"TNC™ Development and Management Team",
-        "version":"1",
-        "vId": "1",
+        "version":"2",
+        "vId": 2,
         "dependencies": []
 
     }
