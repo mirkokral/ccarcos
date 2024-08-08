@@ -3,8 +3,8 @@
         "friendlyName": "Test Application",
         "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
         "owner": "TNC™ Development and Management Team",
-        "version": "24.08.2",
-        "vId": 2,
+        "version": "24.08.3",
+        "vId": 3,
         "dependencies": [],
         "isIndependable": true
     },
@@ -12,8 +12,8 @@
         "friendlyName": "arcui Display Manager",
         "description": "A display manager that uses the UI library",
         "owner": "TNC™ Development and Management Team",
-        "version": "24.08.15",
-        "vId": 15,
+        "version": "24.08.16",
+        "vId": 16,
         "dependencies": [],
         "isIndependable": true
     },
@@ -21,16 +21,16 @@
         "friendlyName": "Tweaks",
         "description": "A graphical application for tweaking the system configuration",
         "owner": "TNC™ Development and Management Team",
-        "version": "24.08.7",
-        "vId": 7,
+        "version": "24.08.8",
+        "vId": 8,
         "dependencies": []
     },
     "ged": {
         "friendlyName": "Editor",
         "description": "A simple WIP editor.",
         "owner": "TNC™ Development and Management Team",
-        "version": "24.08.5",
-        "vId": 5,
+        "version": "24.08.6",
+        "vId": 6,
         "dependencies": []
     },
     "craft": {
@@ -45,8 +45,8 @@
         "friendlyName": "RedNet",
         "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
         "owner":"TNC™ Development and Management Team",
-        "version":"3",
-        "vId": 3,
+        "version":"4",
+        "vId": 4,
         "dependencies": []
 
     }
