@@ -566,17 +566,17 @@ craftos_env.getfenv = getfenv
 craftos_env.getupvalue = debug.getupvalue
 craftos_env.expect = col.expect
 craftos_env.shell = nil
-craftos_env.loadfile = function(file)
+craftos_env.loadfile = function(file, mode, env)
     local f, e = fs.open(file, "r")
     if not f then error(e) end
-    local funct, ferr = load("return (function() " ..  f.read() .. " end)", fs.name(file), nil, getfenv(2))
+    local funct, ferr = load("return (function() " ..  f.read() .. " end)", fs.name(file), nil, env)
     if not funct then
         error(ferr)
     end
     return funct()
 end
 craftos_env.dofile = function(file)
-    return craftos_env.loadfile(file)()
+    return craftos_env.loadfile(file, nil, _G)()
 end
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua")
 if not ok then printError(err) end
