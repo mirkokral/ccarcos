@@ -462,6 +462,22 @@ for i, v in ipairs(fs.ls("/apis/")) do
     arcos.loadAPI("/apis/" .. v)
     
 end 
+-- C:Exc
+---@module "src.system.apis.arc"
+_G.arc = nil
+---@module "src.system.apis.col"
+_G.col = nil
+---@module "src.system.apis.fs"
+_G.fs = nil
+---@module "src.system.apis.hashing"
+_G.hashing = nil
+---@module "src.system.apis.rd"
+_G.rd = nil
+---@module "src.system.apis.tutils"
+_G.tutils = nil
+---@module "src.system.apis.ui"
+_G.ui = nil
+-- C:End
 _G.window = __LEGACY.window
 local passwdFile = fs.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
@@ -481,8 +497,11 @@ _G.print = function(...) end
 ---@param ... string
 _G.write = function(...) end
 ---Reads a line
+---@param r any?
+---@param v any?
+---@param a any?
 ---@return string userInput
-_G.read = function() return "" end
+_G.read = function(r, v, a) return "" end
 -- C:End
 
 local f, err = fs.open("/config/passwd", "r")

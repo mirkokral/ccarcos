@@ -129,25 +129,6 @@ local function receive(protocol_filter, timeout)
     end
 end
 
-local function host(protocol, hostname)
-    assert(type(protocol) == "string")
-    assert(type(hostname) == "string")
-    if hostname == "localhost" then
-        error("Reserved hostname", 2)
-    end
-    if hostNames[protocol] ~= hostname then
-        if lookup(protocol, hostname) ~= nil then
-            error("Hostname in use", 2)
-        end
-        hostNames[protocol] = hostname
-    end
-end
-
-local function unhost(protocol)
-    assert(type(protocol) == "string")
-    hostNames[protocol] = nil
-end
-
 local function lookup(protocol, hostname)
     assert(type(protocol) ==  "string")
     assert(type(hostname) ==  "string" or type(hostname) == "nil")
@@ -160,9 +141,9 @@ local function lookup(protocol, hostname)
 
     -- Check localhost first
     if hostNames[protocol] then
-        if hostname == nil then
+        if results then
             table.insert(results, arcos.id)
-        elseif hostname == "localhost" or hostname == hostnames[protocol] then
+        elseif hostname == "localhost" or hostname == hostNames[protocol] then
             return arcos.id
         end
     end
@@ -192,7 +173,7 @@ local function lookup(protocol, hostname)
             local sender_id, message, message_protocol = p1, p2, p3
             if message_protocol == "dns" and type(message) == "table" and message.sType == "lookup response" then
                 if message.sProtocol == protocol then
-                    if hostname == nil then
+                    if results then
                         table.insert(results, sender_id)
                     elseif message.sHostname == hostname then
                         return sender_id
@@ -208,6 +189,25 @@ local function lookup(protocol, hostname)
         return table.unpack(results)
     end
     return nil
+end
+
+local function host(protocol, hostname)
+    assert(type(protocol) == "string")
+    assert(type(hostname) == "string")
+    if hostname == "localhost" then
+        error("Reserved hostname", 2)
+    end
+    if hostNames[protocol] ~= hostname then
+        if lookup(protocol, hostname) ~= nil then
+            error("Hostname in use", 2)
+        end
+        hostNames[protocol] = hostname
+    end
+end
+
+local function unhost(protocol)
+    assert(type(protocol) == "string")
+    hostNames[protocol] = nil
 end
 
 local started = false

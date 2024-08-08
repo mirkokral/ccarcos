@@ -1,8 +1,13 @@
 term.setTextColor(col.blue)
 print(arcos.version())
 local confile = fs.open("/config/arcshell", "r")
-local conf = tutils.dJSON(confile.read())
-confile.close()
+local conf = {}
+if confile then
+    conf = tutils.dJSON(confile.read())
+    confile.close()
+else
+    return
+end
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
     local cmd = nil
