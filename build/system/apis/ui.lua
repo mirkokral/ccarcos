@@ -235,6 +235,55 @@ local function Wrap(str, maxLength)
     ostr = ostr:sub(1, #ostr - 1)
     return ostr
 end
+local function Label(b)
+    local config = {}
+    for i, v in pairs(b) do
+        config[i] = v
+    end
+    function config.getWH()
+        local height = 1
+        local width = 1
+        local i = 1
+        while string.sub(config.label, i, i) ~= "" do
+            if string.sub(config.label, i, i) == "\n" then
+                height = height + 1
+            else
+                width = width + 1
+            end
+            i = i + 1
+        end
+        width = width - 1
+        return { width, height }
+    end
+    if not config.col then config.col = UItheme.bg end
+    if not config.textCol then config.textCol = UItheme.fg end
+    config.getDrawCommands = function()
+        local rcbuffer = {}
+        local rx = 0
+        local ry = 0
+        local i = 1
+        while string.sub(config.label, i, i) ~= "" do
+            if string.sub(config.label, i, i) == "\n" then
+                rx = 0
+                ry = ry + 1
+            else
+                table.insert(rcbuffer, {
+                    x = config.x + rx,
+                    y = config.y + ry,
+                    forCol = config.textCol,
+                    bgCol = config.col,
+                    text = string.sub(config.label, i, i)
+                })
+                rx = rx + 1
+            end
+            i = i + 1
+        end
+        return rcbuffer
+    end
+    config.onEvent = function(ev)
+    end
+    return config
+end
 local function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
@@ -320,55 +369,6 @@ local function TextInput(b)
     end
     return config
 end
-local function Label(b)
-    local config = {}
-    for i, v in pairs(b) do
-        config[i] = v
-    end
-    function config.getWH()
-        local height = 1
-        local width = 1
-        local i = 1
-        while string.sub(config.label, i, i) ~= "" do
-            if string.sub(config.label, i, i) == "\n" then
-                height = height + 1
-            else
-                width = width + 1
-            end
-            i = i + 1
-        end
-        width = width - 1
-        return { width, height }
-    end
-    if not config.col then config.col = UItheme.bg end
-    if not config.textCol then config.textCol = UItheme.fg end
-    config.getDrawCommands = function()
-        local rcbuffer = {}
-        local rx = 0
-        local ry = 0
-        local i = 1
-        while string.sub(config.label, i, i) ~= "" do
-            if string.sub(config.label, i, i) == "\n" then
-                rx = 0
-                ry = ry + 1
-            else
-                table.insert(rcbuffer, {
-                    x = config.x + rx,
-                    y = config.y + ry,
-                    forCol = config.textCol,
-                    bgCol = config.col,
-                    text = string.sub(config.label, i, i)
-                })
-                rx = rx + 1
-            end
-            i = i + 1
-        end
-        return rcbuffer
-    end
-    config.onEvent = function(ev)
-    end
-    return config
-end
 local function Button(b)
     local config = { col = UItheme.buttonBg, textCol = UItheme.buttonFg }
     for i, v in pairs(b) do
@@ -386,53 +386,6 @@ local function Button(b)
         return rt
     end
     return o
-end
-local function RenderLoop(toRender, outTerm, f)
-    local function reRender()
-        local buf = ui.InitBuffer(outTerm)
-        ui.RenderWidgets(toRender, 0, 0, buf)
-        ui.Push(buf, outTerm)
-        buf = nil
-    end
-    if f then reRender() end
-    local ev = { arcos.ev() }
-    local red = false
-    local isMonitor, monSide = pcall(__LEGACY.peripheral.getName, outTerm)
-    if not isMonitor then
-        if ev[1] == "mouse_click" then
-            for i, v in ipairs(toRender) do
-                if v.onEvent({ "click", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
-            end
-        elseif ev[1] == "mouse_drag" then
-            for i, v in ipairs(toRender) do
-                if v.onEvent({ "drag", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
-            end
-        elseif ev[1] == "mouse_up" then
-            for i, v in ipairs(toRender) do
-                if v.onEvent({ "up", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
-            end
-        elseif ev[1] == "mouse_scroll" then
-            for i, v in ipairs(toRender) do
-                if v.onEvent({ "scroll", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
-            end
-        else
-            for i, v in ipairs(toRender) do
-                if v.onEvent(ev) then red = true end
-            end
-        end
-    else
-        if ev[1] == "monitor_touch" and ev[2] == monSide then
-            for i, v in ipairs(toRender) do
-                if v.onEvent({ "click", 1, ev[3] - 0, ev[4] - 0 }) then red = true end
-                if v.onEvent({ "up", 1, ev[3] - 0, ev[4] - 0 }) then red = true end
-            end
-        else
-            for i, v in ipairs(toRender) do
-                if v.onEvent(ev) then red = true end
-            end
-        end
-    end
-    return red, ev
 end
 local function DirectRender(wr, ox, oy, buf)
     local rc
@@ -533,6 +486,53 @@ local function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             sleep(1 / 20)
         end
     end
+end
+local function RenderLoop(toRender, outTerm, f)
+    local function reRender()
+        local buf = ui.InitBuffer(outTerm)
+        ui.RenderWidgets(toRender, 0, 0, buf)
+        ui.Push(buf, outTerm)
+        buf = nil
+    end
+    if f then reRender() end
+    local ev = { arcos.ev() }
+    local red = false
+    local isMonitor, monSide = pcall(__LEGACY.peripheral.getName, outTerm)
+    if not isMonitor then
+        if ev[1] == "mouse_click" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({ "click", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+            end
+        elseif ev[1] == "mouse_drag" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({ "drag", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+            end
+        elseif ev[1] == "mouse_up" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({ "up", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+            end
+        elseif ev[1] == "mouse_scroll" then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({ "scroll", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+            end
+        else
+            for i, v in ipairs(toRender) do
+                if v.onEvent(ev) then red = true end
+            end
+        end
+    else
+        if ev[1] == "monitor_touch" and ev[2] == monSide then
+            for i, v in ipairs(toRender) do
+                if v.onEvent({ "click", 1, ev[3] - 0, ev[4] - 0 }) then red = true end
+                if v.onEvent({ "up", 1, ev[3] - 0, ev[4] - 0 }) then red = true end
+            end
+        else
+            for i, v in ipairs(toRender) do
+                if v.onEvent(ev) then red = true end
+            end
+        end
+    end
+    return red, ev
 end
 return {
     Label = Label,
