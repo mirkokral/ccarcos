@@ -126,6 +126,17 @@ _G.arcos = {
             return arcos.ev(filter)
         end
     end,
+    ---Pulls an event with respect for the arcos thread executor. Ignores terminte
+    ---@param filter string
+    ---@return table
+    rev = function(filter)
+        r = table.pack(coroutine.yield())
+        if not filter or r[1] == filter then
+            return table.unpack(r)
+        else 
+            return arcos.ev(filter)
+        end
+    end,
     ---Gets the time
     ---@param t "ingame"|"utc"|"local"? Timezone
     ---@return integer
@@ -170,6 +181,16 @@ _G.arcos = {
             return ok, err
         end
     end,
+    ---Queues an event
+    ---@param ev any
+    ---@param ... any
+    queue = function (ev, ...)
+        __LEGACY.os.queueEvent(ev, ...)
+    end,
+    ---Returns the clock
+    ---@return number
+    clock = function() return __LEGACY.os.clock() end,
+
     ---Loads an API. This shouldn't be used outside of the kernel, but there are cases where it's needed.
     ---@param api string
     loadAPI = function(api)
@@ -211,7 +232,9 @@ _G.arcos = {
     ---@return number id Timer id
     startTimer = function(d) 
         return __LEGACY.os.startTimer(d)
-    end
+    end,
+
+    id = __LEGACY.os.getComputerID()
 }
 -- C:Exc
 
@@ -344,14 +367,35 @@ _G.tasking = {
         end
     end
 }
----@deprecated In favor of dev api
 _G.devices = {
     get = function(what)
         return __LEGACY.peripheral.wrap(what)
     end,
     find = function(what)
         return __LEGACY.peripheral.find(what)
+    end,
+    names = function ()
+        return __LEGACY.peripheral.getNames()
+    end,
+    present = function (name)
+        return __LEGACY.peripheral.isPresent(name)
+    end,
+    type = function(peripheral)
+        return __LEGACY.peripheral.getType(peripheral)
+    end,
+    hasType = function (peripheral, peripheral_type)
+        return __LEGACY.peripheral.hasType(peripheral, peripheral_type)
+    end,
+    methods = function(name)
+        return __LEGACY.peripheral.getMethods(name)
+    end,
+    name = function(peripheral)
+        return __LEGACY.peripheral.getName(peripheral)
+    end,
+    call = function(name, method, ...)
+        return __LEGACY.peripheral.call(name, method, ...)
     end
+
 }
 
 _G.dev = {
@@ -417,6 +461,11 @@ arcos.log("Seems like it works")
 for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     arcos.log("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
+    
+end 
+for i, v in ipairs(fs.ls("/apis/")) do
+    arcos.log("Loading UserAPI: " .. v)
+    arcos.loadAPI("/apis/" .. v)
     
 end 
 _G.window = __LEGACY.window

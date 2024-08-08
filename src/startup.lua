@@ -1,4 +1,4 @@
-
+if arcos then return end
 local UIthemedefs = {
 }
 UIthemedefs[colors.white] = {236, 239, 244}

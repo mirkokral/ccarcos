@@ -5,6 +5,7 @@ d>services/enabled
 d>temporary
 d>user
 d>apps
+d>apis
 d>config
 d>config/apps
 f>system/bootloader.lua

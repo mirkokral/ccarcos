@@ -63,9 +63,11 @@ if fs.exists("/startup.lua") then
 end
 local f = fs.open("/startup.lua", "w")
 if f then
-    f.write("fs.delete(\"/startup.lua\") if fs.exists(\"/.startup.lua.albackup\") then fs.move(\"/.startup.lua.albackup\", \"/startup.lua\") end shell.run(\"/.arcliveenv/startup.lua live\")")
+    f.write("settings.set(\"shell.allow_disk_startup\", true) settings.save() fs.delete(\"/startup.lua\") if fs.exists(\"/.startup.lua.albackup\") then fs.move(\"/.startup.lua.albackup\", \"/startup.lua\") end shell.run(\"/.arcliveenv/startup.lua live\")")
     f.close()
 else
     print("Error while making temporary installation")
 end
+settings.set("")
+settings.set("shell.allow_disk_startup", false) settings.save()
 os.reboot()

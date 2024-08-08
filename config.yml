@@ -8,6 +8,7 @@ mkDirs:
   - temporary
   - user
   - apps
+  - apis
   - config
   - config/apps
 compileFiles:

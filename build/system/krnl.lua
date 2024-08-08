@@ -96,6 +96,14 @@ _G.arcos = {
             return arcos.ev(filter)
         end
     end,
+    rev = function(filter)
+        r = table.pack(coroutine.yield())
+        if not filter or r[1] == filter then
+            return table.unpack(r)
+        else 
+            return arcos.ev(filter)
+        end
+    end,
     time = function(t)
         return __LEGACY.os.time(t)
     end,
@@ -131,6 +139,10 @@ _G.arcos = {
             return ok, err
         end
     end,
+    queue = function (ev, ...)
+        __LEGACY.os.queueEvent(ev, ...)
+    end,
+    clock = function() return __LEGACY.os.clock() end,
     loadAPI = function(api)
         assert(type(api) == "string", "Invalid argument: api")
         arcos.log(api)
@@ -166,7 +178,8 @@ _G.arcos = {
     end,
     startTimer = function(d) 
         return __LEGACY.os.startTimer(d)
-    end
+    end,
+    id = __LEGACY.os.getComputerID()
 }
 function _G.sleep(time)
     if not time then time=0.05 end
@@ -248,6 +261,27 @@ _G.devices = {
     end,
     find = function(what)
         return __LEGACY.peripheral.find(what)
+    end,
+    names = function ()
+        return __LEGACY.peripheral.getNames()
+    end,
+    present = function (name)
+        return __LEGACY.peripheral.isPresent(name)
+    end,
+    type = function(peripheral)
+        return __LEGACY.peripheral.getType(peripheral)
+    end,
+    hasType = function (peripheral, peripheral_type)
+        return __LEGACY.peripheral.hasType(peripheral, peripheral_type)
+    end,
+    methods = function(name)
+        return __LEGACY.peripheral.getMethods(name)
+    end,
+    name = function(peripheral)
+        return __LEGACY.peripheral.getName(peripheral)
+    end,
+    call = function(name, method, ...)
+        return __LEGACY.peripheral.call(name, method, ...)
     end
 }
 _G.dev = {
@@ -310,6 +344,10 @@ arcos.log("Seems like it works")
 for i, v in ipairs(__LEGACY.fs.list("/system/apis/")) do
     arcos.log("Loading API: " .. v)
     arcos.loadAPI("/system/apis/" .. v)
+end 
+for i, v in ipairs(fs.ls("/apis/")) do
+    arcos.log("Loading UserAPI: " .. v)
+    arcos.loadAPI("/apis/" .. v)
 end 
 _G.window = __LEGACY.window
 local passwdFile = fs.open("/config/passwd", "r")

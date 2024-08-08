@@ -32,6 +32,23 @@
         "version": "24.08.5",
         "vId": 5,
         "dependencies": []
+    },
+    "craft": {
+        "friendlyName": "Craft",
+        "description": "A WIP compatibility layer to run CraftOS apps",
+        "owner":"TNC™ Development and Management Team",
+        "version": "1",
+        "vId": 1,
+        "dependencies": ["rednet"]
+    },
+    "rednet": {
+        "friendlyName": "RedNet",
+        "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
+        "owner":"TNC™ Development and Management Team",
+        "version":"1",
+        "vId": "1",
+        "dependencies": []
+
     }
     
 }
