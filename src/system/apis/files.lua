@@ -153,7 +153,7 @@ end
 ---@param d string
 ---@return boolean
 local function dir(d) 
-    if d == "" or d == "/" then return true end
+    if f == "" or f == "/" then return true end
     return __LEGACY.files.isDir(d)
 end
 ---Moves t to d

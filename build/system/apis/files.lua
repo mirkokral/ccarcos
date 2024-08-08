@@ -106,7 +106,7 @@ local function resolve(f, keepNonExistent)
     return { "/" .. tutils.join(out, "/") }
 end
 local function dir(d) 
-    if d == "" or d == "/" then return true end
+    if f == "" or f == "/" then return true end
     return __LEGACY.files.isDir(d)
 end
 local function m(t, d) 
