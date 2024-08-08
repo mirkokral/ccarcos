@@ -157,8 +157,8 @@ local function makeRt(s)
     rt._closed = not s.open or false
     rt._autoclose = false
     rt.f = s
-    rt.close = function(self) if self.f then self.f.close() end self._closed = not f.open end
-    rt.flush = function(self) if self.f then self.f.flush() end end
+    rt.close = function(self) self.f.close() self._closed = not self.f.open end
+    rt.flush = function(self) self.f.flush() end
 
     rt.read = function (self, ...)
         local f = self.f
