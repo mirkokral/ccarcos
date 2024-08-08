@@ -518,7 +518,7 @@ setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 _G.arc = nil
 ---@module "src.system.apis.col"
 _G.col = nil
----@module "src.system.apis.fs"
+---@module "src.system.apis.files"
 _G.files = nil
 ---@module "src.system.apis.hashing"
 _G.hashing = nil
