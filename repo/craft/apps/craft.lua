@@ -573,7 +573,7 @@ craftos_env.dofile = function(file)
     if not funct then
         error(ferr)
     end
-    funct()
+    return funct()
 end
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua")
 if not ok then printError(err) end
