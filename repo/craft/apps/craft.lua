@@ -558,10 +558,10 @@ craftos_env.redstone = {
         
 }
 craftos_env._G = setmetatable({}, {__index = craftos_env, __newindex = craftos_env})
-craftos_env.getmetatable = debug.getmetatable
-craftos_env.setmetatable = debug.setmetatable
-craftos_env.setfenv = debug.setfenv
-craftos_env.getfenv = debug.getfenv
+craftos_env.getmetatable = getmetatable
+craftos_env.setmetatable = setmetatable
+craftos_env.setfenv = setfenv
+craftos_env.getfenv = getfenv
 craftos_env.getupvalue = debug.getupvalue
 craftos_env.expect = col.expect
 craftos_env.shell = nil
