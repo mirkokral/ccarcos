@@ -57,6 +57,9 @@ _G.apiUtils = {
     end
 
 }
+
+
+
 _G.arcos = {
     ---Reboots the system
     reboot = function ()
@@ -147,6 +150,15 @@ _G.arcos = {
         end
         compEnv["apiUtils"] = nil
         compEnv["__LEGACY"] = nil
+        compEnv["_G"] = {}
+        setmetatable(compEnv["_G"], {
+            __index = function (t, k)
+                return compEnv[k]
+            end,
+            __newindex = function (t, k, v)
+                compEnv[k] = v
+            end
+        })
         local f = __LEGACY.fs.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
         f.close()
