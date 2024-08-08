@@ -158,7 +158,7 @@ local function makeRt(s)
     rt._autoclose = false
     rt.close = function(self) self.f.close() rt._closed = not f.open end
     rt.flush = function(self) self.f.flush() end
-    rt.handle = s
+    rt.f = s
 
     rt.read = function (self, ...)
         local f = self.f
