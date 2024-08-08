@@ -12,7 +12,7 @@ local function split(inputstr, sep)
     return t
 end
 local function open(path, mode)
-    local validModes = {"w", "r"}
+    local validModes = {"w", "r", "w+", "r+", "a"}
     local cmodevalid = false
     for _, v in ipairs(validModes) do
         if mode == v then cmodevalid = true break end
@@ -24,8 +24,12 @@ local function open(path, mode)
     if not file._f then
         return nil, err
     end
-    file.close = file._f.close
-    if mode == "w" then
+    file.open = true
+    file.close = function() file._f.close() open = false end
+    file.seekBytes = function(whence, offset)
+        return file._f.seek(whence, offset)
+    end
+    if mode == "w" or mode == "w+" or mode == "r+" or mode == "a" then
         file.write = function(towrite)
             file._f.write(towrite)
         end
@@ -35,17 +39,12 @@ local function open(path, mode)
         file.flush = function(towrite)
             file._f.write(towrite)
         end
-        file.seekBytes = function(b)
-            return file._f.seek(b)
-        end
-    elseif mode == "r" then
+    end
+    if mode == "r" or mode == "w+" or mode == "r+" then
         local fd = file._f.readAll()
         local li = 0
         file.readBytes = function(b)
             return file._f.read(b)
-        end
-        file.seekBytes = function(b)
-            return file._f.seek(b)
         end
         file.read = function()
             return fd
@@ -116,6 +115,42 @@ end
 local function c(t, d)
     return __LEGACY.fs.copy(t, d)
 end
+local function complete(path, loc, ...)
+    return __LEGACY.fs.complete(path, loc, ...)
+end
+local function find(path)
+    return __LEGACY.fs.find(path)
+end
+local function driveRoot(path)
+    return __LEGACY.fs.isDriveRoot(path)
+end
+local function combine(...)
+    return __LEGACY.fs.combine(...)
+end
+local function name(path)
+    return __LEGACY.fs.getName(path)
+end
+local function par(path)
+    return __LEGACY.fs.getDir(path)
+end
+local function size(path)
+    return __LEGACY.fs.getSize(path)
+end
+local function readonly(path)
+    return __LEGACY.fs.isReadOnly(path)
+end
+local function drive(path)
+    return __LEGACY.fs.getDrive(path)
+end
+local function freeSpace(path)
+    return __LEGACY.fs.getFreeSpace(path)
+end
+local function capacity(path)
+    return __LEGACY.fs.getCapacity(path)
+end
+local function attributes(path)
+    return __LEGACY.fs.attributes(path)
+end
 return {
     open = open,
     ls = ls,
@@ -126,4 +161,16 @@ return {
     m = m,
     c = c,
     mkDir = mkDir,
+    complete = complete,
+    find = find,
+    driveRoot = driveRoot,
+    combine = combine,
+    name = name,
+    size = size,
+    readonly = readonly,
+    drive = drive,
+    freeSpace = freeSpace,
+    capacity = capacity,
+    attributes = attributes,
+    par = par,
 }

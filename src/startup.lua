@@ -20,6 +20,7 @@ UIthemedefs[colors.black] = {59, 66, 82}
 for index, value in pairs(UIthemedefs) do
     term.setPaletteColor(index, value[1]/255, value[2]/255, value[3]/255) 
 end
+function _G.utd() end
 local live = ({ ... })[1] == "live"
 if not live then
   -- print("Terminate to enter shell or wait 1 second to continue boot")
@@ -95,6 +96,37 @@ if live then
     end,
     open = function(o, m)
       return __LEGACY.ofs.open("/.arcliveenv/" .. o, m)
+    end,
+    complete = function(path, loc, ...)
+      return __LEGACY.ofs.complete(path, "/.arcliveenv/" .. loc, ...)
+    end,
+    find = function(loc)
+      return __LEGACY.ofs.find("/.arcliveenv/" .. loc)
+    end,
+    isDriveRoot = function(path)
+      if path == "/" or path == "" then return true end
+      return __LEGACY.ofs.isDriveRoot("/.arcliveenv/" .. loc)
+    end,
+    combine = __LEGACY.ofs.combine,
+    getName = __LEGACY.ofs.getName,
+    getDir = __LEGACY.ofs.getDir,
+    getSize = function(f)
+      return __LEGACY.ofs.getSize("/.arcliveenv/" .. f)
+    end,
+    isReadOnly = function(f)
+      return __LEGACY.ofs.isReadOnly("/.arcliveenv/" .. f)
+    end,
+    getDrive = function(f)
+      return __LEGACY.ofs.getDrive("/.arcliveenv/" .. f)
+    end,
+    getFreeSpace = function(f)
+      return __LEGACY.ofs.getFreeSpace("/.arcliveenv/" .. f)
+    end,
+    getCapacity = function(f)
+      return __LEGACY.ofs.getCapacity("/.arcliveenv/" .. f)
+    end,
+    attributes = function(f)
+      return __LEGACY.ofs.attributes("/.arcliveenv/" .. f)
     end
   }
 end

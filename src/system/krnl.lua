@@ -65,6 +65,11 @@ _G.arcos = {
     reboot = function ()
         __LEGACY.os.reboot()
     end,
+    ---Shuts the system down
+    shutdown = function ()
+        __LEGACY.os.shutdown()
+        apiUtils.kernelPanic("Failed to turn off", "Kernel", "71")
+    end,
     ---Logs a string
     ---@param txt string String to log
     log = function(txt)
@@ -142,6 +147,25 @@ _G.arcos = {
     ---@return integer
     time = function(t)
         return __LEGACY.os.time(t)
+    end,
+    ---Gets the day
+    ---@param t "ingame"|"utc"|"local"? Timezone
+    ---@return integer
+    day = function(t)
+        return __LEGACY.os.day(t)
+    end,
+    ---Gets the epoch
+    ---@param t "ingame"|"utc"|"local"? Timezone
+    ---@return integer
+    epoch = function(t)
+        return __LEGACY.os.epoch(t)
+    end,
+    ---Returns a date string (or table) using a specified format.
+    ---@param format string?
+    ---@param time number?
+    ---@return string|osdate
+    date = function (format, time)
+        return __LEGACY.os.date(format, time)
     end,
     ---Runs a program
     ---@param env table Environment
@@ -226,6 +250,22 @@ _G.arcos = {
     ---@return number id Timer id
     startTimer = function(d) 
         return __LEGACY.os.startTimer(d)
+    end,
+    ---Cancels a timer
+    ---@param d number Timer ID
+    cancelTimer = function(d) 
+        return __LEGACY.os.cancelTimer(d)
+    end,
+    ---Sets an alarm
+    ---@param d number Alarm time
+    ---@return number id Alarm id
+    setAlarm = function(d) 
+        return __LEGACY.os.setAlarm(d)
+    end,
+    ---Cancels an alarm
+    ---@param d number Alarm ID
+    cancelAlarm = function(d) 
+        return __LEGACY.os.cancelAlarm(d)
     end,
 
     id = __LEGACY.os.getComputerID()
@@ -478,7 +518,7 @@ _G.tutils = nil
 ---@module "src.system.apis.ui"
 _G.ui = nil
 -- C:End
-_G.window = __LEGACY.window
+_G.window = debug.getfenv(utd).window
 local passwdFile = fs.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.validateUser = function (user, password)

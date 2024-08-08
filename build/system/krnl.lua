@@ -51,6 +51,10 @@ _G.arcos = {
     reboot = function ()
         __LEGACY.os.reboot()
     end,
+    shutdown = function ()
+        __LEGACY.os.shutdown()
+        apiUtils.kernelPanic("Failed to turn off", "Kernel", "71")
+    end,
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
@@ -106,6 +110,15 @@ _G.arcos = {
     end,
     time = function(t)
         return __LEGACY.os.time(t)
+    end,
+    day = function(t)
+        return __LEGACY.os.day(t)
+    end,
+    epoch = function(t)
+        return __LEGACY.os.epoch(t)
+    end,
+    date = function (format, time)
+        return __LEGACY.os.date(format, time)
     end,
     r = function(env, path, ...) 
         assert(type(env) == "table", "Invalid argument: env")
@@ -173,6 +186,15 @@ _G.arcos = {
     end,
     startTimer = function(d) 
         return __LEGACY.os.startTimer(d)
+    end,
+    cancelTimer = function(d) 
+        return __LEGACY.os.cancelTimer(d)
+    end,
+    setAlarm = function(d) 
+        return __LEGACY.os.setAlarm(d)
+    end,
+    cancelAlarm = function(d) 
+        return __LEGACY.os.cancelAlarm(d)
     end,
     id = __LEGACY.os.getComputerID()
 }
@@ -344,7 +366,7 @@ for i, v in ipairs(fs.ls("/apis/")) do
     arcos.log("Loading UserAPI: " .. v)
     arcos.loadAPI("/apis/" .. v)
 end 
-_G.window = __LEGACY.window
+_G.window = debug.getfenv(utd).window
 local passwdFile = fs.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.validateUser = function (user, password)

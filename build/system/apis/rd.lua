@@ -13,8 +13,24 @@ end
 local function getI(side)
     return __LEGACY.redstone.getAnalogInput(side)
 end
+local function setBO(sd, bitmask)
+    return __LEGACY.redstone.setBundledOutput(sd, bitmask)
+end
+local function getBO(sd)
+    return __LEGACY.redstone.getBundledOutput(sd)
+end
+local function getBI(sd)
+    return __LEGACY.redstone.getBundledInput(sd)
+end
+local function testBI(sd, test)
+    return __LEGACY.redstone.testtBundledInput(sd, test)
+end
 return {
     setO = setO,
     getO = getO,
-    getI = getI
+    getI = getI,
+    setBO = setBO,
+    getBO = getBO,
+    getBI = getBI,
+    testBI = testBI,
 }

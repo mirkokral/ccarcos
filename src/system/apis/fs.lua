@@ -1,14 +1,17 @@
 ---@class FileH
 ---@field close fun(): nil Close the file handle
-
+---@field open boolean Gets if fh open
+---@field seekBytes fun(whence: string?, offset: string?): nil
 
 ---@class FileHRead: FileH
 ---@field read fun(): string Gets all contents of file
 ---@field readLine fun(): string Gets a single file line
+---@field readBytes fun(amount): number | number[]
 
 ---@class FileHWrite: FileH
 ---@field write fun(towrite: string): nil Erases file and writes towrite to it
-
+---@field writeLine fun(line: string): nil Write line
+---@field flush fun(): nil Flushes file
 local function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -28,7 +31,7 @@ end
 ---@return FileHRead | FileHWrite? handle
 ---@return string? error
 local function open(path, mode)
-    local validModes = {"w", "r"}
+    local validModes = {"w", "r", "w+", "r+", "a"}
     local cmodevalid = false
     for _, v in ipairs(validModes) do
         if mode == v then cmodevalid = true break end
@@ -41,8 +44,12 @@ local function open(path, mode)
         return nil, err
     end
     
-    file.close = file._f.close
-    if mode == "w" then
+    file.open = true
+    file.close = function() file._f.close() open = false end
+    file.seekBytes = function(whence, offset)
+        return file._f.seek(whence, offset)
+    end
+    if mode == "w" or mode == "w+" or mode == "r+" or mode == "a" then
         file.write = function(towrite)
             file._f.write(towrite)
         end
@@ -52,17 +59,12 @@ local function open(path, mode)
         file.flush = function(towrite)
             file._f.write(towrite)
         end
-        file.seekBytes = function(b)
-            return file._f.seek(b)
-        end
-    elseif mode == "r" then
+    end
+    if mode == "r" or mode == "w+" or mode == "r+" then
         local fd = file._f.readAll()
         local li = 0
         file.readBytes = function(b)
             return file._f.read(b)
-        end
-        file.seekBytes = function(b)
-            return file._f.seek(b)
         end
         file.read = function()
             return fd
@@ -169,6 +171,85 @@ local function c(t, d)
     return __LEGACY.fs.copy(t, d)
 end
 
+---Completes path at locale
+---@param path string
+---@param loc string
+---@param ... any
+---@return string[]
+local function complete(path, loc, ...)
+    return __LEGACY.fs.complete(path, loc, ...)
+end
+
+---Wildcards a path
+---@param path string
+---@return string[]
+local function find(path)
+    return __LEGACY.fs.find(path)
+end
+
+---Returns true if a path is a filesystem
+---@param path string
+---@return boolean
+local function driveRoot(path)
+    return __LEGACY.fs.isDriveRoot(path)
+end
+---Combine paths
+---@param ... string
+---@return string
+local function combine(...)
+    return __LEGACY.fs.combine(...)
+end
+---Gets the name of a filepath
+---@param path string
+---@return string
+local function name(path)
+    return __LEGACY.fs.getName(path)
+end
+---Gets the parent dir of a filepath
+---@param path string
+---@return string
+local function par(path)
+    return __LEGACY.fs.getDir(path)
+end
+---Gets the size of a file
+---@param path string
+---@return number   
+local function size(path)
+    return __LEGACY.fs.getSize(path)
+end
+---Gets the readonly status of a file
+---@param path string
+---@return boolean
+local function readonly(path)
+    return __LEGACY.fs.isReadOnly(path)
+end
+---Gets the drive path for path
+---@param path string
+---@return string
+local function drive(path)
+    return __LEGACY.fs.getDrive(path)
+end
+---Gets free space at path
+---@param path string
+---@return number
+local function freeSpace(path)
+    return __LEGACY.fs.getFreeSpace(path)
+end
+---Gets path capacity
+---@param path string
+---@return number
+local function capacity(path)
+    return __LEGACY.fs.getCapacity(path)
+end
+---Gets path attributes
+---@param path string
+---@return {size: number, isDir: number, isReadOnly: number, created: number, modified: number}
+local function attributes(path)
+    return __LEGACY.fs.attributes(path)
+end
+
+
+
 return {
     open = open,
     ls = ls,
@@ -179,4 +260,16 @@ return {
     m = m,
     c = c,
     mkDir = mkDir,
+    complete = complete,
+    find = find,
+    driveRoot = driveRoot,
+    combine = combine,
+    name = name,
+    size = size,
+    readonly = readonly,
+    drive = drive,
+    freeSpace = freeSpace,
+    capacity = capacity,
+    attributes = attributes,
+    par = par,
 }
