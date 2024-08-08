@@ -28,7 +28,7 @@ if not live then
   local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
   if f then
     local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-    local cur = files.open("/system/rel", "r")
+    local cur = fs.open("/system/rel", "r")
     if cur and cur.readAll() ~= branch then
       shell.run("/system/installer.lua")
     end
