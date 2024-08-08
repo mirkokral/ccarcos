@@ -33,7 +33,7 @@ W, H = term.getSize()
 ---Inits the buffer
 ---@param mon any
 ---@return table
-function InitBuffer(mon)
+local function InitBuffer(mon)
     for index, value in pairs(UIthemedefs) do
         mon.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
     end
@@ -104,7 +104,7 @@ end
 ---Create a new scroll pane.
 ---@param b { width: number, height: number, x: number, y: number, col: Color?, children: Widget[], showScrollBtns: boolean?,  hideScrollbar: boolean? }
 ---@return ScrollPane
-function ScrollPane(b)
+local function ScrollPane(b)
     local config = {}
     for key, value in pairs(b) do
         config[key] = value
@@ -277,7 +277,7 @@ end
 ---@param str any
 ---@param maxLength any
 ---@return string
-function Wrap(str, maxLength)
+local function Wrap(str, maxLength)
     local ostr = ""
     local cstr = ""
     for index2, value2 in ipairs(tutils.split(str, "\n")) do
@@ -304,7 +304,7 @@ end
 ---Creates a new text input
 ---@param b { label: string, x: number, y: number, width: number, col: Color?, textCol: Color?} The button configuration
 ---@return TextInput
-function TextInput(b)
+local function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
 
@@ -408,7 +408,7 @@ end
 ---Creates a new label
 ---@param b { label: string, x: number, y: number, col: Color?, textCol: Color?} The button configuration
 ---@return Label
-function Label(b)
+local function Label(b)
     local config = {}
     for i, v in pairs(b) do
         config[i] = v
@@ -463,7 +463,7 @@ end
 ---Creates a new button
 ---@param b { label: string, x: number, y: number, callBack: fun(): boolean, col: Color?, textCol: Color? } The button configuration
 ---@return Button
-function Button(b)
+local function Button(b)
     local config = { col = UItheme.buttonBg, textCol = UItheme.buttonFg }
     for i, v in pairs(b) do
         config[i] = v
@@ -489,7 +489,7 @@ end
 ---@param f boolean? Force render
 ---@return boolean
 ---@return table
-function RenderLoop(toRender, outTerm, f)
+local function RenderLoop(toRender, outTerm, f)
     local function reRender()
         local buf = ui.InitBuffer(outTerm)
         ui.RenderWidgets(toRender, 0, 0, buf)
@@ -543,7 +543,7 @@ end
 ---@param ox number Offset X
 ---@param oy number Offset Y
 ---@param buf table Buffer
-function DirectRender(wr, ox, oy, buf)
+local function DirectRender(wr, ox, oy, buf)
     local rc
     if wr["getDrawCommands"] then
         rc = wr["getDrawCommands"]()
@@ -558,7 +558,7 @@ end
 ---Pushes the buffer to the screen, finnalizing rendering. NOTE: this does not reinit the buffer so make sure to reinit it after you're done with pushing.
 ---@param buf table Buffer
 ---@param terma table Terminal
-function Push(buf, terma)
+local function Push(buf, terma)
     for ix, vy in ipairs(buf) do
         local blitText = ""
         local blitColor = ""
@@ -582,7 +582,7 @@ end
 ---@param buf2 table[][]
 ---@param ox number
 ---@param oy number
-function Cpy(buf1, buf2, ox, oy)
+local function Cpy(buf1, buf2, ox, oy)
     for iy, vy in ipairs(buf1) do
         for ix, vx in ipairs(vy) do
             blitAtPos(ix + ox, iy + oy, vx[1], vx[2], vx[3], buf2)
@@ -595,7 +595,7 @@ end
 ---@param ox number Offset X
 ---@param oy number Offset Y
 ---@param buf table Offset Y
-function RenderWidgets(wdg, ox, oy, buf)
+local function RenderWidgets(wdg, ox, oy, buf)
     arcos.log("UI blitatpos")
     local tw, th = #buf[1], #buf
     for i = 1, th, 1 do
@@ -613,7 +613,7 @@ end
 ---@param callback fun(n: number)
 ---@param speed number
 ---@param deAccelAtEnd boolean?
-function Lerp(callback, speed, deAccelAtEnd)
+local function Lerp(callback, speed, deAccelAtEnd)
     local accel = 50
     local ox = 0
     speed = speed + 1
@@ -643,7 +643,7 @@ end
 ---@param speed number Speed
 ---@param ontop boolean True if new widget on top
 ---@param terma table Terminal
-function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
+local function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local tw, th = terma.getSize()
     local ox = 0
     local buf = InitBuffer(terma)
@@ -682,8 +682,7 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     end
 end
 
--- C:Exc
-_G.ui = {
+return {
     Label = Label,
     Button = Button,
     DirectRender = DirectRender,
@@ -700,4 +699,3 @@ _G.ui = {
     Lerp = Lerp,
 
 }
--- C:End

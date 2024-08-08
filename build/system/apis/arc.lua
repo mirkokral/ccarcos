@@ -73,7 +73,7 @@ local function checkForCD()
         __LEGACY.fs.makeDir("/config/arc")
     end
 end
-function fetch()
+local function fetch()
     checkForCD()
     local f = get("https://raw.githubusercontent.com/mirkokral/ccarcos/".. getLatestCommit() .."/repo/index.json")
     local fa = __LEGACY.fs.open("/config/arc/repo.json", "w")
@@ -81,10 +81,10 @@ function fetch()
     fa.close()
     f.close()
 end
-function isInstalled(package)
+local function isInstalled(package)
     return __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex")
 end
-function getIdata(package)
+local function getIdata(package)
     if not __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
         return nil
     end
@@ -94,13 +94,13 @@ function getIdata(package)
     end
     return __LEGACY.textutils.unserializeJSON(f.readAll())
 end
-function getRepo()
+local function getRepo()
     local f = __LEGACY.fs.open("/config/arc/repo.json", "r")
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
     f.close()
     return uj
 end
-function install(package)
+local function install(package)
     checkForCD()
     local repo = getRepo()
     local latestCommit = getLatestCommit()
@@ -158,7 +158,7 @@ function install(package)
     return function ()
     end
 end
-function getUpdatable()
+local function getUpdatable()
     local updatable = {}
     for index, value in ipairs(fs.ls("/config/arc/")) do
         if value:sub(#value-14) == ".uninstallIndex" then
@@ -174,7 +174,7 @@ function getUpdatable()
     end
     return updatable
 end
-function uninstall(package)
+local function uninstall(package)
     if not __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
@@ -188,3 +188,12 @@ function uninstall(package)
         __LEGACY.fs.delete(value)
     end
 end
+return {
+    fetch = fetch,
+    getRepo = getRepo,
+    install = install,
+    uninstall = uninstall,
+    isInstalled = isInstalled,
+    getIdata = getIdata,
+    getUpdatable = getUpdatable
+}

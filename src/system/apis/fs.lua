@@ -27,7 +27,7 @@ end
 ---@param mode string
 ---@return FileHRead | FileHWrite? handle
 ---@return string? error
-function open(path, mode)
+local function open(path, mode)
     local validModes = {"w", "r"}
     local cmodevalid = false
     for _, v in ipairs(validModes) do
@@ -83,27 +83,27 @@ end
 ---Returs an array of all files in a directory.
 ---@param dir string
 ---@return string[]
-function ls(dir)
+local function ls(dir)
     return __LEGACY.fs.list(dir)
 end
 
 ---Removes a file
 ---@param f string
 ---@return nil
-function rm(f)
+local function rm(f)
     return __LEGACY.fs.delete(f)
 end
 
 ---Returns a boolean if a file exists
 ---@param f string
 ---@return boolean
-function exists(f)
+local function exists(f)
     if d == "" or d == "/" then return true end
     return __LEGACY.fs.exists(f)
 end
 ---Makes a directory
 ---@param d string Dir path
-function mkDir(d)
+local function mkDir(d)
     return __LEGACY.fs.makeDir(d)
 end
 
@@ -111,7 +111,7 @@ end
 ---@param f string File str to resolve
 ---@param keepNonExistent boolean? Keep non existent files 
 ---@return string[]
-function resolve(f, keepNonExistent)
+local function resolve(f, keepNonExistent)
     local p = f:sub(1, 1) == "/" and "/" or (environ.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
@@ -150,7 +150,7 @@ end
 ---Returns if said path is a directory
 ---@param d string
 ---@return boolean
-function dir(d) 
+local function dir(d) 
     if d == "" or d == "/" then return true end
     return __LEGACY.fs.isDir(d)
 end
@@ -158,19 +158,18 @@ end
 ---@param t string
 ---@param d string
 ---@return nil
-function m(t, d) 
+local function m(t, d) 
     return __LEGACY.fs.move(t, d)
 end
 ---Copies t to d
 ---@param t string
 ---@param d string
 ---@return nil
-function c(t, d)
+local function c(t, d)
     return __LEGACY.fs.copy(t, d)
 end
 
--- C:Exc
-_G.fs = {
+return {
     open = open,
     ls = ls,
     rm = rm, 
@@ -181,4 +180,3 @@ _G.fs = {
     c = c,
     mkDir = mkDir,
 }
--- C:End

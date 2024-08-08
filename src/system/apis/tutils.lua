@@ -1,32 +1,32 @@
 ---Serializes an object into JSON
 ---@param obj any
 ---@return string
-function sJSON(obj)
+local function sJSON(obj)
     return __LEGACY.textutils.serializeJSON(obj)
 end
 ---Deserializes a JSON string
 ---@param obj string
 ---@return any
-function dJSON(obj)
+local function dJSON(obj)
     return __LEGACY.textutils.unserialiseJSON(obj)
 end
 ---Serializes a lua object into lua coded
 ---@param obj any
 ---@return string
-function s(obj)
+local function s(obj)
     return __LEGACY.textutils.serialize(obj)
 end
 ---Deserializes lua code
 ---@param obj string
 ---@return any
-function d(obj)
+local function d(obj)
     return __LEGACY.textutils.unserialize(obj)
 end
 ---Splits string by seperator
 ---@param inputstr string
 ---@param sep string
 ---@return table
-function split(inputstr, sep)
+local function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
@@ -44,7 +44,7 @@ end
 ---@param sep string
 ---@return string
 ---@deprecated Use table.concat
-function join(tab, sep )
+local function join(tab, sep )
     local out = ""
     for _, i in ipairs(tab) do
         out = out .. tostring(i) .. sep
@@ -56,12 +56,11 @@ end
 ---@param t number
 ---@param tfhour boolean?
 ---@return string
-function formatTime(t, tfhour)
+local function formatTime(t, tfhour)
     return __LEGACY.textutils.formatTime(t, tfhour)
 end
 
--- C:Exc
-_G.tutils = {
+return {
     dJSON = dJSON,
     sJSON = sJSON,
     d = d,
@@ -70,4 +69,3 @@ _G.tutils = {
     join = join,
     formatTime = formatTime,
 }
--- C:End

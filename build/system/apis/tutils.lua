@@ -1,16 +1,16 @@
-function sJSON(obj)
+local function sJSON(obj)
     return __LEGACY.textutils.serializeJSON(obj)
 end
-function dJSON(obj)
+local function dJSON(obj)
     return __LEGACY.textutils.unserialiseJSON(obj)
 end
-function s(obj)
+local function s(obj)
     return __LEGACY.textutils.serialize(obj)
 end
-function d(obj)
+local function d(obj)
     return __LEGACY.textutils.unserialize(obj)
 end
-function split(inputstr, sep)
+local function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
@@ -23,13 +23,22 @@ function split(inputstr, sep)
     end
     return t
 end
-function join(tab, sep )
+local function join(tab, sep )
     local out = ""
     for _, i in ipairs(tab) do
         out = out .. tostring(i) .. sep
     end
     return out:sub(1, #out-1)
 end
-function formatTime(t, tfhour)
+local function formatTime(t, tfhour)
     return __LEGACY.textutils.formatTime(t, tfhour)
 end
+return {
+    dJSON = dJSON,
+    sJSON = sJSON,
+    d = d,
+    s = s,
+    split = split,
+    join = join,
+    formatTime = formatTime,
+}

@@ -28,7 +28,7 @@ for index, value in pairs(UIthemedefs) do
     term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
 end
 W, H = term.getSize()
-function InitBuffer(mon)
+local function InitBuffer(mon)
     for index, value in pairs(UIthemedefs) do
         mon.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
     end
@@ -50,7 +50,7 @@ local function blitAtPos(sx, sy, bgCol, forCol, text, buf)
         buf[y][x] = { bgCol, forCol, text }
     end
 end
-function ScrollPane(b)
+local function ScrollPane(b)
     local config = {}
     for key, value in pairs(b) do
         config[key] = value
@@ -213,7 +213,7 @@ function ScrollPane(b)
     end
     return config
 end
-function Wrap(str, maxLength)
+local function Wrap(str, maxLength)
     local ostr = ""
     local cstr = ""
     for index2, value2 in ipairs(tutils.split(str, "\n")) do
@@ -235,7 +235,7 @@ function Wrap(str, maxLength)
     ostr = ostr:sub(1, #ostr - 1)
     return ostr
 end
-function TextInput(b)
+local function TextInput(b)
     local ca = b
     if not ca["col"] then ca["col"] = col.gray end
     local defaultText = ca.label
@@ -320,7 +320,7 @@ function TextInput(b)
     end
     return config
 end
-function Label(b)
+local function Label(b)
     local config = {}
     for i, v in pairs(b) do
         config[i] = v
@@ -369,7 +369,7 @@ function Label(b)
     end
     return config
 end
-function Button(b)
+local function Button(b)
     local config = { col = UItheme.buttonBg, textCol = UItheme.buttonFg }
     for i, v in pairs(b) do
         config[i] = v
@@ -387,7 +387,7 @@ function Button(b)
     end
     return o
 end
-function RenderLoop(toRender, outTerm, f)
+local function RenderLoop(toRender, outTerm, f)
     local function reRender()
         local buf = ui.InitBuffer(outTerm)
         ui.RenderWidgets(toRender, 0, 0, buf)
@@ -434,7 +434,7 @@ function RenderLoop(toRender, outTerm, f)
     end
     return red, ev
 end
-function DirectRender(wr, ox, oy, buf)
+local function DirectRender(wr, ox, oy, buf)
     local rc
     if wr["getDrawCommands"] then
         rc = wr["getDrawCommands"]()
@@ -445,7 +445,7 @@ function DirectRender(wr, ox, oy, buf)
         blitAtPos(v.x + ox, v.y + oy, v.bgCol, v.forCol, v.text, buf)
     end
 end
-function Push(buf, terma)
+local function Push(buf, terma)
     for ix, vy in ipairs(buf) do
         local blitText = ""
         local blitColor = ""
@@ -459,14 +459,14 @@ function Push(buf, terma)
         terma.blit(blitText, blitColor, blitBgColor)
     end
 end
-function Cpy(buf1, buf2, ox, oy)
+local function Cpy(buf1, buf2, ox, oy)
     for iy, vy in ipairs(buf1) do
         for ix, vx in ipairs(vy) do
             blitAtPos(ix + ox, iy + oy, vx[1], vx[2], vx[3], buf2)
         end
     end
 end
-function RenderWidgets(wdg, ox, oy, buf)
+local function RenderWidgets(wdg, ox, oy, buf)
     arcos.log("UI blitatpos")
     local tw, th = #buf[1], #buf
     for i = 1, th, 1 do
@@ -479,7 +479,7 @@ function RenderWidgets(wdg, ox, oy, buf)
         ui.DirectRender(value, ox, oy, buf)
     end
 end
-function Lerp(callback, speed, deAccelAtEnd)
+local function Lerp(callback, speed, deAccelAtEnd)
     local accel = 50
     local ox = 0
     speed = speed + 1
@@ -500,7 +500,7 @@ function Lerp(callback, speed, deAccelAtEnd)
         end
     end
 end
-function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
+local function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local tw, th = terma.getSize()
     local ox = 0
     local buf = InitBuffer(terma)
@@ -534,3 +534,19 @@ function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
         end
     end
 end
+return {
+    Label = Label,
+    Button = Button,
+    DirectRender = DirectRender,
+    UItheme = UItheme,
+    RenderWidgets = RenderWidgets,
+    PageTransition = PageTransition,
+    InitBuffer = InitBuffer,
+    Push = Push,
+    Cpy = Cpy,
+    Wrap = Wrap,
+    RenderLoop = RenderLoop,
+    ScrollPane = ScrollPane,
+    TextInput = TextInput,
+    Lerp = Lerp,
+}

@@ -11,7 +11,7 @@ local function split(inputstr, sep)
     end
     return t
 end
-function open(path, mode)
+local function open(path, mode)
     local validModes = {"w", "r"}
     local cmodevalid = false
     for _, v in ipairs(validModes) do
@@ -61,20 +61,20 @@ function open(path, mode)
     end
     return file, nil
 end
-function ls(dir)
+local function ls(dir)
     return __LEGACY.fs.list(dir)
 end
-function rm(f)
+local function rm(f)
     return __LEGACY.fs.delete(f)
 end
-function exists(f)
+local function exists(f)
     if d == "" or d == "/" then return true end
     return __LEGACY.fs.exists(f)
 end
-function mkDir(d)
+local function mkDir(d)
     return __LEGACY.fs.makeDir(d)
 end
-function resolve(f, keepNonExistent)
+local function resolve(f, keepNonExistent)
     local p = f:sub(1, 1) == "/" and "/" or (environ.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
@@ -106,13 +106,24 @@ function resolve(f, keepNonExistent)
     end
     return { "/" .. tutils.join(out, "/") }
 end
-function dir(d) 
+local function dir(d) 
     if d == "" or d == "/" then return true end
     return __LEGACY.fs.isDir(d)
 end
-function m(t, d) 
+local function m(t, d) 
     return __LEGACY.fs.move(t, d)
 end
-function c(t, d)
+local function c(t, d)
     return __LEGACY.fs.copy(t, d)
 end
+return {
+    open = open,
+    ls = ls,
+    rm = rm, 
+    exists = exists,
+    resolve = resolve,
+    dir = dir,
+    m = m,
+    c = c,
+    mkDir = mkDir,
+}

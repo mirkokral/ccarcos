@@ -11,7 +11,7 @@ local function idAsPort(id)
 end
 ---Opens a modem
 ---@param modem string
-function open(modem)
+local function open(modem)
     assert(type(modem) == "string", "Argument modem invalid")
     if devices.type(modem) ~= "modem" then
         error(modem .. " is not a modem!")
@@ -22,7 +22,7 @@ end
 
 ---Closes a modem or all
 ---@param modem string?
-function close(modem)
+local function close(modem)
 
     assert(type(modem) == "string" or type(modem) == "nil", "Argument modem invalid")
     if devices.type(modem) ~= "modem" then
@@ -35,7 +35,7 @@ end
 ---Gets the open status on a modem.
 ---@param modem string?
 ---@return boolean
-function isOpen(modem)
+local function isOpen(modem)
     assert(type(modem) == "string" or type(modem) == "nil")
     if modem then
         if devices.type(modem) == "modem" then
@@ -52,7 +52,7 @@ function isOpen(modem)
     return false
 end
 
-function send(recipient, message, protocol)
+local function send(recipient, message, protocol)
     assert(type(recipient) == "number")
     assert(type(protocol) == "string" or type(protocol) == "nil")
     local mId = math.random(2, 2147483647)
@@ -88,11 +88,11 @@ function send(recipient, message, protocol)
 end
 
 
-function broadcast(message, protocol)
+local function broadcast(message, protocol)
     send(CHANNEL_BROADCAST, message, protocol)
 end
 
-function receive(protocol_filter, timeout)
+local function receive(protocol_filter, timeout)
     -- The parameters used to be ( nTimeout ), detect this case for backwards compatibility
     if type(protocol_filter) == "number" and timeout == nil then
         protocol_filter, timeout = nil, protocol_filter
@@ -129,7 +129,7 @@ function receive(protocol_filter, timeout)
     end
 end
 
-function host(protocol, hostname)
+local function host(protocol, hostname)
     assert(type(protocol) == "string")
     assert(type(hostname) == "string")
     if hostname == "localhost" then
@@ -143,12 +143,12 @@ function host(protocol, hostname)
     end
 end
 
-function unhost(protocol)
+local function unhost(protocol)
     assert(type(protocol) == "string")
     hostNames[protocol] = nil
 end
 
-function lookup(protocol, hostname)
+local function lookup(protocol, hostname)
     assert(type(protocol) ==  "string")
     assert(type(hostname) ==  "string" or type(hostname) == "nil")
 
@@ -212,7 +212,7 @@ end
 
 local started = false
 
-function run()
+local function run()
     if started then
         error("rednet is already running", 2)
     end
@@ -262,3 +262,16 @@ function run()
         end
     end
 end
+
+return {
+    open = open,
+    close = close,
+    isOpen = isOpen,
+    send = send,
+    broadcast = broadcast,
+    receive = receive,
+    host = host,
+    unhost = unhost,
+    lookup = lookup,
+    run = run
+}

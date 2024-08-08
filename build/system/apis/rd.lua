@@ -1,4 +1,4 @@
-function setO(sd, val)
+local function setO(sd, val)
     assert(type(val) == "number" or type(val) == "boolean", "Invalid argument: value")
     assert(type(sd) == "string", "Invalid argument: side")
     if type(val) == "number" then
@@ -7,9 +7,14 @@ function setO(sd, val)
         __LEGACY.redstone.setOutput(sd, val)
     end
 end
-function getO(side)
+local function getO(side)
     return __LEGACY.redstone.getAnalogOutput(side)
 end
-function getI(side)
+local function getI(side)
     return __LEGACY.redstone.getAnalogInput(side)
 end
+return {
+    setO = setO,
+    getO = getO,
+    getI = getI
+}

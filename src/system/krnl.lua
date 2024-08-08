@@ -209,23 +209,17 @@ _G.arcos = {
         end
         local funcApi, err = load(f.readAll(), v, nil, tabEnv)
         f.close()
+        local ok, res
         if funcApi then
-            local ok, err = pcall(funcApi)
+            ok, res = pcall(funcApi)
             if not ok then
-                error(err)
+                error(res)
             end 
         else
             error(err)
         end
-        local tAPI = {}
-        for k, v in pairs(tabEnv) do
-            if k ~= "_ENV" then
-                tAPI[k] =  v
-            end
-        end
-
         arcos.log("Loaded api " .. v)
-        _G[v] = tAPI
+        _G[v] = res
     end,
     ---Starts a timer
     ---@param d number Timer duration in seconds

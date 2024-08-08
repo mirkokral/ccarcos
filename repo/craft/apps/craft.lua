@@ -1,0 +1,1 @@
+local craftos_env = {}

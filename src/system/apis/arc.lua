@@ -82,7 +82,7 @@ local function checkForCD()
     end
 end
 ---Fetches arc repos
-function fetch()
+local function fetch()
     checkForCD()
     local f = get("https://raw.githubusercontent.com/mirkokral/ccarcos/".. getLatestCommit() .."/repo/index.json")
     local fa = __LEGACY.fs.open("/config/arc/repo.json", "w")
@@ -94,14 +94,14 @@ end
 ---Get if package installed
 ---@param package string
 ---@return boolean
-function isInstalled(package)
+local function isInstalled(package)
     return __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex")
 end
 
 ---Get installation data
 ---@param package string
 ---@return table?
-function getIdata(package)
+local function getIdata(package)
     if not __LEGACY.fs.exists("/config/arc/" .. package .. ".meta.json") then
         return nil
     end
@@ -114,7 +114,7 @@ end
 
 ---Gets the repo data
 ---@return table
-function getRepo()
+local function getRepo()
     local f = __LEGACY.fs.open("/config/arc/repo.json", "r")
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
     f.close()
@@ -124,7 +124,7 @@ end
 ---Install a package
 ---@param package string
 ---@return function
-function install(package)
+local function install(package)
     checkForCD()
     local repo = getRepo()
     local latestCommit = getLatestCommit()
@@ -189,7 +189,7 @@ end
 
 ---Gets the updatable packages
 ---@return string[]
-function getUpdatable()
+local function getUpdatable()
     local updatable = {}
     for index, value in ipairs(fs.ls("/config/arc/")) do
         if value:sub(#value-14) == ".uninstallIndex" then
@@ -208,7 +208,7 @@ function getUpdatable()
     return updatable
 end
 
-function uninstall(package)
+local function uninstall(package)
     if not __LEGACY.fs.exists("/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
@@ -224,8 +224,7 @@ function uninstall(package)
     end
 end
 
--- C:Exc
-_G.arc = {
+return {
     fetch = fetch,
     getRepo = getRepo,
     install = install,
@@ -234,4 +233,3 @@ _G.arc = {
     getIdata = getIdata,
     getUpdatable = getUpdatable
 }
--- C:End
