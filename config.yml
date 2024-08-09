@@ -11,6 +11,7 @@ mkDirs:
   - apis
   - config
   - config/apps
+  - data
 compileFiles:
   - system/bootloader.lua
   - system/krnl.lua
