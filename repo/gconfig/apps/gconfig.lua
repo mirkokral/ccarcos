@@ -8,7 +8,7 @@ local function changeScreens(new, ot)
     ui.PageTransition(configScreens[currentScreen], configScreens[new], false, 1, ot, term)
     currentScreen = new
 end
-configScreens = {
+local configScreens = {
     main = {
         ui.Label{
             label = "Select what to configure",
