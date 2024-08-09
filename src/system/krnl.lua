@@ -352,6 +352,9 @@ _G.tasking = {
         if currentTask and user == "root" and currentTask["user"] ~= "root" then
             write("\nEnter root password")
             local password = read()
+            if not arcos.validateUser("root", password) then
+                error("Invalid password")
+            end
         end
 
         table.insert(tasks, {
@@ -403,6 +406,17 @@ _G.tasking = {
             tasks[pid]["paused"] = true
             
         end
+    end,
+    ---Changes the user of the current task 
+    ---@param user string New user username
+    ---@param password string? New user password, ignored if root
+    changeUser = function (user, password)
+        if arcos.getCurrentTask().user == user then return true end
+        if arcos.getCurrentTask().user ~= "root" and not arcos.validateUser(user, password) then return "Invalid credentials" end
+        if not users[user] then return "User non-existent" end
+        if not currentTask then return "No current task" end
+        currentTask["user"] = user
+        return true
     end
 }
 _G.devices = {
@@ -532,13 +546,72 @@ _G.ui = nil
 _G.window = debug.getfenv(utd).window
 local passwdFile = files.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
+---Gets the current home dir for the user
+---@return string
+_G.arcos.getHome = function ()
+    return "/user/" .. arcos.getCurrentTask().user
+end
+---Validates user credentials
+---@param user string
+---@param password string
+---@return boolean
 _G.arcos.validateUser = function (user, password)
+    for index, value in ipairs(users) do
+        if value.name == user and value.password == hashing.sha256(password) then
+            if not files.exists("/user/" .. user) then
+                files.mkDir("/user/" .. user)
+            end
+        end
+    end
+    
     for index, value in ipairs(users) do
         if value.name == user and value.password == hashing.sha256(password) then
             return true
         end
     end
     return false
+end
+---Creates an user
+---@param user string User name
+---@param password string Password
+---@return boolean
+_G.arcos.createUser = function (user, password)
+    if arcos.getCurrentTask().user ~= "root" then
+        return false
+    end
+    for index, value in ipairs(users) do
+        if value.name == user then
+            return false
+        end
+    end
+    table.insert(users, {
+        name = user,
+        password = hashing.sha256(password)
+    })
+    local ufx = files.open("/config/passwd", "w")
+    ufx.write(tutils.sJSON(users))
+    ufx.close()
+    return true
+end
+_G.arcos.deleteUser = function (user)
+    if arcos.getCurrentTask().user ~= "root" then
+        return false
+    end
+    if user == "root" then
+        return false
+    end
+    local todel = nil
+    for index, value in ipairs(users) do
+        if value.name == user then
+            todel = index
+        end
+    end
+    if todel then
+        table.remove(users, todel)
+        return true
+    end
+    return false
+    
 end
 -- C:Exc
 ---Prints something
@@ -574,7 +647,7 @@ tasking.createTask("Init", function()
         end
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "424")
-end, 1, "root", __LEGACY.term, {})
+end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 while true do
     if #tasks > 0 then

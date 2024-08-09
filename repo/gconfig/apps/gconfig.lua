@@ -5,10 +5,10 @@ local blcf = files.open("/config/aboot", "r")
 local blc = tutils.dJSON(blcf.read())
 
 local function changeScreens(new, ot)
-    ui.PageTransition(configs[currentScreen], configs[new], false, 1, ot, term)
+    ui.PageTransition(configScreens[currentScreen], configScreens[new], false, 1, ot, term)
     currentScreen = new
 end
-configs = {
+configScreens = {
     main = {
         ui.Label{
             label = "Select what to configure",
@@ -58,7 +58,7 @@ configs = {
             y = 2,
             callBack = function ()
                 blc["skipPrompt"] = not blc["skipPrompt"]
-                configs.bl[2].label = blc["skipPrompt"] and "Yes" or "No"
+                configScreens.bl[2].label = blc["skipPrompt"] and "Yes" or "No"
                 return true
             end
         },
@@ -78,7 +78,7 @@ configs = {
             x = w-11,
             y = h-1,
             callBack = function ()
-                blc["defargs"] = configs.bl[4].text
+                blc["defargs"] = configScreens.bl[4].text
                 local f = files.open("/config/aboot", "w")
                 f.write(tutils.sJSON(blc))
                 f.close()
@@ -92,5 +92,5 @@ configs = {
 
 local ls = true
 while running do
-    ls = ui.RenderLoop(configs[currentScreen], term, ls)
+    ls = ui.RenderLoop(configScreens[currentScreen], term, ls)
 end
