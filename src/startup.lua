@@ -1,30 +1,29 @@
 if arcos then return end
 local UIthemedefs = {
 }
-UIthemedefs[colors.white] = {236, 239, 244}
-UIthemedefs[colors.orange] = {0, 0, 0}
-UIthemedefs[colors.magenta] = {180, 142, 173}
-UIthemedefs[colors.lightBlue] = {0, 0, 0}
-UIthemedefs[colors.yellow] = {235, 203, 139}
-UIthemedefs[colors.lime] = {163, 190, 140}
-UIthemedefs[colors.pink] = {0, 0, 0}
-UIthemedefs[colors.gray] = {76, 86, 106}
-UIthemedefs[colors.lightGray] = {216, 222, 233}
-UIthemedefs[colors.cyan] = {136, 192, 208}
-UIthemedefs[colors.purple] = {0, 0, 0}
-UIthemedefs[colors.blue] = {129, 161, 193}
-UIthemedefs[colors.brown] = {0, 0, 0}
-UIthemedefs[colors.green] = {163, 190, 140}
-UIthemedefs[colors.red] = {191, 97, 106}
-UIthemedefs[colors.black] = {59, 66, 82}
+UIthemedefs[colors.white] = { 236, 239, 244 }
+UIthemedefs[colors.orange] = { 0, 0, 0 }
+UIthemedefs[colors.magenta] = { 180, 142, 173 }
+UIthemedefs[colors.lightBlue] = { 0, 0, 0 }
+UIthemedefs[colors.yellow] = { 235, 203, 139 }
+UIthemedefs[colors.lime] = { 163, 190, 140 }
+UIthemedefs[colors.pink] = { 0, 0, 0 }
+UIthemedefs[colors.gray] = { 76, 86, 106 }
+UIthemedefs[colors.lightGray] = { 216, 222, 233 }
+UIthemedefs[colors.cyan] = { 136, 192, 208 }
+UIthemedefs[colors.purple] = { 0, 0, 0 }
+UIthemedefs[colors.blue] = { 129, 161, 193 }
+UIthemedefs[colors.brown] = { 0, 0, 0 }
+UIthemedefs[colors.green] = { 163, 190, 140 }
+UIthemedefs[colors.red] = { 191, 97, 106 }
+UIthemedefs[colors.black] = { 59, 66, 82 }
 for index, value in pairs(UIthemedefs) do
-    term.setPaletteColor(index, value[1]/255, value[2]/255, value[3]/255) 
+  term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
 end
 function _G.utd() end
 
 local live = ({ ... })[1] == "live"
 if not live then
-  
   local configFile = fs.open("/config/aboot", "r")
   local f = textutils.unserialiseJSON(configFile.readAll())
   configFile.close()
@@ -48,17 +47,83 @@ if live then
   if not fs.exists("/config/settings") then
     local f, e = fs.open("/config/settings", "w")
     local f2, e2 = fs.open("/.settings", "r")
-    f.write(f2.readAll())
-    f.close()
-    f2.close()
+    if f and f2 then
+      f.write(f2.readAll())
+    end
+    if f then
+      f.close()
+    end
+    if f2 then
+      f2.close()
+    end
   end
 else
   if not fs.exists("/.arcliveenv/config/settings") then
     local f, e = fs.open("/.arcliveenv/config/settings", "w")
     local f2, e2 = fs.open("/.settings", "r")
-    f.write(f2.readAll())
+    if f and f2 then
+      f.write(f2.readAll())
+    end
+    if f then
+      f.close()
+    end
+    if f2 then
+      f2.close()
+    end
+  end
+end
+
+if not live then
+  local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+  if f then
+    local branch = textutils.unserialiseJSON(f.readAll())["sha"]
+
+    file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/objList.txt")
+    if file then
+      cont = file.readAll()
+      file.close()
+      local missingFiles = {}
+      local missingDirs = {}
+      for _, i in ipairs(strsplit(cont, "\n")) do
+        -- print(i)
+        drawLoader()
+        action = string.sub(i, 1, 1)
+        filename = string.sub(i, 3)
+        if action == "d" and not fs.exists(filename) then
+          table.insert(missingDirs, filename)
+        end
+        if action == "f" and not fs.exists("/" .. filename) then
+          table.insert(missingFiles, filename)
+        end
+        if action == "r" and not fs.exists("/" .. filename) then
+          table.insert(missingFiles, filename)
+        end
+      end
+      if #missingDirs > 0 or #missingFiles > 0 then
+        print("Repairing system...")
+        for index, value in ipairs(missingDirs) do
+          print("Repairing directory: " .. value)
+          fs.makeDir(value)
+        end
+        for index, value in ipairs(missingFiles) do
+          f = fs.open(value, "w")
+          hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. value)
+          if f and hf then
+            print("Repairing file: " .. value)
+            f.write(hf.readAll())
+          end
+          if hf then
+            hf.close()
+          end
+          if f then
+            f.close()
+          end
+        end
+      end
+    end
     f.close()
-    f2.close()
+  else
+    print("Fix check failed")
   end
 end
 local oldprr = os.pullEventRaw
@@ -137,7 +202,8 @@ local t = {}
 for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
 for _, k in ipairs(t) do _G[k] = nil end
 local native = _G.term.native()
-for _, method in ipairs { "nativePaletteColor", "nativePaletteColour", "screenshot" } do native[method] = _G.term[method] end
+for _, method in ipairs { "nativePaletteColor", "nativePaletteColour", "screenshot" } do native[method] = _G.term
+  [method] end
 _G.term = native
 _G.http.checkURL = _G.http.checkURLAsync
 _G.http.websocket = _G.http.websocketAsync
@@ -168,7 +234,7 @@ function _G.term.native()
     for k, v in pairs(_G) do
       oldug[k] = v
     end
-  
+
 
     local f = __LEGACY.files.open("/system/bootloader.lua", "r")
     local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
@@ -177,7 +243,6 @@ function _G.term.native()
     __LEGACY.os.pullEvent("key")
     __LEGACY.os.reboot()
   end
-
 end
 
 coroutine.yield()
