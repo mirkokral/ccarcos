@@ -21,8 +21,8 @@
         "friendlyName": "Tweaks",
         "description": "A graphical application for tweaking the system configuration",
         "owner": "TNC™ Development and Management Team",
-        "version": "24.08.10",
-        "vId": 10,
+        "version": "24.08.11",
+        "vId": 11,
         "dependencies": []
     },
     "ged": {

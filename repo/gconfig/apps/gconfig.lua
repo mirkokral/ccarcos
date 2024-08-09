@@ -3,12 +3,12 @@ local currentScreen = "main"
 local running = true
 local blcf = files.open("/config/aboot", "r")
 local blc = tutils.dJSON(blcf.read())
-
+local configScreens
 local function changeScreens(new, ot)
     ui.PageTransition(configScreens[currentScreen], configScreens[new], false, 1, ot, term)
     currentScreen = new
 end
-local configScreens = {
+configScreens = {
     main = {
         ui.Label{
             label = "Select what to configure",
@@ -72,6 +72,21 @@ local configScreens = {
             x = 16,
             y = 4,
             width = w - 16
+        },
+        ui.Label{
+            label = "Auto Update: ",
+            x = 2,
+            y = 6
+        },
+        ui.Button{
+            label = blc["autoUpdate"] and "Yes" or "No",
+            x = 15,
+            y = 6,
+            callBack = function ()
+                blc["autoUpdate"] = not blc["autoUpdate"]
+                configScreens.bl[6].label = blc["autoUpdate"] and "Yes" or "No"
+                return true
+            end
         },
         ui.Button{
             label = "Save & Back",
