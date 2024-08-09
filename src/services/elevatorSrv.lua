@@ -3,6 +3,9 @@ local doorWaitFloor = 8
 local queue = {}
 local enderModem = dev.wmodem[1]
 local wiredModem = dev.modem[1]
+print("Hello!")
+print("EnderModem: " .. enderModem)
+print("WiredModem: " .. wiredModem)
 wiredModem.open(712)
 wiredModem.open(476)
 enderModem.open(476)
