@@ -31,11 +31,13 @@ local romPrograms = {
 	wget = "/rom/programs/http/wget.lua",
 	import = "/rom/programs/import.lua",
 	lua = "/rom/programs/lua.lua",
-
-	--aliases
+	ls = "/data/bmosfs/bin/ls.lua",
 	dir = "/data/bmosfs/bin/ls.lua",
 	mv = "/data/bmosfs/bin/move.lua",
+	move = "/data/bmosfs/bin/move.lua",
+	copy = "/data/bmosfs/bin/copy.lua",
 	cp = "/data/bmosfs/bin/copy.lua",
+	package = "/data/bmosfs/bin/package.lua",
 }
 
 local makeRequire = (compat and compat.isCapy64) and compat.makeRequire or dofile("rom/modules/main/cc/require.lua").make
