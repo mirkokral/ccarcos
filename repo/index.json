@@ -42,11 +42,11 @@
         "dependencies": ["rednet"]
     },
     "bmoscompat": {
-        "friendlyName": "Bm-Compat",
-        "description": "A WIP compatibility layer to run BM-OS apps",
+        "friendlyName": "BM-OS Subsystem",
+        "description": "A WIP BM-OS subsystem",
         "owner":"AdamTheDumbPerson",
         "version": "1",
-        "vId": 42,
+        "vId": 43,
         "dependencies": ["craft"]
     },
     "rednet": {

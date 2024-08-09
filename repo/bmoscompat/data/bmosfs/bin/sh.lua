@@ -33,9 +33,9 @@ local romPrograms = {
 	lua = "/rom/programs/lua.lua",
 
 	--aliases
-	dir = "/bin/ls.lua",
-	mv = "/bin/move.lua",
-	cp = "/bin/copy.lua",
+	dir = "/data/bmosfs/bin/ls.lua",
+	mv = "/data/bmosfs/bin/move.lua",
+	cp = "/data/bmosfs/bin/copy.lua",
 }
 
 local makeRequire = (compat and compat.isCapy64) and compat.makeRequire or dofile("rom/modules/main/cc/require.lua").make

@@ -34,6 +34,7 @@ resolvePath = function(path)
 	end
 	return final
 end
+local parentDir = "/data/bmosfs/bin"
 bmos_compat_env._G = setmetatable({}, {__index = bmos_compat_env, __newindex = bmos_compat_env})
 bmos_compat_env.rootColor = col.red
 bmos_compat_env.userColor = col.green
