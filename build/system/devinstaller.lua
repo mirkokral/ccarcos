@@ -102,8 +102,10 @@ end
 f = fs.open("/system/rel", "w")
 f.write(branch)
 f.close()
-f = fs.open("/config/aboot", "w+")
+f = fs.open("/config/aboot", "r")
 local a = textutils.unserialiseJSON(f.readAll())
+f.close()
+f = fs.open("/config/aboot", "w")
 a["autoUpdate"] = false
 f.write(textutils.serializeJSON(a))
 f.close()
