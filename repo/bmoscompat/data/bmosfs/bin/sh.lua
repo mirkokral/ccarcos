@@ -1,7 +1,7 @@
 if shell then
 	print("Nested shells detected!")
 	print("Exiting...")
-	return 
+	return
 end
 term.clear()
 term.setCursorPos(1,1)
@@ -57,15 +57,15 @@ local shell = {
 		end
 		interpret(command)
 	end,
-	execute = function(progName,...) 
+	execute = function(progName,...)
 		local program = parsePath(progName)
 		runProgram(progName,program,...)
-		return 
+		return
 	 end,
 	exit = function(...) return end, --no
 	dir = fs.getDir,
 	setDir = fs.setDir,
-	path = function() return ".:/rom/programs:/rom/programs/http:/bin:/usr/bin" end,
+	path = function() return ".:/rom/programs:/rom/programs/http:/data/bsmosfs/bin:/data/bsmosfs/usr/bin" end,
 	setPath = function(...) return end,
 	resolve = function(progName)
 		return parsePath(progName)
@@ -78,10 +78,10 @@ function parsePath(progName)
 	local name = splitString(progName,"%P")
 	local program = ""
 	--removed /sbin from this as it isnt in a normal user's path
-	if fs.isProgramInPath("/bin/",progName) then
-		program = fs.isProgramInPath("/bin/",progName)
-	elseif fs.isProgramInPath("/usr/bin/",progName) then
-		program = fs.isProgramInPath("/usr/bin/",progName)
+	if fs.isProgramInPath("/data/bsmosfs/bin/",progName) then
+		program = fs.isProgramInPath("/data/bsmosfs/bin/",progName)
+	elseif fs.isProgramInPath("/data/bsmosfs/usr/bin/",progName) then
+		program = fs.isProgramInPath("/data/bsmosfs/usr/bin/",progName)
 	elseif romPrograms[string.lower(progName)] then --move it down so we can add custom versions of ROM programs
 		program = romPrograms[string.lower(progName)]
 	elseif string.sub(progName,1,1) == "/" then -- if you are trying to use absolute paths you probably know exact filenames
