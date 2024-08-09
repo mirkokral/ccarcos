@@ -41,6 +41,14 @@
         "vId": 29,
         "dependencies": ["rednet"]
     },
+    "bmoscompat": {
+        "friendlyName": "Bm-Compat",
+        "description": "A WIP compatibility layer to run BM-OS apps",
+        "owner":"AdamTheDumbPerson",
+        "version": "1",
+        "vId": 32,
+        "dependencies": ["rednet"]
+    },
     "rednet": {
         "friendlyName": "RedNet",
         "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
