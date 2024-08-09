@@ -47,7 +47,7 @@
         "owner":"AdamTheDumbPerson",
         "version": "1",
         "vId": 30,
-        "dependencies": []
+        "dependencies": ["rednet"]
     },
     "rednet": {
         "friendlyName": "RedNet",
