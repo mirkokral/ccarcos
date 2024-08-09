@@ -277,6 +277,13 @@ _G.tasking = {
         })["user"] then
             tasks[pid]["paused"] = true
         end
+    end,
+    changeUser = function (user, password)
+        if arcos.getCurrentTask().user == user then return true end
+        if arcos.getCurrentTask().user ~= "root" and not arcos.validateUser(user, password) then return false end
+        if not users[user] then return false end
+        if not currentTask then return false end
+        currentTask["user"] = user
     end
 }
 _G.devices = {
