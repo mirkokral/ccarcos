@@ -97,6 +97,31 @@ bmos_compat_env.output = {
 		printError("[ERROR]",...)
 	end,
 }
+local UIthemedefs = {
+}
+UIthemedefs[colors.white] = { 236, 239, 244 }
+UIthemedefs[colors.orange] = { 0, 0, 0 }
+UIthemedefs[colors.magenta] = { 180, 142, 173 }
+UIthemedefs[colors.lightBlue] = { 0, 0, 0 }
+UIthemedefs[colors.yellow] = { 235, 203, 139 }
+UIthemedefs[colors.lime] = { 163, 190, 140 }
+UIthemedefs[colors.pink] = { 0, 0, 0 }
+UIthemedefs[colors.gray] = { 76, 86, 106 }
+UIthemedefs[colors.lightGray] = { 216, 222, 233 }
+UIthemedefs[colors.cyan] = { 136, 192, 208 }
+UIthemedefs[colors.purple] = { 0, 0, 0 }
+UIthemedefs[colors.blue] = { 129, 161, 193 }
+UIthemedefs[colors.brown] = { 0, 0, 0 }
+UIthemedefs[colors.green] = { 163, 190, 140 }
+UIthemedefs[colors.red] = { 191, 97, 106 }
+UIthemedefs[colors.black] = { 59, 66, 82 }
+function bmos_compat_env.term.fixColorScheme()
+	for index, value in pairs(UIthemedefs) do
+  		term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
+	end
+	term.setBackgroundColor(colors.black)
+	term.setTextColor(colors.white)
+end
 print("[INFO] BM-OS Compatiblity Enabled")
 environ.envType = "BM-OS"
 local ok, err = arcos.r(bmos_compat_env, "/apps/bmshell.lua", ...)
