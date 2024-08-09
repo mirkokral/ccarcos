@@ -69,6 +69,16 @@ else
     end
   end
 end
+function _G.strsplit(inputstr, sep)
+  if sep == nil then
+      sep = "%s"
+  end
+  local t = {}
+  for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+      table.insert(t, str)
+  end
+  return t
+end
 if not live then
   local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
   if f then
