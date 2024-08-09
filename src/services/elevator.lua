@@ -74,29 +74,29 @@ end
 modem.open(711)
 reDraw()
 while true do
-    ev = table.pack(arcos.ev())
-    -- print(table.unpack(ev))
-    if ev[1] == "modem_message" then
+    local seev = table.pack(arcos.ev())
+    -- print(table.unpack(seev))
+    if seev[1] == "modem_message" then
         
-        selectedFloor = ev[5]+1
+        selectedFloor = seev[5]+1
         reDraw()
-        -- print("mdmm " .. ev[5])
+        -- print("mdmm " .. seev[5])
     end
-    -- if ev[1] == "terminate" then
+    -- if seev[1] == "terminate" then
     --     shell.run("shell")
     -- end
-    if ev[1] == "mouse_click" then
-        if ev[4] == 1 then
+    if seev[1] == "mouse_click" then
+        if seev[4] == 1 then
             for i, v in ipairs(buttons) do
-                if ev[3] >= v["pos"] and ev[3] <= v["pos"]+#v["text"] then
+                if seev[3] >= v["pos"] and seev[3] <= v["pos"]+#v["text"] then
                     v["callback"]()
                     -- print(v["text"])
                 end
             end
         end
-        -- button, x, y = ev[1], ev[2], ev[3]
-        if floors[ev[4]-1] then
-            modem.transmit(476, 0, floors[ev[4]-1]["id"]-1)
+        -- button, x, y = seev[1], seev[2], seev[3]
+        if floors[seev[4]-1] then
+            modem.transmit(476, 0, floors[seev[4]-1]["id"]-1)
             reDraw()
         end
 

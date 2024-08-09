@@ -28,6 +28,7 @@ end
 local function changeFloor(floor)
     enderModem.transmit(711, 712, floor-1)
     wiredModem.transmit(711, 712, floor-1)
+    print("Actual moving: " .. tostring(floor))
     if floor == doorWaitFloor then
         wiredModem.transmit(713, 712, "TopDoorOpen")
     else
