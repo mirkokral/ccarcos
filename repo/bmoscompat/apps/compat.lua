@@ -28,7 +28,7 @@ bmos_compat_env.output = {
 		local oldPrintColor
 		if term.isColor() then
 			oldPrintColor = term.getTextColor()
-			term.setTextColor(colors.yellow)
+			term.setTextColor(col.yellow)
 		end
 		print("[WARNING]",...)
 		if term.isColor() then
