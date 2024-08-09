@@ -44,3 +44,4 @@ r>services/enabled/login
 r>config/passwd
 r>config/aboot
 r>config/arcshell
+r>config/arcrepo

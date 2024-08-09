@@ -49,4 +49,5 @@ nrFiles:
   - config/passwd
   - config/aboot
   - config/arcshell
+  - config/arcrepo
   # - config/hostname
