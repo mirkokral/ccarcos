@@ -46,7 +46,7 @@
         "description": "A WIP compatibility layer to run BM-OS apps",
         "owner":"AdamTheDumbPerson",
         "version": "1",
-        "vId": 37,
+        "vId": 38,
         "dependencies": ["craft"]
     },
     "rednet": {
