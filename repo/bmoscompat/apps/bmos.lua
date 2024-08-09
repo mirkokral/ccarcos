@@ -124,5 +124,5 @@ function bmos_compat_env.term.fixColorScheme()
 end
 print("[INFO] BM-OS Compatiblity Enabled")
 environ.envType = "BM-OS"
-local ok, err = arcos.r(bmos_compat_env, "/apps/bmshell.lua", ...)
+local ok, err = arcos.r(bmos_compat_env, "/data/bmosfs/bin/sh.lua", ...)
 if not ok then bmos_compat_env.output.error(err) end
