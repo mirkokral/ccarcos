@@ -4,8 +4,8 @@ local queue = {}
 local enderModem = dev.wmodem[1]
 local wiredModem = dev.modem[1]
 print("Hello!")
-print("EnderModem: " .. enderModem)
-print("WiredModem: " .. wiredModem)
+print("EnderModem: " .. tostring(enderModem))
+print("WiredModem: " .. tostring(wiredModem))
 wiredModem.open(712)
 wiredModem.open(476)
 enderModem.open(476)
