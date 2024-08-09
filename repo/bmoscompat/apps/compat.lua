@@ -40,5 +40,6 @@ bmos_compat_env.output = {
 	end,
 }
 print("[INFO] BM-OS Compatiblity Enabled")
+environ.envType = "BM-OS"
 local ok, err = arcos.r(bmos_compat_env, "/apps/shell.lua", ...)
 if not ok then bmos_compat_env.output.error(err) end
