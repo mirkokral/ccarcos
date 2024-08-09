@@ -281,10 +281,14 @@ _G.tasking = {
     changeUser = function (user, password)
         if arcos.getCurrentTask().user == user then return true end
         if arcos.getCurrentTask().user ~= "root" and not arcos.validateUser(user, password) then return "Invalid credentials" end
-        if not users[user] then return "User non-existent" end
         if not currentTask then return "No current task" end
-        currentTask["user"] = user
-        return true
+        for index, value in ipairs(users) do
+            if value.name == user then
+                currentTask["user"] = user
+                return true
+            end
+        end
+        return "User non-existent"
     end
 }
 _G.devices = {
