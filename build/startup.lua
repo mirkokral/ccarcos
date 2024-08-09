@@ -90,7 +90,6 @@ if not live then
       local missingFiles = {}
       local missingDirs = {}
       for _, i in ipairs(strsplit(cont, "\n")) do
-        drawLoader()
         action = string.sub(i, 1, 1)
         filename = string.sub(i, 3)
         if action == "d" and not fs.exists(filename) then
