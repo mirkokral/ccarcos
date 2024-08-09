@@ -51,6 +51,7 @@ end
 	end
 	return drive
 end
+bmos_compat_env.os.hostname = arcos.getName
 bmos_compat_env.user = {
 	login = tasking.changeUser,
 	createUser = arcos.createUser,
