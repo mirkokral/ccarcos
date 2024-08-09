@@ -412,10 +412,11 @@ _G.tasking = {
     ---@param password string? New user password, ignored if root
     changeUser = function (user, password)
         if arcos.getCurrentTask().user == user then return true end
-        if arcos.getCurrentTask().user ~= "root" and not arcos.validateUser(user, password) then return false end
-        if not users[user] then return false end
-        if not currentTask then return false end
+        if arcos.getCurrentTask().user ~= "root" and not arcos.validateUser(user, password) then return "Invalid credentials" end
+        if not users[user] then return "User non-existent" end
+        if not currentTask then return "No current task" end
         currentTask["user"] = user
+        return true
     end
 }
 _G.devices = {
