@@ -84,6 +84,10 @@ do
         end
     end
     write(" ")
+    if environ.envType then
+        term.setTextColor(col.yellow)
+        write("(" .. tostring(environ.envType) .. ") ")
+    end
     term.setTextColor(col.gray) 
     write(environ.workDir)
     write(" ")
