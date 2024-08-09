@@ -17,3 +17,25 @@ bmos_compat_env.user = {
 		return chkRoot() and _G.rootColor or _G.userColor
 	end,
 }
+bmos_compat_env.output = {
+	debug = function(...)
+		print("[DEBUG]",...)
+	end,
+	info = function(...)
+		print("[INFO]",...)
+	end,
+	warn = function(...)
+		local oldPrintColor
+		if term.isColor() then
+			oldPrintColor = term.getTextColor()
+			term.setTextColor(colors.yellow)
+		end
+		print("[WARNING]",...)
+		if term.isColor() then
+			term.setTextColor(oldPrintColor)
+		end
+	end,
+	error = function(...)
+		printError("[ERROR]",...)
+	end,
+}
