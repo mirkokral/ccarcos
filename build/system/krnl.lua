@@ -450,7 +450,7 @@ tasking.createTask("Init", function()
         end
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "424")
-end, 1, "root", __LEGACY.term, {workDir = arcos.getHome()})
+end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 while true do
     if #tasks > 0 then
