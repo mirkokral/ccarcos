@@ -46,7 +46,7 @@
         "description": "A WIP BM-OS subsystem",
         "owner":"AdamTheDumbPerson",
         "version": "1",
-        "vId": 43,
+        "vId": 44,
         "dependencies": ["craft"]
     },
     "rednet": {
