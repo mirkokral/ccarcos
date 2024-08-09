@@ -21,20 +21,26 @@ for index, value in pairs(UIthemedefs) do
     term.setPaletteColor(index, value[1]/255, value[2]/255, value[3]/255) 
 end
 function _G.utd() end
+
 local live = ({ ... })[1] == "live"
 if not live then
-  -- print("Terminate to enter shell or wait 1 second to continue boot")
-  -- sleep(1)
-  local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
-  if f then
-    local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-    local cur = fs.open("/system/rel", "r")
-    if cur and cur.readAll() ~= branch then
-      shell.run("/system/installer.lua")
+  local configFile = fs.open("/config/aboot", "r")
+  local f = textutils.unserialiseJSON(configFile.readAll())
+  configFile.close()
+  if f["autoUpdate"] then
+    -- print("Terminate to enter shell or wait 1 second to continue boot")
+    -- sleep(1)
+    local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+    if f then
+      local branch = textutils.unserialiseJSON(f.readAll())["sha"]
+      local cur = fs.open("/system/rel", "r")
+      if cur and cur.readAll() ~= branch then
+        shell.run("/system/installer.lua")
+      end
+      f.close()
+    else
+      print("Update failed")
     end
-    f.close()
-  else
-    print("Update failed")
   end
 end
 local oldprr = os.pullEventRaw
