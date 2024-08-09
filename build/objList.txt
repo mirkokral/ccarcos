@@ -13,6 +13,7 @@ f>system/bootloader.lua
 f>system/krnl.lua
 f>system/installer.lua
 f>system/liveinst.lua
+f>system/devinstaller.lua
 f>system/apis/col.lua
 f>system/apis/rd.lua
 f>system/apis/files.lua
@@ -43,3 +44,4 @@ r>services/enabled/login
 r>config/passwd
 r>config/aboot
 r>config/arcshell
+r>config/arcrepo

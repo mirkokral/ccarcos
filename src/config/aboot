@@ -4,5 +4,6 @@
         "bg": "black"
     },
     "skipPrompt": true,
-    "defargs": ""
+    "defargs": "",
+    "autoUpdate": true
 }

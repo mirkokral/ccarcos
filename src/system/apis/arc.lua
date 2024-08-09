@@ -4,6 +4,14 @@ local methods = {
     OPTIONS = true, PUT = true, DELETE = true,
     PATCH = true, TRACE = true,
 }
+
+local function getChosenRepo()
+    local rf = files.open("/config/arcrepo", "r")
+    local fx = rf.read()
+    rf.close()
+    return fx
+end
+
 local function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -71,7 +79,7 @@ end
 
 
 local function getLatestCommit()
-    local fr = get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+    local fr = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main")
     local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
     fr.close()
     return rp
@@ -84,7 +92,7 @@ end
 ---Fetches arc repos
 local function fetch()
     checkForCD()
-    local f = get("https://raw.githubusercontent.com/mirkokral/ccarcos/".. getLatestCommit() .."/repo/index.json")
+    local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/".. getLatestCommit() .."/repo/index.json")
     local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
     fa.write(f.readAll())
     fa.close()
@@ -160,7 +168,7 @@ local function install(package)
         end
     end
     local pkg = repo[package]
-    local indexFile = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/index")
+    local indexFile = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/index")
     local ifx = indexFile.readAll()
     for index, value in ipairs(split(ifx, "\n")) do
         if value:sub(1, 1) == "d" then
@@ -171,7 +179,7 @@ local function install(package)
         elseif value:sub(1, 1) == "f" then
             if not __LEGACY.files.exists("/" .. value:sub(3)) then
                 
-                local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. value:sub(3):gsub("%s", "%%20"))
+                local file = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/" .. value:sub(3):gsub("%s", "%%20"))
                 local tfh = __LEGACY.files.open("/" .. value:sub(3), "w")
                 -- print(value:sub(3))
                 tfh.write(file.readAll())
@@ -183,7 +191,7 @@ local function install(package)
     end
     if pkg["postInstScript"] then
         return function()
-            local file = get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
+            local file = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
             local fd = file.readAll()
             file.close()
             local tf = __LEGACY.files.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
