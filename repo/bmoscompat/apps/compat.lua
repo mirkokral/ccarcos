@@ -64,6 +64,17 @@ bmos_compat_env.user = {
 		return (arcos.getCurrentTask().user == "root") and bmos_compat_env.rootColor or bmos_compat_env.userColor
 	end,
 }
+bmos_compat_env.fs.isProgramInPath = function(path,progName)
+	if fs.exists(path..progName) then
+		return path..progName
+	elseif fs.exists(path..progName..".lua") then
+		return path..progName..".lua"
+	elseif fs.exists(path..progName..".why") then
+		return path..progName..".why"
+	else
+		return false
+	end
+end
 bmos_compat_env.output = {
 	debug = function(...)
 		print("[DEBUG]",...)
