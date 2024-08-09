@@ -60,7 +60,7 @@ bmos_compat_env.user = {
 		return arcos.getCurrentTask().user
 	end,
 	currentUserColor = function()
-		return chkRoot() and _G.rootColor or _G.userColor
+		return (arcos.getCurrentTask().user == "root") and _G.rootColor or _G.userColor
 	end,
 }
 bmos_compat_env.output = {
