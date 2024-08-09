@@ -86,7 +86,7 @@ if not live then
     file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/objList.txt")
     if file then
       cont = file.readAll()
-      file.close()
+      pcall(file.close)
       local missingFiles = {}
       local missingDirs = {}
       for _, i in ipairs(strsplit(cont, "\n")) do
@@ -116,15 +116,15 @@ if not live then
             f.write(hf.readAll())
           end
           if hf then
-            hf.close()
+            pcall(hf.close)
           end
           if f then
-            f.close()
+            pcall(f.close)
           end
         end
       end
     end
-    f.close()
+    pcall(f.close)
   else
     print("Fix check failed")
   end
