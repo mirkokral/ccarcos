@@ -45,7 +45,7 @@
         "friendlyName": "Bm-Compat",
         "description": "A WIP compatibility layer to run BM-OS apps",
         "owner":"AdamTheDumbPerson",
-        "version": "1",
+        "version": "2",
         "vId": 30,
         "dependencies": ["rednet"]
     },
