@@ -74,7 +74,12 @@ end
 modem.open(711)
 reDraw()
 while true do
-    local seev = table.pack(arcos.ev())
+    local seev
+    if arcos then
+        seev = table.pack(arcos.ev())
+    else
+        seev = table.pack(os.pullEvent())
+    end
     -- print(table.unpack(seev))
     if seev[1] == "modem_message" then
         

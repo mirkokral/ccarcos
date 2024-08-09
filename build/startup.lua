@@ -40,6 +40,23 @@ if not live then
     end
   end
 end
+if live then
+  if not fs.exists("/config/settings") then
+    local f, e = fs.open("/config/settings", "w")
+    local f2, e2 = fs.open("/.settings", "r")
+    f.write(f2.readAll())
+    f.close()
+    f2.close()
+  end
+else
+  if not fs.exists("/.arcliveenv/config/settings") then
+    local f, e = fs.open("/.arcliveenv/config/settings", "w")
+    local f2, e2 = fs.open("/.settings", "r")
+    f.write(f2.readAll())
+    f.close()
+    f2.close()
+  end
+end
 local oldprr = os.pullEventRaw
 local oldpe = os.pullEvent
 local oldtr = term.redirect
@@ -49,6 +66,7 @@ _G.__LEGACY = {}
 for key, value in pairs(_G) do
   __LEGACY[key] = value
 end
+__LEGACY.ofs = __LEGACY.fs
 __LEGACY.files = __LEGACY.fs
 if live then
   __LEGACY.files = {
