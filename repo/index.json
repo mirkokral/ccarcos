@@ -45,8 +45,8 @@
         "friendlyName": "BM-OS Subsystem",
         "description": "A WIP BM-OS subsystem",
         "owner":"AdamTheDumbPerson",
-        "version": "45",
-        "vId": 45,
+        "version": "1",
+        "vId": 46,
         "dependencies": ["craft"]
     },
     "rednet": {
