@@ -19,3 +19,4 @@ else
     error("Too little or too many arguments")
 end
 
+arcos.createUser(username, password)
