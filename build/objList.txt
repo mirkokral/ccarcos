@@ -39,6 +39,8 @@ f>apps/mkdir.lua
 f>apps/uitest.lua
 f>apps/kmsg.lua
 f>apps/arc.lua
+f>apps/adduser.lua
+f>apps/rmuser.lua
 f>startup.lua
 r>services/enabled/login
 r>config/passwd

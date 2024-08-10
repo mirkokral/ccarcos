@@ -43,6 +43,8 @@ compileFiles:
   - apps/uitest.lua
   - apps/kmsg.lua
   - apps/arc.lua
+  - apps/adduser.lua
+  - apps/rmuser.lua
   - startup.lua
 nrFiles:
   - services/enabled/login
