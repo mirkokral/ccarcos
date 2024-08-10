@@ -96,8 +96,15 @@ _G.arcos = {
             __LEGACY.os.setComputerLabel(new)
         end
     end,
+    ---@class PublicTaskIdentifier
+    ---@field public pid number The process id
+    ---@field public name string The process name
+    ---@field public user string The process user
+    ---@field public nice number The process niceness value
+    ---@field public paused boolean The paused boolean
+    ---@field public env table The environment of the process, exposed as environ 
     ---Gets the currrent task
-    ---@return {pid: number, name: string, user: string, nice: number, paused: boolean, env: table}
+    ---@return PublicTaskIdentifier
     getCurrentTask = function()
         return {
             pid = cPid,
@@ -143,19 +150,19 @@ _G.arcos = {
         end
     end,
     ---Gets the time
-    ---@param t "ingame"|"utc"|"local"? Timezone
+    ---@param t string? Timezone
     ---@return integer
     time = function(t)
         return __LEGACY.os.time(t)
     end,
     ---Gets the day
-    ---@param t "ingame"|"utc"|"local"? Timezone
+    ---@param t string? Timezone
     ---@return integer
     day = function(t)
         return __LEGACY.os.day(t)
     end,
     ---Gets the epoch
-    ---@param t "ingame"|"utc"|"local"? Timezone
+    ---@param t string? Timezone
     ---@return integer
     epoch = function(t)
         return __LEGACY.os.epoch(t)
@@ -381,7 +388,7 @@ _G.tasking = {
         end
     end,
     ---Gets all tasks
-    ---@return { pid: number, name: string, user: string, nice: number, paused: boolean }[]
+    ---@return PublicTaskIdentifier[]
     getTasks = function()
         local returnstuff = {}
         for i, v in ipairs(tasks) do
@@ -533,20 +540,13 @@ end
 setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 
 -- C:Exc
----@module "src.system.apis.arc"
-_G.arc = nil
----@module "src.system.apis.col"
-_G.col = nil
----@module "src.system.apis.files"
-_G.files = nil
----@module "src.system.apis.hashing"
-_G.hashing = nil
----@module "src.system.apis.rd"
-_G.rd = nil
----@module "src.system.apis.tutils"
-_G.tutils = nil
----@module "src.system.apis.ui"
-_G.ui = nil
+_G.arc = require "src.system.apis.arc"
+_G.col = require "src.system.apis.col"
+_G.files = require "src.system.apis.files"
+_G.hashing = require "src.system.apis.hashing"
+_G.rd = require "src.system.apis.rd"
+_G.tutils = require "src.system.apis.tutils"
+_G.ui = require "src.system.apis.ui"
 -- C:End
 _G.window = debug.getfenv(utd).window
 local passwdFile = files.open("/config/passwd", "r")

@@ -1,17 +1,17 @@
 ---@class FileH
----@field close fun(): nil Close the file handle
----@field open boolean Gets if fh open
----@field seekBytes fun(whence: string?, offset: string?): nil
+---@field public close fun(): nil Close the file handle
+---@field public open boolean Gets if fh open
+---@field public seekBytes fun(whence: string?, offset: string?): nil
 
 ---@class FileHRead: FileH
----@field read fun(): string Gets all contents of file
----@field readLine fun(): string Gets a single file line
----@field readBytes fun(amount): number | number[]
+---@field public read fun(): string Gets all contents of file
+---@field public readLine fun(): string Gets a single file line
+---@field public readBytes fun(amount): number | number[]
 
 ---@class FileHWrite: FileH
----@field write fun(towrite: string): nil Erases file and writes towrite to it
----@field writeLine fun(line: string): nil Write line
----@field flush fun(): nil Flushes file
+---@field public write fun(towrite: string): nil Erases file and writes towrite to it
+---@field public writeLine fun(line: string): nil Write line
+---@field public flush fun(): nil Flushes file
 local function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -376,9 +376,17 @@ end
 local function capacity(path)
     return __LEGACY.files.getCapacity(path)
 end
+
+---@class FileAttributes
+---@field public size number
+---@field public isDir boolean
+---@field public isReadOnly boolean
+---@field public created number
+---@field public modified number
+
 ---Gets path attributes
 ---@param path string
----@return {size: number, isDir: number, isReadOnly: number, created: number, modified: number}
+---@return FileAttributes
 local function attributes(path)
     return __LEGACY.files.attributes(path)
 end

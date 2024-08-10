@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>arcos2 documentation &#8212; arcos2 24.08a &#34;Vertica&#34; documentation</title>
+    <title>Installation &#8212; arcos2 24.08a &#34;Vertica&#34; documentation</title>
   
   
   
@@ -38,10 +38,10 @@
     <script src="_static/documentation_options.js?v=27354def"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'installation';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="arcos2 documentation" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -110,7 +110,7 @@
     
   
 
-<a class="navbar-brand logo" href="#">
+<a class="navbar-brand logo" href="index.html">
   
   
   
@@ -131,8 +131,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="installation.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     Installation
   </a>
 </li>
@@ -206,9 +206,7 @@ document.write(`
       
       
       
-        
-      
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -223,8 +221,8 @@ document.write(`
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="installation.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     Installation
   </a>
 </li>
@@ -255,6 +253,15 @@ document.write(`
     
   </div>
   
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
   </div>
@@ -270,7 +277,33 @@ document.write(`
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article d-print-none"></div>
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Installation</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
               
               
               
@@ -278,17 +311,46 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="arcos2-documentation">
-<h1>arcos2 documentation<a class="headerlink" href="#arcos2-documentation" title="Link to this heading">#</a></h1>
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
 <div class="line-block">
-<div class="line">Welcome to arcos2!</div>
-<div class="line">An installation guide is available <a class="reference external" href="installation.html">here.</a></div>
+<div class="line">To install arcos2, simply run <code class="docutils literal notranslate"><span class="pre">wget</span> <span class="pre">run</span> <span class="pre">https://raw.githubusercontent.com/mirkokral/ccarcos/main/build/system/installer.lua</span></code>.</div>
+<div class="line">The installer erases all files in the root directory and copies arcos2 files into it.</div>
 </div>
-<div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-</ul>
+<div class="line-block">
+<div class="line">After the installation finishes, you’ll see the following screen:</div>
+</div>
+<a class="reference internal image-reference" href="_images/oobe_page_1.png"><img alt="A welcome screen" src="_images/oobe_page_1.png" style="width: 480px;" />
+</a>
+<div class="line-block">
+<div class="line">After you click “Next”, you’ll see the following screen:</div>
+</div>
+<a class="reference internal image-reference" href="_images/oobe_page_2.png"><img alt="A screen, where you select a login screen." src="_images/oobe_page_2.png" style="width: 480px;" />
+</a>
+<div class="line-block">
+<div class="line">Here, it is recommended to select “nex” (When it becomes available) or meanwhile “audm”</div>
+<div class="line">If you don’t want any user and password prompt, select “Shell”.</div>
+<div class="line">After you select a login screen, you’ll be met with this screen:</div>
+</div>
+<a class="reference internal image-reference" href="_images/oobe_page_3.png"><img alt="A screen where you set the computer label" src="_images/oobe_page_3.png" style="width: 480px;" />
+</a>
+<div class="line-block">
+<div class="line">Here, you select a computer label.</div>
+<div class="line">This shows up on the shell, when you pickup the computer or in mods like WAYLA or JADE</div>
+</div>
+<div class="line-block">
+<div class="line">After this, you’ll see the following screen:</div>
+</div>
+<a class="reference internal image-reference" href="_images/oobe_page_4.png"><img alt="A screen where the text &quot;Install Packages&quot;, a list of packages and a button with the text &quot;install&quot; is shown" src="_images/oobe_page_4.png" style="width: 480px;" />
+</a>
+<div class="line-block">
+<div class="line">Here, review the packages to install and then click “Install”</div>
+<div class="line">After this, you will see the following screen:</div>
+</div>
+<a class="reference internal image-reference" href="_images/oobe_page_find.png"><img alt="A screen with the text &quot;All finished!&quot; and a button to reboot the computer." src="_images/oobe_page_find.png" style="width: 480px;" />
+</a>
+<div class="line-block">
+<div class="line">On this screen just click reboot.</div>
 </div>
 </section>
 
@@ -302,14 +364,14 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="right-next"
-       href="installation.html"
-       title="next page">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Installation</p>
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">arcos2 documentation</p>
       </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -324,7 +386,7 @@ document.write(`
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="_sources/index.rst.txt">
+    <a href="_sources/installation.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

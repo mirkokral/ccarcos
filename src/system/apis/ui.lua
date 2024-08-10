@@ -63,46 +63,55 @@ local function blitAtPos(sx, sy, bgCol, forCol, text, buf)
     end
 end
 ---@class RenderCommand
----@field x number The X position for the render command
----@field y number The Y position for the render command
----@field bgCol Color The bg color for the render command
----@field forCol Color The foreground color for the render command
----@field text string The text for the render command
+---@field public x number The X position for the render command
+---@field public y number The Y position for the render command
+---@field public bgCol Color The bg color for the render command
+---@field public forCol Color The foreground color for the render command
+---@field public text string The text for the render command
 
 ---@class Widget
----@field x number The x position of the widget
----@field y number The y position of the widget
----@field getDrawCommands fun(): RenderCommand[]
----@field onEvent fun(e): boolean?
----@field renderFinish fun(ox, oy)?
----@field getWH fun(): [number, number] Gets the width and height of this element.
+---@field public x number The x position of the widget
+---@field public y number The y position of the widget
+---@field public getDrawCommands fun(): RenderCommand[]
+---@field public onEvent fun(e): boolean?
+---@field public renderFinish fun(ox, oy)?
+---@field public getWH fun(): [number, number] Gets the width and height of this element.
 
 ---@class Label: Widget
----@field label string The label
----@field col Color The label bg color
----@field textCol Color The text color for the label
+---@field public label string The label
+---@field public col Color The label bg color
+---@field public textCol Color The text color for the label
 ---@class Button: Label
----@field callback fun()
+---@field public callback fun()
 
 ---@class ScrollPane: Widget
----@field width number The width of the pane. Currently cuts off elements but maybe vertical scroll next time
----@field height number The height of the pane.
----@field col Color The background color of the scroll pane
----@field children Widget[] The children.
----@field hideScrollbar boolean Wether to show the scroll bar
----@field showScrollbBtns boolean Wether to show the scroll bar
----@field scroll number How much scrolled
----@field getTotalHeight fun() : number Gets the total height of all the elements
+---@field public width number The width of the pane. Currently cuts off elements but maybe vertical scroll next time
+---@field public height number The height of the pane.
+---@field public col Color The background color of the scroll pane
+---@field public children Widget[] The children.
+---@field public hideScrollbar boolean Wether to show the scroll bar
+---@field public showScrollbBtns boolean Wether to show the scroll bar
+---@field public scroll number How much scrolled
+---@field public getTotalHeight fun() : number Gets the total height of all the elements
 
 ---@class TextInput: Label
----@field curpos number
----@field width number
----@field focus boolean
----@field text string
----@field textScroll number
+---@field public curpos number
+---@field public width number
+---@field public focus boolean
+---@field public text string
+---@field public textScroll number
 
+---@class ScrollPaneOptions
+---@field public width number
+---@field public height number
+---@field public x number
+---@field public y number
+---@field public col Color?
+---@field public children Widget[]
+---@field public showScrollBtns boolean?
+---@field public hideScrollbar boolean?
 ---Create a new scroll pane.
----@param b { width: number, height: number, x: number, y: number, col: Color?, children: Widget[], showScrollBtns: boolean?,  hideScrollbar: boolean? }
+---@param b ScrollPaneOptions
 ---@return ScrollPane
 local function ScrollPane(b)
     local config = {}
@@ -301,8 +310,15 @@ local function Wrap(str, maxLength)
     return ostr
 end
 
+---@class LabelOpts
+---@field public label string
+---@field public x number
+---@field public y number
+---@field public col Color?
+---@field public textCol Color?
+
 ---Creates a new label
----@param b { label: string, x: number, y: number, col: Color?, textCol: Color?} The button configuration
+---@param b LabelOpts The button configuration
 ---@return Label
 local function Label(b)
     local config = {}
@@ -356,8 +372,17 @@ local function Label(b)
     return config
 end
 
+---@class TextInputOpts
+---@field public label string
+---@field public x number
+---@field public y number
+---@field public width number
+---@field public col Color?
+---@field public textCol Color?
+
+
 ---Creates a new text input
----@param b { label: string, x: number, y: number, width: number, col: Color?, textCol: Color?} The button configuration
+---@param b TextInputOpts The button configuration
 ---@return TextInput
 local function TextInput(b)
     local ca = b
@@ -460,8 +485,16 @@ local function TextInput(b)
     return config
 end
 
+---@class ButtonOpts
+---@field public label string
+---@field public x number
+---@field public y number
+---@field public callBack fun():boolean
+---@field public col Color?
+---@field public textCol Color?
+
 ---Creates a new button
----@param b { label: string, x: number, y: number, callBack: fun(): boolean, col: Color?, textCol: Color? } The button configuration
+---@param b ButtonOpts The button configuration
 ---@return Button
 local function Button(b)
     local config = { col = UItheme.buttonBg, textCol = UItheme.buttonFg }

@@ -9,7 +9,7 @@
 project = 'arcos2'
 copyright = '2024, kkk8GJ (mirkokral), emireri1498 (emir4169)'
 author = 'kkk8GJ (mirkokral), emireri1498 (emir4169)'
-release = '24.08 "Vertica" (alpha release)'
+release = '24.08a "Vertica"'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -22,8 +22,16 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_book_theme'
+html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
 extensions = [
-    'myst_parser'
+    'sphinxcontrib.luadomain',
+    'sphinx_lua'
     ]
+
+# Available options and default values
+lua_source_path = ["../src/"]
+lua_source_encoding = 'utf8'
+lua_source_comment_prefix = '---'
+lua_source_use_emmy_lua_syntax = True
+lua_source_private_prefix = '_'
