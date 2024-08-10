@@ -8,7 +8,8 @@ Command reference
 | Lists a directory
 | Example:
 
-.. code-block::
+.. code-block:: sh
+    :linenos:
 
         root@arcos /user/root # cd /
         root@arcos / # ls
@@ -20,7 +21,8 @@ Command reference
 | Changes into directory. You can either use relative paths (ex. ``cd system``) or absolute ones (ex. ``cd /system``)
 | Example:
 
-.. code-block::
+.. code-block:: sh
+    :linenos:
 
         root@arcos /user/root # cd /
         root@arcos / # cd system
@@ -30,7 +32,8 @@ Command reference
 | Copies file <source> into <target>
 | Example:
 
-.. code-block::
+.. code-block:: sh
+    :linenos:
 
         root@arcos /user/root # ls
         file.lua
@@ -45,7 +48,8 @@ Command reference
 | Same as ``cp`` but deletes the old file
 | Example:
 
-.. code-block::
+.. code-block:: sh
+    :linenos:
 
         root@arcos /user/root # ls
         file.lua
@@ -58,7 +62,8 @@ Command reference
 | Reads <file> and outputs it's contents
 | Example:
 
-.. code-block::
+.. code-block:: sh
+    :linenos:
 
         root@arcos /user/root # ls
         tip.txt
@@ -70,7 +75,8 @@ Command reference
 | Creates a folder
 | Example:
 
-.. code-block::
+.. code-block:: sh
+    :linenos:
 
         root@arcos /user/root # ls
         tip.txt
@@ -88,13 +94,67 @@ Command reference
 | Removes a file or folder
 | Example:
 
-.. code-block::
+.. code-block:: sh
+    :linenos:
 
         root@arcos /user/root # ls
         tip.txt
         root@arcos /user/root # rm tip.txt
         root@arcos /user/root # ls
-        
+
+        root@arcos /user/root #
+
+
+
+| ``arc fetch``
+| Fetches the latest repository information
+| Example:
+
+.. code-block:: sh
+    :linenos:
+
+        root@arcos /user/root # arc fetch
+        root@arcos /user/root #
+
+| ``arc install <package>``
+| Installs a package
+| Example:
+
+.. code-block:: sh
+    :linenos:
+
+        root@arcos /user/root # arc fetch
+        root@arcos /user/root # arc install craft
+        These packages will be installed:
+
+        rednet craft
+
+        Do you want to proceed? [y/n] y
+        (1/2) rednet
+        (2/2) craft
+        Done
+        root@arcos /user/root # craft
+        CraftOS 1.8 Compat on arcos 24.08 "Vertica" (Alpha release)
+        missingno
+        > hello
+        Hello, world!
+        >
+
+| ``arc uninstall <package>``
+| Uninstalls a package
+| Example:
+
+.. code-block:: sh
+    :linenos:
+
+        root@arcos /user/root # arc uninstall craft
+        These packages will be uninstalled:
+
+        craft
+
+        Do you want to proceed? [y/n] y
+        root@arcos /user/root # craft
+        [string "eval"]:1: '=' expected near <eof>
         root@arcos /user/root #
 
 

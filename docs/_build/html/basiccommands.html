@@ -314,9 +314,10 @@ document.write(`
 <div class="line">Lists a directory</div>
 <div class="line">Example:</div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># cd /</span>
-<span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span> <span class="c1"># ls</span>
-<span class="n">apis</span> <span class="n">apps</span> <span class="n">config</span> <span class="n">data</span> <span class="n">rom</span> <span class="n">services</span> <span class="n">startup</span><span class="o">.</span><span class="n">lua</span> <span class="n">system</span> <span class="n">temporary</span> <span class="n">user</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># cd /</span>
+<span class="linenos">2</span><span class="w">    </span>root@arcos<span class="w"> </span>/<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">3</span><span class="w">    </span>apis<span class="w"> </span>apps<span class="w"> </span>config<span class="w"> </span>data<span class="w"> </span>rom<span class="w"> </span>services<span class="w"> </span>startup.lua<span class="w"> </span>system<span class="w"> </span>temporary<span class="w"> </span>user
+<span class="linenos">4</span><span class="w">    </span>root@arcos<span class="w"> </span>/<span class="w"> </span><span class="c1">#</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -324,9 +325,9 @@ document.write(`
 <div class="line">Changes into directory. You can either use relative paths (ex. <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">system</span></code>) or absolute ones (ex. <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">/system</span></code>)</div>
 <div class="line">Example:</div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># cd /</span>
-<span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span> <span class="c1"># cd system</span>
-<span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">system</span> <span class="c1">#</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># cd /</span>
+<span class="linenos">2</span><span class="w">    </span>root@arcos<span class="w"> </span>/<span class="w"> </span><span class="c1"># cd system</span>
+<span class="linenos">3</span><span class="w">    </span>root@arcos<span class="w"> </span>/system<span class="w"> </span><span class="c1">#</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -334,11 +335,12 @@ document.write(`
 <div class="line">Copies file &lt;source&gt; into &lt;target&gt;</div>
 <div class="line">Example:</div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># ls</span>
-<span class="n">file</span><span class="o">.</span><span class="n">lua</span>
-<span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># cp file.lua file2.lua</span>
-<span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># ls</span>
-<span class="n">file</span><span class="o">.</span><span class="n">lua</span> <span class="n">file2</span><span class="o">.</span><span class="n">lua</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">2</span><span class="w">    </span>file.lua
+<span class="linenos">3</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># cp file.lua file2.lua</span>
+<span class="linenos">4</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">5</span><span class="w">    </span>file.lua<span class="w"> </span>file2.lua
+<span class="linenos">6</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1">#</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -347,11 +349,103 @@ document.write(`
 <div class="line">Same as <code class="docutils literal notranslate"><span class="pre">cp</span></code> but deletes the old file</div>
 <div class="line">Example:</div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># ls</span>
-<span class="n">file</span><span class="o">.</span><span class="n">lua</span>
-<span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># mv file.lua file2.lua</span>
-<span class="n">root</span><span class="nd">@arcos</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">root</span> <span class="c1"># ls</span>
-<span class="n">file2</span><span class="o">.</span><span class="n">lua</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">2</span><span class="w">    </span>file.lua
+<span class="linenos">3</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># mv file.lua file2.lua</span>
+<span class="linenos">4</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">5</span><span class="w">    </span>file2.lua
+<span class="linenos">6</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1">#</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">&lt;file&gt;</span></code></div>
+<div class="line">Reads &lt;file&gt; and outputs it’s contents</div>
+<div class="line">Example:</div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">2</span><span class="w">    </span>tip.txt
+<span class="linenos">3</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># cat tip.txt</span>
+<span class="linenos">4</span><span class="w">    </span>The<span class="w"> </span>arcos<span class="w"> </span><span class="nb">source</span><span class="w"> </span>code<span class="w"> </span>is<span class="w"> </span>available<span class="w"> </span>at<span class="w"> </span>https://www.github.com/mirkokral/ccarcos/.
+<span class="linenos">5</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1">#</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">&lt;folder&gt;</span></code></div>
+<div class="line">Creates a folder</div>
+<div class="line">Example:</div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos"> 2</span><span class="w">    </span>tip.txt
+<span class="linenos"> 3</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># mkdir test</span>
+<span class="linenos"> 4</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="nb">test</span><span class="w"> </span>tip.txt
+<span class="linenos"> 6</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># mv tip.txt test/tip.txt</span>
+<span class="linenos"> 7</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="nb">test</span>
+<span class="linenos"> 9</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls test</span>
+<span class="linenos">10</span><span class="w">    </span>tip.txt
+<span class="linenos">11</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1">#</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">&lt;file/folder&gt;</span></code></div>
+<div class="line">Removes a file or folder</div>
+<div class="line">Example:</div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">2</span><span class="w">    </span>tip.txt
+<span class="linenos">3</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># rm tip.txt</span>
+<span class="linenos">4</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># ls</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1">#</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">arc</span> <span class="pre">fetch</span></code></div>
+<div class="line">Fetches the latest repository information</div>
+<div class="line">Example:</div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># arc fetch</span>
+<span class="linenos">2</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1">#</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">arc</span> <span class="pre">install</span> <span class="pre">&lt;package&gt;</span></code></div>
+<div class="line">Installs a package</div>
+<div class="line">Example:</div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># arc fetch</span>
+<span class="linenos"> 2</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># arc install craft</span>
+<span class="linenos"> 3</span><span class="w">    </span>These<span class="w"> </span>packages<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>installed:
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="w">    </span>rednet<span class="w"> </span>craft
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w">    </span>Do<span class="w"> </span>you<span class="w"> </span>want<span class="w"> </span>to<span class="w"> </span>proceed?<span class="w"> </span><span class="o">[</span>y/n<span class="o">]</span><span class="w"> </span>y
+<span class="linenos"> 8</span><span class="w">    </span><span class="o">(</span><span class="m">1</span>/2<span class="o">)</span><span class="w"> </span>rednet
+<span class="linenos"> 9</span><span class="w">    </span><span class="o">(</span><span class="m">2</span>/2<span class="o">)</span><span class="w"> </span>craft
+<span class="linenos">10</span><span class="w">    </span>Done
+<span class="linenos">11</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># craft</span>
+<span class="linenos">12</span><span class="w">    </span>CraftOS<span class="w"> </span><span class="m">1</span>.8<span class="w"> </span>Compat<span class="w"> </span>on<span class="w"> </span>arcos<span class="w"> </span><span class="m">24</span>.08<span class="w"> </span><span class="s2">&quot;Vertica&quot;</span><span class="w"> </span><span class="o">(</span>Alpha<span class="w"> </span>release<span class="o">)</span>
+<span class="linenos">13</span><span class="w">    </span>missingno
+<span class="linenos">14</span><span class="w">    </span>&gt;<span class="w"> </span>hello
+<span class="linenos">15</span><span class="w">    </span>Hello,<span class="w"> </span>world!
+<span class="linenos">16</span><span class="w">    </span>&gt;
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">arc</span> <span class="pre">uninstall</span> <span class="pre">&lt;package&gt;</span></code></div>
+<div class="line">Uninstalls a package</div>
+<div class="line">Example:</div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># arc uninstall craft</span>
+<span class="linenos">2</span><span class="w">    </span>These<span class="w"> </span>packages<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>uninstalled:
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="w">    </span>craft
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="w">    </span>Do<span class="w"> </span>you<span class="w"> </span>want<span class="w"> </span>to<span class="w"> </span>proceed?<span class="w"> </span><span class="o">[</span>y/n<span class="o">]</span><span class="w"> </span>y
+<span class="linenos">7</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1"># craft</span>
+<span class="linenos">8</span><span class="w">    </span><span class="o">[</span>string<span class="w"> </span><span class="s2">&quot;eval&quot;</span><span class="o">]</span>:1:<span class="w"> </span><span class="s1">&#39;=&#39;</span><span class="w"> </span>expected<span class="w"> </span>near<span class="w"> </span>&lt;eof&gt;
+<span class="linenos">9</span><span class="w">    </span>root@arcos<span class="w"> </span>/user/root<span class="w"> </span><span class="c1">#</span>
 </pre></div>
 </div>
 </section>
