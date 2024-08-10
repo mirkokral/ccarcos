@@ -65,6 +65,36 @@ bmos_compat_env.user = {
 		return (arcos.getCurrentTask().user == "root") and bmos_compat_env.rootColor or bmos_compat_env.userColor
 	end,
 }
+bmos_compat_env.fs.updateFile = function(file,url)
+	local result, reason = http.get({url = url, binary = true}) --make names better
+	if not result then
+		output.warn(("Failed to update %s from %s (%s)"):format(file, url, reason)) --include more detail
+		return
+	end
+	local a1 = fs.open(file,"wb")
+	a1.write(result.readAll())
+	a1.close()
+	result.close()
+end
+bmos_compat_env.os.run = function(env,file,...)
+	--resolving this here since its required for files to work
+	local a = fs.open(file,"r")
+	if a then
+		local firstLine = a.readLine(false)
+		a.close()
+		if firstLine:sub(1,2) == "#!" then
+			local interpreter = firstLine:sub(3)
+			if fs.isProgramInPath("",interpreter) then
+				interpreter = fs.isProgramInPath("",interpreter)
+			end
+			oldRun(env,interpreter,file,...)
+		else
+			oldRun(env,file,...)
+		end
+	else
+		bmos_compat_env.output.info(file)
+	end
+end
 bmos_compat_env.fs.isProgramInPath = function(path,progName)
 	if fs.exists(path..progName) then
 		return path..progName
