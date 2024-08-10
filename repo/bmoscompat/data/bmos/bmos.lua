@@ -124,8 +124,8 @@ function bmos_compat_env.term.fixColorScheme()
 	term.setTextColor(colors.white)
 end
 print("[INFO] BM-OS Compatiblity Enabled")
-local lastEnvType = environ.envType .. ""
+local lastEnvType = (environ.envType or "") .. ""
 environ.envType = "BM-OS"
 local ok, err = arcos.r(bmos_compat_env, "/data/bmosfs/bin/sh.lua", ...)
 if not ok then bmos_compat_env.output.error(err) end
-environ.envType = lastEnvType
+environ.envType = lastEnvType == "" and nil or lastEnvType
