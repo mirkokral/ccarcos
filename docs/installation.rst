@@ -7,22 +7,19 @@ Installation
 
 | After the installation finishes, you'll see the following screen:
 
-.. image:: images/oobe_page_1.png
-   :width: 480
+.. image:: images/oobe_page_1.bmp
    :alt: A welcome screen
 
 | After you click "Next", you'll see the following screen:
 
-.. image:: images/oobe_page_2.png
-   :width: 480
+.. image:: images/oobe_page_2.bmp
    :alt: A screen, where you select a login screen.
 
 | Here, it is recommended to select "nex" (When it becomes available) or meanwhile "audm"
 | If you don't want any user and password prompt, select "Shell".
 | After you select a login screen, you'll be met with this screen:
 
-.. image:: images/oobe_page_3.png
-   :width: 480
+.. image:: images/oobe_page_3.bmp
    :alt: A screen where you set the computer label
 
 | Here, you select a computer label. 
@@ -30,15 +27,13 @@ Installation
 
 | After this, you'll see the following screen:
 
-.. image:: images/oobe_page_4.png
-   :width: 480
+.. image:: images/oobe_page_4.bmp
    :alt: A screen where the text "Install Packages", a list of packages and a button with the text "install" is shown
 
 | Here, review the packages to install and then click "Install"
 | After this, you will see the following screen:
 
-.. image:: images/oobe_page_find.png
-   :width: 480
+.. image:: images/oobe_page_5.bmp
    :alt: A screen with the text "All finished!" and a button to reboot the computer.
 
 | On this screen just click reboot.

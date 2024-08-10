@@ -22,12 +22,15 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'pydata_sphinx_theme'
+html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
 extensions = [
     'sphinxcontrib.luadomain',
     'sphinx_lua'
     ]
+html_show_sphinx = False
+html_css_files = ["css/custom.css"]
+
 
 # Available options and default values
 lua_source_path = ["../src/"]

@@ -15,3 +15,4 @@ arcos2 documentation
    :caption: Contents:
    
    installation
+   gettingstarted

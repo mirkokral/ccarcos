@@ -1,3 +1,5 @@
+---@module "src.system.apis.arc"
+
 
 local methods = {
     GET = true, POST = true, HEAD = true,
