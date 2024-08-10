@@ -76,6 +76,7 @@ bmos_compat_env.fs.updateFile = function(file,url)
 	a1.close()
 	result.close()
 end
+oldRun = os.run
 bmos_compat_env.os.run = function(env,file,...)
 	--resolving this here since its required for files to work
 	local a = fs.open(file,"r")
