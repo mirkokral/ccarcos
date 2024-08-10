@@ -2,5 +2,5 @@ d>apps
 f>apps/test.lua
 d>config
 d>config/apps
-f>config/apps/test.icon
 f>config/apps/test.json
+f>config/apps/test.icon

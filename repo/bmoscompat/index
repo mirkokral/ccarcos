@@ -24,3 +24,5 @@ d>data/bmosfs/usr
 d>data/bmosfs/usr/bin
 d>data/bmosfs/usr/etc
 d>data/bmosfs/usr/lib
+d>data/bmos
+f>data/bmos/bmos.lua
