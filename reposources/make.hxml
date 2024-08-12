@@ -1,0 +1,4 @@
+# --lua test.lua
+--interp
+--main NexUITest
+-p .
