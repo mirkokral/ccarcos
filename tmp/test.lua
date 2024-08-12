@@ -183,19 +183,49 @@ local Class = _hx_e();
 local Enum = _hx_e();
 
 local Array = _hx_e()
+__lua_lib_lrexlib_Rex = _G.require("rex_pcre2")
 __lua_lib_luautf8_Utf8 = _G.require("lua-utf8")
+local EReg = _hx_e()
+local Lambda = _hx_e()
 local Math = _hx_e()
+local Reflect = _hx_e()
 local String = _hx_e()
 local Std = _hx_e()
+local StringTools = _hx_e()
+local Attachment = _hx_e()
+local EcoFriendlyWoodVeneir = _hx_e()
+local GalvanizedSquareSteel = _hx_e()
 local Test = _hx_e()
+__haxe_IMap = _hx_e()
 __haxe_Exception = _hx_e()
 __haxe_NativeStackTrace = _hx_e()
 __haxe_ValueException = _hx_e()
+__haxe_ds_StringMap = _hx_e()
 __haxe_exceptions_PosException = _hx_e()
 __haxe_exceptions_NotImplementedException = _hx_e()
+__haxe_http_HttpBase = _hx_e()
+__haxe_io_Bytes = _hx_e()
+__haxe_io_BytesBuffer = _hx_e()
+__haxe_io_Input = _hx_e()
+__haxe_io_Output = _hx_e()
+__haxe_io_BytesOutput = _hx_e()
+__haxe_io_Encoding = _hx_e()
+__haxe_io_Eof = _hx_e()
+__haxe_io_Error = _hx_e()
 __haxe_iterators_ArrayIterator = _hx_e()
 __haxe_iterators_ArrayKeyValueIterator = _hx_e()
+__lua_Boot = _hx_e()
+__lua_UserData = _hx_e()
 __lua_Thread = _hx_e()
+__lua_lib_luasec_Ssl = _G.require("ssl")
+__lua_lib_luasocket_Socket = _G.require("socket")
+__lua_lib_luv_net_Dns = _G.require("luv")
+__sys_Http = _hx_e()
+__sys_net_Host = _hx_e()
+__sys_net_Socket = _hx_e()
+__sys_net_SocketInput = _hx_e()
+__sys_net_SocketOutput = _hx_e()
+__sys_ssl_Socket = _hx_e()
 
 local _hx_bind, _hx_bit, _hx_staticToInstance, _hx_funcToField, _hx_maxn, _hx_print, _hx_apply_self, _hx_box_mr, _hx_bit_clamp, _hx_table, _hx_bit_raw
 local _hx_pcall_default = {};
@@ -545,6 +575,100 @@ Array.prototype.resize = function(self,len)
   end;
 end
 
+Array.prototype.__class__ =  Array
+
+EReg.new = function(r,opt) 
+  local self = _hx_new(EReg.prototype)
+  EReg.super(self,r,opt)
+  return self
+end
+EReg.super = function(self,r,opt) 
+  local ropt = 0;
+  local _g = 0;
+  local _g1 = __lua_lib_luautf8_Utf8.len(opt);
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    local _g = __lua_lib_luautf8_Utf8.sub(opt, i + 1, i + 1);
+    if (_g) == "g" then 
+      self.global = true;
+    elseif (_g) == "i" then 
+      ropt = _hx_bit.bor(ropt,EReg.FLAGS.CASELESS);
+    elseif (_g) == "m" then 
+      ropt = _hx_bit.bor(ropt,EReg.FLAGS.MULTILINE);
+    elseif (_g) == "s" then 
+      ropt = _hx_bit.bor(ropt,EReg.FLAGS.DOTALL);else end;
+  end;
+  ropt = _hx_bit.bor(ropt,EReg.FLAGS.UTF);
+  ropt = _hx_bit.bor(ropt,EReg.FLAGS.UCP);
+  if (self.global == nil) then 
+    self.global = false;
+  end;
+  self.r = __lua_lib_lrexlib_Rex.new(r, ropt);
+end
+EReg.__name__ = true
+EReg.prototype = _hx_e();
+EReg.prototype.match = function(self,s) 
+  if (s == nil) then 
+    do return false end;
+  else
+    self.m = _hx_table.pack(self.r:exec(s, 1));
+    self.s = s;
+    do return self.m[1] ~= nil end;
+  end;
+end
+EReg.prototype.matched = function(self,n) 
+  if ((self.m[1] == nil) or (n < 0)) then 
+    _G.error(__haxe_Exception.thrown("EReg::matched"),0);
+  else
+    if (n == 0) then 
+      local k = _G.string.sub(self.s, self.m[1], self.m[2]);
+      do return k end;
+    else
+      if (__lua_Boot.__instanceof(self.m[3], _G.table)) then 
+        local mn = 2 * (n - 1);
+        if (__lua_Boot.__instanceof(self.m[3][mn + 1], Bool)) then 
+          do return nil end;
+        end;
+        do return _G.string.sub(self.s, self.m[3][mn + 1], self.m[3][mn + 2]) end;
+      else
+        _G.error(__haxe_Exception.thrown("EReg:matched"),0);
+      end;
+    end;
+  end;
+end
+EReg.prototype.matchedLeft = function(self) 
+  if (self.m[1] == nil) then 
+    _G.error(__haxe_Exception.thrown("No string matched"),0);
+  end;
+  do return _G.string.sub(self.s, 1, self.m[1] - 1) end
+end
+EReg.prototype.matchedPos = function(self) 
+  local left = self:matchedLeft();
+  local matched = self:matched(0);
+  if (self.m[1] == nil) then 
+    _G.error(__haxe_Exception.thrown("No string matched"),0);
+  end;
+  do return _hx_o({__fields__={pos=true,len=true},pos=__lua_lib_luautf8_Utf8.len(left),len=__lua_lib_luautf8_Utf8.len(matched)}) end
+end
+
+EReg.prototype.__class__ =  EReg
+
+Lambda.new = {}
+Lambda.__name__ = true
+Lambda.exists = function(it,f) 
+  local x = it:iterator();
+  while (x:hasNext()) do _hx_do_first_1 = false;
+    
+    local x = x:next();
+    if (f(x)) then 
+      do return true end;
+    end;
+  end;
+  do return false end;
+end
+
 Math.new = {}
 Math.__name__ = true
 Math.isNaN = function(f) 
@@ -563,6 +687,12 @@ Math.min = function(a,b)
   else
     do return _G.math.min(a, b) end;
   end;
+end
+
+Reflect.new = {}
+Reflect.__name__ = true
+Reflect.compareMethods = function(f1,f2) 
+  do return f1 == f2 end;
 end
 
 String.new = function(string) 
@@ -741,6 +871,8 @@ String.prototype.substr = function(self,pos,len)
   do return __lua_lib_luautf8_Utf8.sub(self, pos + 1, pos + len) end
 end
 
+String.prototype.__class__ =  String
+
 Std.new = {}
 Std.__name__ = true
 Std.string = function(s) 
@@ -753,12 +885,129 @@ Std.int = function(x)
     do return _hx_bit_clamp(x) end;
   end;
 end
+Std.parseInt = function(x) 
+  if (x == nil) then 
+    do return nil end;
+  end;
+  local sign, numString = _G.string.match(x, "^%s*([%-+]?)0[xX]([%da-fA-F]*)");
+  if (numString ~= nil) then 
+    if (sign == "-") then 
+      do return -_G.tonumber(numString, 16) end;
+    else
+      do return _G.tonumber(numString, 16) end;
+    end;
+  end;
+  local intMatch = _G.string.match(x, "^%s*[%-+]?%d*");
+  if (intMatch == nil) then 
+    do return nil end;
+  end;
+  do return _G.tonumber(intMatch) end;
+end
+Std.random = function(x) 
+  if (x <= 0) then 
+    do return 0 end;
+  else
+    do return _G.math.floor(_G.math.random() * x) end;
+  end;
+end
+
+StringTools.new = {}
+StringTools.__name__ = true
+StringTools.urlEncode = function(s) 
+  s = _G.string.gsub(s, "\n", "\r\n");
+  s = _G.string.gsub(s, "([^%w %-%_%.%~])", function(c) 
+    do return _G.string.format("%%%02X", Std.string(_G.string.byte(c)) .. Std.string("")) end;
+  end);
+  s = _G.string.gsub(s, " ", "+");
+  do return s end;
+end
+StringTools.isSpace = function(s,pos) 
+  if (((__lua_lib_luautf8_Utf8.len(s) == 0) or (pos < 0)) or (pos >= __lua_lib_luautf8_Utf8.len(s))) then 
+    do return false end;
+  end;
+  local c = __lua_lib_luautf8_Utf8.byte(s, pos + 1);
+  if (not ((c > 8) and (c < 14))) then 
+    do return c == 32 end;
+  else
+    do return true end;
+  end;
+end
+StringTools.ltrim = function(s) 
+  local l = __lua_lib_luautf8_Utf8.len(s);
+  local r = 0;
+  while ((r < l) and StringTools.isSpace(s, r)) do _hx_do_first_1 = false;
+    
+    r = r + 1;
+  end;
+  if (r > 0) then 
+    do return String.prototype.substr(s, r, l - r) end;
+  else
+    do return s end;
+  end;
+end
+StringTools.rtrim = function(s) 
+  local l = __lua_lib_luautf8_Utf8.len(s);
+  local r = 0;
+  while ((r < l) and StringTools.isSpace(s, (l - r) - 1)) do _hx_do_first_1 = false;
+    
+    r = r + 1;
+  end;
+  if (r > 0) then 
+    do return String.prototype.substr(s, 0, l - r) end;
+  else
+    do return s end;
+  end;
+end
+
+Attachment.new = {}
+Attachment.__name__ = true
+Attachment.prototype = _hx_e();
+Attachment.prototype.attach = function(self,gss) 
+  gss.attachments:push(self);
+end
+
+Attachment.prototype.__class__ =  Attachment
+
+EcoFriendlyWoodVeneir.new = function() 
+  local self = _hx_new(EcoFriendlyWoodVeneir.prototype)
+  EcoFriendlyWoodVeneir.super(self)
+  return self
+end
+EcoFriendlyWoodVeneir.super = function(self) 
+  self.EcoFriendlyness = 10;
+end
+EcoFriendlyWoodVeneir.__name__ = true
+EcoFriendlyWoodVeneir.prototype = _hx_e();
+
+EcoFriendlyWoodVeneir.prototype.__class__ =  EcoFriendlyWoodVeneir
+EcoFriendlyWoodVeneir.__super__ = Attachment
+setmetatable(EcoFriendlyWoodVeneir.prototype,{__index=Attachment.prototype})
+
+GalvanizedSquareSteel.new = function() 
+  local self = _hx_new(GalvanizedSquareSteel.prototype)
+  GalvanizedSquareSteel.super(self)
+  return self
+end
+GalvanizedSquareSteel.super = function(self) 
+  self.attachments = _hx_tab_array({}, 0);
+end
+GalvanizedSquareSteel.__name__ = true
+GalvanizedSquareSteel.prototype = _hx_e();
+
+GalvanizedSquareSteel.prototype.__class__ =  GalvanizedSquareSteel
 
 Test.new = {}
 Test.__name__ = true
 Test.main = function() 
-  _G.print("Skibidi");
+  local steel = GalvanizedSquareSteel.new();
+  local wood = EcoFriendlyWoodVeneir.new();
+  wood:attach(steel);
+  _G.print(Std.string(steel.attachments));
+  _G.print(Std.string(__sys_Http.requestUrl("https://raw.githubusercontent.com/luvit/luv/master/LICENSE.txt")));
 end
+
+__haxe_IMap.new = {}
+__haxe_IMap.__name__ = true
 
 __haxe_Exception.new = function(message,previous,native) 
   local self = _hx_new(__haxe_Exception.prototype)
@@ -779,13 +1028,37 @@ __haxe_Exception.super = function(self,message,previous,native)
   end;
 end
 __haxe_Exception.__name__ = true
+__haxe_Exception.caught = function(value) 
+  if (__lua_Boot.__instanceof(value, __haxe_Exception)) then 
+    do return value end;
+  else
+    do return __haxe_ValueException.new(value, nil, value) end;
+  end;
+end
+__haxe_Exception.thrown = function(value) 
+  if (__lua_Boot.__instanceof(value, __haxe_Exception)) then 
+    do return value:get_native() end;
+  else
+    local e = __haxe_ValueException.new(value);
+    e.__skipStack = e.__skipStack + 1;
+    do return e end;
+  end;
+end
 __haxe_Exception.prototype = _hx_e();
+__haxe_Exception.prototype.unwrap = function(self) 
+  do return self.__nativeException end
+end
 __haxe_Exception.prototype.toString = function(self) 
   do return self:get_message() end
 end
 __haxe_Exception.prototype.get_message = function(self) 
   do return self.__exceptionMessage end
 end
+__haxe_Exception.prototype.get_native = function(self) 
+  do return self.__nativeException end
+end
+
+__haxe_Exception.prototype.__class__ =  __haxe_Exception
 
 __haxe_NativeStackTrace.new = {}
 __haxe_NativeStackTrace.__name__ = true
@@ -821,8 +1094,27 @@ __haxe_ValueException.super = function(self,value,previous,native)
 end
 __haxe_ValueException.__name__ = true
 __haxe_ValueException.prototype = _hx_e();
+__haxe_ValueException.prototype.unwrap = function(self) 
+  do return self.value end
+end
+
+__haxe_ValueException.prototype.__class__ =  __haxe_ValueException
 __haxe_ValueException.__super__ = __haxe_Exception
 setmetatable(__haxe_ValueException.prototype,{__index=__haxe_Exception.prototype})
+
+__haxe_ds_StringMap.new = function() 
+  local self = _hx_new(__haxe_ds_StringMap.prototype)
+  __haxe_ds_StringMap.super(self)
+  return self
+end
+__haxe_ds_StringMap.super = function(self) 
+  self.h = ({});
+end
+__haxe_ds_StringMap.__name__ = true
+__haxe_ds_StringMap.__interfaces__ = {__haxe_IMap}
+__haxe_ds_StringMap.prototype = _hx_e();
+
+__haxe_ds_StringMap.prototype.__class__ =  __haxe_ds_StringMap
 
 __haxe_exceptions_PosException.new = function(message,previous,pos) 
   local self = _hx_new(__haxe_exceptions_PosException.prototype)
@@ -842,6 +1134,8 @@ __haxe_exceptions_PosException.prototype = _hx_e();
 __haxe_exceptions_PosException.prototype.toString = function(self) 
   do return Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string("") .. Std.string(__haxe_Exception.prototype.toString(self))) .. Std.string(" in ")) .. Std.string(self.posInfos.className)) .. Std.string(".")) .. Std.string(self.posInfos.methodName)) .. Std.string(" at ")) .. Std.string(self.posInfos.fileName)) .. Std.string(":")) .. Std.string(self.posInfos.lineNumber) end
 end
+
+__haxe_exceptions_PosException.prototype.__class__ =  __haxe_exceptions_PosException
 __haxe_exceptions_PosException.__super__ = __haxe_Exception
 setmetatable(__haxe_exceptions_PosException.prototype,{__index=__haxe_Exception.prototype})
 
@@ -858,8 +1152,281 @@ __haxe_exceptions_NotImplementedException.super = function(self,message,previous
 end
 __haxe_exceptions_NotImplementedException.__name__ = true
 __haxe_exceptions_NotImplementedException.prototype = _hx_e();
+
+__haxe_exceptions_NotImplementedException.prototype.__class__ =  __haxe_exceptions_NotImplementedException
 __haxe_exceptions_NotImplementedException.__super__ = __haxe_exceptions_PosException
 setmetatable(__haxe_exceptions_NotImplementedException.prototype,{__index=__haxe_exceptions_PosException.prototype})
+
+__haxe_http_HttpBase.new = function(url) 
+  local self = _hx_new(__haxe_http_HttpBase.prototype)
+  __haxe_http_HttpBase.super(self,url)
+  return self
+end
+__haxe_http_HttpBase.super = function(self,url) 
+  self.url = url;
+  self.headers = _hx_tab_array({}, 0);
+  self.params = _hx_tab_array({}, 0);
+  self.emptyOnData = _hx_bind(self,self.onData);
+end
+__haxe_http_HttpBase.__name__ = true
+__haxe_http_HttpBase.prototype = _hx_e();
+__haxe_http_HttpBase.prototype.onData = function(self,data) 
+end
+__haxe_http_HttpBase.prototype.onBytes = function(self,data) 
+end
+__haxe_http_HttpBase.prototype.onError = function(self,msg) 
+end
+__haxe_http_HttpBase.prototype.onStatus = function(self,status) 
+end
+__haxe_http_HttpBase.prototype.hasOnData = function(self) 
+  do return not Reflect.compareMethods(_hx_bind(self,self.onData), self.emptyOnData) end
+end
+__haxe_http_HttpBase.prototype.success = function(self,data) 
+  self.responseBytes = data;
+  self.responseAsString = nil;
+  if (self:hasOnData()) then 
+    self:onData(self:get_responseData());
+  end;
+  self:onBytes(self.responseBytes);
+end
+__haxe_http_HttpBase.prototype.get_responseData = function(self) 
+  if ((self.responseAsString == nil) and (self.responseBytes ~= nil)) then 
+    self.responseAsString = self.responseBytes:getString(0, self.responseBytes.length, __haxe_io_Encoding.UTF8);
+  end;
+  do return self.responseAsString end
+end
+
+__haxe_http_HttpBase.prototype.__class__ =  __haxe_http_HttpBase
+
+__haxe_io_Bytes.new = function(length,b) 
+  local self = _hx_new(__haxe_io_Bytes.prototype)
+  __haxe_io_Bytes.super(self,length,b)
+  return self
+end
+__haxe_io_Bytes.super = function(self,length,b) 
+  self.length = length;
+  self.b = b;
+end
+__haxe_io_Bytes.__name__ = true
+__haxe_io_Bytes.alloc = function(length) 
+  local a = Array.new();
+  local _g = 0;
+  local _g1 = length;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    a:push(0);
+  end;
+  do return __haxe_io_Bytes.new(length, a) end;
+end
+__haxe_io_Bytes.ofString = function(s,encoding) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = _G.string.len(s);
+  while (_g1 < _g2) do _hx_do_first_1 = false;
+    
+    _g1 = _g1 + 1;
+    local i = _g1 - 1;
+    _g:push(_G.string.byte(s, i + 1));
+  end;
+  local bytes = _g;
+  do return __haxe_io_Bytes.new(bytes.length, bytes) end;
+end
+__haxe_io_Bytes.prototype = _hx_e();
+__haxe_io_Bytes.prototype.sub = function(self,pos,len) 
+  if (((pos < 0) or (len < 0)) or ((pos + len) > self.length)) then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+  end;
+  do return __haxe_io_Bytes.new(len, self.b:slice(pos, pos + len)) end
+end
+__haxe_io_Bytes.prototype.getString = function(self,pos,len,encoding) 
+  local tmp = encoding == nil;
+  if (((pos < 0) or (len < 0)) or ((pos + len) > self.length)) then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+  end;
+  if ((self.b.length - pos) <= __lua_Boot.MAXSTACKSIZE) then 
+    local _end = Math.min(self.b.length, pos + len) - 1;
+    do return _G.string.char(_hx_table.unpack(self.b, pos, _end)) end;
+  else
+    local tbl = ({});
+    local _g = pos;
+    local _g1 = pos + len;
+    while (_g < _g1) do _hx_do_first_1 = false;
+      
+      _g = _g + 1;
+      local idx = _g - 1;
+      _G.table.insert(tbl, _G.string.char(self.b[idx]));
+    end;
+    do return _G.table.concat(tbl, "") end;
+  end;
+end
+__haxe_io_Bytes.prototype.toString = function(self) 
+  do return self:getString(0, self.length) end
+end
+
+__haxe_io_Bytes.prototype.__class__ =  __haxe_io_Bytes
+
+__haxe_io_BytesBuffer.new = function() 
+  local self = _hx_new(__haxe_io_BytesBuffer.prototype)
+  __haxe_io_BytesBuffer.super(self)
+  return self
+end
+__haxe_io_BytesBuffer.super = function(self) 
+  self.b = Array.new();
+end
+__haxe_io_BytesBuffer.__name__ = true
+__haxe_io_BytesBuffer.prototype = _hx_e();
+__haxe_io_BytesBuffer.prototype.getBytes = function(self) 
+  local bytes = __haxe_io_Bytes.new(self.b.length, self.b);
+  self.b = nil;
+  do return bytes end
+end
+
+__haxe_io_BytesBuffer.prototype.__class__ =  __haxe_io_BytesBuffer
+
+__haxe_io_Input.new = {}
+__haxe_io_Input.__name__ = true
+__haxe_io_Input.prototype = _hx_e();
+__haxe_io_Input.prototype.readByte = function(self) 
+  _G.error(__haxe_exceptions_NotImplementedException.new(nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="haxe/io/Input.hx",lineNumber=53,className="haxe.io.Input",methodName="readByte"})),0);
+end
+__haxe_io_Input.prototype.readBytes = function(self,s,pos,len) 
+  local k = len;
+  local b = s.b;
+  if (((pos < 0) or (len < 0)) or ((pos + len) > s.length)) then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+  end;
+  local _hx_status, _hx_result = pcall(function() 
+  
+      while (k > 0) do _hx_do_first_1 = false;
+        
+        b[pos] = self:readByte();
+        pos = pos + 1;
+        k = k - 1;
+      end;
+    return _hx_pcall_default
+  end)
+  if not _hx_status and _hx_result == "_hx_pcall_break" then
+  elseif not _hx_status then 
+    local _g = _hx_result;
+    if (not __lua_Boot.__instanceof(__haxe_Exception.caught(_g):unwrap(), __haxe_io_Eof)) then 
+      _G.error(_g,0);
+    end;
+  elseif _hx_result ~= _hx_pcall_default then
+    return _hx_result
+  end;
+  do return len - k end
+end
+
+__haxe_io_Input.prototype.__class__ =  __haxe_io_Input
+
+__haxe_io_Output.new = {}
+__haxe_io_Output.__name__ = true
+__haxe_io_Output.prototype = _hx_e();
+__haxe_io_Output.prototype.writeByte = function(self,c) 
+  _G.error(__haxe_exceptions_NotImplementedException.new(nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="haxe/io/Output.hx",lineNumber=47,className="haxe.io.Output",methodName="writeByte"})),0);
+end
+__haxe_io_Output.prototype.writeBytes = function(self,s,pos,len) 
+  if (((pos < 0) or (len < 0)) or ((pos + len) > s.length)) then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+  end;
+  local b = s.b;
+  local k = len;
+  while (k > 0) do _hx_do_first_1 = false;
+    
+    self:writeByte(b[pos]);
+    pos = pos + 1;
+    k = k - 1;
+  end;
+  do return len end
+end
+__haxe_io_Output.prototype.close = function(self) 
+end
+__haxe_io_Output.prototype.writeFullBytes = function(self,s,pos,len) 
+  while (len > 0) do _hx_do_first_1 = false;
+    
+    local k = self:writeBytes(s, pos, len);
+    pos = pos + k;
+    len = len - k;
+  end;
+end
+__haxe_io_Output.prototype.prepare = function(self,nbytes) 
+end
+__haxe_io_Output.prototype.writeString = function(self,s,encoding) 
+  local b = __haxe_io_Bytes.ofString(s, encoding);
+  self:writeFullBytes(b, 0, b.length);
+end
+
+__haxe_io_Output.prototype.__class__ =  __haxe_io_Output
+
+__haxe_io_BytesOutput.new = function() 
+  local self = _hx_new(__haxe_io_BytesOutput.prototype)
+  __haxe_io_BytesOutput.super(self)
+  return self
+end
+__haxe_io_BytesOutput.super = function(self) 
+  self.b = __haxe_io_BytesBuffer.new();
+end
+__haxe_io_BytesOutput.__name__ = true
+__haxe_io_BytesOutput.prototype = _hx_e();
+__haxe_io_BytesOutput.prototype.writeByte = function(self,c) 
+  self.b.b:push(c);
+end
+__haxe_io_BytesOutput.prototype.writeBytes = function(self,buf,pos,len) 
+  local _this = self.b;
+  if (((pos < 0) or (len < 0)) or ((pos + len) > buf.length)) then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+  end;
+  local b1 = _this.b;
+  local b2 = buf.b;
+  local _g = pos;
+  local _g1 = pos + len;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    _this.b:push(b2[i]);
+  end;
+  do return len end
+end
+__haxe_io_BytesOutput.prototype.getBytes = function(self) 
+  do return self.b:getBytes() end
+end
+
+__haxe_io_BytesOutput.prototype.__class__ =  __haxe_io_BytesOutput
+__haxe_io_BytesOutput.__super__ = __haxe_io_Output
+setmetatable(__haxe_io_BytesOutput.prototype,{__index=__haxe_io_Output.prototype})
+_hxClasses["haxe.io.Encoding"] = { __ename__ = true, __constructs__ = _hx_tab_array({[0]="UTF8","RawNative"},2)}
+__haxe_io_Encoding = _hxClasses["haxe.io.Encoding"];
+__haxe_io_Encoding.UTF8 = _hx_tab_array({[0]="UTF8",0,__enum__ = __haxe_io_Encoding},2)
+
+__haxe_io_Encoding.RawNative = _hx_tab_array({[0]="RawNative",1,__enum__ = __haxe_io_Encoding},2)
+
+
+__haxe_io_Eof.new = function() 
+  local self = _hx_new(__haxe_io_Eof.prototype)
+  __haxe_io_Eof.super(self)
+  return self
+end
+__haxe_io_Eof.super = function(self) 
+end
+__haxe_io_Eof.__name__ = true
+__haxe_io_Eof.prototype = _hx_e();
+__haxe_io_Eof.prototype.toString = function(self) 
+  do return "Eof" end
+end
+
+__haxe_io_Eof.prototype.__class__ =  __haxe_io_Eof
+_hxClasses["haxe.io.Error"] = { __ename__ = true, __constructs__ = _hx_tab_array({[0]="Blocked","Overflow","OutsideBounds","Custom"},4)}
+__haxe_io_Error = _hxClasses["haxe.io.Error"];
+__haxe_io_Error.Blocked = _hx_tab_array({[0]="Blocked",0,__enum__ = __haxe_io_Error},2)
+
+__haxe_io_Error.Overflow = _hx_tab_array({[0]="Overflow",1,__enum__ = __haxe_io_Error},2)
+
+__haxe_io_Error.OutsideBounds = _hx_tab_array({[0]="OutsideBounds",2,__enum__ = __haxe_io_Error},2)
+
+__haxe_io_Error.Custom = function(e) local _x = _hx_tab_array({[0]="Custom",3,e,__enum__=__haxe_io_Error}, 3); return _x; end 
 
 __haxe_iterators_ArrayIterator.new = function(array) 
   local self = _hx_new(__haxe_iterators_ArrayIterator.prototype)
@@ -885,8 +1452,10 @@ __haxe_iterators_ArrayIterator.prototype.next = function(self)
    end)()] end
 end
 
+__haxe_iterators_ArrayIterator.prototype.__class__ =  __haxe_iterators_ArrayIterator
+
 __haxe_iterators_ArrayKeyValueIterator.new = function(array) 
-  local self = _hx_new()
+  local self = _hx_new(__haxe_iterators_ArrayKeyValueIterator.prototype)
   __haxe_iterators_ArrayKeyValueIterator.super(self,array)
   return self
 end
@@ -894,9 +1463,1069 @@ __haxe_iterators_ArrayKeyValueIterator.super = function(self,array)
   self.array = array;
 end
 __haxe_iterators_ArrayKeyValueIterator.__name__ = true
+__haxe_iterators_ArrayKeyValueIterator.prototype = _hx_e();
+
+__haxe_iterators_ArrayKeyValueIterator.prototype.__class__ =  __haxe_iterators_ArrayKeyValueIterator
+
+__lua_Boot.new = {}
+__lua_Boot.__name__ = true
+__lua_Boot.__instanceof = function(o,cl) 
+  if (cl == nil) then 
+    do return false end;
+  end;
+  local cl1 = cl;
+  if (cl1) == Array then 
+    do return __lua_Boot.isArray(o) end;
+  elseif (cl1) == Bool then 
+    do return _G.type(o) == "boolean" end;
+  elseif (cl1) == Dynamic then 
+    do return o ~= nil end;
+  elseif (cl1) == Float then 
+    do return _G.type(o) == "number" end;
+  elseif (cl1) == Int then 
+    if (_G.type(o) == "number") then 
+      do return _hx_bit_clamp(o) == o end;
+    else
+      do return false end;
+    end;
+  elseif (cl1) == String then 
+    do return _G.type(o) == "string" end;
+  elseif (cl1) == _G.table then 
+    do return _G.type(o) == "table" end;
+  elseif (cl1) == __lua_Thread then 
+    do return _G.type(o) == "thread" end;
+  elseif (cl1) == __lua_UserData then 
+    do return _G.type(o) == "userdata" end;else
+  if (((o ~= nil) and (_G.type(o) == "table")) and (_G.type(cl) == "table")) then 
+    local tmp;
+    if (__lua_Boot.__instanceof(o, Array)) then 
+      tmp = Array;
+    else
+      if (__lua_Boot.__instanceof(o, String)) then 
+        tmp = String;
+      else
+        local cl = o.__class__;
+        tmp = (function() 
+          local _hx_1
+          if (cl ~= nil) then 
+          _hx_1 = cl; else 
+          _hx_1 = nil; end
+          return _hx_1
+        end )();
+      end;
+    end;
+    if (__lua_Boot.extendsOrImplements(tmp, cl)) then 
+      do return true end;
+    end;
+    if ((function() 
+      local _hx_2
+      if (cl == Class) then 
+      _hx_2 = o.__name__ ~= nil; else 
+      _hx_2 = false; end
+      return _hx_2
+    end )()) then 
+      do return true end;
+    end;
+    if ((function() 
+      local _hx_3
+      if (cl == Enum) then 
+      _hx_3 = o.__ename__ ~= nil; else 
+      _hx_3 = false; end
+      return _hx_3
+    end )()) then 
+      do return true end;
+    end;
+    do return o.__enum__ == cl end;
+  else
+    do return false end;
+  end; end;
+end
+__lua_Boot.isArray = function(o) 
+  if (_G.type(o) == "table") then 
+    if ((o.__enum__ == nil) and (_G.getmetatable(o) ~= nil)) then 
+      do return _G.getmetatable(o).__index == Array.prototype end;
+    else
+      do return false end;
+    end;
+  else
+    do return false end;
+  end;
+end
+__lua_Boot.extendsOrImplements = function(cl1,cl2) 
+  if ((cl1 == nil) or (cl2 == nil)) then 
+    do return false end;
+  else
+    if (cl1 == cl2) then 
+      do return true end;
+    else
+      if (cl1.__interfaces__ ~= nil) then 
+        local intf = cl1.__interfaces__;
+        local _g = 1;
+        local _g1 = _hx_table.maxn(intf) + 1;
+        while (_g < _g1) do _hx_do_first_1 = false;
+          
+          _g = _g + 1;
+          local i = _g - 1;
+          if (__lua_Boot.extendsOrImplements(intf[i], cl2)) then 
+            do return true end;
+          end;
+        end;
+      end;
+    end;
+  end;
+  do return __lua_Boot.extendsOrImplements(cl1.__super__, cl2) end;
+end
+
+__lua_UserData.new = {}
+__lua_UserData.__name__ = true
 
 __lua_Thread.new = {}
 __lua_Thread.__name__ = true
+
+__sys_Http.new = function(url) 
+  local self = _hx_new(__sys_Http.prototype)
+  __sys_Http.super(self,url)
+  return self
+end
+__sys_Http.super = function(self,url) 
+  self.cnxTimeout = 10;
+  __haxe_http_HttpBase.super(self,url);
+end
+__sys_Http.__name__ = true
+__sys_Http.requestUrl = function(url) 
+  local h = __sys_Http.new(url);
+  local r = nil;
+  h.onData = function(self,d) 
+    r = d;
+   end;
+  h.onError = function(self,e) 
+    _G.error(__haxe_Exception.thrown(e),0);
+   end;
+  h:request(false);
+  do return r end;
+end
+__sys_Http.prototype = _hx_e();
+__sys_Http.prototype.request = function(self,post) 
+  local _gthis = self;
+  local output = __haxe_io_BytesOutput.new();
+  local old = _hx_bind(self,self.onError);
+  local err = false;
+  self.onError = function(self,e) 
+    _gthis.responseBytes = output:getBytes();
+    err = true;
+    _gthis.onError = _hx_funcToField(old);
+    _gthis:onError(e);
+   end;
+  post = (post or (self.postBytes ~= nil)) or (self.postData ~= nil);
+  self:customRequest(post, output);
+  if (not err) then 
+    self:success(output:getBytes());
+  end;
+end
+__sys_Http.prototype.customRequest = function(self,post,api,sock,method) 
+  self.responseAsString = nil;
+  self.responseBytes = nil;
+  local url_regexp = EReg.new("^(https?://)?([a-zA-Z\\.0-9_-]+)(:[0-9]+)?(.*)$", "");
+  if (not url_regexp:match(self.url)) then 
+    self:onError("Invalid URL");
+    do return end;
+  end;
+  local secure = url_regexp:matched(1) == "https://";
+  if (sock == nil) then 
+    if (secure) then 
+      sock = __sys_ssl_Socket.new();
+    else
+      sock = __sys_net_Socket.new();
+    end;
+    local timeout = self.cnxTimeout;
+    sock.timeout = timeout;
+    if (sock._socket ~= nil) then 
+      local client = sock._socket;
+      client:settimeout(timeout);
+    end;
+  end;
+  local host = url_regexp:matched(2);
+  local portString = url_regexp:matched(3);
+  local request = url_regexp:matched(4);
+  if (__lua_lib_luautf8_Utf8.sub(request, 1, 1) ~= "/") then 
+    request = Std.string("/") .. Std.string(request);
+  end;
+  local port = (function() 
+    local _hx_1
+    if ((portString == nil) or (portString == "")) then 
+    _hx_1 = (function() 
+      local _hx_2
+      if (secure) then 
+      _hx_2 = 443; else 
+      _hx_2 = 80; end
+      return _hx_2
+    end )(); else 
+    _hx_1 = Std.parseInt(String.prototype.substr(portString, 1, __lua_lib_luautf8_Utf8.len(portString) - 1)); end
+    return _hx_1
+  end )();
+  local multipart = self.file ~= nil;
+  local boundary = nil;
+  local uri = nil;
+  if (multipart) then 
+    post = true;
+    boundary = Std.string(Std.string(Std.string(Std.string(Std.random(1000))) .. Std.string(Std.string(Std.random(1000)))) .. Std.string(Std.string(Std.random(1000)))) .. Std.string(Std.string(Std.random(1000)));
+    while (__lua_lib_luautf8_Utf8.len(boundary) < 38) do _hx_do_first_1 = false;
+      
+      boundary = Std.string("-") .. Std.string(boundary);
+    end;
+    local b_b = ({});
+    local b_length = 0;
+    local _g = 0;
+    local _g1 = self.params;
+    while (_g < _g1.length) do _hx_do_first_1 = false;
+      
+      local p = _g1[_g];
+      _g = _g + 1;
+      local str = "--";
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = Std.string(boundary);
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = "\r\n";
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = "Content-Disposition: form-data; name=\"";
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = Std.string(p.name);
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = "\"";
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = "\r\n";
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = "\r\n";
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = Std.string(p.value);
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+      local str = "\r\n";
+      _G.table.insert(b_b, str);
+      b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    end;
+    local str = "--";
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = Std.string(boundary);
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = "\r\n";
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = "Content-Disposition: form-data; name=\"";
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = Std.string(self.file.param);
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = "\"; filename=\"";
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = Std.string(self.file.filename);
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = "\"";
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = "\r\n";
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    local str = Std.string(Std.string(Std.string(Std.string("Content-Type: ") .. Std.string(self.file.mimeType)) .. Std.string("\r\n")) .. Std.string("\r\n"));
+    _G.table.insert(b_b, str);
+    b_length = b_length + __lua_lib_luautf8_Utf8.len(str);
+    uri = _G.table.concat(b_b);
+  else
+    local _g = 0;
+    local _g1 = self.params;
+    while (_g < _g1.length) do _hx_do_first_1 = false;
+      
+      local p = _g1[_g];
+      _g = _g + 1;
+      if (uri == nil) then 
+        uri = "";
+      else
+        uri = Std.string(uri) .. Std.string("&");
+      end;
+      uri = Std.string(uri) .. Std.string((Std.string(Std.string(StringTools.urlEncode(p.name)) .. Std.string("=")) .. Std.string(StringTools.urlEncode(Std.string("") .. Std.string(p.value)))));
+    end;
+  end;
+  local b = __haxe_io_BytesOutput.new();
+  if (method ~= nil) then 
+    b:writeString(method);
+    b:writeString(" ");
+  else
+    if (post) then 
+      b:writeString("POST ");
+    else
+      b:writeString("GET ");
+    end;
+  end;
+  if (__sys_Http.PROXY ~= nil) then 
+    b:writeString("http://");
+    b:writeString(host);
+    if (port ~= 80) then 
+      b:writeString(":");
+      b:writeString(Std.string("") .. Std.string(port));
+    end;
+  end;
+  b:writeString(request);
+  if (not post and (uri ~= nil)) then 
+    if (String.prototype.indexOf(request, "?", 0) >= 0) then 
+      b:writeString("&");
+    else
+      b:writeString("?");
+    end;
+    b:writeString(uri);
+  end;
+  b:writeString(Std.string(Std.string(" HTTP/1.1\r\nHost: ") .. Std.string(host)) .. Std.string("\r\n"));
+  if (self.postData ~= nil) then 
+    self.postBytes = __haxe_io_Bytes.ofString(self.postData);
+    self.postData = nil;
+  end;
+  if (self.postBytes ~= nil) then 
+    b:writeString(Std.string(Std.string("Content-Length: ") .. Std.string(self.postBytes.length)) .. Std.string("\r\n"));
+  else
+    if (post and (uri ~= nil)) then 
+      if (multipart or not Lambda.exists(self.headers, function(h) 
+        do return h.name == "Content-Type" end;
+      end)) then 
+        b:writeString("Content-Type: ");
+        if (multipart) then 
+          b:writeString("multipart/form-data");
+          b:writeString("; boundary=");
+          b:writeString(boundary);
+        else
+          b:writeString("application/x-www-form-urlencoded");
+        end;
+        b:writeString("\r\n");
+      end;
+      if (multipart) then 
+        b:writeString(Std.string(Std.string("Content-Length: ") .. Std.string((((__lua_lib_luautf8_Utf8.len(uri) + self.file.size) + __lua_lib_luautf8_Utf8.len(boundary)) + 6))) .. Std.string("\r\n"));
+      else
+        b:writeString(Std.string(Std.string("Content-Length: ") .. Std.string(__lua_lib_luautf8_Utf8.len(uri))) .. Std.string("\r\n"));
+      end;
+    end;
+  end;
+  b:writeString("Connection: close\r\n");
+  local _g = 0;
+  local _g1 = self.headers;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local h = _g1[_g];
+    _g = _g + 1;
+    b:writeString(h.name);
+    b:writeString(": ");
+    b:writeString(h.value);
+    b:writeString("\r\n");
+  end;
+  b:writeString("\r\n");
+  if (self.postBytes ~= nil) then 
+    b:writeFullBytes(self.postBytes, 0, self.postBytes.length);
+  else
+    if (post and (uri ~= nil)) then 
+      b:writeString(uri);
+    end;
+  end;
+  local _hx_status, _hx_result = pcall(function() 
+  
+      if (__sys_Http.PROXY ~= nil) then 
+        sock:connect(__sys_net_Host.new(__sys_Http.PROXY.host), __sys_Http.PROXY.port);
+      else
+        sock:connect(__sys_net_Host.new(host), port);
+      end;
+      if (multipart) then 
+        self:writeBody(b, self.file.io, self.file.size, boundary, sock);
+      else
+        self:writeBody(b, nil, 0, nil, sock);
+      end;
+      self:readHttpResponse(api, sock);
+      sock:close();
+    return _hx_pcall_default
+  end)
+  if not _hx_status and _hx_result == "_hx_pcall_break" then
+  elseif not _hx_status then 
+    local _g = _hx_result;
+    local e = __haxe_Exception.caught(_g):unwrap();
+    local _hx_status, _hx_result = pcall(function() 
+    
+        sock:close();
+      return _hx_pcall_default
+    end)
+    if not _hx_status and _hx_result == "_hx_pcall_break" then
+    elseif not _hx_status then 
+      local _g = _hx_result;
+    elseif _hx_result ~= _hx_pcall_default then
+      return _hx_result
+    end;
+    self:onError(Std.string(e));
+  elseif _hx_result ~= _hx_pcall_default then
+    return _hx_result
+  end;
+end
+__sys_Http.prototype.writeBody = function(self,body,fileInput,fileSize,boundary,sock) 
+  if (body ~= nil) then 
+    local bytes = body:getBytes();
+    sock.output:writeFullBytes(bytes, 0, bytes.length);
+  end;
+  if (boundary ~= nil) then 
+    local bufsize = 4096;
+    local buf = __haxe_io_Bytes.alloc(bufsize);
+    while (fileSize > 0) do _hx_do_first_1 = false;
+      
+      local size = (function() 
+        local _hx_1
+        if (fileSize > bufsize) then 
+        _hx_1 = bufsize; else 
+        _hx_1 = fileSize; end
+        return _hx_1
+      end )();
+      local len = 0;
+      local _hx_status, _hx_result = pcall(function() 
+      
+          len = fileInput:readBytes(buf, 0, size);
+        return _hx_pcall_default
+      end)
+      if not _hx_status and _hx_result == "_hx_pcall_break" then
+        break
+      elseif not _hx_status then 
+        local _g = _hx_result;
+        if (__lua_Boot.__instanceof(__haxe_Exception.caught(_g):unwrap(), __haxe_io_Eof)) then 
+          break;
+        else
+          _G.error(_g,0);
+        end;
+      elseif _hx_result ~= _hx_pcall_default then
+        return _hx_result
+      end;
+      sock.output:writeFullBytes(buf, 0, len);
+      fileSize = fileSize - len;
+    end;
+    sock.output:writeString("\r\n");
+    sock.output:writeString("--");
+    sock.output:writeString(boundary);
+    sock.output:writeString("--");
+  end;
+end
+__sys_Http.prototype.readHttpResponse = function(self,api,sock) 
+  local b = __haxe_io_BytesBuffer.new();
+  local k = 4;
+  local s = __haxe_io_Bytes.alloc(4);
+  local timeout = self.cnxTimeout;
+  sock.timeout = timeout;
+  if (sock._socket ~= nil) then 
+    local client = sock._socket;
+    client:settimeout(timeout);
+  end;
+  local _hx_continue_1 = false;
+  while (true) do _hx_do_first_1 = false;
+    repeat 
+    local p = 0;
+    while (p ~= k) do _hx_do_first_2 = false;
+      
+      local _hx_status, _hx_result = pcall(function() 
+      
+          p = p + sock.input:readBytes(s, p, k - p);
+        return _hx_pcall_default
+      end)
+      if not _hx_status and _hx_result == "_hx_pcall_break" then
+        break
+      elseif not _hx_status then 
+        local _g = _hx_result;
+        if (not __lua_Boot.__instanceof(__haxe_Exception.caught(_g):unwrap(), __haxe_io_Eof)) then 
+          _G.error(_g,0);
+        end;
+      elseif _hx_result ~= _hx_pcall_default then
+        return _hx_result
+      end;
+    end;
+    if ((k < 0) or (k > s.length)) then 
+      _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+    end;
+    local b1 = b.b;
+    local b2 = s.b;
+    local _g = 0;
+    local _g1 = k;
+    while (_g < _g1) do _hx_do_first_2 = false;
+      
+      _g = _g + 1;
+      local i = _g - 1;
+      b.b:push(b2[i]);
+    end;
+    local k1 = k;
+    if (k1) == 1 then 
+      local c = s.b[0];
+      if (c == 10) then 
+        _hx_continue_1 = true;break;
+      end;
+      if (c == 13) then 
+        k = 3;
+      else
+        k = 4;
+      end;
+    elseif (k1) == 2 then 
+      local c = s.b[1];
+      if (c == 10) then 
+        if (s.b[0] == 13) then 
+          _hx_continue_1 = true;break;
+        end;
+        k = 4;
+      else
+        if (c == 13) then 
+          k = 3;
+        else
+          k = 4;
+        end;
+      end;
+    elseif (k1) == 3 then 
+      local c = s.b[2];
+      if (c == 10) then 
+        if (s.b[1] ~= 13) then 
+          k = 4;
+        else
+          if (s.b[0] ~= 10) then 
+            k = 2;
+          else
+            _hx_continue_1 = true;break;
+          end;
+        end;
+      else
+        if (c == 13) then 
+          if ((s.b[1] ~= 10) or (s.b[0] ~= 13)) then 
+            k = 1;
+          else
+            k = 3;
+          end;
+        else
+          k = 4;
+        end;
+      end;
+    elseif (k1) == 4 then 
+      local c = s.b[3];
+      if (c == 10) then 
+        if (s.b[2] ~= 13) then 
+          break;
+        else
+          if ((s.b[1] ~= 10) or (s.b[0] ~= 13)) then 
+            k = 2;
+          else
+            _hx_continue_1 = true;break;
+          end;
+        end;
+      else
+        if (c == 13) then 
+          if ((s.b[2] ~= 10) or (s.b[1] ~= 13)) then 
+            k = 3;
+          else
+            k = 1;
+          end;
+        end;
+      end; end;until true
+    if _hx_continue_1 then 
+    _hx_continue_1 = false;
+    break;
+    end;
+    
+  end;
+  local headers = String.prototype.split(b:getBytes():toString(), "\r\n");
+  local response = headers:shift();
+  local rp = String.prototype.split(response, " ");
+  local status = Std.parseInt(rp[1]);
+  if ((status == 0) or (status == nil)) then 
+    _G.error(__haxe_Exception.thrown("Response status error"),0);
+  end;
+  headers:pop();
+  headers:pop();
+  self.responseHeaders = __haxe_ds_StringMap.new();
+  local size = nil;
+  local chunked = false;
+  local _g = 0;
+  while (_g < headers.length) do _hx_do_first_1 = false;
+    
+    local hline = headers[_g];
+    _g = _g + 1;
+    local a = String.prototype.split(hline, ": ");
+    local hname = a:shift();
+    local hval = (function() 
+      local _hx_1
+      if (a.length == 1) then 
+      _hx_1 = a[0]; else 
+      _hx_1 = a:join(": "); end
+      return _hx_1
+    end )();
+    hval = StringTools.ltrim(StringTools.rtrim(hval));
+    local ret = self.responseHeaders.h[hname];
+    local previousValue = (function() 
+      local _hx_2
+      if (ret == __haxe_ds_StringMap.tnull) then 
+      _hx_2 = nil; else 
+      _hx_2 = ret; end
+      return _hx_2
+    end )();
+    if (previousValue ~= nil) then 
+      if (self.responseHeadersSameKey == nil) then 
+        self.responseHeadersSameKey = __haxe_ds_StringMap.new();
+      end;
+      local ret = self.responseHeadersSameKey.h[hname];
+      local array = (function() 
+        local _hx_3
+        if (ret == __haxe_ds_StringMap.tnull) then 
+        _hx_3 = nil; else 
+        _hx_3 = ret; end
+        return _hx_3
+      end )();
+      if (array == nil) then 
+        array = Array.new();
+        array:push(previousValue);
+        local _this = self.responseHeadersSameKey;
+        if (array == nil) then 
+          _this.h[hname] = __haxe_ds_StringMap.tnull;
+        else
+          _this.h[hname] = array;
+        end;
+      end;
+      array:push(hval);
+    end;
+    local _this = self.responseHeaders;
+    if (hval == nil) then 
+      _this.h[hname] = __haxe_ds_StringMap.tnull;
+    else
+      _this.h[hname] = hval;
+    end;
+    local _g = __lua_lib_luautf8_Utf8.lower(hname);
+    if (_g) == "content-length" then 
+      size = Std.parseInt(hval);
+    elseif (_g) == "transfer-encoding" then 
+      chunked = __lua_lib_luautf8_Utf8.lower(hval) == "chunked"; end;
+  end;
+  self:onStatus(status);
+  local chunk_re = EReg.new("^([0-9A-Fa-f]+)[ ]*\r\n", "m");
+  self.chunk_size = nil;
+  self.chunk_buf = nil;
+  local bufsize = 1024;
+  local buf = __haxe_io_Bytes.alloc(bufsize);
+  if (chunked) then 
+    local _hx_status, _hx_result = pcall(function() 
+    
+        while (true) do _hx_do_first_1 = false;
+          
+          local len = sock.input:readBytes(buf, 0, bufsize);
+          if (not self:readChunk(chunk_re, api, buf, len)) then 
+            break;
+          end;
+        end;
+      return _hx_pcall_default
+    end)
+    if not _hx_status and _hx_result == "_hx_pcall_break" then
+    elseif not _hx_status then 
+      local _g = _hx_result;
+      if (__lua_Boot.__instanceof(__haxe_Exception.caught(_g):unwrap(), __haxe_io_Eof)) then 
+        _G.error(__haxe_Exception.thrown("Transfer aborted"),0);
+      else
+        _G.error(_g,0);
+      end;
+    elseif _hx_result ~= _hx_pcall_default then
+      return _hx_result
+    end;
+  else
+    if (size == nil) then 
+      if (not self.noShutdown) then 
+        sock:shutdown(false, true);
+      end;
+      local _hx_status, _hx_result = pcall(function() 
+      
+          while (true) do _hx_do_first_1 = false;
+            
+            local len = sock.input:readBytes(buf, 0, bufsize);
+            if (len == 0) then 
+              break;
+            end;
+            api:writeBytes(buf, 0, len);
+          end;
+        return _hx_pcall_default
+      end)
+      if not _hx_status and _hx_result == "_hx_pcall_break" then
+      elseif not _hx_status then 
+        local _g = _hx_result;
+        if (not __lua_Boot.__instanceof(__haxe_Exception.caught(_g):unwrap(), __haxe_io_Eof)) then 
+          _G.error(_g,0);
+        end;
+      elseif _hx_result ~= _hx_pcall_default then
+        return _hx_result
+      end;
+    else
+      api:prepare(size);
+      local _hx_status, _hx_result = pcall(function() 
+      
+          while (size > 0) do _hx_do_first_1 = false;
+            
+            local len = sock.input:readBytes(buf, 0, (function() 
+              local _hx_4
+              if (size > bufsize) then 
+              _hx_4 = bufsize; else 
+              _hx_4 = size; end
+              return _hx_4
+            end )());
+            api:writeBytes(buf, 0, len);
+            size = size - len;
+          end;
+        return _hx_pcall_default
+      end)
+      if not _hx_status and _hx_result == "_hx_pcall_break" then
+      elseif not _hx_status then 
+        local _g = _hx_result;
+        if (__lua_Boot.__instanceof(__haxe_Exception.caught(_g):unwrap(), __haxe_io_Eof)) then 
+          _G.error(__haxe_Exception.thrown("Transfer aborted"),0);
+        else
+          _G.error(_g,0);
+        end;
+      elseif _hx_result ~= _hx_pcall_default then
+        return _hx_result
+      end;
+    end;
+  end;
+  if (chunked and ((self.chunk_size ~= nil) or (self.chunk_buf ~= nil))) then 
+    _G.error(__haxe_Exception.thrown("Invalid chunk"),0);
+  end;
+  if ((status < 200) or (status >= 400)) then 
+    _G.error(__haxe_Exception.thrown(Std.string("Http Error #") .. Std.string(status)),0);
+  end;
+  api:close();
+end
+__sys_Http.prototype.readChunk = function(self,chunk_re,api,buf,len) 
+  if (self.chunk_size == nil) then 
+    if (self.chunk_buf ~= nil) then 
+      local b = __haxe_io_BytesBuffer.new();
+      local src = self.chunk_buf;
+      local b1 = b.b;
+      local b2 = src.b;
+      local _g = 0;
+      local _g1 = src.length;
+      while (_g < _g1) do _hx_do_first_1 = false;
+        
+        _g = _g + 1;
+        local i = _g - 1;
+        b.b:push(b2[i]);
+      end;
+      if ((len < 0) or (len > buf.length)) then 
+        _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+      end;
+      local b1 = b.b;
+      local b2 = buf.b;
+      local _g = 0;
+      local _g1 = len;
+      while (_g < _g1) do _hx_do_first_1 = false;
+        
+        _g = _g + 1;
+        local i = _g - 1;
+        b.b:push(b2[i]);
+      end;
+      buf = b:getBytes();
+      len = len + self.chunk_buf.length;
+      self.chunk_buf = nil;
+    end;
+    if (chunk_re:match(buf:toString())) then 
+      local p = chunk_re:matchedPos();
+      if (p.len <= len) then 
+        local cstr = chunk_re:matched(1);
+        self.chunk_size = Std.parseInt(Std.string("0x") .. Std.string(cstr));
+        if (self.chunk_size == 0) then 
+          self.chunk_size = nil;
+          self.chunk_buf = nil;
+          do return false end;
+        end;
+        len = len - p.len;
+        do return self:readChunk(chunk_re, api, buf:sub(p.len, len), len) end;
+      end;
+    end;
+    if (len > 10) then 
+      self:onError("Invalid chunk");
+      do return false end;
+    end;
+    self.chunk_buf = buf:sub(0, len);
+    do return true end;
+  end;
+  if (self.chunk_size > len) then 
+    local tmp = self;
+    tmp.chunk_size = tmp.chunk_size - len;
+    api:writeBytes(buf, 0, len);
+    do return true end;
+  end;
+  local _end = self.chunk_size + 2;
+  if (len >= _end) then 
+    if (self.chunk_size > 0) then 
+      api:writeBytes(buf, 0, self.chunk_size);
+    end;
+    len = len - _end;
+    self.chunk_size = nil;
+    if (len == 0) then 
+      do return true end;
+    end;
+    do return self:readChunk(chunk_re, api, buf:sub(_end, len), len) end;
+  end;
+  if (self.chunk_size > 0) then 
+    api:writeBytes(buf, 0, self.chunk_size);
+  end;
+  local tmp = self;
+  tmp.chunk_size = tmp.chunk_size - len;
+  do return true end
+end
+
+__sys_Http.prototype.__class__ =  __sys_Http
+__sys_Http.__super__ = __haxe_http_HttpBase
+setmetatable(__sys_Http.prototype,{__index=__haxe_http_HttpBase.prototype})
+
+__sys_net_Host.new = function(name) 
+  local self = _hx_new(__sys_net_Host.prototype)
+  __sys_net_Host.super(self,name)
+  return self
+end
+__sys_net_Host.super = function(self,name) 
+  self.host = name;
+  if (_G.string.find(name, "(%d+)%.(%d+)%.(%d+)%.(%d+)") ~= nil) then 
+    self._ip = name;
+  else
+    local _hx_1_res_result, _hx_1_res_message = __lua_lib_luv_net_Dns.getaddrinfo(name);
+    if (_hx_1_res_result == nil) then 
+      _G.error(__haxe_Exception.thrown("Unrecognized node name"),0);
+    end;
+    self._ip = _hx_1_res_result[1].addr;
+    if (self._ip == "::1") then 
+      self._ip = "127.0.0.0";
+    end;
+  end;
+  local num = 0;
+  local _g = 0;
+  local _g1 = String.prototype.split(self._ip, ".");
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local a = _g1[_g];
+    _g = _g + 1;
+    num = (num * 256) + _G.tonumber(a);
+  end;
+  self.ip = num;
+end
+__sys_net_Host.__name__ = true
+__sys_net_Host.prototype = _hx_e();
+
+__sys_net_Host.prototype.__class__ =  __sys_net_Host
+
+__sys_net_Socket.new = function() 
+  local self = _hx_new(__sys_net_Socket.prototype)
+  __sys_net_Socket.super(self)
+  return self
+end
+__sys_net_Socket.super = function(self) 
+  self.timeout = nil;
+end
+__sys_net_Socket.__name__ = true
+__sys_net_Socket.prototype = _hx_e();
+__sys_net_Socket.prototype.close = function(self) 
+  self._socket:close();
+end
+__sys_net_Socket.prototype.connect = function(self,host,port) 
+  local _hx_1_res_result, _hx_1_res_message = __lua_lib_luasocket_Socket.connect(host.host, port);
+  if (_hx_1_res_message ~= nil) then 
+    _G.error(__haxe_Exception.thrown(Std.string("Socket Error : ") .. Std.string(_hx_1_res_message)),0);
+  end;
+  self.input = __sys_net_SocketInput.new(_hx_1_res_result);
+  self.output = __sys_net_SocketOutput.new(_hx_1_res_result);
+  self._socket = _hx_1_res_result;
+  self._socket:settimeout(self.timeout);
+end
+__sys_net_Socket.prototype.shutdown = function(self,read,write) 
+  local client = self._socket;
+  if (read) then 
+    if (write) then 
+      _hx_box_mr(_hx_table.pack(client:shutdown("both")), {"result", "message"});
+    else
+      _hx_box_mr(_hx_table.pack(client:shutdown("receive")), {"result", "message"});
+    end;
+  else
+    if (write == true) then 
+      _hx_box_mr(_hx_table.pack(client:shutdown("send")), {"result", "message"});
+    end;
+  end;
+end
+
+__sys_net_Socket.prototype.__class__ =  __sys_net_Socket
+
+__sys_net_SocketInput.new = function(tcp) 
+  local self = _hx_new(__sys_net_SocketInput.prototype)
+  __sys_net_SocketInput.super(self,tcp)
+  return self
+end
+__sys_net_SocketInput.super = function(self,tcp) 
+  self.tcp = tcp;
+end
+__sys_net_SocketInput.__name__ = true
+__sys_net_SocketInput.prototype = _hx_e();
+__sys_net_SocketInput.prototype.readByte = function(self) 
+  local _hx_1_res_result, _hx_1_res_message = self.tcp:receive(1);
+  if (_hx_1_res_message == "closed") then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Eof.new()),0);
+  else
+    if (_hx_1_res_message ~= nil) then 
+      _G.error(__haxe_Exception.thrown(Std.string("Error : ") .. Std.string(_hx_1_res_message)),0);
+    end;
+  end;
+  do return __lua_lib_luautf8_Utf8.byte(_hx_1_res_result, 1) end
+end
+__sys_net_SocketInput.prototype.readBytes = function(self,s,pos,len) 
+  local leftToRead = len;
+  local b = s.b;
+  if (((pos < 0) or (len < 0)) or ((pos + len) > s.length)) then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+  end;
+  local readCount = 0;
+  local _hx_status, _hx_result = pcall(function() 
+  
+      while (leftToRead > 0) do _hx_do_first_1 = false;
+        
+        b[pos] = self:readByte();
+        pos = pos + 1;
+        readCount = readCount + 1;
+        leftToRead = leftToRead - 1;
+      end;
+    return _hx_pcall_default
+  end)
+  if not _hx_status and _hx_result == "_hx_pcall_break" then
+  elseif not _hx_status then 
+    local _g = _hx_result;
+    local _g1 = __haxe_Exception.caught(_g):unwrap();
+    if (__lua_Boot.__instanceof(_g1, __haxe_io_Eof)) then 
+      local e = _g1;
+      if (readCount == 0) then 
+        _G.error(__haxe_Exception.thrown(e),0);
+      end;
+    else
+      _G.error(_g,0);
+    end;
+  elseif _hx_result ~= _hx_pcall_default then
+    return _hx_result
+  end;
+  do return readCount end
+end
+
+__sys_net_SocketInput.prototype.__class__ =  __sys_net_SocketInput
+__sys_net_SocketInput.__super__ = __haxe_io_Input
+setmetatable(__sys_net_SocketInput.prototype,{__index=__haxe_io_Input.prototype})
+
+__sys_net_SocketOutput.new = function(tcp) 
+  local self = _hx_new(__sys_net_SocketOutput.prototype)
+  __sys_net_SocketOutput.super(self,tcp)
+  return self
+end
+__sys_net_SocketOutput.super = function(self,tcp) 
+  self.tcp = tcp;
+end
+__sys_net_SocketOutput.__name__ = true
+__sys_net_SocketOutput.prototype = _hx_e();
+__sys_net_SocketOutput.prototype.writeByte = function(self,c) 
+  local char = _G.string.char(c);
+  local _hx_1_res_result, _hx_1_res_message = self.tcp:send(char);
+  if (_hx_1_res_message ~= nil) then 
+    _G.error(__haxe_Exception.thrown(Std.string("Error : Socket writeByte : ") .. Std.string(_hx_1_res_message)),0);
+  end;
+end
+__sys_net_SocketOutput.prototype.writeBytes = function(self,s,pos,len) 
+  if (((pos < 0) or (len < 0)) or ((pos + len) > s.length)) then 
+    _G.error(__haxe_Exception.thrown(__haxe_io_Error.OutsideBounds),0);
+  end;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = s.b:slice(pos, pos + len);
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    _g:push(_G.string.char(i));
+  end;
+  local b = _g;
+  local encoded = _G.table.concat(b, nil, 0);
+  local _hx_1_res_result, _hx_1_res_message = self.tcp:send(encoded);
+  if (_hx_1_res_message ~= nil) then 
+    _G.error(__haxe_Exception.thrown(Std.string("Error : Socket writeByte : ") .. Std.string(_hx_1_res_message)),0);
+  end;
+  do return len end
+end
+
+__sys_net_SocketOutput.prototype.__class__ =  __sys_net_SocketOutput
+__sys_net_SocketOutput.__super__ = __haxe_io_Output
+setmetatable(__sys_net_SocketOutput.prototype,{__index=__haxe_io_Output.prototype})
+
+__sys_ssl_Socket.new = function() 
+  local self = _hx_new(__sys_ssl_Socket.prototype)
+  __sys_ssl_Socket.super(self)
+  return self
+end
+__sys_ssl_Socket.super = function(self) 
+  __sys_net_Socket.super(self);
+end
+__sys_ssl_Socket.__name__ = true
+__sys_ssl_Socket.prototype = _hx_e();
+__sys_ssl_Socket.prototype.wrap = function(self,sock) 
+  local _hx_1_res_result, _hx_1_res_message = __lua_lib_luasec_Ssl.wrap(sock, _hx_o({__fields__={mode=true,protocol=true},mode="client",protocol="any"}));
+  if (_hx_1_res_message ~= nil) then 
+    _G.error(__haxe_Exception.thrown(Std.string("Socket Error : ") .. Std.string(_hx_1_res_message)),0);
+  end;
+  do return _hx_1_res_result end
+end
+__sys_ssl_Socket.prototype.handshake = function(self) 
+  local _hx_1_res_result, _hx_1_res_message = self._sslSocket:dohandshake();
+  if (_hx_1_res_message ~= nil) then 
+    _G.error(__haxe_Exception.thrown(Std.string("Handshake Error : ") .. Std.string(_hx_1_res_message)),0);
+  end;
+end
+__sys_ssl_Socket.prototype.connect = function(self,host,port) 
+  local _hx_1_res_result, _hx_1_res_message = __lua_lib_luasocket_Socket.connect(host.host, port);
+  if (_hx_1_res_message ~= nil) then 
+    _G.error(__haxe_Exception.thrown(Std.string("Socket Error : ") .. Std.string(_hx_1_res_message)),0);
+  end;
+  local sslSock = self:wrap(_hx_1_res_result);
+  self.input = __sys_net_SocketInput.new(sslSock);
+  self.output = __sys_net_SocketOutput.new(sslSock);
+  self._sslSocket = sslSock;
+  self._sslSocket:settimeout(self.timeout);
+  self:handshake();
+end
+__sys_ssl_Socket.prototype.close = function(self) 
+  self._sslSocket:close();
+end
+
+__sys_ssl_Socket.prototype.__class__ =  __sys_ssl_Socket
+__sys_ssl_Socket.__super__ = __sys_net_Socket
+setmetatable(__sys_ssl_Socket.prototype,{__index=__sys_net_Socket.prototype})
+local hasBit32, bit32 = pcall(require, 'bit32')
+if hasBit32 then --if we are on Lua 5.1, bit32 will be the default.
+  _hx_bit_raw = bit32
+  _hx_bit = setmetatable({}, { __index = _hx_bit_raw })
+  -- lua 5.2 weirdness
+  _hx_bit.bnot = function(...) return _hx_bit_clamp(_hx_bit_raw.bnot(...)) end
+  _hx_bit.bxor = function(...) return _hx_bit_clamp(_hx_bit_raw.bxor(...)) end
+else
+  --If we do not have bit32, fallback to 'bit'
+  local hasBit, bit = pcall(require, 'bit')
+  if not hasBit then
+    error("Failed to load bit or bit32")
+  end
+  _hx_bit_raw = bit
+  _hx_bit = setmetatable({}, { __index = _hx_bit_raw })
+end
+
+-- see https://github.com/HaxeFoundation/haxe/issues/8849
+_hx_bit.bor = function(...) return _hx_bit_clamp(_hx_bit_raw.bor(...)) end
+_hx_bit.band = function(...) return _hx_bit_clamp(_hx_bit_raw.band(...)) end
+_hx_bit.arshift = function(...) return _hx_bit_clamp(_hx_bit_raw.arshift(...)) end
+
 if _hx_bit_raw then
     _hx_bit_clamp = function(v)
     if v <= 2147483647 and v >= -2147483648 then
@@ -936,9 +2565,66 @@ else
 end
 local _hx_static_init = function()
   
+  if (__lua_lib_lrexlib_Rex == nil) then 
+    _G.error(__haxe_Exception.thrown("Rex is missing.  Please install lrexlib-pcre2."),0);
+  end;
   String.__name__ = true;
-  Array.__name__ = true;
+  Array.__name__ = true;EReg.FLAGS = __lua_lib_lrexlib_Rex.flags();
+  
+  __haxe_ds_StringMap.tnull = ({});
+  
+  __lua_Boot.MAXSTACKSIZE = 1000;
+  
+  
 end
+
+_hx_bind = function(o,m)
+  if m == nil then return nil end;
+  local f;
+  if o._hx__closures == nil then
+    _G.rawset(o, '_hx__closures', {});
+  else
+    f = o._hx__closures[m];
+  end
+  if (f == nil) then
+    f = function(...) return m(o, ...) end;
+    o._hx__closures[m] = f;
+  end
+  return f;
+end
+
+_hx_funcToField = function(f)
+  if type(f) == 'function' then
+    return function(self,...)
+      return f(...)
+    end
+  else
+    return f
+  end
+end
+
+_G.math.randomseed(_G.os.time());
+
+_hx_box_mr = function(x,nt)
+    res = _hx_o({__fields__={}})
+    for i,v in ipairs(nt) do
+      res[v] = x[i]
+    end
+    return res
+end
+
+_hx_table = {}
+_hx_table.pack = _G.table.pack or function(...)
+    return {...}
+end
+_hx_table.unpack = _G.table.unpack or _G.unpack
+_hx_table.maxn = _G.table.maxn or function(t)
+  local maxn=0;
+  for i in pairs(t) do
+    maxn=type(i)=='number'and i>maxn and i or maxn
+  end
+  return maxn
+end;
 
 function _hx_handle_error(obj)
   local message = tostring(obj)

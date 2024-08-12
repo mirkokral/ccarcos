@@ -14,7 +14,7 @@ else
     total = 0
 end
 monitor.setTextScale(0.5)
-function formatNum(number)
+local function formatNum(number)
     if not number then
         return 0, ""
     end
