@@ -183,20 +183,25 @@ local Class = _hx_e();
 local Enum = _hx_e();
 
 local Array = _hx_e()
-__lua_lib_luautf8_Utf8 = _G.require("lua-utf8")
+__lua_lib_luautf8_Utf8 = utf8
 local Math = _hx_e()
 local NexUITest = _hx_e()
 local String = _hx_e()
 local Std = _hx_e()
 local Sys = _hx_e()
+__haxe_IMap = _hx_e()
 __haxe_Exception = _hx_e()
 __haxe_NativeStackTrace = _hx_e()
 __haxe_ValueException = _hx_e()
+__haxe_ds_ObjectMap = _hx_e()
+__haxe_ds_StringMap = _hx_e()
 __haxe_exceptions_PosException = _hx_e()
 __haxe_exceptions_NotImplementedException = _hx_e()
 __haxe_iterators_ArrayIterator = _hx_e()
 __haxe_iterators_ArrayKeyValueIterator = _hx_e()
+__lua_PairTools = _hx_e()
 __lua_Thread = _hx_e()
+__lua_lib_luv_Os = _G.require("luv")
 __nexui_Terminal = _hx_e()
 
 local _hx_bind, _hx_bit, _hx_staticToInstance, _hx_funcToField, _hx_maxn, _hx_print, _hx_apply_self, _hx_box_mr, _hx_bit_clamp, _hx_table, _hx_bit_raw
@@ -572,7 +577,15 @@ NexUITest.__name__ = true
 NexUITest.main = function() 
   local terma = __nexui_Terminal.new(Sys.print);
   terma:write("Hello, world!");
-  _G.term:write("Testa");
+  local terma = _hx_bind(terma,terma.write);
+  local ret = Sys.environment().h.LINES;
+  terma((function() 
+    local _hx_1
+    if (ret == __haxe_ds_StringMap.tnull) then 
+    _hx_1 = nil; else 
+    _hx_1 = ret; end
+    return _hx_1
+  end )());
 end
 
 String.new = function(string) 
@@ -770,6 +783,19 @@ Sys.print = function(v)
   _G.io.write(Std.string(v));
   _G.io.flush();
 end
+Sys.environment = function() 
+  local env = __lua_lib_luv_Os.os_environ();
+  local obj = __haxe_ds_ObjectMap.new();
+  __lua_PairTools.pairsFold(env, function(k,v,m) 
+    obj.h[k] = v;
+    obj.k[k] = true;
+    do return obj end;
+  end, obj);
+  do return obj end;
+end
+
+__haxe_IMap.new = {}
+__haxe_IMap.__name__ = true
 
 __haxe_Exception.new = function(message,previous,native) 
   local self = _hx_new(__haxe_Exception.prototype)
@@ -834,6 +860,29 @@ __haxe_ValueException.__name__ = true
 __haxe_ValueException.prototype = _hx_e();
 __haxe_ValueException.__super__ = __haxe_Exception
 setmetatable(__haxe_ValueException.prototype,{__index=__haxe_Exception.prototype})
+
+__haxe_ds_ObjectMap.new = function() 
+  local self = _hx_new()
+  __haxe_ds_ObjectMap.super(self)
+  return self
+end
+__haxe_ds_ObjectMap.super = function(self) 
+  self.h = ({});
+  self.k = ({});
+end
+__haxe_ds_ObjectMap.__name__ = true
+__haxe_ds_ObjectMap.__interfaces__ = {__haxe_IMap}
+
+__haxe_ds_StringMap.new = function() 
+  local self = _hx_new()
+  __haxe_ds_StringMap.super(self)
+  return self
+end
+__haxe_ds_StringMap.super = function(self) 
+  self.h = ({});
+end
+__haxe_ds_StringMap.__name__ = true
+__haxe_ds_StringMap.__interfaces__ = {__haxe_IMap}
 
 __haxe_exceptions_PosException.new = function(message,previous,pos) 
   local self = _hx_new(__haxe_exceptions_PosException.prototype)
@@ -905,6 +954,13 @@ __haxe_iterators_ArrayKeyValueIterator.super = function(self,array)
   self.array = array;
 end
 __haxe_iterators_ArrayKeyValueIterator.__name__ = true
+
+__lua_PairTools.new = {}
+__lua_PairTools.__name__ = true
+__lua_PairTools.pairsFold = function(table,func,seed) 
+  for k,v in _G.pairs(table) do seed = func(k,v,seed) end;
+  do return seed end;
+end
 
 __lua_Thread.new = {}
 __lua_Thread.__name__ = true
@@ -984,7 +1040,9 @@ end
 local _hx_static_init = function()
   
   String.__name__ = true;
-  Array.__name__ = true;
+  Array.__name__ = true;__haxe_ds_StringMap.tnull = ({});
+  
+  
 end
 
 _hx_bind = function(o,m)

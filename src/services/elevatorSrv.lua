@@ -39,9 +39,10 @@ local function changeFloor(floor)
     end
     if floor == doorWaitFloor then
         print("Waiting for door")
+        local e
         repeat
-            local e = {arcos.ev("modem_message")}
-        until e[3] == 712
+            e = {arcos.ev("modem_message")}
+        until e[3] == 712 and e[5] == "TopDoorAck"
     end
     devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", true)
     sleep(0.1)
