@@ -37,6 +37,7 @@ local function changeFloor(floor)
     if floor == 3 then
         port = math.random(1, 65534)
         wiredModem.transmit(713, port, (floor == 3 and "CCDoorOpen" or "CCDoorClose"))
+        print(floor == 3 and "CCDoorOpen" or "CCDoorClose")
     end
     if floor == doorWaitFloor then
         print("Waiting for door")
