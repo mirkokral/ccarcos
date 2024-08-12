@@ -28,5 +28,3 @@ class Terminal {
         this.printFunction = printFunction;
     }
 }
-
-extern var term:Terminal;

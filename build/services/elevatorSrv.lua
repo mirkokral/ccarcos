@@ -35,6 +35,7 @@ local function changeFloor(floor)
         wiredModem.transmit(713, 712, "TopDoorClose")
     end
     if floor == doorWaitFloor then
+        print("Waiting for door")
         repeat
             local e = {arcos.ev("modem_message")}
         until e[3] == 712

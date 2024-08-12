@@ -1,4 +1,4 @@
-# --lua test.lua
---interp
+--lua test.lua
+# --interp
 --main NexUITest
 -p .
