@@ -37,8 +37,8 @@
         "friendlyName": "Craft",
         "description": "A WIP compatibility layer to run CraftOS apps",
         "owner":"TNC™ Development and Management Team",
-        "version": "29",
-        "vId": 29,
+        "version": "30",
+        "vId": 30,
         "dependencies": ["rednet"]
     },
     "bmoscompat": {
