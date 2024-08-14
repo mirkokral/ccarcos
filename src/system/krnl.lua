@@ -548,7 +548,7 @@ _G.rd = require "src.system.apis.rd"
 _G.tutils = require "src.system.apis.tutils"
 _G.ui = require "src.system.apis.ui"
 -- C:End
-_G.window = debug.getfenv(utd).window
+_G.window = __LEGACY.window
 local passwdFile = files.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 ---Gets the current home dir for the user

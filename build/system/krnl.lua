@@ -386,7 +386,7 @@ for i, v in ipairs(files.ls("/apis/")) do
     arcos.loadAPI("/apis/" .. v)
 end
 setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
-_G.window = debug.getfenv(utd).window
+_G.window = __LEGACY.window
 local passwdFile = files.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.getHome = function ()
