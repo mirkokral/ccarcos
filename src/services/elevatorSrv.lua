@@ -28,7 +28,7 @@ local function contains(table, element)
     return false
 end
 
-local function changeFloor(floor)
+local function changeFloor(floor, fakeit)
     enderModem.transmit(711, 712, floor-1)
     wiredModem.transmit(711, 712, floor-1)
     print("Actual moving: " .. tostring(floor))
@@ -48,14 +48,16 @@ local function changeFloor(floor)
             e = {arcos.ev("modem_message")}
         until e[3] == 712 and e[5] == "TopDoorAck"
     end
-    devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", true)
-    sleep(0.1)
-    devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", false)
-    sleep(0.1)
-    repeat
-        local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("front")
+    if not fakeit then
+        devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", true)
         sleep(0.1)
-    until r
+        devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", false)
+        sleep(0.1)
+        repeat
+            local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("front")
+            sleep(0.1)
+        until r
+    end
 
 end
 tasking.createTask("Queue task", function()
@@ -87,6 +89,9 @@ while true do
     if channel == 476 and not contains(queue, tonumber(msg+1)) then
         print("Queued floor " .. tonumber(msg + 1))
         table.insert(queue, tonumber(msg + 1))
+    elseif channel == 477 and not contains(queue, tonumber(msg+1)) then
+        print("Faking floor " .. tonumber(msg + 1))
+        changeFloor(tonumber(msg+1), true)
     else
         print(channel)
     end

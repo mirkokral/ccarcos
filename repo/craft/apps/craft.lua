@@ -430,10 +430,10 @@ craftos_env.keys.getName = function(keyIndex)
     return tKeys[keyIndex]
 end
 
-craftos_env.paintutils = debug.getfenv(utd).paintutils
-craftos_env.settings = debug.getfenv(utd).settings
-craftos_env.textutils = debug.getfenv(utd).textutils
-craftos_env.help = debug.getfenv(utd).help
+craftos_env.paintutils = getfenv(utd).paintutils
+craftos_env.settings = getfenv(utd).settings
+craftos_env.textutils = getfenv(utd).textutils
+craftos_env.help = getfenv(utd).help
 craftos_env.window = window
 craftos_env.parallel = {
     waitForAll = function (...)
