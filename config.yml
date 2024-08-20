@@ -25,6 +25,7 @@ compileFiles:
   - system/apis/ui.lua
   - system/apis/arc.lua
   - system/apis/hashing.lua
+  - services/arcfix.lua
   - services/elevator.lua
   - services/elevatorStep.lua
   - services/elevatorSrv.lua
@@ -47,6 +48,7 @@ compileFiles:
   - apps/rmuser.lua
   - startup.lua
 nrFiles:
+  - services/enabled/9 arcfix
   - services/enabled/login
   - config/passwd
   - config/aboot
