@@ -75,7 +75,7 @@ _G.arcos = {
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
-            __LEGACY.term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
+            __LEGACY.term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
         end
     end,
     ---Returns the arcos version
