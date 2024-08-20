@@ -27,7 +27,7 @@ if not live then
   local f = textutils.unserialiseJSON(configFile.readAll())
   configFile.close()
   if f["autoUpdate"] then
-    local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+    local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
     if f then
       local branch = textutils.unserialiseJSON(f.readAll())["sha"]
       local cur = fs.open("/system/rel", "r")
@@ -37,6 +37,10 @@ if not live then
       f.close()
     else
       print("Update failed")
+      print("This could happen due to a github ratelimit, or due to the server not having http enabled. Please contact your administrator for further help or wait until the next hour until updating again.")
+      print()
+      printError(e)
+      sleep(5)
     end
   end
 end
