@@ -87,7 +87,7 @@ for _,i in ipairs(strsplit(cont, "\n")) do
     if action == "f" then
         fs.delete("/" .. filename)
         f = fs.open(filename, "w")
-        hf = http.get(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))
+        hf = http.get(table.pack(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))[1])
         f.write(hf.readAll())
         hf.close()
         f.close()
@@ -96,7 +96,7 @@ for _,i in ipairs(strsplit(cont, "\n")) do
         -- shell.run("rm /" .. filename)
         
         f = fs.open(filename, "w")
-        hf = http.get(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))
+        hf = http.get(table.pack(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))[1])
         f.write(hf.readAll())
         hf.close()
         f.close()
