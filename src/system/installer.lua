@@ -14,6 +14,7 @@ term.setPaletteColor(colors.brown, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.green, 163/255, 190/255, 140/255)
 term.setPaletteColor(colors.red, 191/255, 97/255, 106/255)
 term.setPaletteColor(colors.black, 59/255, 66/255, 82/255)
+local ghToken = "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" -- I know this is stupid but it works
 local loaderLoaded = 0
 function drawLoader()
     local w, h = term.getSize()
@@ -64,7 +65,9 @@ function _G.strsplit(inputstr, sep)
     return t
 end
 -- shell.run("rm /*")
-local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", {
+    Authorization = "Bearer " .. ghToken -- CHICHICHIHA
+})
 local branch
 if fr then
     branch = textutils.unserialiseJSON(fr.readAll())["sha"]

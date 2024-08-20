@@ -1,5 +1,10 @@
 if arcos then return end
+clear()
 local UIthemedefs = {
+}
+local ghToken = "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" -- I know this is stupid but it works
+local headers = {
+  Authorization = ghToken
 }
 UIthemedefs[colors.white] = { 236, 239, 244 }
 UIthemedefs[colors.orange] = { 0, 0, 0 }
@@ -27,7 +32,9 @@ if not live then
   local f = textutils.unserialiseJSON(configFile.readAll())
   configFile.close()
   if f["autoUpdate"] then
-    local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+    local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", {
+      Authorization = "Bearer " .. ghToken -- CHICHICHIHA
+    })
     if f then
       local branch = textutils.unserialiseJSON(f.readAll())["sha"]
       local cur = fs.open("/system/rel", "r")
@@ -85,7 +92,7 @@ function _G.strsplit(inputstr, sep)
   return t
 end
 if not live then
-  local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
+  local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
   if f then
     local branch = textutils.unserialiseJSON(f.readAll())["sha"]
     file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/objList.txt")
