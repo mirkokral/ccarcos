@@ -201,5 +201,8 @@ return {
     uninstall = uninstall,
     isInstalled = isInstalled,
     getIdata = getIdata,
-    getUpdatable = getUpdatable
+    getUpdatable = getUpdatable,
+    getChosenRepo = getChosenRepo,
+    getLatestCommit = getLatestCommit,
+    get = get,
 }
