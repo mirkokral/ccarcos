@@ -36,6 +36,7 @@ if not live then
       local cur = fs.open("/system/rel", "r")
       if cur and cur.readAll() ~= branch then
         shell.run("/system/installer.lua")
+        sleep(1)
       end
       f.close()
     else
