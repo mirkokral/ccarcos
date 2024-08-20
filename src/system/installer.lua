@@ -66,7 +66,7 @@ function _G.strsplit(inputstr, sep)
 end
 -- shell.run("rm /*")
 local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", {
-    Authorization = "Bearer " .. ghToken -- CHICHICHIHA
+    [ "Authorization" ] = "Bearer " .. ghToken -- CHICHICHIHA
 })
 local branch
 if fr then
