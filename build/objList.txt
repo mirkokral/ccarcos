@@ -21,6 +21,7 @@ f>system/apis/tutils.lua
 f>system/apis/ui.lua
 f>system/apis/arc.lua
 f>system/apis/hashing.lua
+f>services/enabled/9 arcfix
 f>services/arcfix.lua
 f>services/elevator.lua
 f>services/elevatorStep.lua
@@ -43,7 +44,6 @@ f>apps/arc.lua
 f>apps/adduser.lua
 f>apps/rmuser.lua
 f>startup.lua
-r>services/enabled/9 arcfix
 r>services/enabled/login
 r>config/passwd
 r>config/aboot
