@@ -9,6 +9,7 @@ d>apis
 d>config
 d>config/apps
 d>data
+f>system/rel
 f>system/bootloader.lua
 f>system/krnl.lua
 f>system/installer.lua

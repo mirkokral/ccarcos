@@ -13,6 +13,7 @@ mkDirs:
   - config/apps
   - data
 compileFiles:
+  - system/rel
   - system/bootloader.lua
   - system/krnl.lua
   - system/installer.lua
