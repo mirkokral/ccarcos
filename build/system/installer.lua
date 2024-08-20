@@ -84,14 +84,14 @@ for _,i in ipairs(strsplit(cont, "\n")) do
     if action == "f" then
         fs.delete("/" .. filename)
         f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
+        hf = http.get(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))
         f.write(hf.readAll())
         hf.close()
         f.close()
     end
     if action == "r" and not fs.exists("/" .. filename) then
         f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
+        hf = http.get(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))
         f.write(hf.readAll())
         hf.close()
         f.close()
