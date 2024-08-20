@@ -23,7 +23,9 @@
         "owner": "TNC™ Development and Management Team",
         "version": "24.08.11",
         "vId": 11,
-        "dependencies": []
+        "dependencies": [],
+        "isIndependable": true
+
     },
     "ged": {
         "friendlyName": "Editor",
@@ -31,15 +33,19 @@
         "owner": "TNC™ Development and Management Team",
         "version": "24.08.6",
         "vId": 6,
-        "dependencies": []
+        "dependencies": [],
+        "isIndependable": true
+
     },
     "craft": {
         "friendlyName": "Craft",
         "description": "A WIP compatibility layer to run CraftOS apps",
         "owner":"TNC™ Development and Management Team",
-        "version": "31",
-        "vId": 31,
-        "dependencies": ["rednet"]
+        "version": "32",
+        "vId": 32,
+        "dependencies": ["rednet"],
+        "isIndependable": true
+
     },
     "bmoscompat": {
         "friendlyName": "BM-OS Subsystem",
@@ -47,7 +53,8 @@
         "owner":"AdamTheDumbPerson",
         "version": "1",
         "vId": 50,
-        "dependencies": ["craft"]
+        "dependencies": ["craft"],
+        "isIndependable": true
     },
     "rednet": {
         "friendlyName": "RedNet",
@@ -56,7 +63,6 @@
         "version":"4",
         "vId": 4,
         "dependencies": []
-
     }
     
 }

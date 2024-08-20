@@ -168,5 +168,5 @@ while true do
     if fru then
         peripheral.find("chatBox").sendMessageToPlayer(fru, "kkk8GJ", "\xA7aEstrogen Dispenser")   
     end
-    sleep(0.1)
+    sleep(0.3)
 end

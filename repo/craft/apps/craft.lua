@@ -2,7 +2,10 @@ local craftos_env = {}
 for key, value in pairs(_G) do
     craftos_env[key] = value
 end
-
+if not _CEXPORTS then
+    print("No _CEXPORTS!\nTry restarting your computer or reinstalling the package.")
+    error()
+end
 craftos_env.colors = col
 craftos_env.colours = col
 craftos_env.disk = {
@@ -430,10 +433,10 @@ craftos_env.keys.getName = function(keyIndex)
     return tKeys[keyIndex]
 end
 
-craftos_env.paintutils = getfenv(utd).paintutils
-craftos_env.settings = getfenv(utd).settings
-craftos_env.textutils = getfenv(utd).textutils
-craftos_env.help = getfenv(utd).help
+craftos_env.paintutils = _CEXPORTS.paintutils
+craftos_env.settings = _CEXPORTS.settings
+craftos_env.textutils = _CEXPORTS.textutils
+craftos_env.help = _CEXPORTS.help
 craftos_env.window = window
 craftos_env.parallel = {
     waitForAll = function (...)
