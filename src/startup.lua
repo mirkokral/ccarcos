@@ -29,7 +29,8 @@ function _G.utd() end
 
 local live = ({ ... })[1] == "live"
 if not live then
-  local configFile = fs.open("/config/aboot", "r")
+  local configFile, err = fs.open("/config/aboot", "r")
+  if not configFile then configFile = {autoUpdate = true} end -- Fallback
   local f = textutils.unserialiseJSON(configFile.readAll())
   configFile.close()
   if f["autoUpdate"] then
