@@ -13,6 +13,7 @@ end
 if files.exists("/config/arc") then
     local packages = files.ls("/config/arc/")
     for index, value in ipairs(packages) do
+        print(value:sub(#value-14) )
         if value:sub(#value-14) == "uninstallIndex" then
             local pkg = value:sub(0, #value-13)
             local unif = files.open("/config/arc/" .. value, "r")
