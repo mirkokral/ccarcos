@@ -6,7 +6,7 @@
 ---@class FileHRead: FileH
 ---@field public read fun(): string Gets all contents of file
 ---@field public readLine fun(): string Gets a single file line
----@field public readBytes fun(amount): number | number[]
+---@field public readBytes fun(amount: number): number | number[]
 
 ---@class FileHWrite: FileH
 ---@field public write fun(towrite: string): nil Erases file and writes towrite to it
@@ -38,14 +38,13 @@ local function open(path, mode)
     end
     if not cmodevalid then error("Mode not valid: " .. mode) end
     local err
-    file = {}
+    local file = {}
     file._f, err = __LEGACY.files.open(path, mode)
     if not file._f then
         return nil, err
     end
-    
     file.open = true
-    file.close = function() file._f.close() open = false end
+    file.close = function() file._f.close() file.open = false end
     file.seekBytes = function(whence, offset)
         return file._f.seek(whence, offset)
     end

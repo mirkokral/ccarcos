@@ -37,6 +37,9 @@ local function strsplit(inputstr, sep)
     return t
 end
 
+-- This is a super long line of text to test out the wrapping feature of neovim. This is a super long line of text to test out the wrapping feature of neovim. This is a super long line of text to test out the wrapping feature of neovim. This is a super long line of text to test out the wrapping feature of neovim. 
+ 
+ 
 
 _G.apiUtils = {
     ---Executes a kernel panic
@@ -44,13 +47,12 @@ _G.apiUtils = {
     ---@param file string File kernel panic source
     ---@param line string File line
     kernelPanic = function(err, file, line)
-        term.setBackgroundColor(__LEGACY.colors.black)
-        term.setTextColor(__LEGACY.colors.red)
-        arcos.log("--- KERNEL PANIC ---")
-        arcos.log(err)
-        arcos.log("" .. file .. " at " .. line)
-        arcos.log("--------------------")
-        tasks = {}
+        __LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
+        __LEGACY.term.setTextColor(__LEGACY.colors.black)
+	__LEGACY.term.clear()
+	print("arcos has forcefully shut off, due to a system issue.")
+	print("The suspected file: " .. file .. ", suspected line: " .. file .. )
+	tasks = {}
         while true do
             coroutine.yield()
         end

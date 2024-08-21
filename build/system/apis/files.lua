@@ -19,13 +19,13 @@ local function open(path, mode)
     end
     if not cmodevalid then error("Mode not valid: " .. mode) end
     local err
-    file = {}
+    local file = {}
     file._f, err = __LEGACY.files.open(path, mode)
     if not file._f then
         return nil, err
     end
     file.open = true
-    file.close = function() file._f.close() open = false end
+    file.close = function() file._f.close() file.open = false end
     file.seekBytes = function(whence, offset)
         return file._f.seek(whence, offset)
     end

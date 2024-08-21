@@ -1,3 +1,6 @@
+-- This file is unused
+-- TODO: Remove
+
 local mdm = devices.find("modem")
 local currentFloor = -1
 if not mdm then
@@ -12,15 +15,6 @@ local whitelistedPlayers = {
 
 mdm.open(711)
 mdm.open(713)
-local function contains(table, element)
-    for _, value in pairs(table) do
-        if value == element then
-            return true
-        end
-    end
-    return false
-end
-
 -- tasking.createTask("Elevator step player detector handler", function()
 --     local pd = devices.find("playerDetector")
 --     while true do
