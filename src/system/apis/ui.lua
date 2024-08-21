@@ -562,6 +562,7 @@ local function Align(x, y, widgettoalign, alignment)
           vw.y = vw.y + w.y
           table.insert(rendercommands, vw)
         end
+        print(rendercommands)
         return rendercommands -- CHICHICHIHA
       end,
       onEvent = function (e)
