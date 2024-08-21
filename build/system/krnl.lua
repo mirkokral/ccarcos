@@ -39,8 +39,10 @@ _G.apiUtils = {
         __LEGACY.term.setTextColor(__LEGACY.colors.black)
 	__LEGACY.term.clear()
 	print("arcos has forcefully shut off, due to a system issue.")
-	print("The suspected file: " .. file .. ", suspected line: " .. file .. )
+	print("The suspected file: " .. file .. ", suspected line: " .. tostring(line) .. "." )
+	print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
 	tasks = {}
+	tasking.createTask("n", function() while true do coroutine.yield() end end, 1, "root", __LEGACY.term, environ)
         while true do
             coroutine.yield()
         end
