@@ -137,30 +137,30 @@ local function ScrollPane(b)
         end
         return dcBuf
     end
-    config.renderFinish = function(ox, oy)
+    config.renderFinish = function(ox, oy, termar)
         local yo = 0
         for index, value in ipairs(config.children) do
             if value.y + yo - config.scroll + value.getWH()[1] > 0 and value.y + yo - config.scroll <= config.height then
                 if value.renderFinish then
-                    value.renderFinish(config.x + ox, config.y + oy - config.scroll)
+                    value.renderFinish(config.x + ox, config.y + oy - config.scroll, termar)
                 end
             end
             yo = yo + value.getWH()[2]
         end
     end
-    config.onEvent = function(e)
+    config.onEvent = function(e, termar)
         local ce = e
         if ce[1] == "click" then
             local ret = false
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
-                    if value.onEvent({ "click", ce[2], ce[3] - config.x + 1, ce[4] - config.y + config.scroll - index + 2 }) then
+                    if value.onEvent({ "click", ce[2], ce[3] - config.x + 1, ce[4] - config.y + config.scroll - index + 2 }, termar) then
                         ret = true
                     end
                 end
             else
                 for index, value in ipairs(config.children) do
-                    if value.onEvent({ "defocus" }) then ret = true end
+                    if value.onEvent({ "defocus" }, termar) then ret = true end
                 end
             end
             if config.showScrollBtns then
@@ -180,7 +180,7 @@ local function ScrollPane(b)
         if ce[1] == "drag" then
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[3] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
-                    value.onEvent({ "drag", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index + 2 })
+                    value.onEvent({ "drag", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index + 2 }, termar)
                 end
             end
             local ret = false
@@ -196,8 +196,8 @@ local function ScrollPane(b)
             local ret = false
             if ce[3] >= config.x and ce[4] >= config.y and ce[3] <= config.x + config.width and ce[4] <= config.y + config.height then
                 for index, value in ipairs(config.children) do
-                    if value.onEvent({ "up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index + 2 }) then
-                        ret = ture
+                    if value.onEvent({ "up", ce[2], ce[3] - config.x, ce[4] - config.y + config.scroll - index + 2 }, termar) then
+                        ret = true
                     end
                 end
             end
@@ -339,7 +339,7 @@ local function TextInput(b)
         end
     end
     local oldgdc = config.getDrawCommands
-    config.getDrawCommands = function()
+    config.getDrawCommands = function(termar)
         if config.focus then
             config.label = config.text:sub(0, cursorPos) .. "|" .. config.text:sub(cursorPos + 1)
             config.textScroll = math.max(math.min(#config.text - config.width + 2, cursorPos), 1)
@@ -365,7 +365,7 @@ local function TextInput(b)
             config.col = col.gray
             config.textCol = col.white
         end
-        return oldgdc()
+        return oldgdc(termar)
     end
     return config
 end
@@ -387,15 +387,17 @@ local function Button(b)
     end
     return o
 end
-local function Align(x, y, widgettoalign, alignment)
+local function Align(x, y, widgettoalign, alignment, w, h)
 	local widget = widgettoalign
 	widget.x = 0
 	widget.y = 0
 	local w = {}
-	function updateXY()
+	function updateXY(termar)
 	  widget.x = 0
 	  widget.y = 0
-	  local tw, th = term.getSize()
+	  local tw, th = termar.getSize()
+	  if w then tw = w end
+	  if h then th = h end
 	  if alignment[1] >= 0 and alignment[1] <= 1 then
 	    w.x = tw*alignment[1]-(widget.getWH()[1]*alignment[1])
 	  end
@@ -411,10 +413,10 @@ local function Align(x, y, widgettoalign, alignment)
 	    getWH = function ()
     	  return {x + widget.getWH()[1], y + widget.getWH()[2]}
       end,
-      getDrawCommands = function ()
+      getDrawCommands = function (termar)
     	  updateXY()
     	  local rendercommands = {}
-    	  local wrcs = widget.getDrawCommands()
+    	  local wrcs = widget.getDrawCommands(termar)
     	  for index,value  in ipairs(wrcs) do
           local vw = value
           vw.x = math.floor(vw.x + w.x)
@@ -434,10 +436,10 @@ local function Align(x, y, widgettoalign, alignment)
 	}
 	return w
 end
-local function DirectRender(wr, ox, oy, buf)
+local function DirectRender(wr, ox, oy, buf, terma)
     local rc
     if wr["getDrawCommands"] then
-        rc = wr["getDrawCommands"]()
+        rc = wr["getDrawCommands"](terma)
     else
         rc = wr
     end
@@ -546,34 +548,34 @@ local function RenderLoop(toRender, outTerm, f)
     if not isMonitor then
         if ev[1] == "mouse_click" then
             for i, v in ipairs(toRender) do
-                if v.onEvent({ "click", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+                if v.onEvent({ "click", ev[2], ev[3] - 0, ev[4] - 0 }, outTerm) then red = true end
             end
         elseif ev[1] == "mouse_drag" then
             for i, v in ipairs(toRender) do
-                if v.onEvent({ "drag", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+                if v.onEvent({ "drag", ev[2], ev[3] - 0, ev[4] - 0 }, outTerm) then red = true end
             end
         elseif ev[1] == "mouse_up" then
             for i, v in ipairs(toRender) do
-                if v.onEvent({ "up", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+                if v.onEvent({ "up", ev[2], ev[3] - 0, ev[4] - 0 }, outTerm) then red = true end
             end
         elseif ev[1] == "mouse_scroll" then
             for i, v in ipairs(toRender) do
-                if v.onEvent({ "scroll", ev[2], ev[3] - 0, ev[4] - 0 }) then red = true end
+                if v.onEvent({ "scroll", ev[2], ev[3] - 0, ev[4] - 0 }, outTerm) then red = true end
             end
         else
             for i, v in ipairs(toRender) do
-                if v.onEvent(ev) then red = true end
+                if v.onEvent(ev, outTerm) then red = true end
             end
         end
     else
         if ev[1] == "monitor_touch" and ev[2] == monSide then
             for i, v in ipairs(toRender) do
-                if v.onEvent({ "click", 1, ev[3] - 0, ev[4] - 0 }) then red = true end
-                if v.onEvent({ "up", 1, ev[3] - 0, ev[4] - 0 }) then red = true end
+                if v.onEvent({ "click", 1, ev[3] - 0, ev[4] - 0 }, outTerm) then red = true end
+                if v.onEvent({ "up", 1, ev[3] - 0, ev[4] - 0 }, outTerm) then red = true end
             end
         else
             for i, v in ipairs(toRender) do
-                if v.onEvent(ev) then red = true end
+                if v.onEvent(ev, outTerm) then red = true end
             end
         end
     end
