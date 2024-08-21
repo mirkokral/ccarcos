@@ -563,7 +563,7 @@ local function Align(x, y, widgettoalign, alignment)
           table.insert(rendercommands, vw)
         end
         for k,v in ipairs(rendercommands) do
-        	print(k, ": ", v)
+        	print(k, ": ", v.x, v.y, v.bgCol, v.forCol, v.text)
         end
         return rendercommands -- CHICHICHIHA
       end,
