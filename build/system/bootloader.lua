@@ -22,6 +22,8 @@ function main()
         args = read()
     end
     local f = __LEGACY.files.open("/system/krnl.lua", "r")
-    load(f.readAll(), "/system/krnl.lua", nil, setmetatable({}, {__index = _G}))(table.unpack(mysplit(args, " ")))
+    local fn, e = load(f.readAll(), "/system/krnl.lua", nil, setmetatable({}, {__index = _G}))
+    if not fn then error(e) end
+    fn(table.unpack(mysplit(args, " ")))
 end
 main()
