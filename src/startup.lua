@@ -4,7 +4,7 @@ local UIthemedefs = {
 }
 local ghToken = "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" -- I know this is stupid but it works
 local headers = {
-  [ "Authorization" ] = ghToken
+--  [ "Authorization" ] = ghToken
 }
 UIthemedefs[colors.white] = { 236, 239, 244 }
 UIthemedefs[colors.orange] = { 0, 0, 0 }
