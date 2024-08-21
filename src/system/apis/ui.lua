@@ -570,6 +570,7 @@ local function Align(x, y, widgettoalign, alignment)
         end
     	end
 	}
+	return w
 end
 
 

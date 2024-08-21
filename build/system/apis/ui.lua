@@ -429,6 +429,7 @@ local function Align(x, y, widgettoalign, alignment)
         end
     	end
 	}
+	return w
 end
 local function DirectRender(wr, ox, oy, buf)
     local rc
