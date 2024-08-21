@@ -110,6 +110,11 @@ end
 ---@field public children Widget[]
 ---@field public showScrollBtns boolean?
 ---@field public hideScrollbar boolean?
+
+---@class Align: Widget
+---@field public alignment "hor" | "ver"
+---@field public widgettoalign Widget
+
 ---Create a new scroll pane.
 ---@param b ScrollPaneOptions
 ---@return ScrollPane
@@ -516,6 +521,56 @@ local function Button(b)
     return o
 end
 
+---Aligns a widget to center, either vertically or horizontally
+---@param x number
+---@param y number
+---@param widgettoalign Widget
+---@param alignment [number, number] If a direction is not in the range of 0..1, it doesn't get aligned.
+---@return Align
+local function Align(x, y, widgettoalign, alignment)
+	local widget = widgettoalign
+	widget.x = 0
+	widget.y = 0
+	local w = {}
+	function updateXY()
+	  widget.x = 0
+	  widget.y = 0
+	  local tw, th = term.getSize()
+	  if alignment[1] >= 0 and alignment[1] <= 1 then
+	    w.x = tw*alignment[1]-(widget.getWH()[1]*alignment[1])
+	  end
+	  if alignment[2] >= 0 and alignment[2] <= 1 then
+	    w.y = th*alignment[2]-(widget.getWH()[2]*alignment[2])
+	  end
+	end
+  w = {
+	    alignment = alignment,
+	    widgettoalign = widget,
+	    x = x,
+	    y = y,
+	    getWH = function ()
+    	  return {x + widget.getWH()[1], y + widget.getWH()[2]}
+      end,
+      getDrawCommands = function ()
+    	  updateXY()
+    	  ---@type RenderCommand[]
+    	  local rendercommands = {}
+    	  local wrcs = widget.getDrawCommands()
+    	  for index,value  in ipairs(wrcs) do
+          local vw = value
+          vw.x = vw.x + w.x
+          vw.y = vw.y + w.y
+          table.insert(rendercommands, vw)
+        end
+        return rendercommands -- CHICHICHIHA
+      end,
+      onEvent = function (e)
+        if e[1]:sub(#e[1]-6) == "resize" then
+          return true
+        end
+    	end
+	}
+end
 
 
 ---Directly renders rendercommands.
@@ -714,6 +769,7 @@ local function RenderLoop(toRender, outTerm, f)
     return red, ev
 end
 return {
+    Align = Align,
     Label = Label,
     Button = Button,
     DirectRender = DirectRender,

@@ -164,7 +164,8 @@ if term then
             children = lbls,
             col = col.gray,
             showScrollBtns = true
-        })
+        }),
+        ui.Align(1, 1, ui.Label{x=0, y=0, label="Center"}, {0.5, 0.5})
     }
     table.insert(
         pages[2],
