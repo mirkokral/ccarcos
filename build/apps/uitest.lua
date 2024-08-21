@@ -191,7 +191,7 @@ if term then
     else
         ui.PageTransition(monSelPage, {
             ui.Label{
-                label = "Test is being displayed on monitor.",
+                label = "Test is being displayed on monitor." .. tostring(alignObject),
                 x = 2,
                 y = 2
             }
