@@ -558,8 +558,8 @@ local function Align(x, y, widgettoalign, alignment)
     	  local wrcs = widget.getDrawCommands()
     	  for index,value  in ipairs(wrcs) do
           local vw = value
-          vw.x = vw.x + w.x
-          vw.y = vw.y + w.y
+          vw.x = math.floor(vw.x + w.x)
+          vw.y = math.floor(vw.y + w.y)
           table.insert(rendercommands, vw)
         end
         for k,v in ipairs(rendercommands) do
