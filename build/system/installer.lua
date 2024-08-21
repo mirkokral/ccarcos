@@ -49,7 +49,7 @@ end
 drawLoader()
 if not fs.exists("/system/krnl.lua") then
     for _, i in ipairs(fs.list("/")) do
-        if not i == "rom" then fs.delete(i) end
+        if i ~= "rom" and i:sub(1, 4) ~= "disk"  then fs.delete(i) end
     end
 else
     fs.delete("/system")
@@ -64,13 +64,19 @@ function _G.strsplit(inputstr, sep)
     end
     return t
 end
-local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", {
+local fr, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", {
     [ "Authorization" ] = ghToken -- CHICHICHIHA
 })
 local branch
 if fr then
     branch = textutils.unserialiseJSON(fr.readAll())["sha"]
 else
+    term.clear()
+    term.setBackgroundColor(colors.black)
+    term.setTextColor(colors.white)
+    term.setCursorPos(1, 1)
+    term.clear()
+    print("Automatically fetching the latest commit failed because: " .. e .. ". Go to arcos, get latest commit hash and paste it in here.")
     write(">")
     branch = read()
 end
