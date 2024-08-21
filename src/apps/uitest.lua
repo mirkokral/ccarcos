@@ -145,6 +145,8 @@ if term then
             y = 1
         }))
     end
+    local alignObject = ui.Align(1, 1, ui.Label{x=0, y=0, label="Center"}, {0.5, 0.5})
+    print(tostring(alignObject))
     pages[2] = {
         ui.Label({
             label = "Level!",
@@ -175,7 +177,7 @@ if term then
             col = col.gray,
             showScrollBtns = true
         }),
-        ui.Align(1, 1, ui.Label{x=0, y=0, label="Center"}, {0.5, 0.5})
+        alignObject
     }
     table.insert(
         pages[2],
