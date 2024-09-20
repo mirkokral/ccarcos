@@ -31,7 +31,7 @@ end
 ---@return FileHRead | FileHWrite? handle
 ---@return string? error
 local function open(path, mode)
-    local validModes = {"w", "r", "w+", "r+", "a"}
+    local validModes = {"w", "r", "w+", "r+", "a", "wb", "rb"}
     local cmodevalid = false
     for _, v in ipairs(validModes) do
         if mode == v then cmodevalid = true break end

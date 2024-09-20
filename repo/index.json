@@ -3,8 +3,8 @@
         "friendlyName": "arcos itself",
         "description": "The package that has all the arcos files",
         "owner": "arcos Development Team and contributors",
-        "version": "24.08.2",                   
-        "vId": 2,
+        "version": "24.08.3",                   
+        "vId": 3,
         "dependencies": [],
         "isIndependable": true
     },

@@ -54,12 +54,12 @@
 |system/apis/arc.lua|70109|
 |system/apis/col.lua|82170|
 |system/apis/files.lua|86243|
-|system/apis/hashing.lua|94877|
-|system/apis/rd.lua|99501|
-|system/apis/tutils.lua|100505|
-|system/apis/ui.lua|101476|
-|system/apis/window.lua|122380|
-|data/PRIVACY.txt|137442|
+|system/apis/hashing.lua|94889|
+|system/apis/rd.lua|99513|
+|system/apis/tutils.lua|100517|
+|system/apis/ui.lua|101488|
+|system/apis/window.lua|122392|
+|data/PRIVACY.txt|137454|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -2947,7 +2947,7 @@ return {
     return t
 end
 local function open(path, mode)
-    local validModes = {"w", "r", "w+", "r+", "a"}
+    local validModes = {"w", "r", "w+", "r+", "a", "wb", "rb"}
     local cmodevalid = false
     for _, v in ipairs(validModes) do
         if mode == v then cmodevalid = true break end
