@@ -1,5 +1,4 @@
 shell.setDir(environ.workDir)
-shell.setAlias(     )
 term.setBackgroundColor(col.black)
 term.setTextColor(col.white)
 term.clear()
