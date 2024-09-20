@@ -35,7 +35,7 @@ if not live then
   configFile.close()
   -- if f["autoUpdate"] then
   --   -- print("Terminate to enter shell or wait 1 second to continue boot")
-  --   -- sleep(1)
+  --   -- sleep(1)      
   --   local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
   --   if f then
   --     local branch = textutils.unserialiseJSON(f.readAll())["sha"]
