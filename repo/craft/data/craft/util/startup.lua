@@ -1,7 +1,8 @@
 shell.setDir(environ.workDir)
+-- parentShell = nil
+shell.run("/rom/startup.lua")
 term.setBackgroundColor(col.black)
 term.setTextColor(col.white)
 term.clear()
 term.setCursorPos(1, 1)
-parentShell = nil
-shell.run("shell", ...) 
+shell.run("shell", ...)

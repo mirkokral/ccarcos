@@ -610,9 +610,10 @@ craftos_env.dofile = function(file)
 end
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua", "/data/craft/util/startup.lua", ...)
 if not ok then printError(err) endarcos.r({}, "/apps/craft.lua", "edit", ...)shell.setDir(environ.workDir)
+-- parentShell = nil
+shell.run("/rom/startup.lua")
 term.setBackgroundColor(col.black)
 term.setTextColor(col.white)
 term.clear()
 term.setCursorPos(1, 1)
-parentShell = nil
-shell.run("shell", ...) 
+shell.run("shell", ...)
