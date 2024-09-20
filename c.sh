@@ -1,8 +1,4 @@
-python build.py clean
-python build.py whole
-cd build/
-python archivebuild.py
-cd ..
+bash build.sh
 mkdir ~/.local/share/craftos-pc/computer/120
 rm -rf ~/.local/share/craftos-pc/computer/120/*
 cp build/* ~/.local/share/craftos-pc/computer/120/ -r

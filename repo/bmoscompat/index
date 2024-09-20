@@ -1,6 +1,8 @@
 d>apps
 f>apps/bmos.lua
 d>data
+d>data/bmos
+f>data/bmos/bmos.lua
 d>data/bmosfs
 d>data/bmosfs/bin
 f>data/bmosfs/bin/cat.lua
@@ -18,11 +20,3 @@ f>data/bmosfs/bin/rm.lua
 f>data/bmosfs/bin/sh.lua
 f>data/bmosfs/bin/shutdown.lua
 f>data/bmosfs/bin/useradd.lua
-d>data/bmosfs/etc
-d>data/bmosfs/lib
-d>data/bmosfs/usr
-d>data/bmosfs/usr/bin
-d>data/bmosfs/usr/etc
-d>data/bmosfs/usr/lib
-d>data/bmos
-f>data/bmos/bmos.lua

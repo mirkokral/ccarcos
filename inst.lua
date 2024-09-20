@@ -8,7 +8,7 @@ term.setPaletteColor(colors.pink, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.gray, 174/255, 179/255, 187/255)
 term.setPaletteColor(colors.lightGray, 216/255, 222/255, 233/255)
 term.setPaletteColor(colors.cyan, 136/255, 192/255, 208/255)
-term.setPaletteColor(colors.purple, 0/255, 0/255, 0/255)
+term.setPaletteColor(colors.purple, 0/255, 0/255, 0/255)  
 term.setPaletteColor(colors.blue, 129/255, 161/255, 193/255)
 term.setPaletteColor(colors.brown, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.green, 163/255, 190/255, 140/255)
@@ -84,33 +84,32 @@ local function get(_url, _headers, _binary)
     return wrap_request(_url, _url, nil, _headers, _binary)
 end
 
-function redraw()
-  term.setBackgroundColor(colors.black)
-  term.setTextColor(colors.white)
-  term.clear()
-  local tw, th = term.getSize()
-  term.setCursorPos(tw/2-8<0.5 and math.floor(tw/2-8) or math.ceil(tw/2-8), th/2<0.5 and math.floor(th/2) or math.ceil(th/2))
-  term.setTextColor(colors.blue)
-  write("[")
-  term.setTextColor(colors.magenta)
-  for i = 0, (filesAlreadyDownloaded/filesToGo)*14, 1 do
-    write("=")
-  end
-  for i = 0, 14-(filesAlreadyDownloaded/filesToGo)*14, 1 do
-    write(" ")
-  end
-  term.setTextColor(colors.blue)
-  write("]")
-  if not wasSuccess then
-    term.setTextColor(colors.red)
-  end
-  term.setCursorPos(tw/2-(#currentlyDownloadingFile/2)<0.5 and math.floor(tw/2-(#currentlyDownloadingFile/2)) or math.ceil(tw/2-(#currentlyDownloadingFile/2)), th/2<0.5 and math.floor(th/2+1) or math.ceil(th/2+1))
-  write(currentlyDownloadingFile)
-  if not wasSuccess then sleep(0.5) end
-end
+-- function redraw()
+  -- term.setBackgroundColor(colors.black)
+  -- term.setTextColor(colors.white)
+  -- term.clear()
+  -- local tw, th = term.getSize()
+  -- term.setCursorPos(tw/2-8<0.5 and math.floor(tw/2-8) or math.ceil(tw/2-8), th/2<0.5 and math.floor(th/2) or math.ceil(th/2))
+  -- term.setTextColor(colors.blue)
+  -- write("[")
+  -- term.setTextColor(colors.magenta)
+  -- for i = 0, (filesAlreadyDownloaded/filesToGo)*14, 1 do
+  --   write("=")
+  -- end
+  -- for i = 0, 14-(filesAlreadyDownloaded/filesToGo)*14, 1 do
+  --   write(" ")
+  -- end
+  -- term.setTextColor(colors.blue)
+  -- write("]")
+  -- if not wasSuccess then
+  --   term.setTextColor(colors.red)
+  -- end
+  -- term.setCursorPos(tw/2-(#currentlyDownloadingFile/2)<0.5 and math.floor(tw/2-(#currentlyDownloadingFile/2)) or math.ceil(tw/2-(#currentlyDownloadingFile/2)), th/2<0.5 and math.floor(th/2+1) or math.ceil(th/2+1))
+  -- write(currentlyDownloadingFile)
+  -- if not wasSuccess then sleep(0.5) end
+-- end
 
-redraw()
-
+print("")
 local indexFile, err = get(sourceURL .. "/build/objList.txt")
 if not indexFile then
   print("Failed to get index file. Error: " .. err)
@@ -144,9 +143,5 @@ for _, dir in ipairs(dirsToBeCreated) do
   fs.makeDir(dir)
 end
 for _, file in ipairs(filesToBeInstalled) do
-  filesAlreadyDownloaded = filesAlreadyDownloaded + 1
-  wasSuccess = true
-  currentlyDownloadingFile = file
   sleep(1)
-  redraw()
 end

@@ -1,21 +1,21 @@
-import os, arclib
+import os, repo.arclib
 
-with open("archived.arc", "wb") as f:
+with open("archivedpkgs/base.arc", "wb") as f:
     dirs = []
     files = []
-    for dirpath, dirnames, filenames in os.walk("."):
+    for p2, dirnames, filenames in os.walk("build/"):
+        dirpath = p2[6:]
         for name in dirnames:
             if dirpath + "/" + name not in dirs:
                 dirs.append(dirpath + "/" + name)
 
         for name in filenames:
             if dirpath + "/" + name not in files:
-                with open(dirpath + "/" + name, "rb") as f2:
-                    print(name)
+                with open(p2 + "/" + name, "rb") as f2:
+                    # print(name)
                     files.append([dirpath + "/" + name, f2.read()])
 
-    print(dirs, files)
     built = []
     for i in dirs: built.append([i, None])
     for i in files: built.append([i[0], i[1]])
-    f.write(arclib.archive(built))
+    f.write(repo.arclib.archive(built))
