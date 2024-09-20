@@ -52,14 +52,14 @@
 |system/liveinst.lua|67851|
 |system/rel|70103|
 |system/apis/arc.lua|70109|
-|system/apis/col.lua|82010|
-|system/apis/files.lua|86083|
-|system/apis/hashing.lua|94717|
-|system/apis/rd.lua|99341|
-|system/apis/tutils.lua|100345|
-|system/apis/ui.lua|101316|
-|system/apis/window.lua|122220|
-|data/PRIVACY.txt|137282|
+|system/apis/col.lua|82170|
+|system/apis/files.lua|86243|
+|system/apis/hashing.lua|94877|
+|system/apis/rd.lua|99501|
+|system/apis/tutils.lua|100505|
+|system/apis/ui.lua|101476|
+|system/apis/window.lua|122380|
+|data/PRIVACY.txt|137442|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -2529,7 +2529,13 @@ local function fetch()
     local fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
         ["Authorization"] = "Bearer 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"
     })
-    if not fr then error(e) end
+    if not fr then 
+        fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
+        })
+        if not fr then
+            return false
+        end
+    end
     local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
     f2.write(rp)
     fr.close()

@@ -114,7 +114,13 @@ local function fetch()
     local fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
         ["Authorization"] = "Bearer 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"
     })
-    if not fr then error(e) end
+    if not fr then 
+        fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
+        })
+        if not fr then
+            return false
+        end
+    end
     local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
     f2.write(rp)
     fr.close()
