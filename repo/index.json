@@ -48,10 +48,10 @@
     },
     "craft": {
         "friendlyName": "Craft",
-        "description": "A WIP compatibility layer to run CraftOS apps",
+        "description": "A compatibility layer to run CraftOS apps",
         "owner":"TNC™ Development and Management Team",
-        "version": "34",
-        "vId": 34,
+        "version": "35",
+        "vId": 35,
         "dependencies": ["rednet"],
         "isIndependable": true
 
