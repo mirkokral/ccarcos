@@ -6,8 +6,8 @@
 |/index|0|
 |apis/_CEXPORTS.lua|136|
 |apps/craft.lua|405|
-|apps/edit.lua|16971|
-|data/craft/util/startup.lua|17014|
+|apps/edit.lua|17154|
+|data/craft/util/startup.lua|17197|
 --ENDTABLE
 d>apis
 f>apis/_CEXPORTS.lua
@@ -33,6 +33,7 @@ if not _CEXPORTS then
     print("No _CEXPORTS!\nTry restarting your computer or reinstalling the package.")
     error()
 end
+local openedFilesToClose = {}
 craftos_env.colors = col
 craftos_env.colours = col
 craftos_env.disk = {
@@ -134,6 +135,7 @@ craftos_env.fs = {
     open = function (path, mode)
         local f, e = files.open(path, mode)
         if not f then return f, e end
+        table.insert(openedFilesToClose, f)
         local rt = {}
         rt.close = f.close
         rt.write = f.write
@@ -279,6 +281,7 @@ craftos_env.io = {
         if not mode then mode = "r" end
         local f, e = files.open(fname, mode)
         if not f then return f, e end
+        table.insert(openedFilesToClose, f)
         return makeRt(f)
     end,
     input = function(f) 
@@ -609,7 +612,10 @@ craftos_env.dofile = function(file)
     return craftos_env.loadfile(file, nil, craftos_env)()
 end
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua", "/data/craft/util/startup.lua", ...)
-if not ok then printError(err) endarcos.r({}, "/apps/craft.lua", "edit", ...)shell.setDir(environ.workDir)
+if not ok then printError(err) end
+for _, v in ipairs(openedFilesToClose) do
+    pcall(v.close)
+endarcos.r({}, "/apps/craft.lua", "edit", ...)shell.setDir(environ.workDir)
 -- parentShell = nil
 shell.run("/rom/startup.lua")
 term.setBackgroundColor(col.black)

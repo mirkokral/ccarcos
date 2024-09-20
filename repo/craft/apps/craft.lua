@@ -6,6 +6,7 @@ if not _CEXPORTS then
     print("No _CEXPORTS!\nTry restarting your computer or reinstalling the package.")
     error()
 end
+local openedFilesToClose = {}
 craftos_env.colors = col
 craftos_env.colours = col
 craftos_env.disk = {
@@ -107,6 +108,7 @@ craftos_env.fs = {
     open = function (path, mode)
         local f, e = files.open(path, mode)
         if not f then return f, e end
+        table.insert(openedFilesToClose, f)
         local rt = {}
         rt.close = f.close
         rt.write = f.write
@@ -252,6 +254,7 @@ craftos_env.io = {
         if not mode then mode = "r" end
         local f, e = files.open(fname, mode)
         if not f then return f, e end
+        table.insert(openedFilesToClose, f)
         return makeRt(f)
     end,
     input = function(f) 
@@ -583,3 +586,6 @@ craftos_env.dofile = function(file)
 end
 local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua", "/data/craft/util/startup.lua", ...)
 if not ok then printError(err) end
+for _, v in ipairs(openedFilesToClose) do
+    pcall(v.close)
+end

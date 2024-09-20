@@ -1,4 +1,4 @@
-buildCount: 98
+buildCount: 99
 compileFiles:
 - startup.lua
 - apps/adduser.lua
