@@ -33,26 +33,26 @@ if not live then
   if not configFile then configFile = {autoUpdate = true} end -- Fallback
   local f = textutils.unserialiseJSON(configFile.readAll())
   configFile.close()
-  if f["autoUpdate"] then
-    -- print("Terminate to enter shell or wait 1 second to continue boot")
-    -- sleep(1)
-    local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
-    if f then
-      local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-      local cur = fs.open("/system/rel", "r")
-      if cur and cur.readAll() ~= branch then
-        shell.run("/system/installer.lua")
-        sleep(1)
-      end
-      f.close()
-    else
-      print("Update failed")
-      print("This could happen due to a github ratelimit, or due to the server not having http enabled. Please contact your administrator for further help or wait until the next hour until updating again.")
-      print()
-      printError(e)
-      sleep(5)
-    end
-  end
+  -- if f["autoUpdate"] then
+  --   -- print("Terminate to enter shell or wait 1 second to continue boot")
+  --   -- sleep(1)
+  --   local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
+  --   if f then
+  --     local branch = textutils.unserialiseJSON(f.readAll())["sha"]
+  --     local cur = fs.open("/system/rel", "r")
+  --     if cur and cur.readAll() ~= branch then
+  --       shell.run("/system/installer.lua")
+  --       sleep(1)
+  --     end
+  --     f.close()
+  --   else
+  --     print("Update failed")
+  --     print("This could happen due to a github ratelimit, or due to the server not having http enabled. Please contact your administrator for further help or wait until the next hour until updating again.")
+  --     print()
+  --     printError(e)
+  --     sleep(5)
+  --   end
+  -- end
 end
 if live then
   if not fs.exists("/config/settings") then

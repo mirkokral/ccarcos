@@ -11,55 +11,55 @@
 |services/enabled|-1|
 |system/apis|-1|
 |/startup.lua|0|
-|/objList.txt|7523|
-|apps/adduser.lua|8722|
-|apps/arc.lua|9236|
-|apps/cat.lua|12130|
-|apps/cd.lua|12330|
-|apps/cp.lua|12628|
-|apps/init.lua|12866|
-|apps/kmsg.lua|15739|
-|apps/ls.lua|15788|
-|apps/mkdir.lua|16403|
-|apps/mv.lua|16518|
-|apps/rm.lua|16756|
-|apps/rmuser.lua|16907|
-|apps/shell.lua|17311|
-|apps/uitest.lua|19983|
-|apps/clear.lua|25308|
-|apps/shutdown.lua|25344|
-|apps/reboot.lua|25360|
-|config/aboot|25374|
-|config/arcrepo|25534|
-|config/arcshell|25551|
-|config/hostname|25603|
-|config/passwd|25608|
-|config/arc/base.meta.json|25858|
-|config/arc/base.uninstallIndex|26126|
-|services/arcfix.lua|27325|
-|services/elevator.lua|27410|
-|services/elevatorSrv.lua|29701|
-|services/elevatorStep.lua|32757|
-|services/oobe.lua|33349|
-|services/pms.lua|39094|
-|services/shell.lua|42674|
-|services/enabled/9 arcfix|42704|
-|services/enabled/login|42717|
-|system/bootloader.lua|42727|
-|system/devinstaller.lua|43676|
-|system/installer.lua|47837|
-|system/krnl.lua|52283|
-|system/liveinst.lua|68542|
-|system/rel|70794|
-|system/apis/arc.lua|70800|
-|system/apis/col.lua|82701|
-|system/apis/files.lua|86774|
-|system/apis/hashing.lua|95408|
-|system/apis/rd.lua|100032|
-|system/apis/tutils.lua|101036|
-|system/apis/ui.lua|102007|
-|system/apis/window.lua|122911|
-|data/PRIVACY.txt|137973|
+|/objList.txt|6832|
+|apps/adduser.lua|8031|
+|apps/arc.lua|8545|
+|apps/cat.lua|11439|
+|apps/cd.lua|11639|
+|apps/cp.lua|11937|
+|apps/init.lua|12175|
+|apps/kmsg.lua|15048|
+|apps/ls.lua|15097|
+|apps/mkdir.lua|15712|
+|apps/mv.lua|15827|
+|apps/rm.lua|16065|
+|apps/rmuser.lua|16216|
+|apps/shell.lua|16620|
+|apps/uitest.lua|19292|
+|apps/clear.lua|24617|
+|apps/shutdown.lua|24653|
+|apps/reboot.lua|24669|
+|config/aboot|24683|
+|config/arcrepo|24843|
+|config/arcshell|24860|
+|config/hostname|24912|
+|config/passwd|24917|
+|config/arc/base.meta.json|25167|
+|config/arc/base.uninstallIndex|25435|
+|services/arcfix.lua|26634|
+|services/elevator.lua|26719|
+|services/elevatorSrv.lua|29010|
+|services/elevatorStep.lua|32066|
+|services/oobe.lua|32658|
+|services/pms.lua|38403|
+|services/shell.lua|41983|
+|services/enabled/9 arcfix|42013|
+|services/enabled/login|42026|
+|system/bootloader.lua|42036|
+|system/devinstaller.lua|42985|
+|system/installer.lua|47146|
+|system/krnl.lua|51592|
+|system/liveinst.lua|67851|
+|system/rel|70103|
+|system/apis/arc.lua|70109|
+|system/apis/col.lua|82010|
+|system/apis/files.lua|86083|
+|system/apis/hashing.lua|94717|
+|system/apis/rd.lua|99341|
+|system/apis/tutils.lua|100345|
+|system/apis/ui.lua|101316|
+|system/apis/window.lua|122220|
+|data/PRIVACY.txt|137282|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -94,24 +94,6 @@ if not live then
   if not configFile then configFile = {autoUpdate = true} end -- Fallback
   local f = textutils.unserialiseJSON(configFile.readAll())
   configFile.close()
-  if f["autoUpdate"] then
-    local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
-    if f then
-      local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-      local cur = fs.open("/system/rel", "r")
-      if cur and cur.readAll() ~= branch then
-        shell.run("/system/installer.lua")
-        sleep(1)
-      end
-      f.close()
-    else
-      print("Update failed")
-      print("This could happen due to a github ratelimit, or due to the server not having http enabled. Please contact your administrator for further help or wait until the next hour until updating again.")
-      print()
-      printError(e)
-      sleep(5)
-    end
-  end
 end
 if live then
   if not fs.exists("/config/settings") then
