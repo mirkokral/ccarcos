@@ -3,3 +3,7 @@ f>apis/_CEXPORTS.lua
 d>apps
 f>apps/craft.lua
 f>apps/edit.lua
+d>data
+d>data/craft
+d>data/craft/util
+f>data/craft/util/startup.lua

@@ -1,15 +1,23 @@
 |/apis|-1|
 |/apps|-1|
+|/data|-1|
+|data/craft|-1|
+|data/craft/util|-1|
 |/index|0|
-|apis/_CEXPORTS.lua|68|
-|apps/craft.lua|337|
-|apps/edit.lua|16871|
+|apis/_CEXPORTS.lua|136|
+|apps/craft.lua|405|
+|apps/edit.lua|16971|
+|data/craft/util/startup.lua|17014|
 --ENDTABLE
 d>apis
 f>apis/_CEXPORTS.lua
 d>apps
 f>apps/craft.lua
 f>apps/edit.lua
+d>data
+d>data/craft
+d>data/craft/util
+f>data/craft/util/startup.lua
 -- This api only exists to replace the getfenv magic used by craft.lua.
 -- This api is not meant to be used by anything else
 return {
@@ -600,5 +608,10 @@ end
 craftos_env.dofile = function(file)
     return craftos_env.loadfile(file, nil, craftos_env)()
 end
-local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua", ...)
-if not ok then printError(err) endarcos.r({}, "/apps/craft.lua", "edit", ...)
+local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua", "/data/craft/util/startup.lua", ...)
+if not ok then printError(err) endarcos.r({}, "/apps/craft.lua", "edit", ...)shell.setDir(environ.workDir)
+term.setBackgroundColor(col.black)
+term.setTextColor(col.white)
+term.clear()
+term.setCursorPos(1, 1)
+shell.run("shell", ...)
