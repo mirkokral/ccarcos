@@ -36,30 +36,30 @@
 |config/passwd|25608|
 |config/arc/base.meta.json|25858|
 |config/arc/base.uninstallIndex|26126|
-|services/arcfix.lua|26126|
-|services/elevator.lua|27621|
-|services/elevatorSrv.lua|29912|
-|services/elevatorStep.lua|32968|
-|services/oobe.lua|33560|
-|services/pms.lua|39305|
-|services/shell.lua|42885|
-|services/enabled/9 arcfix|42915|
-|services/enabled/login|42928|
-|system/bootloader.lua|42938|
-|system/devinstaller.lua|43887|
-|system/installer.lua|48048|
-|system/krnl.lua|52494|
-|system/liveinst.lua|68753|
-|system/rel|71005|
-|system/apis/arc.lua|71011|
-|system/apis/col.lua|82276|
-|system/apis/files.lua|86349|
-|system/apis/hashing.lua|94983|
-|system/apis/rd.lua|99607|
-|system/apis/tutils.lua|100611|
-|system/apis/ui.lua|101582|
-|system/apis/window.lua|122486|
-|data/PRIVACY.txt|137548|
+|services/arcfix.lua|27325|
+|services/elevator.lua|27410|
+|services/elevatorSrv.lua|29701|
+|services/elevatorStep.lua|32757|
+|services/oobe.lua|33349|
+|services/pms.lua|39094|
+|services/shell.lua|42674|
+|services/enabled/9 arcfix|42704|
+|services/enabled/login|42717|
+|system/bootloader.lua|42727|
+|system/devinstaller.lua|43676|
+|system/installer.lua|47837|
+|system/krnl.lua|52283|
+|system/liveinst.lua|68542|
+|system/rel|70794|
+|system/apis/arc.lua|70800|
+|system/apis/col.lua|82701|
+|system/apis/files.lua|86774|
+|system/apis/hashing.lua|95408|
+|system/apis/rd.lua|100032|
+|system/apis/tutils.lua|101036|
+|system/apis/ui.lua|102007|
+|system/apis/window.lua|122911|
+|data/PRIVACY.txt|137973|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -936,46 +936,73 @@ term.setCursorPos(1, 1)arcos.shutdown()arcos.reboot(){
     "vId": 0,
     "dependencies": [],
     "isIndependable": true
-}if arcos.getCurrentTask().user ~= "root" then
+}d>apps
+d>config
+d>services
+d>system
+d>temporary
+d>user
+d>apis
+d>data
+d>config/apps
+d>config/arc
+d>services/enabled
+d>system/apis
+f>startup.lua
+f>apps/adduser.lua
+f>apps/arc.lua
+f>apps/cat.lua
+f>apps/cd.lua
+f>apps/cp.lua
+f>apps/init.lua
+f>apps/kmsg.lua
+f>apps/ls.lua
+f>apps/mkdir.lua
+f>apps/mv.lua
+f>apps/rm.lua
+f>apps/rmuser.lua
+f>apps/shell.lua
+f>apps/uitest.lua
+f>apps/clear.lua
+f>apps/shutdown.lua
+f>apps/reboot.lua
+f>config/aboot
+f>config/arcrepo
+f>config/arcshell
+f>config/hostname
+f>config/passwd
+f>config/arc/base.meta.json
+f>config/arc/base.uninstallIndex
+f>services/arcfix.lua
+f>services/elevator.lua
+f>services/elevatorSrv.lua
+f>services/elevatorStep.lua
+f>services/oobe.lua
+f>services/pms.lua
+f>services/shell.lua
+f>services/enabled/9 arcfix
+f>services/enabled/login
+f>system/bootloader.lua
+f>system/devinstaller.lua
+f>system/installer.lua
+f>system/krnl.lua
+f>system/liveinst.lua
+f>system/rel
+f>system/apis/arc.lua
+f>system/apis/col.lua
+f>system/apis/files.lua
+f>system/apis/hashing.lua
+f>system/apis/rd.lua
+f>system/apis/tutils.lua
+f>system/apis/ui.lua
+f>system/apis/window.lua
+f>data/PRIVACY.txt
+f>services/enabled/login
+f>config/passwd
+f>config/aboot
+f>config/arcshell
+f>config/arcrepoif arcos.getCurrentTask().user ~= "root" then
     error("Not root!")
-end
-local function recursiveMkdir(dir)
-    local f = tutils.split(dir, "/")
-    local rmdt = ""
-    for index, value in ipairs(f) do
-        rmdt = rmdt .. value
-        files.mkDir(value)
-    end
-end
-if files.exists("/config/arc") then
-    local packages = files.ls("/config/arc/")
-    for index, value in ipairs(packages) do
-        print(value:sub(#value-14) )
-        if value:sub(#value-14) == "uninstallIndex" then
-            local pkg = value:sub(0, #value-13)
-            local unif = files.open("/config/arc/" .. value, "r")
-            if not unif then goto continue end
-            local uni = tutils.split(unif.read(), "\n")
-            for index, value in ipairs(uni) do
-                local mod = value:sub(1, 1)
-                local fn = value:sub(3)
-                if mod == "f" then
-                    recursiveMkdir(files.par(fn))
-                    local f = files.open(fn, "w")
-                    local h = arc.get("https://raw.githubusercontent.com/" .. arc.getChosenRepo() .. "/" .. arc.getLatestCommit() .. "/repo/" .. pkg .. "/" .. value)
-                    if f and h then
-                        f.write(h.readAll())
-                        f.close()
-                        h.close()
-                    end
-                end
-                if mod == "d" then
-                    recursiveMkdir(fn)
-                end
-            end
-        end
-    end
-    ::continue::
 end
 ackFinish()
 local modem
@@ -2494,10 +2521,14 @@ local function get(_url, _headers, _binary)
     return wrap_request(_url, _url, nil, _headers, _binary)
 end
 local function getLatestCommit()
-    local fr = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main")
-    local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
-    fr.close()
-    return rp
+    local f, e = __LEGACY.files.open("/config/arc/latestCommit.hash", "r")
+    if not f then 
+        return ""
+    else 
+        local rp = f.readAll()
+        f.close()
+        return rp
+    end
 end
 local function checkForCD()
     if arcos.getCurrentTask().user ~= "root" then
@@ -2512,6 +2543,15 @@ local function fetch()
         error("This operation requires the user to be root.")
     end
     checkForCD()
+    local f2 = __LEGACY.files.open("/config/arc/latestCommit.hash", "w")    
+    local fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
+        ["Authorization"] = "Bearer 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"
+    })
+    if not fr then error(e) end
+    local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
+    f2.write(rp)
+    fr.close()
+    f2.close()
     local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
     getLatestCommit() .. "/repo/index.json")
     local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
@@ -2570,11 +2610,21 @@ local function uninstall(package)
         if hash == "" then
             __LEGACY.files.delete(value)
         elseif hash ~= "DIRECTORY" then
-            local f, e = __LEGACY.files.open(value)
+            local f, e = __LEGACY.files.open(value, "r")
             if f then
                 local fhash = hashing.sha256(f.readAll())
-                if fhash == hash then
+                local hmismatch = {}
+                for i = 1, #fhash, 1 do
+                    local c1 = fhash:sub(i, i)
+                    local c2 = hash:sub(i, i)
+                    if c1 ~= c2 then
+                        print("Mismatch: " .. c1 .. " != " .. c2)
+                        table.insert(hmismatch, c1)
+                    end
+                end
+                if #hmismatch == 0 then
                     __LEGACY.files.delete(value)
+                else
                 end
             end
         end
@@ -2605,7 +2655,7 @@ local arkivelib = {
                     isReaderHeadInTable = false
                     break
                 else
-                    table.insert(offsetheader, mstrsplit(linebuf, "|"))
+                    table.insert(offsetheader, tutils.split(linebuf, "|"))
                 end
                 linebuf = ""
             else
@@ -2622,11 +2672,6 @@ local arkivelib = {
             else
                 table.insert(outputfiles, { v[1], text:sub(bufend + tonumber(v[2]), #text) })
             end
-            currentlyDownloadingFile = "Extracting..."
-            filesToGo = #offsetheader
-            filesAlreadyDownloaded = k
-            wasSuccess = true
-            redraw()
         end
         return outputfiles
     end
@@ -2664,8 +2709,7 @@ local function install(package)
         end
     end
     local pkg = repo[package]
-    local indexFile, err = get("https://raw.githubusercontent.com/" ..
-    getChosenRepo() .. "/" .. latestCommit .. "/archivedpkgs/" .. package .. ".arc")
+    local indexFile, err = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" .. latestCommit .. "/archivedpkgs/" .. package .. ".arc")
     if not indexFile then
         error(err)
     end
@@ -2688,10 +2732,10 @@ local function install(package)
         else
             if not __LEGACY.files.exists("/" .. value[1]) then
                 local file = value[2]
-                local tfh = __LEGACY.files.open("/" .. value[1], "w")
-                tfh.write(file.readAll())
+                local tfh, e = __LEGACY.files.open("/" .. value[1], "w")
+                if not tfh then error(e) end
+                tfh.write(file)
                 tfh.close()
-                file.close()
                 buildedpl = buildedpl .. "f "  .. hashing.sha256(value[2]) .. " " .. value[1] .. "\n"
             end
         end

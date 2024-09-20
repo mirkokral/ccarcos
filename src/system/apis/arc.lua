@@ -86,10 +86,14 @@ end
 
 
 local function getLatestCommit()
-    local fr = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main")
-    local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
-    fr.close()
-    return rp
+    local f, e = __LEGACY.files.open("/config/arc/latestCommit.hash", "r")
+    if not f then 
+        return ""
+    else 
+        local rp = f.readAll()
+        f.close()
+        return rp
+    end
 end
 local function checkForCD()
     if arcos.getCurrentTask().user ~= "root" then
@@ -105,6 +109,16 @@ local function fetch()
         error("This operation requires the user to be root.")
     end
     checkForCD()
+    local f2 = __LEGACY.files.open("/config/arc/latestCommit.hash", "w")    
+
+    local fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
+        ["Authorization"] = "Bearer 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"
+    })
+    if not fr then error(e) end
+    local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
+    f2.write(rp)
+    fr.close()
+    f2.close()
     local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
     getLatestCommit() .. "/repo/index.json")
     local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
@@ -185,11 +199,21 @@ local function uninstall(package)
         if hash == "" then
             __LEGACY.files.delete(value)
         elseif hash ~= "DIRECTORY" then
-            local f, e = __LEGACY.files.open(value)
+            local f, e = __LEGACY.files.open(value, "r")
             if f then
                 local fhash = hashing.sha256(f.readAll())
-                if fhash == hash then
+                local hmismatch = {}
+                for i = 1, #fhash, 1 do
+                    local c1 = fhash:sub(i, i)
+                    local c2 = hash:sub(i, i)
+                    if c1 ~= c2 then
+                        print("Mismatch: " .. c1 .. " != " .. c2)
+                        table.insert(hmismatch, c1)
+                    end
+                end
+                if #hmismatch == 0 then
                     __LEGACY.files.delete(value)
+                else
                 end
             end
         end
@@ -223,7 +247,7 @@ local arkivelib = {
                     isReaderHeadInTable = false
                     break
                 else
-                    table.insert(offsetheader, mstrsplit(linebuf, "|"))
+                    table.insert(offsetheader, tutils.split(linebuf, "|"))
                 end
                 linebuf = ""
             else
@@ -241,12 +265,6 @@ local arkivelib = {
             else
                 table.insert(outputfiles, { v[1], text:sub(bufend + tonumber(v[2]), #text) })
             end
-            --print(v[1])
-            currentlyDownloadingFile = "Extracting..."
-            filesToGo = #offsetheader
-            filesAlreadyDownloaded = k
-            wasSuccess = true
-            redraw()
         end
 
         --print(bufend)
@@ -290,8 +308,7 @@ local function install(package)
         end
     end
     local pkg = repo[package]
-    local indexFile, err = get("https://raw.githubusercontent.com/" ..
-    getChosenRepo() .. "/" .. latestCommit .. "/archivedpkgs/" .. package .. ".arc")
+    local indexFile, err = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" .. latestCommit .. "/archivedpkgs/" .. package .. ".arc")
     if not indexFile then
         error(err)
     end
@@ -314,11 +331,11 @@ local function install(package)
         else
             if not __LEGACY.files.exists("/" .. value[1]) then
                 local file = value[2]
-                local tfh = __LEGACY.files.open("/" .. value[1], "w")
+                local tfh, e = __LEGACY.files.open("/" .. value[1], "w")
+                if not tfh then error(e) end
                 -- print(value[1])
-                tfh.write(file.readAll())
+                tfh.write(file)
                 tfh.close()
-                file.close()
                 buildedpl = buildedpl .. "f "  .. hashing.sha256(value[2]) .. " " .. value[1] .. "\n"
             end
         end

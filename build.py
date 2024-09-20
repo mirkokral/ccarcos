@@ -72,8 +72,10 @@ match sys.argv[1]:
         pass
     case "whole":
         objectListLines = []
+        packageListLines = []
         for i in config["mkDirs"]:
             objectListLines.append("d>" + i)
+            packageListLines.append("d>" + i)
             try:
                 recursiveMkdir("build/"+i)
             except:
@@ -86,16 +88,20 @@ match sys.argv[1]:
                 print("An error happened while parsing file: " + i)
                 print(e)
             objectListLines.append("f>" + i)
+            packageListLines.append("f>" + i)
         for ind, i in enumerate(config["nrFiles"]):
             # try:
             compileFile(i or "FileNameThatSurelyDoesNotExistAsWhyWouldSomeoneMakeSuchAStupidDecisionToMakeThisFileNameJustToHaveADefaultFile.ImpracticalFileExtension")
             print(f'{len(config["compileFiles"]) +ind+1}/{len(config["nrFiles"])+len(config["compileFiles"])+1} | {i}')
             
             objectListLines.append("r>" + i)
+            packageListLines.append("f>" + i)
         print(f'{len(config["nrFiles"])+len(config["compileFiles"])+1}/{len(config["nrFiles"]) + len(config["compileFiles"])+1} | objList.txt')
 
         with open("build/objList.txt", "w") as f:
             f.write('\n'.join(objectListLines))
+        with open("build/config/arc/base.uninstallIndex", "w") as f:
+            f.write('\n'.join(packageListLines))
         if "buildCount" in config:
             config["buildCount"] = config["buildCount"] + 1
         else:
