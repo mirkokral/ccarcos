@@ -1,58 +1,68 @@
-options:
-  - enableCompatibility
-mkDirs:
-  - system
-  - system/apis
-  - services
-  - services/enabled
-  - temporary
-  - user
-  - apps
-  - apis
-  - config
-  - config/apps
-  - data
+buildCount: 40
 compileFiles:
-  - system/rel
-  - system/bootloader.lua
-  - system/krnl.lua
-  - system/installer.lua
-  - system/liveinst.lua
-  - system/devinstaller.lua
-  - system/apis/col.lua
-  - system/apis/rd.lua
-  - system/apis/files.lua
-  - system/apis/tutils.lua
-  - system/apis/ui.lua
-  - system/apis/arc.lua
-  - system/apis/hashing.lua
-  - services/enabled/9 arcfix
-  - services/arcfix.lua
-  - services/elevator.lua
-  - services/elevatorStep.lua
-  - services/elevatorSrv.lua
-  - services/shell.lua
-  - services/pms.lua
-  - services/oobe.lua
-  - apps/init.lua
-  - apps/shell.lua
-  - apps/cd.lua
-  - apps/ls.lua
-  - apps/mv.lua
-  - apps/cp.lua
-  - apps/cat.lua
-  - apps/rm.lua
-  - apps/mkdir.lua
-  - apps/uitest.lua
-  - apps/kmsg.lua
-  - apps/arc.lua
-  - apps/adduser.lua
-  - apps/rmuser.lua
-  - startup.lua
+- startup.lua
+- apps/adduser.lua
+- apps/arc.lua
+- apps/cat.lua
+- apps/cd.lua
+- apps/cp.lua
+- apps/init.lua
+- apps/kmsg.lua
+- apps/ls.lua
+- apps/mkdir.lua
+- apps/mv.lua
+- apps/rm.lua
+- apps/rmuser.lua
+- apps/shell.lua
+- apps/uitest.lua
+- apps/clear.lua
+- apps/shutdown.lua
+- apps/reboot.lua
+- config/aboot
+- config/arcrepo
+- config/arcshell
+- config/hostname
+- config/passwd
+- services/arcfix.lua
+- services/elevator.lua
+- services/elevatorSrv.lua
+- services/elevatorStep.lua
+- services/oobe.lua
+- services/pms.lua
+- services/shell.lua
+- services/enabled/9 arcfix
+- services/enabled/login
+- system/bootloader.lua
+- system/devinstaller.lua
+- system/installer.lua
+- system/krnl.lua
+- system/liveinst.lua
+- system/rel
+- system/apis/arc.lua
+- system/apis/col.lua
+- system/apis/files.lua
+- system/apis/hashing.lua
+- system/apis/rd.lua
+- system/apis/tutils.lua
+- system/apis/ui.lua
+- system/apis/window.lua
+mkDirs:
+- apps
+- config
+- services
+- system
+- temporary
+- user
+- apis
+- data
+- config/apps
+- services/enabled
+- system/apis
 nrFiles:
-  - services/enabled/login
-  - config/passwd
-  - config/aboot
-  - config/arcshell
-  - config/arcrepo
-  # - config/hostname
+- services/enabled/login
+- config/passwd
+- config/aboot
+- config/arcshell
+- config/arcrepo
+options:
+- enableCompatibility

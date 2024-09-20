@@ -8,7 +8,7 @@ if confile then
 else
     return
 end
-
+local luaGlobal = setmetatable({}, {__index = _G})
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...)
     local cmd = nil
@@ -45,7 +45,7 @@ local function run(a1, ...)
     end
     if cmd == nil then
         local cq = tutils.join({ a1, ... }, " ")
-        local chunkl, err = load(cq, "eval", nil, _G)
+        local chunkl, err = load(cq, "eval", nil, luaGlobal)
         if not chunkl then
             printError(err)
             return false

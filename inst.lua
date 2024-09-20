@@ -114,7 +114,7 @@ redraw()
 local indexFile, err = get(sourceURL .. "/build/objList.txt")
 if not indexFile then
   print("Failed to get index file. Error: " .. err)
-  print("Make sure your server has HTTP on. If it doesn't, use a release zip from the releases section (when one gets released.)")
+  print("Make sure your server has HTTP on. If it doesn't, use a release bundle lua from the releases section (when one gets released.)")
   error()
 end
 
@@ -140,8 +140,6 @@ for _, v in ipairs(index) do
 end
 
 filesToGo = #filesToBeInstalled
-print(require("cc.pretty").pretty(dirsToBeCreated))
-print(require("cc.pretty").pretty(filesToBeInstalled))
 for _, dir in ipairs(dirsToBeCreated) do 
   fs.makeDir(dir)
 end

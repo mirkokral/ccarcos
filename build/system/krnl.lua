@@ -8,8 +8,17 @@ local config = {
     forceNice = nil,
     init = "/apps/init.lua",
     printLogToConsole = false,
+    printLogToFile = false,
     telemetry = true
 }
+local logfile = nil
+if config.printLogToFile then
+    logfile, error = __LEGACY.files.open("/system/log.txt", "w")
+    if not logfile then
+        print(error)
+        while true do coroutine.yield() end
+    end
+end
 local function recursiveRemove(r)
     for _, i in ipairs(__LEGACY.files.list(r)) do
         if __LEGACY.files.isDir(i) then
@@ -37,12 +46,15 @@ _G.apiUtils = {
     kernelPanic = function(err, file, line)
         __LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
         __LEGACY.term.setTextColor(__LEGACY.colors.black)
-	__LEGACY.term.clear()
-	print("arcos has forcefully shut off, due to a system issue.")
-	print("The suspected file: " .. file .. ", suspected line: " .. tostring(line) .. "." )
-	print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
-	tasks = {}
-	tasking.createTask("n", function() while true do coroutine.yield() end end, 1, "root", __LEGACY.term, environ)
+        __LEGACY.term.setCursorPos(1, 1)
+        __LEGACY.term.clear()
+        print("arcos has forcefully shut off, due to a critical error.")
+        print("This is probably a system issue")
+        print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
+        print("Suspected location: " .. debug.getinfo(2).short_src .. ":" .. debug.getinfo(2).currentline)
+        print("Error: " .. err)
+        tasks = {}
+        if tasking then tasking.createTask("n", function() while true do coroutine.yield() end end, 1, "root", __LEGACY.term, environ) end
         while true do
             coroutine.yield()
         end
@@ -61,6 +73,9 @@ _G.arcos = {
         if config["printLogToConsole"] then
             __LEGACY.term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
         end
+        if config.printLogToFile and logfile then
+            logfile.write(kernelLogBuffer)
+        end
     end,
     version = function ()
         return "arcos 24.08 \"Vertica\" (Alpha release)"
@@ -74,13 +89,23 @@ _G.arcos = {
         end
     end,
     getCurrentTask = function()
+        if currentTask then
+            return {
+                pid = cPid,
+                name = currentTask["name"],
+                user = currentTask["user"],
+                nice = currentTask["nice"],
+                paused = currentTask["paused"],
+                env = currentTask["env"]
+            }
+        end
         return {
-            pid = cPid,
-            name = currentTask["name"],
-            user = currentTask["user"],
-            nice = currentTask["nice"],
-            paused = currentTask["paused"],
-            env = currentTask["env"]
+            pid = -1,
+            name = "kernelspace",
+            user = "krunner",
+            nice = 1,
+            paused = false,
+            env = {}
         }
     end,
     getKernelLogBuffer = function()
@@ -359,7 +384,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], "Kernel", debug.getinfo().currentline)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], "Kernel", debug.getinfo(1).currentline)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -376,6 +401,16 @@ while true do
     if arg == "printLog" then
         config["printLogToConsole"] = true
     end
+    if arg == "fileLog" then
+        config["printLogToFile"] = true
+    end
+end
+if config.printLogToFile then
+    logfile, error = __LEGACY.files.open("/system/log.txt", "w")
+    if not logfile then
+        print(error)
+        while true do coroutine.yield() end
+    end
 end
 arcos.log("Seems like it works")
 for i, v in ipairs(__LEGACY.files.list("/system/apis/")) do
@@ -387,7 +422,6 @@ for i, v in ipairs(files.ls("/apis/")) do
     arcos.loadAPI("/apis/" .. v)
 end
 setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
-_G.window = __LEGACY.window
 local passwdFile = files.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.getHome = function ()

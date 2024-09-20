@@ -7,10 +7,18 @@ with open('config.yml') as f:
     config = yaml.safe_load(f)
 if not "options" in config:
     print("Missing config: options")
-if not "compileFiles" in config:
-    print("Missing config: compileFiles")
-if not "mkDirs" in config:
-    print("Missing config: mkDirs")
+
+cf = []
+cd = []
+for root, dirs, files in os.walk("src/"):
+    for name in files:
+        if not os.path.join(root[4:], name) in cf:
+            cf.append(os.path.join(root[4:], name))
+    for name in dirs:
+        if not os.path.join(root[4:], name) in cd:
+            cd.append(os.path.join(root[4:], name))
+config["compileFiles"] = cf
+config["mkDirs"] = cd
 if not "build" in os.listdir("."):
     os.mkdir("build")
 
@@ -28,23 +36,27 @@ def compileFile(filepathstr: str):
     recursiveMkdir(str(pathlib.Path(str(pathlib.Path("build/").absolute()) + "/" + filepathstr).absolute().parent))
     with open(str(pathlib.Path("src/").absolute()) + "/" + filepathstr, "r") as file:
         outlines = []
-        currentlyExcluding = False
+        currentlyExcluding = 0
         for i in file.readlines():
             if i.strip().startswith("-- C:"):
                 cmd = i.strip()[5:]
                 match cmd:
                     case "Exc":
-                        currentlyExcluding = True
+                        currentlyExcluding += 1
                     case "End":
-                        currentlyExcluding = False
+                        currentlyExcluding -= 1
                     case "Ifc":
-                        currentlyExcluding = i.strip()[8:] in config["options"]
+                        currentlyExcluding += 1 if (i.strip()[8:] in config["options"]) else 0
                     case "Inv":
                         currentlyExcluding = not currentlyExcluding
+            elif i.strip().startswith("--[["):
+                currentlyExcluding += 1
             elif i.strip().startswith("--") or i.strip() == "":
                 pass
+            elif i.strip().endswith("]]") :
+                currentlyExcluding -= 1
             else:
-                if not currentlyExcluding:
+                if currentlyExcluding < 1:
                     outlines.append(i)
         with open(pathlib.Path("build/" + filepathstr), "w") as writeFile:
             writeFile.writelines(outlines)
@@ -62,6 +74,10 @@ match sys.argv[1]:
         objectListLines = []
         for i in config["mkDirs"]:
             objectListLines.append("d>" + i)
+            try:
+                recursiveMkdir("build/"+i)
+            except:
+                pass
         for ind, i in enumerate(config["compileFiles"]):
             try:
                 compileFile(i or "FileNameThatSurelyDoesNotExistAsWhyWouldSomeoneMakeSuchAStupidDecisionToMakeThisFileNameJustToHaveADefaultFile.ImpracticalFileExtension")
@@ -80,6 +96,12 @@ match sys.argv[1]:
 
         with open("build/objList.txt", "w") as f:
             f.write('\n'.join(objectListLines))
+        if "buildCount" in config:
+            config["buildCount"] = config["buildCount"] + 1
+        else:
+            config["buildCount"] = 1
+        with open("config.yml", "w") as f:
+            f.write(yaml.dump(config, indent=2))
     case "clean":
         os.system("rm -rf build/*")
     case "test":

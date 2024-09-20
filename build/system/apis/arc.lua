@@ -102,6 +102,9 @@ local function getIdata(package)
 end
 local function getRepo()
     local f = __LEGACY.files.open("/config/arc/repo.json", "r")
+    if not f then
+        return {}
+    end
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
     f.close()
     return uj
