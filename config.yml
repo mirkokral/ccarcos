@@ -1,4 +1,4 @@
-buildCount: 46
+buildCount: 53
 compileFiles:
 - startup.lua
 - apps/adduser.lua
@@ -23,6 +23,8 @@ compileFiles:
 - config/arcshell
 - config/hostname
 - config/passwd
+- config/arc/base.meta.json
+- config/arc/base.uninstallIndex
 - services/arcfix.lua
 - services/elevator.lua
 - services/elevatorSrv.lua
@@ -46,6 +48,7 @@ compileFiles:
 - system/apis/tutils.lua
 - system/apis/ui.lua
 - system/apis/window.lua
+- data/PRIVACY.txt
 mkDirs:
 - apps
 - config
@@ -56,6 +59,7 @@ mkDirs:
 - apis
 - data
 - config/apps
+- config/arc
 - services/enabled
 - system/apis
 nrFiles:

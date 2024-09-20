@@ -7,55 +7,59 @@
 |/apis|-1|
 |/data|-1|
 |config/apps|-1|
+|config/arc|-1|
 |services/enabled|-1|
 |system/apis|-1|
 |/startup.lua|0|
-|/objList.txt|9215|
-|apps/adduser.lua|10321|
-|apps/arc.lua|10835|
-|apps/cat.lua|13729|
-|apps/cd.lua|13929|
-|apps/cp.lua|14227|
-|apps/init.lua|14465|
-|apps/kmsg.lua|17338|
-|apps/ls.lua|17387|
-|apps/mkdir.lua|18002|
-|apps/mv.lua|18117|
-|apps/rm.lua|18355|
-|apps/rmuser.lua|18506|
-|apps/shell.lua|18910|
-|apps/uitest.lua|21582|
-|apps/clear.lua|26907|
-|apps/shutdown.lua|26943|
-|apps/reboot.lua|26959|
-|config/aboot|26973|
-|config/arcrepo|27109|
-|config/arcshell|27126|
-|config/hostname|27178|
-|config/passwd|27183|
-|services/arcfix.lua|27433|
-|services/elevator.lua|28928|
-|services/elevatorSrv.lua|31219|
-|services/elevatorStep.lua|34275|
-|services/oobe.lua|34867|
-|services/pms.lua|40612|
-|services/shell.lua|44192|
-|services/enabled/9 arcfix|44222|
-|services/enabled/login|44235|
-|system/bootloader.lua|44245|
-|system/devinstaller.lua|45194|
-|system/installer.lua|49355|
-|system/krnl.lua|53801|
-|system/liveinst.lua|70060|
-|system/rel|72312|
-|system/apis/arc.lua|72318|
-|system/apis/col.lua|79858|
-|system/apis/files.lua|83931|
-|system/apis/hashing.lua|92564|
-|system/apis/rd.lua|97188|
-|system/apis/tutils.lua|98192|
-|system/apis/ui.lua|99163|
-|system/apis/window.lua|120067|
+|/objList.txt|7523|
+|apps/adduser.lua|8722|
+|apps/arc.lua|9236|
+|apps/cat.lua|12130|
+|apps/cd.lua|12330|
+|apps/cp.lua|12628|
+|apps/init.lua|12866|
+|apps/kmsg.lua|15739|
+|apps/ls.lua|15788|
+|apps/mkdir.lua|16403|
+|apps/mv.lua|16518|
+|apps/rm.lua|16756|
+|apps/rmuser.lua|16907|
+|apps/shell.lua|17311|
+|apps/uitest.lua|19983|
+|apps/clear.lua|25308|
+|apps/shutdown.lua|25344|
+|apps/reboot.lua|25360|
+|config/aboot|25374|
+|config/arcrepo|25534|
+|config/arcshell|25551|
+|config/hostname|25603|
+|config/passwd|25608|
+|config/arc/base.meta.json|25858|
+|config/arc/base.uninstallIndex|26126|
+|services/arcfix.lua|26126|
+|services/elevator.lua|27621|
+|services/elevatorSrv.lua|29912|
+|services/elevatorStep.lua|32968|
+|services/oobe.lua|33560|
+|services/pms.lua|39305|
+|services/shell.lua|42885|
+|services/enabled/9 arcfix|42915|
+|services/enabled/login|42928|
+|system/bootloader.lua|42938|
+|system/devinstaller.lua|43887|
+|system/installer.lua|48048|
+|system/krnl.lua|52494|
+|system/liveinst.lua|68753|
+|system/rel|71005|
+|system/apis/arc.lua|71011|
+|system/apis/col.lua|82276|
+|system/apis/files.lua|86349|
+|system/apis/hashing.lua|94983|
+|system/apis/rd.lua|99607|
+|system/apis/tutils.lua|100611|
+|system/apis/ui.lua|101582|
+|system/apis/window.lua|122486|
+|data/PRIVACY.txt|137548|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -147,56 +151,6 @@ function _G.strsplit(inputstr, sep)
       table.insert(t, str)
   end
   return t
-end
-if not live then
-  local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
-  if f then
-    local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-    file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/objList.txt")
-    if file then
-      cont = file.readAll()
-      pcall(file.close)
-      local missingFiles = {}
-      local missingDirs = {}
-      for _, i in ipairs(strsplit(cont, "\n")) do
-        action = string.sub(i, 1, 1)
-        filename = string.sub(i, 3)
-        if action == "d" and not fs.exists(filename) then
-          table.insert(missingDirs, filename)
-        end
-        if action == "f" and not fs.exists("/" .. filename) then
-          table.insert(missingFiles, filename)
-        end
-        if action == "r" and not fs.exists("/" .. filename) then
-          table.insert(missingFiles, filename)
-        end
-      end
-      if #missingDirs > 0 or #missingFiles > 0 then
-        print("Repairing system...")
-        for index, value in ipairs(missingDirs) do
-          print("Repairing directory: " .. value)
-          fs.makeDir(value)
-        end
-        for index, value in ipairs(missingFiles) do
-          f = fs.open(value, "w")
-          hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. value)
-          if f and hf then
-            print("Repairing file: " .. value)
-            f.write(hf.readAll())
-          end
-          if hf then
-            pcall(hf.close)
-          end
-          if f then
-            pcall(f.close)
-          end
-        end
-      end
-    end
-    pcall(f.close)
-  else
-    print("Fix check failed")
-  end
 end
 local oldprr = os.pullEventRaw
 local oldpe = os.pullEvent
@@ -318,6 +272,7 @@ d>user
 d>apis
 d>data
 d>config/apps
+d>config/arc
 d>services/enabled
 d>system/apis
 f>startup.lua
@@ -343,6 +298,8 @@ f>config/arcrepo
 f>config/arcshell
 f>config/hostname
 f>config/passwd
+f>config/arc/base.meta.json
+f>config/arc/base.uninstallIndex
 f>services/arcfix.lua
 f>services/elevator.lua
 f>services/elevatorSrv.lua
@@ -366,6 +323,7 @@ f>system/apis/rd.lua
 f>system/apis/tutils.lua
 f>system/apis/ui.lua
 f>system/apis/window.lua
+f>data/PRIVACY.txt
 r>services/enabled/login
 r>config/passwd
 r>config/aboot
@@ -954,7 +912,8 @@ term.setCursorPos(1, 1)arcos.shutdown()arcos.reboot(){
     },
     "skipPrompt": true,
     "defargs": "",
-    "autoUpdate": true
+    "autoUpdate": true,
+    "telemetry": false
 }mirkokral/ccarcos{
     "path": [
         "/apps",
@@ -969,7 +928,15 @@ term.setCursorPos(1, 1)arcos.shutdown()arcos.reboot(){
         "name": "root",
         "password": "ce5ca673d13b36118d54a7cf13aeb0ca012383bf771e713421b4d1fd841f539a"
     }
-]if arcos.getCurrentTask().user ~= "root" then
+]{
+    "friendlyName": "arcos itself",
+    "description": "The package that has all the arcos files",
+    "owner": "arcos Development Team and contributors",
+    "version": "24.08.1",                   
+    "vId": 0,
+    "dependencies": [],
+    "isIndependable": true
+}if arcos.getCurrentTask().user ~= "root" then
     error("Not root!")
 end
 local function recursiveMkdir(dir)
@@ -2452,9 +2419,14 @@ end
 settings.set("")
 settings.set("shell.allow_disk_startup", false) settings.save()
 os.reboot()brokenlocal methods = {
-    GET = true, POST = true, HEAD = true,
-    OPTIONS = true, PUT = true, DELETE = true,
-    PATCH = true, TRACE = true,
+    GET = true,
+    POST = true,
+    HEAD = true,
+    OPTIONS = true,
+    PUT = true,
+    DELETE = true,
+    PATCH = true,
+    TRACE = true,
 }
 local function getChosenRepo()
     local rf = files.open("/config/arcrepo", "r")
@@ -2528,13 +2500,20 @@ local function getLatestCommit()
     return rp
 end
 local function checkForCD()
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     if not __LEGACY.files.exists("/config/arc") then
         __LEGACY.files.makeDir("/config/arc")
     end
 end
 local function fetch()
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     checkForCD()
-    local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/".. getLatestCommit() .."/repo/index.json")
+    local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
+    getLatestCommit() .. "/repo/index.json")
     local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
     fa.write(f.readAll())
     fa.close()
@@ -2547,7 +2526,7 @@ local function getIdata(package)
     if not __LEGACY.files.exists("/config/arc/" .. package .. ".meta.json") then
         return nil
     end
-    local f, e = __LEGACY.files.open("/config/arc/".. package .. ".meta.json", "r")
+    local f, e = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "r")
     if not f then
         return nil
     end
@@ -2562,21 +2541,100 @@ local function getRepo()
     f.close()
     return uj
 end
+local function getOwners()
+    local owners = {}
+end
+local function isDependant(pkg)
+    local l = __LEGACY.files.list("")
+end
 local function uninstall(package)
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     if not __LEGACY.files.exists("/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
-    local toDelete = {"/config/arc/" .. package .. ".uninstallIndex", "/config/arc/" .. package .. ".meta.json"}
+    local toDelete = { }
+    toDelete["/config/arc/" .. package .. ".uninstallIndex"] = ""
+    toDelete["/config/arc/" .. package .. ".meta.json"] = ""
     local f = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "r")
     for value in f.readLine do
         if value == nil then break end
-        table.insert(toDelete, 1, "/" .. value:sub(3))
+        if value:sub(0, 1) == "f" then
+            toDelete["/" .. value:sub(4+64)] = value:sub(3, 3+64)
+        else
+            toDelete["/" .. value:sub(3)] = "DIRECTORY"
+        end
     end
-    for index, value in ipairs(toDelete) do
-        __LEGACY.files.delete(value)
+    for value, hash in pairs(toDelete) do
+        if hash == "" then
+            __LEGACY.files.delete(value)
+        elseif hash ~= "DIRECTORY" then
+            local f, e = __LEGACY.files.open(value)
+            if f then
+                local fhash = hashing.sha256(f.readAll())
+                if fhash == hash then
+                    __LEGACY.files.delete(value)
+                end
+            end
+        end
+    end
+    for value, hash in pairs(toDelete) do
+        if hash == "DIRECTORY" then
+            if __LEGACY.files.isDir(value) then
+                if #__LEGACY.files.list(value) > 0 then
+                    goto continue
+                end
+            end
+            __LEGACY.files.delete(value)
+        end
+        ::continue::
     end
 end
+local arkivelib = {
+    unarchive = function(text)
+        local linebuf = ""
+        local isReaderHeadInTable = true
+        local offsetheader = {}
+        local bufend = 0
+        for k = 0, #text, 1 do
+            local v = text:sub(k, k)
+            if v == "\n" then
+                if linebuf == "--ENDTABLE" then
+                    bufend = k + 1
+                    isReaderHeadInTable = false
+                    break
+                else
+                    table.insert(offsetheader, mstrsplit(linebuf, "|"))
+                end
+                linebuf = ""
+            else
+                linebuf = linebuf .. v
+            end
+        end
+        local outputfiles = {}
+        for k, v in ipairs(offsetheader) do
+            if v[2] == "-1" then
+                table.insert(outputfiles, { v[1], nil })
+            elseif offsetheader[k + 1] then
+                table.insert(outputfiles,
+                    { v[1], text:sub(bufend + tonumber(v[2]), bufend + tonumber(offsetheader[k + 1][2]) - 1) })
+            else
+                table.insert(outputfiles, { v[1], text:sub(bufend + tonumber(v[2]), #text) })
+            end
+            currentlyDownloadingFile = "Extracting..."
+            filesToGo = #offsetheader
+            filesAlreadyDownloaded = k
+            wasSuccess = true
+            redraw()
+        end
+        return outputfiles
+    end
+}
 local function install(package)
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     checkForCD()
     local repo = getRepo()
     local latestCommit = getLatestCommit()
@@ -2588,40 +2646,66 @@ local function install(package)
         local f = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "r")
         local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
         if ver < repo[package]["vId"] then
+            local updateFile, e = get("https://raw.githubusercontent.com/" ..
+            getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/upd" .. repo[package]["vId"] .. ".lua")
+            if updateFile then
+                local r = updateFile.readAll()
+                local f, e = load(r, "Update Module", "t", setmetatable({}, { __index = _G }))
+                if f then
+                    local ok, err = pcall(f);
+                    if not ok then error(err) end
+                else
+                    error(e)
+                end
+            end
             uninstall(package)
         else
             error("Package already installed!")
         end
     end
     local pkg = repo[package]
-    local indexFile = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/index")
-    local ifx = indexFile.readAll()
-    for index, value in ipairs(split(ifx, "\n")) do
-        if value:sub(1, 1) == "d" then
-            if not __LEGACY.files.exists("/" .. value:sub(3)) then
-                __LEGACY.files.makeDir("/" .. value:sub(3))
-                buildedpl = buildedpl .. value .. "\n"
+    local indexFile, err = get("https://raw.githubusercontent.com/" ..
+    getChosenRepo() .. "/" .. latestCommit .. "/archivedpkgs/" .. package .. ".arc")
+    if not indexFile then
+        error(err)
+    end
+    local ifx = arkivelib.unarchive(indexFile.readAll())
+    for index, value in ipairs(ifx) do
+        if value[2] == nil then
+            if not __LEGACY.files.exists("/" .. value[1]) then
+                __LEGACY.files.makeDir("/" .. value[1])
+                buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
-        elseif value:sub(1, 1) == "f" then
-            if not __LEGACY.files.exists("/" .. value:sub(3)) then
-                local file = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/" .. value:sub(3):gsub("%s", "%%20"))
-                local tfh = __LEGACY.files.open("/" .. value:sub(3), "w")
+        else
+        end
+    end
+    for index, value in ipairs(ifx) do
+        if value[2] == nil then
+            if not __LEGACY.files.exists("/" .. value[1]) then
+                __LEGACY.files.makeDir("/" .. value[1])
+                buildedpl = buildedpl .. "d " .. value[1] .. "\n"
+            end
+        else
+            if not __LEGACY.files.exists("/" .. value[1]) then
+                local file = value[2]
+                local tfh = __LEGACY.files.open("/" .. value[1], "w")
                 tfh.write(file.readAll())
                 tfh.close()
                 file.close()
-                buildedpl = buildedpl .. value .. "\n"
+                buildedpl = buildedpl .. "f "  .. hashing.sha256(value[2]) .. " " .. value[1] .. "\n"
             end
         end
     end
     if pkg["postInstScript"] then
         return function()
-            local file = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
+            local file = get("https://raw.githubusercontent.com/" ..
+            getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/" .. "pi.lua")
             local fd = file.readAll()
             file.close()
-            local tf = __LEGACY.files.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+            local tf = __LEGACY.files.open("/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
             tf.write(fd)
             tf.close()
-            arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+            arcos.r({}, "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
         end
     end
     indexFile.close()
@@ -2631,14 +2715,14 @@ local function install(package)
     local uinsf = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "w")
     uinsf.write(buildedpl)
     uinsf.close()
-    return function ()
+    return function()
     end
 end
 local function getUpdatable()
     local updatable = {}
     for index, value in ipairs(files.ls("/config/arc/")) do
-        if value:sub(#value-14) == ".uninstallIndex" then
-            local pk = value:sub(0, #value-15)
+        if value:sub(#value - 14) == ".uninstallIndex" then
+            local pk = value:sub(0, #value - 15)
             local pf = __LEGACY.files.open("/config/arc/" .. pk .. ".meta.json", "r")
             local at = pf.readAll()
             local af = __LEGACY.textutils.unserializeJSON(at)
@@ -2661,7 +2745,8 @@ return {
     getChosenRepo = getChosenRepo,
     getLatestCommit = getLatestCommit,
     get = get,
-}local white = 0x1
+}
+local white = 0x1
 local orange = 0x2
 local magenta = 0x4
 local lightBlue = 0x8
@@ -2888,7 +2973,7 @@ local function exists(f)
     if d == "" or d == "/" then return true end
     return __LEGACY.files.exists(f)
 end
-local function mkDir(d)
+local function mkDir(d) 
     return __LEGACY.files.makeDir(d)
 end
 local function resolve(f, keepNonExistent)
@@ -4355,4 +4440,28 @@ local function create(parent, nX, nY, nWidth, nHeight, bStartVisible)
     end
     return window
 end
-return {create = create}
+return {create = create}By using arcos, you automatically agree to these
+terms. Agreement to this file is also required By
+the stock arcos installer.
+We (the arcos development team) may:
+- Collect telemetry information.
+Telemetry sample data:
+For an error: 
+    - Message: text must not be nil
+    - File: /system/krnl.lua
+    - Line: 2
+For a kernel panic:
+    - Debug: <all info from the whole stack of 
+    debug.getinfo>
+    - Message: Argument invalid
+If there is no file at /temporary/telemetry, no 
+telemetry has been collected and no telemetry will be
+collected.
+(every telemetry call checks for 
+/temporary/telemetry, if it's not found it skips 
+telemetry else it overrides it with the new
+telemetry and sends the telemetry to the server)
+Turning off telemetry:
+To turn off telemetry, use gconfig or (if gconfig
+doesn't have telemetry stuff) modify /config/aboot,
+find the "telemetry" field and disable it

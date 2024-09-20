@@ -1,3 +1,55 @@
+
+while true do
+  term.setCursorPos(1, 1)
+  term.clear()
+  term.setBackgroundColor(colors.black)
+  term.setTextColor(colors.white)
+  print("Do you agree to the privacy policy found?")
+  print("(Y = yes, N = no, R = read the privacy policy)")
+  local ev, c = os.pullEvent("char")
+  if c == "y" or c == "Y" then
+    break
+  end
+  if c == "n" or c == "N" then
+    error("User did not agree to privacy policy.")
+  end
+  if c == "r" or c == "R" then
+    local x = ".p" .. os.clock()*1000 .. ".txt"
+    local f, e = fs.open(x, "w");
+    if not f then error(e) end
+    f.write([[By using arcos, you automatically agree to these
+terms. Agreement to this file is also required By
+the stock arcos installer.
+
+We (the arcos development team) may:
+- Collect telemetry information.
+Telemetry sample data:
+For an error: 
+    - Message: text must not be nil
+    - File: /system/krnl.lua
+    - Line: 2
+For a kernel panic:
+    - Debug: <all info from the whole stack of 
+    debug.getinfo>
+    - Message: Argument invalid
+
+If there is no file at /temporary/telemetry, no 
+telemetry has been collected and no telemetry will be
+collected.
+(every telemetry call checks for 
+/temporary/telemetry, if it's not found it skips 
+telemetry else it overrides it with the new
+telemetry and sends the telemetry to the server)
+
+Turning off telemetry:
+To turn off telemetry, use gconfig or (if gconfig
+doesn't have telemetry stuff) modify /config/aboot,
+find the "telemetry" field and disable it]])
+    f.close()
+    os.run({}, "/rom/programs/shell.lua", "/rom/programs/edit.lua", x)
+    fs.delete(x)
+  end
+end
 term.setPaletteColor(colors.white, 236/255, 239/255, 244/255)
 term.setPaletteColor(colors.orange, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.magenta, 180/255, 142/255, 173/255)
@@ -8,14 +60,14 @@ term.setPaletteColor(colors.pink, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.gray, 174/255, 179/255, 187/255)
 term.setPaletteColor(colors.lightGray, 216/255, 222/255, 233/255)
 term.setPaletteColor(colors.cyan, 136/255, 192/255, 208/255)
-term.setPaletteColor(colors.purple, 0/255, 0/255, 0/255)  
+term.setPaletteColor(colors.purple, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.blue, 129/255, 161/255, 193/255)
 term.setPaletteColor(colors.brown, 0/255, 0/255, 0/255)
 term.setPaletteColor(colors.green, 163/255, 190/255, 140/255)
 term.setPaletteColor(colors.red, 191/255, 97/255, 106/255)
 term.setPaletteColor(colors.black, 59/255, 66/255, 82/255)
-local sourceURL = "http://raw.githubusercontent.com/mirkokral/ccarcos/main"
-
+local sourceURL = "http://raw.githubusercontent.com/mirkokral/ccarcos/main/archivedpkgs/base.arc"
+local args = { ... }
 local filesAlreadyDownloaded = 0
 local filesToGo = 24
 local currentlyDownloadingFile = ""
@@ -84,64 +136,116 @@ local function get(_url, _headers, _binary)
     return wrap_request(_url, _url, nil, _headers, _binary)
 end
 
--- function redraw()
-  -- term.setBackgroundColor(colors.black)
-  -- term.setTextColor(colors.white)
-  -- term.clear()
-  -- local tw, th = term.getSize()
-  -- term.setCursorPos(tw/2-8<0.5 and math.floor(tw/2-8) or math.ceil(tw/2-8), th/2<0.5 and math.floor(th/2) or math.ceil(th/2))
-  -- term.setTextColor(colors.blue)
-  -- write("[")
-  -- term.setTextColor(colors.magenta)
-  -- for i = 0, (filesAlreadyDownloaded/filesToGo)*14, 1 do
-  --   write("=")
-  -- end
-  -- for i = 0, 14-(filesAlreadyDownloaded/filesToGo)*14, 1 do
-  --   write(" ")
-  -- end
-  -- term.setTextColor(colors.blue)
-  -- write("]")
-  -- if not wasSuccess then
-  --   term.setTextColor(colors.red)
-  -- end
-  -- term.setCursorPos(tw/2-(#currentlyDownloadingFile/2)<0.5 and math.floor(tw/2-(#currentlyDownloadingFile/2)) or math.ceil(tw/2-(#currentlyDownloadingFile/2)), th/2<0.5 and math.floor(th/2+1) or math.ceil(th/2+1))
-  -- write(currentlyDownloadingFile)
-  -- if not wasSuccess then sleep(0.5) end
--- end
+function redraw()
+  if args[1] == "norender" then return end
+  term.setBackgroundColor(colors.black)
+  term.setTextColor(colors.white)
+  term.clear()
+  local tw, th = term.getSize()
+  term.setCursorPos(tw/2-8<0.5 and math.floor(tw/2-8) or math.ceil(tw/2-8), th/2<0.5 and math.floor(th/2) or math.ceil(th/2))
+  term.setTextColor(colors.blue)
+  write("[")
+  term.setTextColor(colors.magenta)
+  for i = 0, (filesAlreadyDownloaded/filesToGo)*14, 1 do
+    write("=")
+  end
+  for i = 0, 14-(filesAlreadyDownloaded/filesToGo)*14, 1 do
+    write(" ")
+  end
+  term.setTextColor(colors.blue)
+  write("]")
+  if not wasSuccess then
+    term.setTextColor(colors.red)
+  end
+  term.setCursorPos(tw/2-(#currentlyDownloadingFile/2)<0.5 and math.floor(tw/2-(#currentlyDownloadingFile/2)) or math.ceil(tw/2-(#currentlyDownloadingFile/2)), th/2<0.5 and math.floor(th/2+1) or math.ceil(th/2+1))
+  write(currentlyDownloadingFile)
+  if not wasSuccess then sleep(0.5) end
+end
 
-print("")
-local indexFile, err = get(sourceURL .. "/build/objList.txt")
+redraw()
+
+local indexFile, err = get(sourceURL)
 if not indexFile then
   print("Failed to get index file. Error: " .. err)
-  print("Make sure your server has HTTP on. If it doesn't, use a release bundle lua from the releases section (when one gets released.)")
+  print("Make sure your server has HTTP on. If it doesn't, use a release zip from the releases section (when one gets released.)")
   error()
 end
-
+currentlyDownloadingFile = "Downloading archive"
+redraw()
 local indexFileContents = indexFile.readAll()
-if not indexFileContents then error("Error reading index file. Make sure your server has HTTP on.") end
+--if not indexFileContents then error("Error reading index file. Make sure your server has HTTP on.") end
 
-local index = mstrsplit(indexFileContents, "\n")
-local dirsToBeCreated = {}
-local filesToBeInstalled = {}
-
-for _, v in ipairs(index) do
-  if v:sub(1, 1) == "d" and not fs.exists(v:sub(3)) then
-    table.insert(dirsToBeCreated, v:sub(3))
+local arkivelib = {
+  ---Unachives an akv archive
+  ---@param text string
+  unarchive = function(text)
+    local linebuf = ""
+    local isReaderHeadInTable = true
+    local offsetheader = {}
+    local bufend = 0
+    for k=0, #text,1 do
+      local v = text:sub(k, k)
+      if v == "\n" then
+        if linebuf == "--ENDTABLE" then
+          bufend = k+1
+          isReaderHeadInTable=false
+          break
+        else
+          table.insert(offsetheader, mstrsplit(linebuf, "|"))
+        end
+        linebuf = ""
+      else
+        linebuf = linebuf .. v
+      end
+      --print(linebuf)
+    end
+    local outputfiles = {}
+    for k,v in ipairs(offsetheader) do
+      if v[2] == "-1" then table.insert(outputfiles, {v[1], nil})
+      elseif offsetheader[k+1] then
+        table.insert(outputfiles, {v[1], text:sub(bufend+tonumber(v[2]), bufend+tonumber(offsetheader[k+1][2])-1)})
+      else
+        table.insert(outputfiles, {v[1], text:sub(bufend+tonumber(v[2]), #text)})
+      end
+      --print(v[1])
+      currentlyDownloadingFile = "Extracting..."
+      filesToGo = #offsetheader
+      filesAlreadyDownloaded = k
+      wasSuccess = true
+      redraw()
+    end
+    
+    --print(bufend)
+    return outputfiles
   end
+}
 
-  if v:sub(1, 1) == "r" and not fs.exists(v:sub(3)) then
-    table.insert(filesToBeInstalled, v:sub(3))
-  end
+local data = arkivelib.unarchive(indexFileContents)
 
-  if v:sub(1, 1) == "f" then
-    table.insert(filesToBeInstalled, v:sub(3))
+currentlyDownloadingFile = "Writing..."
+filesToGo = #data
+filesAlreadyDownloaded = 0
+wasSuccess = true
+redraw()
+
+for k, v in ipairs(data) do
+  if v[2] == nil then fs.makeDir("/" .. v[1]) else
+    if fs.exists("/" .. v[1]) then fs.delete("/" .. v[1]) end
+    local f, e = fs.open("/" .. v[1], "w")
+    if f then
+      f.write(v[2])
+      f.close()
+    else
+      print(e)
+      sleep(5)
+    end
   end
+  filesAlreadyDownloaded = k
+  redraw()
 end
 
-filesToGo = #filesToBeInstalled
-for _, dir in ipairs(dirsToBeCreated) do 
-  fs.makeDir(dir)
-end
-for _, file in ipairs(filesToBeInstalled) do
-  sleep(1)
-end
+term.clear()
+term.setCursorPos(2, 2)
+term.setTextColor(colors.white)
+print("Downloading finished.")
+print()

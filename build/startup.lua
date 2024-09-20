@@ -89,56 +89,6 @@ function _G.strsplit(inputstr, sep)
   end
   return t
 end
-if not live then
-  local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
-  if f then
-    local branch = textutils.unserialiseJSON(f.readAll())["sha"]
-    file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/objList.txt")
-    if file then
-      cont = file.readAll()
-      pcall(file.close)
-      local missingFiles = {}
-      local missingDirs = {}
-      for _, i in ipairs(strsplit(cont, "\n")) do
-        action = string.sub(i, 1, 1)
-        filename = string.sub(i, 3)
-        if action == "d" and not fs.exists(filename) then
-          table.insert(missingDirs, filename)
-        end
-        if action == "f" and not fs.exists("/" .. filename) then
-          table.insert(missingFiles, filename)
-        end
-        if action == "r" and not fs.exists("/" .. filename) then
-          table.insert(missingFiles, filename)
-        end
-      end
-      if #missingDirs > 0 or #missingFiles > 0 then
-        print("Repairing system...")
-        for index, value in ipairs(missingDirs) do
-          print("Repairing directory: " .. value)
-          fs.makeDir(value)
-        end
-        for index, value in ipairs(missingFiles) do
-          f = fs.open(value, "w")
-          hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. value)
-          if f and hf then
-            print("Repairing file: " .. value)
-            f.write(hf.readAll())
-          end
-          if hf then
-            pcall(hf.close)
-          end
-          if f then
-            pcall(f.close)
-          end
-        end
-      end
-    end
-    pcall(f.close)
-  else
-    print("Fix check failed")
-  end
-end
 local oldprr = os.pullEventRaw
 local oldpe = os.pullEvent
 local oldtr = term.redirect

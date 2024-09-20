@@ -7,6 +7,7 @@ d>user
 d>apis
 d>data
 d>config/apps
+d>config/arc
 d>services/enabled
 d>system/apis
 f>startup.lua
@@ -32,6 +33,8 @@ f>config/arcrepo
 f>config/arcshell
 f>config/hostname
 f>config/passwd
+f>config/arc/base.meta.json
+f>config/arc/base.uninstallIndex
 f>services/arcfix.lua
 f>services/elevator.lua
 f>services/elevatorSrv.lua
@@ -55,6 +58,7 @@ f>system/apis/rd.lua
 f>system/apis/tutils.lua
 f>system/apis/ui.lua
 f>system/apis/window.lua
+f>data/PRIVACY.txt
 r>services/enabled/login
 r>config/passwd
 r>config/aboot

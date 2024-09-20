@@ -1,4 +1,13 @@
 {
+    "base": {
+        "friendlyName": "arcos itself",
+        "description": "The package that has all the arcos files",
+        "owner": "arcos Development Team and contributors",
+        "version": "24.08.1",                   
+        "vId": 1,
+        "dependencies": [],
+        "isIndependable": true
+    },
     "test": {
         "friendlyName": "Test Application",
         "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
@@ -62,7 +71,8 @@
         "owner":"TNC™ Development and Management Team",
         "version":"4",
         "vId": 4,
-        "dependencies": []
+        "dependencies": [],
+        "isIndependable": false
     }
     
 }

@@ -1,7 +1,12 @@
 local methods = {
-    GET = true, POST = true, HEAD = true,
-    OPTIONS = true, PUT = true, DELETE = true,
-    PATCH = true, TRACE = true,
+    GET = true,
+    POST = true,
+    HEAD = true,
+    OPTIONS = true,
+    PUT = true,
+    DELETE = true,
+    PATCH = true,
+    TRACE = true,
 }
 local function getChosenRepo()
     local rf = files.open("/config/arcrepo", "r")
@@ -75,13 +80,20 @@ local function getLatestCommit()
     return rp
 end
 local function checkForCD()
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     if not __LEGACY.files.exists("/config/arc") then
         __LEGACY.files.makeDir("/config/arc")
     end
 end
 local function fetch()
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     checkForCD()
-    local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/".. getLatestCommit() .."/repo/index.json")
+    local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
+    getLatestCommit() .. "/repo/index.json")
     local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
     fa.write(f.readAll())
     fa.close()
@@ -94,7 +106,7 @@ local function getIdata(package)
     if not __LEGACY.files.exists("/config/arc/" .. package .. ".meta.json") then
         return nil
     end
-    local f, e = __LEGACY.files.open("/config/arc/".. package .. ".meta.json", "r")
+    local f, e = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "r")
     if not f then
         return nil
     end
@@ -109,21 +121,100 @@ local function getRepo()
     f.close()
     return uj
 end
+local function getOwners()
+    local owners = {}
+end
+local function isDependant(pkg)
+    local l = __LEGACY.files.list("")
+end
 local function uninstall(package)
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     if not __LEGACY.files.exists("/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
-    local toDelete = {"/config/arc/" .. package .. ".uninstallIndex", "/config/arc/" .. package .. ".meta.json"}
+    local toDelete = { }
+    toDelete["/config/arc/" .. package .. ".uninstallIndex"] = ""
+    toDelete["/config/arc/" .. package .. ".meta.json"] = ""
     local f = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "r")
     for value in f.readLine do
         if value == nil then break end
-        table.insert(toDelete, 1, "/" .. value:sub(3))
+        if value:sub(0, 1) == "f" then
+            toDelete["/" .. value:sub(4+64)] = value:sub(3, 3+64)
+        else
+            toDelete["/" .. value:sub(3)] = "DIRECTORY"
+        end
     end
-    for index, value in ipairs(toDelete) do
-        __LEGACY.files.delete(value)
+    for value, hash in pairs(toDelete) do
+        if hash == "" then
+            __LEGACY.files.delete(value)
+        elseif hash ~= "DIRECTORY" then
+            local f, e = __LEGACY.files.open(value)
+            if f then
+                local fhash = hashing.sha256(f.readAll())
+                if fhash == hash then
+                    __LEGACY.files.delete(value)
+                end
+            end
+        end
+    end
+    for value, hash in pairs(toDelete) do
+        if hash == "DIRECTORY" then
+            if __LEGACY.files.isDir(value) then
+                if #__LEGACY.files.list(value) > 0 then
+                    goto continue
+                end
+            end
+            __LEGACY.files.delete(value)
+        end
+        ::continue::
     end
 end
+local arkivelib = {
+    unarchive = function(text)
+        local linebuf = ""
+        local isReaderHeadInTable = true
+        local offsetheader = {}
+        local bufend = 0
+        for k = 0, #text, 1 do
+            local v = text:sub(k, k)
+            if v == "\n" then
+                if linebuf == "--ENDTABLE" then
+                    bufend = k + 1
+                    isReaderHeadInTable = false
+                    break
+                else
+                    table.insert(offsetheader, mstrsplit(linebuf, "|"))
+                end
+                linebuf = ""
+            else
+                linebuf = linebuf .. v
+            end
+        end
+        local outputfiles = {}
+        for k, v in ipairs(offsetheader) do
+            if v[2] == "-1" then
+                table.insert(outputfiles, { v[1], nil })
+            elseif offsetheader[k + 1] then
+                table.insert(outputfiles,
+                    { v[1], text:sub(bufend + tonumber(v[2]), bufend + tonumber(offsetheader[k + 1][2]) - 1) })
+            else
+                table.insert(outputfiles, { v[1], text:sub(bufend + tonumber(v[2]), #text) })
+            end
+            currentlyDownloadingFile = "Extracting..."
+            filesToGo = #offsetheader
+            filesAlreadyDownloaded = k
+            wasSuccess = true
+            redraw()
+        end
+        return outputfiles
+    end
+}
 local function install(package)
+    if arcos.getCurrentTask().user ~= "root" then
+        error("This operation requires the user to be root.")
+    end
     checkForCD()
     local repo = getRepo()
     local latestCommit = getLatestCommit()
@@ -135,40 +226,66 @@ local function install(package)
         local f = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "r")
         local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
         if ver < repo[package]["vId"] then
+            local updateFile, e = get("https://raw.githubusercontent.com/" ..
+            getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/upd" .. repo[package]["vId"] .. ".lua")
+            if updateFile then
+                local r = updateFile.readAll()
+                local f, e = load(r, "Update Module", "t", setmetatable({}, { __index = _G }))
+                if f then
+                    local ok, err = pcall(f);
+                    if not ok then error(err) end
+                else
+                    error(e)
+                end
+            end
             uninstall(package)
         else
             error("Package already installed!")
         end
     end
     local pkg = repo[package]
-    local indexFile = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/index")
-    local ifx = indexFile.readAll()
-    for index, value in ipairs(split(ifx, "\n")) do
-        if value:sub(1, 1) == "d" then
-            if not __LEGACY.files.exists("/" .. value:sub(3)) then
-                __LEGACY.files.makeDir("/" .. value:sub(3))
-                buildedpl = buildedpl .. value .. "\n"
+    local indexFile, err = get("https://raw.githubusercontent.com/" ..
+    getChosenRepo() .. "/" .. latestCommit .. "/archivedpkgs/" .. package .. ".arc")
+    if not indexFile then
+        error(err)
+    end
+    local ifx = arkivelib.unarchive(indexFile.readAll())
+    for index, value in ipairs(ifx) do
+        if value[2] == nil then
+            if not __LEGACY.files.exists("/" .. value[1]) then
+                __LEGACY.files.makeDir("/" .. value[1])
+                buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
-        elseif value:sub(1, 1) == "f" then
-            if not __LEGACY.files.exists("/" .. value:sub(3)) then
-                local file = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/" .. value:sub(3):gsub("%s", "%%20"))
-                local tfh = __LEGACY.files.open("/" .. value:sub(3), "w")
+        else
+        end
+    end
+    for index, value in ipairs(ifx) do
+        if value[2] == nil then
+            if not __LEGACY.files.exists("/" .. value[1]) then
+                __LEGACY.files.makeDir("/" .. value[1])
+                buildedpl = buildedpl .. "d " .. value[1] .. "\n"
+            end
+        else
+            if not __LEGACY.files.exists("/" .. value[1]) then
+                local file = value[2]
+                local tfh = __LEGACY.files.open("/" .. value[1], "w")
                 tfh.write(file.readAll())
                 tfh.close()
                 file.close()
-                buildedpl = buildedpl .. value .. "\n"
+                buildedpl = buildedpl .. "f "  .. hashing.sha256(value[2]) .. " " .. value[1] .. "\n"
             end
         end
     end
     if pkg["postInstScript"] then
         return function()
-            local file = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/"..latestCommit.."/repo/"..package.."/" .. "pi.lua")
+            local file = get("https://raw.githubusercontent.com/" ..
+            getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/" .. "pi.lua")
             local fd = file.readAll()
             file.close()
-            local tf = __LEGACY.files.open("/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+            local tf = __LEGACY.files.open("/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
             tf.write(fd)
             tf.close()
-            arcos.r({}, "/temporary/arc."..package.."." .. latestCommit .. ".postInst.lua")
+            arcos.r({}, "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
         end
     end
     indexFile.close()
@@ -178,14 +295,14 @@ local function install(package)
     local uinsf = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "w")
     uinsf.write(buildedpl)
     uinsf.close()
-    return function ()
+    return function()
     end
 end
 local function getUpdatable()
     local updatable = {}
     for index, value in ipairs(files.ls("/config/arc/")) do
-        if value:sub(#value-14) == ".uninstallIndex" then
-            local pk = value:sub(0, #value-15)
+        if value:sub(#value - 14) == ".uninstallIndex" then
+            local pk = value:sub(0, #value - 15)
             local pf = __LEGACY.files.open("/config/arc/" .. pk .. ".meta.json", "r")
             local at = pf.readAll()
             local af = __LEGACY.textutils.unserializeJSON(at)
