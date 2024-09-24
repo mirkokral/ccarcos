@@ -37,7 +37,16 @@ local function split(inputstr, sep)
     if t == {} then
         t = { inputstr }
     end
-    return t
+    local nt = {}
+    for i, v in ipairs(t) do
+        if v ~= "" then
+            table.insert(nt, v)
+        end
+    end
+    if t == {} then
+        t = { "" }
+    end
+    return nt
 end
 ---Joins an table by seperators
 ---@param tab table

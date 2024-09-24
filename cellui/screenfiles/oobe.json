@@ -1,0 +1,341 @@
+[
+    {
+        "x": 0,
+        "y": 0,
+        "xa": 0,
+        "ya": 0,
+        "vexpand": 0,
+        "hexpand": 0,
+        "width": 51,
+        "height": 19,
+        "id": "512241690.9505603",
+        "children": [
+            {
+                "cmd": {
+                    "type": "Command",
+                    "ctype": "goToScreen",
+                    "value": "1",
+                    "transition": {
+                        "dir": "right",
+                        "anim": "over",
+                        "curve": "ease",
+                        "duration": 1000
+                    }
+                },
+                "x": -0.6944444628409403,
+                "y": 0,
+                "xa": 1,
+                "ya": 1,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 3,
+                "height": 3,
+                "id": "654966125.6288562",
+                "children": [
+                    {
+                        "labelText": ">",
+                        "x": 1,
+                        "y": 1,
+                        "xa": 0,
+                        "ya": 0,
+                        "vexpand": 0,
+                        "hexpand": 0,
+                        "width": 1,
+                        "height": 1,
+                        "id": "573925929.5709376",
+                        "children": [],
+                        "style": {
+                            "fgColor": "9",
+                            "bgColor": "f"
+                        },
+                        "typeName": "Label"
+                    }
+                ],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Button"
+            },
+            {
+                "labelText": "1",
+                "x": -4,
+                "y": -1,
+                "xa": 1,
+                "ya": 1,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 1,
+                "height": 1,
+                "id": "173101124.9971467",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "",
+                "x": 0.09722219830677747,
+                "y": 1.1666666666666672,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 0.9027768745098346,
+                "height": 17.000000000000004,
+                "id": "321298115.12672657",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "2"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "",
+                "x": -6.083333520977589,
+                "y": 1.3000000000000003,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 0.9027768745098346,
+                "height": 17.000000000000004,
+                "id": "321298115.12672657 (copy)",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "2"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "",
+                "x": -13.097222595671093,
+                "y": 1.7666666666666675,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 0.9027768745098346,
+                "height": 17.000000000000004,
+                "id": "321298115.12672657 (copy) (copy)",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "2"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "",
+                "x": -20.59722279435327,
+                "y": 1.9000000000000012,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 0.9027768745098346,
+                "height": 17.000000000000004,
+                "id": "321298115.12672657 (copy) (copy) (copy)",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "2"
+                },
+                "typeName": "Label"
+            }
+        ],
+        "style": {
+            "fgColor": "0",
+            "bgColor": "f"
+        },
+        "typeName": "Container"
+    },
+    {
+        "x": 0,
+        "y": 0,
+        "xa": 0,
+        "ya": 0,
+        "vexpand": 0,
+        "hexpand": 0,
+        "width": 51,
+        "height": 19,
+        "id": "512241690.9505603",
+        "children": [
+            {
+                "cmd": {
+                    "type": "Command",
+                    "ctype": "goToScreen",
+                    "value": "0",
+                    "transition": {
+                        "dir": "right",
+                        "anim": "over",
+                        "curve": "ease",
+                        "duration": 1000
+                    }
+                },
+                "x": -0.6944444628409403,
+                "y": 0,
+                "xa": 1,
+                "ya": 1,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 3,
+                "height": 3,
+                "id": "654966125.6288562",
+                "children": [
+                    {
+                        "labelText": ">",
+                        "x": 1,
+                        "y": 1,
+                        "xa": 0,
+                        "ya": 0,
+                        "vexpand": 0,
+                        "hexpand": 0,
+                        "width": 1,
+                        "height": 1,
+                        "id": "573925929.5709376",
+                        "children": [],
+                        "style": {
+                            "fgColor": "9",
+                            "bgColor": "f"
+                        },
+                        "typeName": "Label"
+                    }
+                ],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Button"
+            },
+            {
+                "labelText": "2",
+                "x": -4,
+                "y": -1,
+                "xa": 1,
+                "ya": 1,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 1,
+                "height": 1,
+                "id": "173101124.9971467",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Label"
+            },
+            {
+                "cmd": {
+                    "type": "Command",
+                    "ctype": "goToScreen",
+                    "value": "0",
+                    "transition": {
+                        "dir": "left",
+                        "anim": "under",
+                        "curve": "ease",
+                        "duration": 1000
+                    }
+                },
+                "x": -5,
+                "y": 0,
+                "xa": 1,
+                "ya": 1,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 3,
+                "height": 3,
+                "id": "Back",
+                "children": [
+                    {
+                        "labelText": "<",
+                        "x": 1,
+                        "y": 1,
+                        "xa": 0,
+                        "ya": 0,
+                        "vexpand": 0,
+                        "hexpand": 0,
+                        "width": 1,
+                        "height": 1,
+                        "id": "573925929.5709376",
+                        "children": [],
+                        "style": {
+                            "fgColor": "7",
+                            "bgColor": "f"
+                        },
+                        "typeName": "Label"
+                    }
+                ],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Button"
+            },
+            {
+                "labelText": "",
+                "x": 0.23611109087496546,
+                "y": 1.2000000000000004,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 0.763887981941656,
+                "height": 17.099999999999998,
+                "id": "941431421.9632021",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "4"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "",
+                "x": -7.402778000375375,
+                "y": 1.5000000000000009,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 0.763887981941656,
+                "height": 17.099999999999998,
+                "id": "941431421.9632021 (copy)",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "4"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "",
+                "x": -15.527778215614385,
+                "y": 1.8333333333333346,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 0.763887981941656,
+                "height": 17.099999999999998,
+                "id": "941431421.9632021 (copy) (copy)",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "4"
+                },
+                "typeName": "Label"
+            }
+        ],
+        "style": {
+            "fgColor": "0",
+            "bgColor": "f"
+        },
+        "typeName": "Container"
+    }
+]

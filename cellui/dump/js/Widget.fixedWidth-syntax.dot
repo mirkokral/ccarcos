@@ -1,0 +1,18 @@
+digraph graphname {
+n45198 [shape=box,label="(45198)"];
+n45197 [shape=box,label="(45197)\ntmp = screenwidth"];
+n45196 [shape=box,label="(45196)\nvar tmp\nvar ignoreParent = ignoreParent"];
+n45195 [shape=box,label="(45195)\nignoreParent = true"];
+n45194 [shape=box,label="(45194)\nvar tmp = this.parent == null"];
+n45194 -> n45195[style="dashed",color="gray",label="then"];
+n45194 -> n45196[style="dashed",color="gray",label="next"];
+n45193 [shape=box,label="(45193)\nignoreParent = false"];
+n45192 [shape=box,label="<function-end>
+(45192)"];
+n45191 [shape=box,label="<function-begin>
+(45191)\nvar tmp = ignoreParent == null"];
+n45191 -> n45193[style="dashed",color="gray",label="then"];
+n45191 -> n45194[style="dashed",color="gray",label="next"];
+n1 [shape=box,label="<root>
+(1)"];
+}

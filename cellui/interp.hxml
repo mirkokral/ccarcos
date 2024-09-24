@@ -1,0 +1,3 @@
+--interp
+--class-path src
+-m Main

@@ -1,0 +1,6 @@
+--lua out/celluilib.lua
+--class-path src
+-m Main
+-D lua-vanilla
+-D cos=1
+--library hxease

@@ -1,0 +1,6 @@
+--lua out/uitest.lua
+--class-path src
+--main Test
+-D lua-vanilla
+-D cos=1
+--library hxease

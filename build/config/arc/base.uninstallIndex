@@ -45,10 +45,7 @@ f>services/shell.lua
 f>services/enabled/9 arcfix
 f>services/enabled/login
 f>system/bootloader.lua
-f>system/devinstaller.lua
-f>system/installer.lua
 f>system/krnl.lua
-f>system/liveinst.lua
 f>system/rel
 f>system/apis/arc.lua
 f>system/apis/col.lua

@@ -44,8 +44,11 @@ local function run(a1, ...)
         end
     end
     if cmd == nil then
-        local cq = tutils.join({ a1, ... }, " ")
+        local cq = "return " .. tutils.join({ a1, ... }, " ")
         local chunkl, err = load(cq, "eval", nil, luaGlobal)
+        if(err and err:sub(20, 36) == "syntax error near") then
+            err = "Command not found."
+        end
         if not chunkl then
             printError(err)
             return false

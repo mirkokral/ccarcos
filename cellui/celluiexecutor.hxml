@@ -1,0 +1,6 @@
+--lua celluidesigner/src/base.txt
+--class-path src
+-m Main2
+-D lua-vanilla
+-D cos=1
+--library hxease

@@ -1,0 +1,204 @@
+[
+    {
+        "x": 0,
+        "y": 0,
+        "xa": 0,
+        "ya": 0,
+        "vexpand": 0,
+        "hexpand": 0,
+        "width": 51,
+        "height": 19,
+        "id": "433516466.21485853",
+        "children": [
+            {
+                "labelText": "left!",
+                "x": 0,
+                "y": 0,
+                "xa": 0,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 5,
+                "height": 1,
+                "id": "datelabel",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "center!",
+                "x": 0,
+                "y": 0,
+                "xa": 0.5,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 7,
+                "height": 1,
+                "id": "clocklabel",
+                "children": [],
+                "style": {
+                    "fgColor": "d",
+                    "bgColor": "e"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "right!",
+                "x": 0,
+                "y": 0,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 6,
+                "height": 1,
+                "id": "rightlabel",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "Amogus\n(in multiline)",
+                "x": 10,
+                "y": 2,
+                "xa": 0,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 14,
+                "height": 2,
+                "id": "amoglabel",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "e"
+                },
+                "typeName": "Label"
+            },
+            {
+                "cmd": {
+                    "type": "Command",
+                    "ctype": "goToScreen",
+                    "value": "1",
+                    "transition": {
+                        "dir": "left",
+                        "anim": "slide",
+                        "curve": "ease",
+                        "duration": 1000
+                    }
+                },
+                "x": -1,
+                "y": -1,
+                "xa": 1,
+                "ya": 1,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 4.2361109584202055,
+                "height": 1.3666666666666671,
+                "id": "225897307.30156854",
+                "children": [
+                    {
+                        "labelText": "Next",
+                        "x": 0,
+                        "y": 0,
+                        "xa": 0,
+                        "ya": 0,
+                        "vexpand": 0,
+                        "hexpand": 0,
+                        "width": 4.3888886607723405,
+                        "height": 1.1333333333333329,
+                        "id": "850580634.0474308",
+                        "children": [],
+                        "style": {
+                            "fgColor": "0",
+                            "bgColor": "b"
+                        },
+                        "typeName": "Label"
+                    }
+                ],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Button"
+            }
+        ],
+        "style": {
+            "fgColor": "0",
+            "bgColor": "f"
+        },
+        "typeName": "Container"
+    },
+    {
+        "x": 0,
+        "y": 0,
+        "xa": 0,
+        "ya": 0,
+        "vexpand": 0,
+        "hexpand": 0,
+        "width": 51,
+        "height": 19,
+        "id": "872792075.7679654",
+        "children": [
+            {
+                "cmd": {
+                    "type": "Command",
+                    "ctype": "goToScreen",
+                    "value": "0",
+                    "transition": {
+                        "dir": "right",
+                        "anim": "over",
+                        "curve": "ease",
+                        "duration": 1000
+                    }
+                },
+                "x": -1,
+                "y": -1,
+                "xa": 1,
+                "ya": 1,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 4,
+                "height": 1,
+                "id": "135484100.40492874",
+                "children": [
+                    {
+                        "labelText": "Back",
+                        "x": 0,
+                        "y": 0,
+                        "xa": 0,
+                        "ya": 0,
+                        "vexpand": 0,
+                        "hexpand": 0,
+                        "width": 10,
+                        "height": 1,
+                        "id": "593521228.4341767",
+                        "children": [],
+                        "style": {
+                            "fgColor": "0",
+                            "bgColor": "7"
+                        },
+                        "typeName": "Label"
+                    }
+                ],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Button"
+            }
+        ],
+        "style": {
+            "fgColor": "0",
+            "bgColor": "f"
+        },
+        "typeName": "Container"
+    }
+]

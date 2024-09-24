@@ -9,7 +9,10 @@ local methods = {
     TRACE = true,
 }
 local function getChosenRepo()
-    local rf = files.open("/config/arcrepo", "r")
+    local rf, x = files.open("/config/arcrepo", "r")
+    if not rf then
+        return "mirkokral/ccarcos" -- Default to the main arcos repo
+    end
     local fx = rf.read()
     rf.close()
     return fx
@@ -111,8 +114,11 @@ local function fetch()
     f2.write(rp)
     fr.close()
     f2.close()
-    local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
+    local f, e = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
     getLatestCommit() .. "/repo/index.json")
+    if not f then
+        return false
+    end
     local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
     fa.write(f.readAll())
     fa.close()
@@ -139,12 +145,6 @@ local function getRepo()
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
     f.close()
     return uj
-end
-local function getOwners()
-    local owners = {}
-end
-local function isDependant(pkg)
-    local l = __LEGACY.files.list("")
 end
 local function uninstall(package)
     if arcos.getCurrentTask().user ~= "root" then
@@ -301,8 +301,11 @@ local function install(package)
     end
     if pkg["postInstScript"] then
         return function()
-            local file = get("https://raw.githubusercontent.com/" ..
+            local file, e = get("https://raw.githubusercontent.com/" ..
             getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/" .. "pi.lua")
+            if not file then
+                return;
+            end
             local fd = file.readAll()
             file.close()
             local tf = __LEGACY.files.open("/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")

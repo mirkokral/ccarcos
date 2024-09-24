@@ -63,7 +63,7 @@ _G.apiUtils = {
         print("arcos has forcefully shut off, due to a critical error.")
         print("This is probably a system issue")
         print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
-        print("Suspected location: " .. debug.getinfo(2).short_src .. ":" .. debug.getinfo(2).currentline)
+        print("Suspected location: " .. debug.getinfo(2).source .. ":" .. debug.getinfo(2).currentline)
         print("Error: " .. err)
         
         tasks = {}
@@ -139,12 +139,23 @@ _G.arcos = {
         return {
             pid = -1,
             name = "kernelspace",
-            user = "krunner",
+            user = "root",
             nice = 1,
             paused = false,
             env = {}
         }
     end,
+
+    ---Gets all user names in the system
+    ---@return table<number,string>
+    getUsers = function()
+        local f = {}
+        for index, value in ipairs(users) do
+            table.insert(f, value.name)
+        end
+        return f
+    end,
+
     ---Gets the kernel log buffer
     ---@return string?
     getKernelLogBuffer = function()
@@ -593,6 +604,9 @@ users = tutils.dJSON(passwdFile.read())
 ---Gets the current home dir for the user
 ---@return string
 _G.arcos.getHome = function ()
+    if not files.exists("/user/" .. arcos.getCurrentTask().user) then
+        files.mkDir("/user/" .. arcos.getCurrentTask().user)
+    end
     return "/user/" .. arcos.getCurrentTask().user
 end
 ---Validates user credentials
@@ -678,6 +692,12 @@ if f then
     tab = tutils.dJSON(f.read())
 else
     apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), "Kernel", "174")
+end
+
+for index, value in ipairs(arcos.getUsers()) do
+    if not files.exists("/user/" .. value) then
+        files.mkDir("/user/" .. value)
+    end    
 end
 
 tasking.createTask("Init", function()

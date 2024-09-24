@@ -1,3 +1,53 @@
+local function getPermissions(file, user) 
+    local read = true
+    local write = true
+    local listed = true
+    if user == nil then user = arcos.getCurrentTask().user end
+    if __LEGACY.files.isReadOnly(file) then
+        write = false
+    end
+    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "$" then -- Metadata files
+        return {
+            read = false,
+            write = false,
+            listed = false
+        }
+    end
+    local disallowedfiles = {"startup.lua", "startup"}
+    for index, value in ipairs(disallowedfiles) do
+        if tutils.split(file, "/")[1] == value then -- Metadata files
+            return {
+                read = false,
+                write = false,
+                listed = false,
+            }
+        end
+    end
+    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "." then
+        listed = false
+    end
+    return {
+        read = read,
+        write = write,
+        listed = listed,
+    }
+end
+local function getPermissionsForAll(file)
+    local u = {}
+    for index, value in ipairs(arcos.getUsers()) do
+        u[value] = getPermissions(file, value)
+    end
+    return u
+end
+local function cant(on, what)
+    return not getPermissions(on)[what]
+end
+local function can(on, what)
+    return getPermissions(on)[what]
+end
+local function readonly(path)
+    return not getPermissions(path).write
+end
 local function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
@@ -13,6 +63,12 @@ local function split(inputstr, sep)
 end
 local function open(path, mode)
     local validModes = {"w", "r", "w+", "r+", "a", "wb", "rb"}
+    if cant(path, "read") and (mode == "r" or mode == "r+" or mode == "a" or mode == "w+" or mode == "rb") then
+        return nil, "No permission for this action"
+    end
+    if cant(path, "write") and (mode == "w" or mode == "w+" or mode == "a" or mode == "r+" or mode == "wb") then
+        return nil, "No permission for this action"
+    end
     local cmodevalid = false
     for _, v in ipairs(validModes) do
         if mode == v then cmodevalid = true break end
@@ -61,16 +117,39 @@ local function open(path, mode)
     return file, nil
 end
 local function ls(dir)
-    return __LEGACY.files.list(dir)
+    local listed =  __LEGACY.files.list(dir)
+    local out = {}
+    for index, value in ipairs(listed) do
+        if can(dir .. '/' .. value, "listed") then
+            table.insert(out, value)
+        end
+    end
+    return out
 end
 local function rm(f)
+    if cant(f, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.delete(f)
 end
 local function exists(f)
-    if d == "" or d == "/" then return true end
+    if f == "" or f == "/" then return true end
+    if tutils.split(f, "/")[#tutils.split(f, "/")]:sub(1,1) == "$" then
+        return false
+    end
     return __LEGACY.files.exists(f)
 end
 local function mkDir(d) 
+    local fv = {}
+    for key, value in pairs({table.unpack(tutils.split(d, "/"), 1, #tutils.split(d, "/")-1)}) do
+        table.insert(fv, value)
+    end
+    if not exists(table.concat(fv, "/")) then
+        error("Parent doesn't exist.")
+    end
+    if cant(table.concat(fv, "/"), "write") then
+        error("No permission for this action");
+    end
     return __LEGACY.files.makeDir(d)
 end
 local function resolve(f, keepNonExistent)
@@ -110,9 +189,15 @@ local function dir(d)
     return __LEGACY.files.isDir(d)
 end
 local function m(t, d) 
+    if cant(t, "read") or cant(t, "write") or cant(d, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.move(t, d)
 end
 local function c(t, d)
+    if cant(t, "read") or cant(d, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.copy(t, d)
 end
 local expect = col.expect
@@ -197,7 +282,7 @@ local function find_aux(path, parts, i, out)
         local files = files.ls(path)
         for j = 1, #files do
             local file = files[j]
-            if file:find(part.contents) then find_aux(files.combine(path, file), parts, i + 1, out) end
+            if file:find(part.contents) then find_aux(__LEGACY.files.combine(path, file), parts, i + 1, out) end
         end
     end
 end
@@ -245,10 +330,10 @@ local function par(path)
     return __LEGACY.files.getDir(path)
 end
 local function size(path)
+    if cant(path, "read") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.getSize(path)
-end
-local function readonly(path)
-    return __LEGACY.files.isReadOnly(path)
 end
 local function drive(path)
     return __LEGACY.files.getDrive(path)
@@ -260,7 +345,9 @@ local function capacity(path)
     return __LEGACY.files.getCapacity(path)
 end
 local function attributes(path)
-    return __LEGACY.files.attributes(path)
+    local attr = __LEGACY.files.attributes(path)
+    attr.permissions = getPermissionsForAll(path)
+    return attr
 end
 return {
     open = open,

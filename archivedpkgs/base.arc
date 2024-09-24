@@ -11,62 +11,56 @@
 |services/enabled|-1|
 |system/apis|-1|
 |/startup.lua|0|
-|/objList.txt|6832|
-|apps/adduser.lua|8031|
-|apps/arc.lua|8545|
-|apps/cat.lua|11439|
-|apps/cd.lua|11639|
-|apps/cp.lua|11937|
-|apps/init.lua|12175|
-|apps/kmsg.lua|15048|
-|apps/ls.lua|15097|
-|apps/mkdir.lua|15712|
-|apps/mv.lua|15827|
-|apps/rm.lua|16065|
-|apps/rmuser.lua|16216|
-|apps/shell.lua|16620|
-|apps/uitest.lua|19292|
-|apps/clear.lua|24617|
-|apps/shutdown.lua|24653|
-|apps/reboot.lua|24669|
-|config/aboot|24683|
-|config/arcrepo|24843|
-|config/arcshell|24860|
-|config/hostname|24912|
-|config/passwd|24917|
-|config/arc/base.meta.json|25167|
-|config/arc/base.uninstallIndex|25435|
-|services/arcfix.lua|26634|
-|services/elevator.lua|26719|
-|services/elevatorSrv.lua|29010|
-|services/elevatorStep.lua|32066|
-|services/oobe.lua|32658|
-|services/pms.lua|38403|
-|services/shell.lua|41983|
-|services/enabled/9 arcfix|42013|
-|services/enabled/login|42026|
-|system/bootloader.lua|42036|
-|system/devinstaller.lua|42985|
-|system/installer.lua|47146|
-|system/krnl.lua|51592|
-|system/liveinst.lua|67851|
-|system/rel|70103|
-|system/apis/arc.lua|70109|
-|system/apis/col.lua|82170|
-|system/apis/files.lua|86243|
-|system/apis/hashing.lua|94889|
-|system/apis/rd.lua|99513|
-|system/apis/tutils.lua|100517|
-|system/apis/ui.lua|101488|
-|system/apis/window.lua|122392|
-|data/PRIVACY.txt|137454|
+|/objList.txt|6662|
+|apps/adduser.lua|7790|
+|apps/arc.lua|8304|
+|apps/cat.lua|11198|
+|apps/cd.lua|11398|
+|apps/cp.lua|11696|
+|apps/init.lua|11934|
+|apps/kmsg.lua|14807|
+|apps/ls.lua|14856|
+|apps/mkdir.lua|15471|
+|apps/mv.lua|15586|
+|apps/rm.lua|15824|
+|apps/rmuser.lua|15975|
+|apps/shell.lua|16379|
+|apps/uitest.lua|19179|
+|apps/clear.lua|24504|
+|apps/shutdown.lua|24540|
+|apps/reboot.lua|24556|
+|config/aboot|24570|
+|config/arcrepo|24730|
+|config/arcshell|24747|
+|config/hostname|24799|
+|config/passwd|24804|
+|config/arc/base.meta.json|25054|
+|config/arc/base.uninstallIndex|25322|
+|services/arcfix.lua|26450|
+|services/elevator.lua|26535|
+|services/elevatorSrv.lua|28826|
+|services/elevatorStep.lua|31882|
+|services/oobe.lua|32474|
+|services/pms.lua|38219|
+|services/shell.lua|41799|
+|services/enabled/9 arcfix|41829|
+|services/enabled/login|41842|
+|system/bootloader.lua|41852|
+|system/krnl.lua|42801|
+|system/rel|59514|
+|system/apis/arc.lua|59520|
+|system/apis/col.lua|71675|
+|system/apis/files.lua|75842|
+|system/apis/hashing.lua|87267|
+|system/apis/rd.lua|91891|
+|system/apis/tutils.lua|92895|
+|system/apis/ui.lua|94037|
+|system/apis/window.lua|114947|
+|data/PRIVACY.txt|130009|
 --ENDTABLE
 if arcos then return end
 term.clear()
 local UIthemedefs = {
-}
-local ghToken = "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" -- I know this is stupid but it works
-local headers = {
 }
 UIthemedefs[colors.white] = { 236, 239, 244 }
 UIthemedefs[colors.orange] = { 0, 0, 0 }
@@ -292,10 +286,7 @@ f>services/shell.lua
 f>services/enabled/9 arcfix
 f>services/enabled/login
 f>system/bootloader.lua
-f>system/devinstaller.lua
-f>system/installer.lua
 f>system/krnl.lua
-f>system/liveinst.lua
 f>system/rel
 f>system/apis/arc.lua
 f>system/apis/col.lua
@@ -623,8 +614,11 @@ local function run(a1, ...)
         end
     end
     if cmd == nil then
-        local cq = tutils.join({ a1, ... }, " ")
+        local cq = "return " .. tutils.join({ a1, ... }, " ")
         local chunkl, err = load(cq, "eval", nil, luaGlobal)
+        if(err and err:sub(20, 36) == "syntax error near") then
+            err = "Command not found."
+        end
         if not chunkl then
             printError(err)
             return false
@@ -965,10 +959,7 @@ f>services/shell.lua
 f>services/enabled/9 arcfix
 f>services/enabled/login
 f>system/bootloader.lua
-f>system/devinstaller.lua
-f>system/installer.lua
 f>system/krnl.lua
-f>system/liveinst.lua
 f>system/rel
 f>system/apis/arc.lua
 f>system/apis/col.lua
@@ -1610,228 +1601,6 @@ function main()
     fn(table.unpack(mysplit(args, " ")))
 end
 main()
-term.setPaletteColor(colors.white, 236/255, 239/255, 244/255)
-term.setPaletteColor(colors.orange, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.magenta, 180/255, 142/255, 173/255)
-term.setPaletteColor(colors.lightBlue, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.yellow, 235/255, 203/255, 139/255)
-term.setPaletteColor(colors.lime, 163/255, 190/255, 140/255)
-term.setPaletteColor(colors.pink, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.gray, 174/255, 179/255, 187/255)
-term.setPaletteColor(colors.lightGray, 216/255, 222/255, 233/255)
-term.setPaletteColor(colors.cyan, 136/255, 192/255, 208/255)
-term.setPaletteColor(colors.purple, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.blue, 129/255, 161/255, 193/255)
-term.setPaletteColor(colors.brown, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.green, 163/255, 190/255, 140/255)
-term.setPaletteColor(colors.red, 191/255, 97/255, 106/255)
-term.setPaletteColor(colors.black, 59/255, 66/255, 82/255)
-local loaderLoaded = 0
-function drawLoader()
-    local w, h = term.getSize()
-    term.setBackgroundColor(colors.black)
-    term.clear()
-    term.setCursorPos(math.floor(w/2), h/2-2)
-    term.setBackgroundColor(loaderLoaded == 0 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)+3, h/2-2)
-    term.setBackgroundColor(loaderLoaded == 1 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)+3, h/2)
-    term.setBackgroundColor(loaderLoaded == 2 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)+3, h/2+2)
-    term.setBackgroundColor(loaderLoaded == 3 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2), h/2+2)
-    term.setBackgroundColor(loaderLoaded == 4 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)-3, h/2+2)
-    term.setBackgroundColor(loaderLoaded == 5 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)-3, h/2)
-    term.setBackgroundColor(loaderLoaded == 6 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)-3, h/2-2)
-    term.setBackgroundColor(loaderLoaded == 7 and colors.white or colors.gray)
-    term.write("  ")
-    loaderLoaded = (loaderLoaded + 1) % 8
-end
-write("GitHub repo (for example: mirkokral/ccarcos) > ")
-local repo = read()
-drawLoader()
-if not fs.exists("/system/krnl.lua") then
-    for _, i in ipairs(fs.list("/")) do
-        if not i == "rom" then fs.delete(i) end
-    end
-else
-    fs.delete("/system")
-end
-function _G.strsplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
-local fr = http.get("https://api.github.com/repos/".. repo .."/commits/main")
-local branch
-if fr then
-    branch = textutils.unserialiseJSON(fr.readAll())["sha"]
-else
-    write(">")
-    branch = read()
-end
-file = http.get("https://raw.githubusercontent.com/"..repo.."/"..branch.."/build/objList.txt")
-cont = file.readAll()
-file.close()
-for _,i in ipairs(strsplit(cont, "\n")) do
-    drawLoader()
-    action = string.sub(i, 1, 1)
-    filename = string.sub(i, 3)
-    if action == "d" then
-        fs.makeDir("/" .. filename)
-    end
-    if action == "f" then
-        fs.delete("/" .. filename)
-        f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/"..repo.."/" .. branch .. "/build/" .. filename)
-        f.write(hf.readAll())
-        hf.close()
-        f.close()
-    end
-    if action == "r" and not fs.exists("/" .. filename) then
-        f = fs.open(filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/"..repo.."/" .. branch .. "/build/" .. filename)
-        f.write(hf.readAll())
-        hf.close()
-        f.close()
-    end
-end
-f = fs.open("/system/rel", "w")
-f.write(branch)
-f.close()
-f = fs.open("/config/aboot", "r")
-local a = textutils.unserialiseJSON(f.readAll())
-f.close()
-f = fs.open("/config/aboot", "w")
-a["autoUpdate"] = false
-f.write(textutils.serializeJSON(a))
-f.close()
-os.reboot()term.setPaletteColor(colors.white, 236/255, 239/255, 244/255)
-term.setPaletteColor(colors.orange, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.magenta, 180/255, 142/255, 173/255)
-term.setPaletteColor(colors.lightBlue, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.yellow, 235/255, 203/255, 139/255)
-term.setPaletteColor(colors.lime, 163/255, 190/255, 140/255)
-term.setPaletteColor(colors.pink, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.gray, 174/255, 179/255, 187/255)
-term.setPaletteColor(colors.lightGray, 216/255, 222/255, 233/255)
-term.setPaletteColor(colors.cyan, 136/255, 192/255, 208/255)
-term.setPaletteColor(colors.purple, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.blue, 129/255, 161/255, 193/255)
-term.setPaletteColor(colors.brown, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.green, 163/255, 190/255, 140/255)
-term.setPaletteColor(colors.red, 191/255, 97/255, 106/255)
-term.setPaletteColor(colors.black, 59/255, 66/255, 82/255)
-local ghToken = "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" -- I know this is stupid but it works
-local loaderLoaded = 0
-function drawLoader()
-    local w, h = term.getSize()
-    term.setBackgroundColor(colors.black)
-    term.clear()
-    term.setCursorPos(math.floor(w/2), h/2-2)
-    term.setBackgroundColor(loaderLoaded == 0 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)+3, h/2-2)
-    term.setBackgroundColor(loaderLoaded == 1 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)+3, h/2)
-    term.setBackgroundColor(loaderLoaded == 2 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)+3, h/2+2)
-    term.setBackgroundColor(loaderLoaded == 3 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2), h/2+2)
-    term.setBackgroundColor(loaderLoaded == 4 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)-3, h/2+2)
-    term.setBackgroundColor(loaderLoaded == 5 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)-3, h/2)
-    term.setBackgroundColor(loaderLoaded == 6 and colors.white or colors.gray)
-    term.write("  ")
-    term.setCursorPos(math.floor(w/2)-3, h/2-2)
-    term.setBackgroundColor(loaderLoaded == 7 and colors.white or colors.gray)
-    term.write("  ")
-    loaderLoaded = (loaderLoaded + 1) % 8
-end
-drawLoader()
-if not fs.exists("/system/krnl.lua") then
-    for _, i in ipairs(fs.list("/")) do
-        if i ~= "rom" and i:sub(1, 4) ~= "disk"  then fs.delete(i) end
-    end
-else
-    fs.delete("/system")
-end
-function _G.strsplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
-local fr, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", {
-})
-local branch
-if fr then
-    branch = textutils.unserialiseJSON(fr.readAll())["sha"]
-else
-    term.clear()
-    term.setBackgroundColor(colors.black)
-    term.setTextColor(colors.white)
-    term.setCursorPos(1, 1)
-    term.clear()
-    print("Automatically fetching the latest commit failed because: " .. e .. ". Go to arcos, get latest commit hash and paste it in here.")
-    write(">")
-    branch = read()
-end
-file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
-cont = file.readAll()
-file.close()
-for _,i in ipairs(strsplit(cont, "\n")) do
-    drawLoader()
-    action = string.sub(i, 1, 1)
-    filename = string.sub(i, 3)
-    if action == "d" then
-        fs.makeDir("/" .. filename)
-    end
-    if action == "f" then
-        fs.delete("/" .. filename)
-        f = fs.open(filename, "w")
-        hf = http.get(table.pack(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))[1])
-        f.write(hf.readAll())
-        hf.close()
-        f.close()
-    end
-    if action == "r" and not fs.exists("/" .. filename) then
-        f = fs.open(filename, "w")
-        hf = http.get(table.pack(("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename):gsub(" ", "%%20"))[1])
-        f.write(hf.readAll())
-        hf.close()
-        f.close()
-    end
-end
-f = fs.open("/system/rel", "w")
-f.write(branch)
-f.close()
-os.reboot()
 local args = {...}
 local currentTask
 local cPid
@@ -1885,7 +1654,7 @@ _G.apiUtils = {
         print("arcos has forcefully shut off, due to a critical error.")
         print("This is probably a system issue")
         print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
-        print("Suspected location: " .. debug.getinfo(2).short_src .. ":" .. debug.getinfo(2).currentline)
+        print("Suspected location: " .. debug.getinfo(2).source .. ":" .. debug.getinfo(2).currentline)
         print("Error: " .. err)
         tasks = {}
         if tasking then tasking.createTask("n", function() while true do coroutine.yield() end end, 1, "root", __LEGACY.term, environ) end
@@ -1936,11 +1705,18 @@ _G.arcos = {
         return {
             pid = -1,
             name = "kernelspace",
-            user = "krunner",
+            user = "root",
             nice = 1,
             paused = false,
             env = {}
         }
+    end,
+    getUsers = function()
+        local f = {}
+        for index, value in ipairs(users) do
+            table.insert(f, value.name)
+        end
+        return f
     end,
     getKernelLogBuffer = function()
         if not currentTask or currentTask["user"] == "root" then
@@ -2259,6 +2035,9 @@ setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 local passwdFile = files.open("/config/passwd", "r")
 users = tutils.dJSON(passwdFile.read())
 _G.arcos.getHome = function ()
+    if not files.exists("/user/" .. arcos.getCurrentTask().user) then
+        files.mkDir("/user/" .. arcos.getCurrentTask().user)
+    end
     return "/user/" .. arcos.getCurrentTask().user
 end
 _G.arcos.validateUser = function (user, password)
@@ -2320,6 +2099,11 @@ if f then
 else
     apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), "Kernel", "174")
 end
+for index, value in ipairs(arcos.getUsers()) do
+    if not files.exists("/user/" .. value) then
+        files.mkDir("/user/" .. value)
+    end    
+end
 tasking.createTask("Init", function()
     arcos.log("Starting Init")
     local ok, err = pcall(function()
@@ -2362,72 +2146,7 @@ while true do
         end, 1, "root", __LEGACY.term, {workDir = "/"})
     end
 end
-if files.exists("/.arcliveenv") then
-    files.delete("/.arcliveenv")
-end
-files.makeDir("/.arcliveenv")
-function _G.strsplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
-end
-local fr = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main")
-local branch
-if fr then
-    branch = textutils.unserialiseJSON(fr.readAll())["sha"]
-else
-    write(">")
-    branch = read()
-end
-file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/"..branch.."/build/objList.txt")
-cont = file.readAll()
-file.close()
-for _,i in ipairs(strsplit(cont, "\n")) do
-    action = string.sub(i, 1, 1)
-    filename = string.sub(i, 3)
-    if action == "d" then
-        files.makeDir("/.arcliveenv/" .. filename)
-    end
-    if action == "f" then
-        f = files.open("/.arcliveenv/" .. filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
-        f.write(hf.readAll())
-        hf.close()
-        f.close()
-    end
-    if action == "r" and not files.exists("/.arcliveenv/" .. filename) then
-        f = files.open("/.arcliveenv/" .. filename, "w")
-        hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. filename)
-        f.write(hf.readAll())
-        hf.close()
-        f.close()
-    end
-end
-f = files.open("/.arcliveenv/system/rel", "w")
-f.write(branch)
-f.close()
-if files.exists("/startup.lua") then
-    if files.exists("/.startup.lua.albackup") then
-        files.delete("/.startup.lua.albackup")
-    end
-    files.copy("/startup.lua", "/.startup.lua.albackup")
-    files.delete("/startup.lua")
-end
-local f = files.open("/startup.lua", "w")
-if f then
-    f.write("settings.set(\"shell.allow_disk_startup\", true) settings.save() fs.delete(\"/startup.lua\") if fs.exists(\"/.startup.lua.albackup\") then fs.move(\"/.startup.lua.albackup\", \"/startup.lua\") end shell.run(\"/.arcliveenv/startup.lua live\")")
-    f.close()
-else
-    print("Error while making temporary installation")
-end
-settings.set("")
-settings.set("shell.allow_disk_startup", false) settings.save()
-os.reboot()brokenlocal methods = {
+brokenlocal methods = {
     GET = true,
     POST = true,
     HEAD = true,
@@ -2438,7 +2157,10 @@ os.reboot()brokenlocal methods = {
     TRACE = true,
 }
 local function getChosenRepo()
-    local rf = files.open("/config/arcrepo", "r")
+    local rf, x = files.open("/config/arcrepo", "r")
+    if not rf then
+        return "mirkokral/ccarcos" -- Default to the main arcos repo
+    end
     local fx = rf.read()
     rf.close()
     return fx
@@ -2540,8 +2262,11 @@ local function fetch()
     f2.write(rp)
     fr.close()
     f2.close()
-    local f = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
+    local f, e = get("https://raw.githubusercontent.com/" .. getChosenRepo() .. "/" ..
     getLatestCommit() .. "/repo/index.json")
+    if not f then
+        return false
+    end
     local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
     fa.write(f.readAll())
     fa.close()
@@ -2568,12 +2293,6 @@ local function getRepo()
     local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
     f.close()
     return uj
-end
-local function getOwners()
-    local owners = {}
-end
-local function isDependant(pkg)
-    local l = __LEGACY.files.list("")
 end
 local function uninstall(package)
     if arcos.getCurrentTask().user ~= "root" then
@@ -2730,8 +2449,11 @@ local function install(package)
     end
     if pkg["postInstScript"] then
         return function()
-            local file = get("https://raw.githubusercontent.com/" ..
+            local file, e = get("https://raw.githubusercontent.com/" ..
             getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/" .. "pi.lua")
+            if not file then
+                return;
+            end
             local fd = file.readAll()
             file.close()
             local tf = __LEGACY.files.open("/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
@@ -2804,6 +2526,13 @@ local function expect(n, v, ...)
     end
     if not r then
         error("Argument " .. n .. " is not valid!")
+    end
+end
+if not bit32 then
+    if bit then
+        bit32 = bit
+    else
+        bit32 = {}
     end
 end
 local function combine(...)
@@ -2933,7 +2662,57 @@ return {
     fromBlit = fromBlit,
     expect = expect,
     field = field
-}local function split(inputstr, sep)
+}local function getPermissions(file, user) 
+    local read = true
+    local write = true
+    local listed = true
+    if user == nil then user = arcos.getCurrentTask().user end
+    if __LEGACY.files.isReadOnly(file) then
+        write = false
+    end
+    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "$" then -- Metadata files
+        return {
+            read = false,
+            write = false,
+            listed = false
+        }
+    end
+    local disallowedfiles = {"startup.lua", "startup"}
+    for index, value in ipairs(disallowedfiles) do
+        if tutils.split(file, "/")[1] == value then -- Metadata files
+            return {
+                read = false,
+                write = false,
+                listed = false,
+            }
+        end
+    end
+    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "." then
+        listed = false
+    end
+    return {
+        read = read,
+        write = write,
+        listed = listed,
+    }
+end
+local function getPermissionsForAll(file)
+    local u = {}
+    for index, value in ipairs(arcos.getUsers()) do
+        u[value] = getPermissions(file, value)
+    end
+    return u
+end
+local function cant(on, what)
+    return not getPermissions(on)[what]
+end
+local function can(on, what)
+    return getPermissions(on)[what]
+end
+local function readonly(path)
+    return not getPermissions(path).write
+end
+local function split(inputstr, sep)
     if sep == nil then
         sep = "%s"
     end
@@ -2948,6 +2727,12 @@ return {
 end
 local function open(path, mode)
     local validModes = {"w", "r", "w+", "r+", "a", "wb", "rb"}
+    if cant(path, "read") and (mode == "r" or mode == "r+" or mode == "a" or mode == "w+" or mode == "rb") then
+        return nil, "No permission for this action"
+    end
+    if cant(path, "write") and (mode == "w" or mode == "w+" or mode == "a" or mode == "r+" or mode == "wb") then
+        return nil, "No permission for this action"
+    end
     local cmodevalid = false
     for _, v in ipairs(validModes) do
         if mode == v then cmodevalid = true break end
@@ -2996,16 +2781,39 @@ local function open(path, mode)
     return file, nil
 end
 local function ls(dir)
-    return __LEGACY.files.list(dir)
+    local listed =  __LEGACY.files.list(dir)
+    local out = {}
+    for index, value in ipairs(listed) do
+        if can(dir .. '/' .. value, "listed") then
+            table.insert(out, value)
+        end
+    end
+    return out
 end
 local function rm(f)
+    if cant(f, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.delete(f)
 end
 local function exists(f)
-    if d == "" or d == "/" then return true end
+    if f == "" or f == "/" then return true end
+    if tutils.split(f, "/")[#tutils.split(f, "/")]:sub(1,1) == "$" then
+        return false
+    end
     return __LEGACY.files.exists(f)
 end
 local function mkDir(d) 
+    local fv = {}
+    for key, value in pairs({table.unpack(tutils.split(d, "/"), 1, #tutils.split(d, "/")-1)}) do
+        table.insert(fv, value)
+    end
+    if not exists(table.concat(fv, "/")) then
+        error("Parent doesn't exist.")
+    end
+    if cant(table.concat(fv, "/"), "write") then
+        error("No permission for this action");
+    end
     return __LEGACY.files.makeDir(d)
 end
 local function resolve(f, keepNonExistent)
@@ -3045,9 +2853,15 @@ local function dir(d)
     return __LEGACY.files.isDir(d)
 end
 local function m(t, d) 
+    if cant(t, "read") or cant(t, "write") or cant(d, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.move(t, d)
 end
 local function c(t, d)
+    if cant(t, "read") or cant(d, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.copy(t, d)
 end
 local expect = col.expect
@@ -3132,7 +2946,7 @@ local function find_aux(path, parts, i, out)
         local files = files.ls(path)
         for j = 1, #files do
             local file = files[j]
-            if file:find(part.contents) then find_aux(files.combine(path, file), parts, i + 1, out) end
+            if file:find(part.contents) then find_aux(__LEGACY.files.combine(path, file), parts, i + 1, out) end
         end
     end
 end
@@ -3180,10 +2994,10 @@ local function par(path)
     return __LEGACY.files.getDir(path)
 end
 local function size(path)
+    if cant(path, "read") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.getSize(path)
-end
-local function readonly(path)
-    return __LEGACY.files.isReadOnly(path)
 end
 local function drive(path)
     return __LEGACY.files.getDrive(path)
@@ -3195,7 +3009,9 @@ local function capacity(path)
     return __LEGACY.files.getCapacity(path)
 end
 local function attributes(path)
-    return __LEGACY.files.attributes(path)
+    local attr = __LEGACY.files.attributes(path)
+    attr.permissions = getPermissionsForAll(path)
+    return attr
 end
 return {
     open = open,
@@ -3270,7 +3086,7 @@ local function band(a, b, c, ...)
 		a = a % MOD
 		b = b % MOD
 		z = ((a + b) - bxor1(a,b)) / 2
-		if c then z = bit32_band(z, c, ...) end
+		if c then z = bit32.band(z, c, ...) end
 		return z
 	elseif a then return a % MOD
 	else return MODM end
@@ -3443,7 +3259,16 @@ local function split(inputstr, sep)
     if t == {} then
         t = { inputstr }
     end
-    return t
+    local nt = {}
+    for i, v in ipairs(t) do
+        if v ~= "" then
+            table.insert(nt, v)
+        end
+    end
+    if t == {} then
+        t = { "" }
+    end
+    return nt
 end
 local function join(tab, sep )
     local out = ""
@@ -3853,7 +3678,7 @@ local function Button(b)
     end
     return o
 end
-local function Align(x, y, widgettoalign, alignment, w, h)
+local function Align(x, y, widgettoalign, alignment, xw, xh)
 	local widget = widgettoalign
 	widget.x = 0
 	widget.y = 0
@@ -3862,8 +3687,8 @@ local function Align(x, y, widgettoalign, alignment, w, h)
 	  widget.x = 0
 	  widget.y = 0
 	  local tw, th = termar.getSize()
-	  if w then tw = w end
-	  if h then th = h end
+	  if xw then tw = xw end
+	  if xh then th = xh end
 	  if alignment[1] >= 0 and alignment[1] <= 1 then
 	    w.x = tw*alignment[1]-(widget.getWH()[1]*alignment[1])
 	  end

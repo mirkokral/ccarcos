@@ -50,22 +50,27 @@ find the "telemetry" field and disable it]])
     fs.delete(x)
   end
 end
-term.setPaletteColor(colors.white, 236/255, 239/255, 244/255)
-term.setPaletteColor(colors.orange, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.magenta, 180/255, 142/255, 173/255)
-term.setPaletteColor(colors.lightBlue, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.yellow, 235/255, 203/255, 139/255)
-term.setPaletteColor(colors.lime, 163/255, 190/255, 140/255)
-term.setPaletteColor(colors.pink, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.gray, 174/255, 179/255, 187/255)
-term.setPaletteColor(colors.lightGray, 216/255, 222/255, 233/255)
-term.setPaletteColor(colors.cyan, 136/255, 192/255, 208/255)
-term.setPaletteColor(colors.purple, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.blue, 129/255, 161/255, 193/255)
-term.setPaletteColor(colors.brown, 0/255, 0/255, 0/255)
-term.setPaletteColor(colors.green, 163/255, 190/255, 140/255)
-term.setPaletteColor(colors.red, 191/255, 97/255, 106/255)
-term.setPaletteColor(colors.black, 59/255, 66/255, 82/255)
+local UIthemedefs = {
+}
+UIthemedefs[colors.white] = { 236, 239, 244 }
+UIthemedefs[colors.orange] = { 0, 0, 0 }
+UIthemedefs[colors.magenta] = { 180, 142, 173 }
+UIthemedefs[colors.lightBlue] = { 0, 0, 0 }
+UIthemedefs[colors.yellow] = { 235, 203, 139 }
+UIthemedefs[colors.lime] = { 163, 190, 140 }
+UIthemedefs[colors.pink] = { 0, 0, 0 }
+UIthemedefs[colors.gray] = { 76, 86, 106 }
+UIthemedefs[colors.lightGray] = { 216, 222, 233 }
+UIthemedefs[colors.cyan] = { 136, 192, 208 }
+UIthemedefs[colors.purple] = { 0, 0, 0 }
+UIthemedefs[colors.blue] = { 129, 161, 193 }
+UIthemedefs[colors.brown] = { 0, 0, 0 }
+UIthemedefs[colors.green] = { 163, 190, 140 }
+UIthemedefs[colors.red] = { 191, 97, 106 }
+UIthemedefs[colors.black] = { 59, 66, 82 }
+for index, value in pairs(UIthemedefs) do
+  term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
+end
 local sourceURL = "http://raw.githubusercontent.com/mirkokral/ccarcos/main/archivedpkgs/base.arc"
 local args = { ... }
 local filesAlreadyDownloaded = 0
@@ -219,7 +224,6 @@ local arkivelib = {
     return outputfiles
   end
 }
-
 local data = arkivelib.unarchive(indexFileContents)
 
 currentlyDownloadingFile = "Writing..."
@@ -245,7 +249,9 @@ for k, v in ipairs(data) do
 end
 
 term.clear()
-term.setCursorPos(2, 2)
+term.setCursorPos(1, 2)
 term.setTextColor(colors.white)
-print("Downloading finished.")
-print()
+if shell then
+  fs.delete(shell.getRunningProgram())
+end
+os.reboot()

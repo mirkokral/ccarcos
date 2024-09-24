@@ -1,4 +1,4 @@
-buildCount: 101
+buildCount: 115
 compileFiles:
 - startup.lua
 - apps/adduser.lua
@@ -35,10 +35,7 @@ compileFiles:
 - services/enabled/9 arcfix
 - services/enabled/login
 - system/bootloader.lua
-- system/devinstaller.lua
-- system/installer.lua
 - system/krnl.lua
-- system/liveinst.lua
 - system/rel
 - system/apis/arc.lua
 - system/apis/col.lua

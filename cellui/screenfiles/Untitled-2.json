@@ -1,0 +1,92 @@
+[
+    {
+        "x": 0,
+        "y": 0,
+        "xa": 0,
+        "ya": 0,
+        "vexpand": 0,
+        "hexpand": 0,
+        "width": 51,
+        "height": 19,
+        "id": "574248674.26689",
+        "children": [
+            {
+                "labelText": "left!",
+                "x": 0,
+                "y": 0,
+                "xa": 0,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 5,
+                "height": 1,
+                "id": "datelabel",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "center!",
+                "x": 0,
+                "y": 0,
+                "xa": 0.5,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 7,
+                "height": 1,
+                "id": "clocklabel",
+                "children": [],
+                "style": {
+                    "fgColor": "d",
+                    "bgColor": "e"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "right!",
+                "x": 0,
+                "y": 0,
+                "xa": 1,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 6,
+                "height": 1,
+                "id": "rightlabel",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "f"
+                },
+                "typeName": "Label"
+            },
+            {
+                "labelText": "Amogus\n(in multiline)",
+                "x": 10,
+                "y": 2,
+                "xa": 0,
+                "ya": 0,
+                "vexpand": 0,
+                "hexpand": 0,
+                "width": 14,
+                "height": 2,
+                "id": "amoglabel",
+                "children": [],
+                "style": {
+                    "fgColor": "0",
+                    "bgColor": "e"
+                },
+                "typeName": "Label"
+            }
+        ],
+        "style": {
+            "fgColor": "0",
+            "bgColor": "f"
+        },
+        "typeName": "Container"
+    }
+]

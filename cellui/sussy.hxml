@@ -1,0 +1,9 @@
+--js celluidesigner/src/cellui/cellui.js
+--class-path src
+-m Main
+-D js-es=6
+# -D js-unflatten
+-D haxeJSON
+# -D shallow-expose
+--library hxtsdgen
+--library hxease

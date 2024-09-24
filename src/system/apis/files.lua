@@ -1,3 +1,76 @@
+---Gets the permissions for this user for a file
+---@param file string File path
+---@param user string? User
+---@return {read: boolean, write: boolean, listed: boolean} perm Permission
+local function getPermissions(file, user) 
+    local read = true
+    local write = true
+    local listed = true
+    if user == nil then user = arcos.getCurrentTask().user end
+    if __LEGACY.files.isReadOnly(file) then
+        write = false
+    end
+    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "$" then -- Metadata files
+        return {
+            read = false,
+            write = false,
+            listed = false
+        }
+    end
+    local disallowedfiles = {"startup.lua", "startup"}
+    for index, value in ipairs(disallowedfiles) do
+        if tutils.split(file, "/")[1] == value then -- Metadata files
+            return {
+                read = false,
+                write = false,
+                listed = false,
+            }
+        end
+    end
+    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "." then
+        listed = false
+    end
+    
+    return {
+        read = read,
+        write = write,
+        listed = listed,
+    }
+end
+
+---Get perms for all users on a file
+---@param file string The file path
+---@return table<string, {read: boolean, write: boolean, listed: boolean}>
+local function getPermissionsForAll(file)
+    local u = {}
+    for index, value in ipairs(arcos.getUsers()) do
+        u[value] = getPermissions(file, value)
+    end
+    return u
+end
+
+---Used in if statements - gets if you can't do so.
+---@param on any
+---@param what "read" | "write" | "listed"
+---@return boolean
+local function cant(on, what)
+    return not getPermissions(on)[what]
+end
+---Used in if statements - gets if you can do so.
+---@param on any
+---@param what "read" | "write" | "listed"
+---@return boolean
+local function can(on, what)
+    return getPermissions(on)[what]
+end
+
+---Gets the readonly status of a file
+---@param path string
+---@return boolean
+local function readonly(path)
+    return not getPermissions(path).write
+end
+
 ---@class FileH
 ---@field public close fun(): nil Close the file handle
 ---@field public open boolean Gets if fh open
@@ -32,6 +105,12 @@ end
 ---@return string? error
 local function open(path, mode)
     local validModes = {"w", "r", "w+", "r+", "a", "wb", "rb"}
+    if cant(path, "read") and (mode == "r" or mode == "r+" or mode == "a" or mode == "w+" or mode == "rb") then
+        return nil, "No permission for this action"
+    end
+    if cant(path, "write") and (mode == "w" or mode == "w+" or mode == "a" or mode == "r+" or mode == "wb") then
+        return nil, "No permission for this action"
+    end
     local cmodevalid = false
     for _, v in ipairs(validModes) do
         if mode == v then cmodevalid = true break end
@@ -85,13 +164,23 @@ end
 ---@param dir string
 ---@return string[]
 local function ls(dir)
-    return __LEGACY.files.list(dir)
+    local listed =  __LEGACY.files.list(dir)
+    local out = {}
+    for index, value in ipairs(listed) do
+        if can(dir .. '/' .. value, "listed") then
+            table.insert(out, value)
+        end
+    end
+    return out
 end
 
 ---Removes a file
 ---@param f string
 ---@return nil
 local function rm(f)
+    if cant(f, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.delete(f)
 end
 
@@ -99,12 +188,27 @@ end
 ---@param f string
 ---@return boolean
 local function exists(f)
-    if d == "" or d == "/" then return true end
+    if f == "" or f == "/" then return true end
+
+    if tutils.split(f, "/")[#tutils.split(f, "/")]:sub(1,1) == "$" then
+        return false
+    end
+    
     return __LEGACY.files.exists(f)
 end
 ---Makes a directory
 ---@param d string Dir path
 local function mkDir(d) 
+    local fv = {}
+    for key, value in pairs({table.unpack(tutils.split(d, "/"), 1, #tutils.split(d, "/")-1)}) do
+        table.insert(fv, value)
+    end
+    if not exists(table.concat(fv, "/")) then
+        error("Parent doesn't exist.")
+    end
+    if cant(table.concat(fv, "/"), "write") then
+        error("No permission for this action");
+    end
     return __LEGACY.files.makeDir(d)
 end
 
@@ -160,6 +264,9 @@ end
 ---@param d string
 ---@return nil
 local function m(t, d) 
+    if cant(t, "read") or cant(t, "write") or cant(d, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.move(t, d)
 end
 ---Copies t to d
@@ -167,6 +274,9 @@ end
 ---@param d string
 ---@return nil
 local function c(t, d)
+    if cant(t, "read") or cant(d, "write") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.copy(t, d)
 end
 
@@ -269,7 +379,7 @@ local function find_aux(path, parts, i, out)
         local files = files.ls(path)
         for j = 1, #files do
             local file = files[j]
-            if file:find(part.contents) then find_aux(files.combine(path, file), parts, i + 1, out) end
+            if file:find(part.contents) then find_aux(__LEGACY.files.combine(path, file), parts, i + 1, out) end
         end
     end
 end
@@ -349,13 +459,10 @@ end
 ---@param path string
 ---@return number   
 local function size(path)
+    if cant(path, "read") then
+        error("No permission for this action")
+    end
     return __LEGACY.files.getSize(path)
-end
----Gets the readonly status of a file
----@param path string
----@return boolean
-local function readonly(path)
-    return __LEGACY.files.isReadOnly(path)
 end
 ---Gets the drive path for path
 ---@param path string
@@ -382,12 +489,15 @@ end
 ---@field public isReadOnly boolean
 ---@field public created number
 ---@field public modified number
+---@field public permissions table<string, {read: boolean, write: boolean, listed: boolean}>
 
 ---Gets path attributes
 ---@param path string
 ---@return FileAttributes
 local function attributes(path)
-    return __LEGACY.files.attributes(path)
+    local attr = __LEGACY.files.attributes(path)
+    attr.permissions = getPermissionsForAll(path)
+    return attr
 end
 
 

@@ -26,6 +26,13 @@ local function expect(n, v, ...)
         error("Argument " .. n .. " is not valid!")
     end
 end
+if not bit32 then
+    if bit then
+        bit32 = bit
+    else
+        bit32 = {}
+    end
+end
 local function combine(...)
     local r = 0
     for i = 1, select('#', ...) do

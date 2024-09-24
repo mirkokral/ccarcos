@@ -524,12 +524,12 @@ end
 ---Aligns a widget to center, either vertically or horizontally
 ---@param x number
 ---@param y number
----@param w number
----@param h number
 ---@param widgettoalign Widget
 ---@param alignment [number, number] If a direction is not in the range of 0..1, it doesn't get aligned.
+---@param xw number?
+---@param xh number?
 ---@return Align
-local function Align(x, y, widgettoalign, alignment, w, h)
+local function Align(x, y, widgettoalign, alignment, xw, xh)
 	local widget = widgettoalign
 	widget.x = 0
 	widget.y = 0
@@ -539,8 +539,8 @@ local function Align(x, y, widgettoalign, alignment, w, h)
 	  widget.y = 0
 	  
 	  local tw, th = termar.getSize()
-	  if w then tw = w end
-	  if h then th = h end
+	  if xw then tw = xw end
+	  if xh then th = xh end
 	  if alignment[1] >= 0 and alignment[1] <= 1 then
 	    w.x = tw*alignment[1]-(widget.getWH()[1]*alignment[1])
 	  end
