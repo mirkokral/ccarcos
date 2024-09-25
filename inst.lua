@@ -71,6 +71,16 @@ UIthemedefs[colors.black] = { 59, 66, 82 }
 for index, value in pairs(UIthemedefs) do
   term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
 end
+local fr, e = http.get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
+    ["Authorization"] = "Bearer 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"
+})
+if not fr then 
+    fr, e = http.get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
+    })
+    if not fr then
+        return false
+    end
+end
 local sourceURL = "http://raw.githubusercontent.com/mirkokral/ccarcos/main/archivedpkgs/base.arc"
 local args = { ... }
 local filesAlreadyDownloaded = 0

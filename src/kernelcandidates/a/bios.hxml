@@ -1,0 +1,5 @@
+--lua out/bios.lua
+--class-path src
+--main bios.Bios
+--define CraftOS
+-D lua-vanilla

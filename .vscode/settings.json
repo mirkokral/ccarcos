@@ -1,9 +1,9 @@
 {
     "Lua.completion.autoRequire": false,
     "Lua.runtime.path": [
-        "src/system/apis/?.lua",
-        "src/system/apis/?/init.lua",
-        "cellui/out/?.lua"
+        "src/lua/system/apis/?.lua",
+        "src/lua/system/apis/?/init.lua",
+        "src/cellui/out/?.lua"
     ],
     "Lua.diagnostics.disable": [
         "deprecated"

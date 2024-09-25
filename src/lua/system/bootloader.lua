@@ -22,6 +22,7 @@ function main()
     local args = config["defargs"] or ""
     if not config["skipPrompt"] then
         write("krnl: ")
+        -- sleep(5)
         args = read()
     end
     local f = __LEGACY.files.open("/system/krnl.lua", "r")

@@ -1,86 +1,68 @@
-|/apps|-1|
-|/config|-1|
-|/services|-1|
 |/system|-1|
-|/temporary|-1|
 |/user|-1|
-|/apis|-1|
+|/temporary|-1|
+|/services|-1|
 |/data|-1|
+|/config|-1|
+|/apps|-1|
+|/apis|-1|
+|system/apis|-1|
+|services/enabled|-1|
 |config/apps|-1|
 |config/arc|-1|
-|services/enabled|-1|
-|system/apis|-1|
 |/startup.lua|0|
-|apps/adduser.lua|7011|
-|apps/arc.lua|7525|
-|apps/cat.lua|10612|
-|apps/cd.lua|10888|
-|apps/cp.lua|11217|
-|apps/init.lua|11486|
-|apps/kmsg.lua|14417|
-|apps/ls.lua|14466|
-|apps/mkdir.lua|15139|
-|apps/mv.lua|15285|
-|apps/rm.lua|15554|
-|apps/rmuser.lua|15736|
-|apps/shell.lua|16140|
-|apps/uitest.lua|19219|
-|apps/clear.lua|24596|
-|apps/shutdown.lua|24632|
-|apps/reboot.lua|24648|
-|apps/celluitest.lua|24662|
-|config/aboot|24820|
-|config/arcrepo|24980|
-|config/arcshell|24997|
-|config/hostname|25049|
-|config/passwd|25054|
-|config/arc/base.meta.json|25304|
-|config/arc/base.uninstallIndex|25572|
-|services/arcfix.lua|26722|
-|services/elevator.lua|26807|
-|services/elevatorSrv.lua|29126|
-|services/elevatorStep.lua|32182|
-|services/oobe.lua|32774|
-|services/pms.lua|38519|
-|services/shell.lua|42099|
-|services/enabled/9 arcfix|42129|
-|services/enabled/login|42142|
-|system/bootloader.lua|42152|
-|system/krnl.lua|43101|
-|system/rel|62955|
-|system/apis/arc.lua|62961|
-|system/apis/col.lua|75215|
-|system/apis/files.lua|79339|
-|system/apis/hashing.lua|90728|
-|system/apis/rd.lua|95363|
-|system/apis/tutils.lua|96367|
-|system/apis/ui.lua|97509|
-|system/apis/window.lua|118715|
-|system/apis/cellui.lua|133804|
-|data/PRIVACY.txt|277815|
+|system/bootloader.lua|17173|
+|system/rel|18122|
+|system/krnl.lua|18128|
+|system/apis/arc.lua|37982|
+|system/apis/col.lua|51215|
+|system/apis/files.lua|55339|
+|system/apis/hashing.lua|66728|
+|system/apis/rd.lua|71363|
+|system/apis/tutils.lua|72367|
+|system/apis/ui.lua|73509|
+|system/apis/window.lua|94715|
+|system/apis/cellui.lua|109804|
+|services/arcfix.lua|253815|
+|services/elevator.lua|253900|
+|services/elevatorSrv.lua|256218|
+|services/elevatorStep.lua|259274|
+|services/oobe.lua|259866|
+|services/pms.lua|265611|
+|services/shell.lua|269191|
+|services/enabled/9 arcfix|269221|
+|services/enabled/login|269234|
+|data/PRIVACY.txt|269244|
+|config/aboot|270133|
+|config/arcrepo|270293|
+|config/arcshell|270310|
+|config/hostname|270362|
+|config/passwd|270367|
+|config/arc/base.meta.json|270617|
+|config/arc/base.uninstallIndex|270885|
+|apps/adduser.lua|272035|
+|apps/arc.lua|272549|
+|apps/cat.lua|275636|
+|apps/cd.lua|275912|
+|apps/cp.lua|276241|
+|apps/init.lua|276510|
+|apps/kmsg.lua|279441|
+|apps/ls.lua|279490|
+|apps/mkdir.lua|280163|
+|apps/mv.lua|280309|
+|apps/rm.lua|280578|
+|apps/rmuser.lua|280760|
+|apps/shell.lua|281164|
+|apps/uitest.lua|284243|
+|apps/clear.lua|289620|
+|apps/shutdown.lua|289656|
+|apps/reboot.lua|289672|
+|apps/celluitest.lua|289686|
 --ENDTABLE
 if arcos then return end
 term.clear()
 local UIthemedefs = {
 }
-if not colors then local colors = {
-  white = 0,
-  orange = 0,
-  magenta = 0,
-  lightBlue = 0,
-  yellow = 0,
-  lime = 0,
-  pink = 0,
-  gray = 0,
-  lightGray = 0,
-  cyan = 0,
-  purple = 0,
-  blue = 0,
-  brown = 0,
-  green = 0,
-  red = 0,
-  black = 0,
-} end
 UIthemedefs[colors.white] = { 236, 239, 244 }
 UIthemedefs[colors.orange] = { 0, 0, 0 }
 UIthemedefs[colors.magenta] = { 180, 142, 173 }
@@ -137,7 +119,7 @@ else
     end
   end
 end
-local function strsplit(inputstr, sep)
+function _G.strsplit(inputstr, sep)
   if sep == nil then
       sep = "%s"
   end
@@ -157,9 +139,8 @@ for key, value in pairs(_G) do
   __LEGACY[key] = value
 end
 __LEGACY.ofs = __LEGACY.fs
-__LEGACY.files = __LEGACY.fs
 if live then
-  __LEGACY.files = {
+  __LEGACY.fs = {
     list = function(f)
       return __LEGACY.ofs.list("/.arcliveenv/" .. f)
     end,
@@ -217,6 +198,28 @@ if live then
     end
   }
 end
+__LEGACY.files = __LEGACY.fs
+setmetatable(__LEGACY, {__index = function(self, i)
+    if i == "_G" or i == "_ENV" then return __LEGACY end
+  end
+})
+local function fix(f, l)
+  if type(f) == "function" then
+    return setfenv(f, __LEGACY)
+  elseif type(f) == "table" and l ~= "_G" and l ~= "_ENV" then
+    local fn = {}
+    for k, v in pairs(f) do
+      if k == "_G" or k == "_ENV" then
+        fn[k] = fn
+      else
+        fn[k] = fix(v,k)
+      end
+    end
+    return fn
+  else
+    return f
+  end
+end
 local keptAPIs = { utd = true, printError = true, require = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, bit = true, ccemux = true, config = true, coroutine = true, debug = true, fs = true, http = true, mounter = true, os = true, periphemu = true, peripheral = true, redstone = true, rs = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
 local t = {}
 for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
@@ -233,7 +236,7 @@ local delete = { os = { "version", "pullEventRaw", "pullEvent", "run", "loadAPI"
 for k, v in pairs(delete) do for _, a in ipairs(v) do _G[k][a] = nil end end
 _G.term.redirect = function() end
 _G.error = function() end
-debug.setfenv(utd, __LEGACY)
+setfenv(utd, __LEGACY)
 function _G.term.native()
   _G.error = olderr
   _G.term.redirect = oldtr
@@ -249,1329 +252,246 @@ function _G.term.native()
     for k, v in pairs(_G) do
       oldug[k] = v
     end
-    local f, e = __LEGACY.files.open("/system/bootloader.lua", "r")
-    if not f then error(e) end
-    local l, e = load(f.readAll(), "Bootloader", nil, _G)
-    if not l then error(e) end
-    local ok, err = pcall(l)
+    local keptAPIs = { utd = true, printError = true, require = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, bit = true, coroutine = true, debug = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
+    local t = {}
+    for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
+    for _, k in ipairs(t) do _G[k] = nil end
+    for k, v in pairs(_G) do
+      if keptAPIs[k] then
+        if k == "_G" then
+          _G[k] = _G
+        elseif k == "__LEGACY" then
+          _G[k] = __LEGACY
+        else
+          print(k)
+          _G[k] = fix(v,k)
+        end
+      end
+    end
+    _G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
+          term.setCursorBlink(true)
+          local sLine
+          if type(_sDefault) == "string" then
+              sLine = _sDefault
+          else
+              sLine = ""
+          end
+          local nHistoryPos
+          local nPos, nScroll = #sLine, 0
+          if _sReplaceChar then
+              _sReplaceChar = string.sub(_sReplaceChar, 1, 1)
+          end
+          local tCompletions
+          local nCompletion
+          local function recomplete()
+              if _fnComplete and nPos == #sLine then
+                  tCompletions = _fnComplete(sLine)
+                  if tCompletions and #tCompletions > 0 then
+                      nCompletion = 1
+                  else
+                      nCompletion = nil
+                  end
+              else
+                  tCompletions = nil
+                  nCompletion = nil
+              end
+          end
+          local function uncomplete()
+              tCompletions = nil
+              nCompletion = nil
+          end
+          local w = term.getSize()
+          local sx = term.getCursorPos()
+          local function redraw(_bClear)
+              local cursor_pos = nPos - nScroll
+              if sx + cursor_pos >= w then
+                  nScroll = sx + nPos - w
+              elseif cursor_pos < 0 then
+                  nScroll = nPos
+              end
+              local _, cy = term.getCursorPos()
+              term.setCursorPos(sx, cy)
+              local sReplace = _bClear and " " or _sReplaceChar
+              if sReplace then
+                  term.write(string.rep(sReplace, math.max(#sLine - nScroll, 0)))
+              else
+                  term.write(string.sub(sLine, nScroll + 1))
+              end
+              if nCompletion then
+                  local sCompletion = tCompletions[nCompletion]
+                  local oldText, oldBg
+                  if not _bClear then
+                      oldText = term.getTextColor()
+                      oldBg = term.getBackgroundColor()
+                      term.setTextColor(__LEGACY.colors.white)
+                      term.setBackgroundColor(__LEGACY.colors.gray)
+                  end
+                  if sReplace then
+                      term.write(string.rep(sReplace, #sCompletion))
+                  else
+                      term.write(sCompletion)
+                  end
+                  if not _bClear then
+                      term.setTextColor(oldText)
+                      term.setBackgroundColor(oldBg)
+                  end
+              end
+              term.setCursorPos(sx + nPos - nScroll, cy)
+          end
+          local function clear()
+              redraw(true)
+          end
+          recomplete()
+          redraw()
+          local function acceptCompletion()
+              if nCompletion then
+                  clear()
+                  local sCompletion = tCompletions[nCompletion]
+                  sLine = sLine .. sCompletion
+                  nPos = #sLine
+                  recomplete()
+                  redraw()
+              end
+          end
+          while true do
+              local sEvent, param, param1, param2 = coroutine.yield()
+              if sEvent == "char" then
+                  clear()
+                  sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
+                  nPos = nPos + 1
+                  recomplete()
+                  redraw()
+              elseif sEvent == "paste" then
+                  clear()
+                  sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
+                  nPos = nPos + #param
+                  recomplete()
+                  redraw()
+              elseif sEvent == "key" then
+                  if param == __LEGACY.keys.enter or param == __LEGACY.keys.numPadEnter then
+                      if nCompletion then
+                          clear()
+                          uncomplete()
+                          redraw()
+                      end
+                      break
+                  elseif param == __LEGACY.keys.left then
+                      if nPos > 0 then
+                          clear()
+                          nPos = nPos - 1
+                          recomplete()
+                          redraw()
+                      end
+                  elseif param == __LEGACY.keys.right then
+                      if nPos < #sLine then
+                          clear()
+                          nPos = nPos + 1
+                          recomplete()
+                          redraw()
+                      else
+                          acceptCompletion()
+                      end
+                  elseif param == __LEGACY.keys.up or param == __LEGACY.keys.down then
+                      if nCompletion then
+                          clear()
+                          if param == __LEGACY.keys.up then
+                              nCompletion = nCompletion - 1
+                              if nCompletion < 1 then
+                                  nCompletion = #tCompletions
+                              end
+                          elseif param == __LEGACY.keys.down then
+                              nCompletion = nCompletion + 1
+                              if nCompletion > #tCompletions then
+                                  nCompletion = 1
+                              end
+                          end
+                          redraw()
+                      elseif _tHistory then
+                          clear()
+                          if param == __LEGACY.keys.up then
+                              if nHistoryPos == nil then
+                                  if #_tHistory > 0 then
+                                      nHistoryPos = #_tHistory
+                                  end
+                              elseif nHistoryPos > 1 then
+                                  nHistoryPos = nHistoryPos - 1
+                              end
+                          else
+                              if nHistoryPos == #_tHistory then
+                                  nHistoryPos = nil
+                              elseif nHistoryPos ~= nil then
+                                  nHistoryPos = nHistoryPos + 1
+                              end
+                          end
+                          if nHistoryPos then
+                              sLine = _tHistory[nHistoryPos]
+                              nPos, nScroll = #sLine, 0
+                          else
+                              sLine = ""
+                              nPos, nScroll = 0, 0
+                          end
+                          uncomplete()
+                          redraw()
+                      end
+                  elseif param == __LEGACY.keys.backspace then
+                      if nPos > 0 then
+                          clear()
+                          sLine = string.sub(sLine, 1, nPos - 1) .. string.sub(sLine, nPos + 1)
+                          nPos = nPos - 1
+                          if nScroll > 0 then nScroll = nScroll - 1 end
+                          recomplete()
+                          redraw()
+                      end
+                  elseif param == __LEGACY.keys.home then
+                      if nPos > 0 then
+                          clear()
+                          nPos = 0
+                          recomplete()
+                          redraw()
+                      end
+                  elseif param == __LEGACY.keys.delete then
+                      if nPos < #sLine then
+                          clear()
+                          sLine = string.sub(sLine, 1, nPos) .. string.sub(sLine, nPos + 2)
+                          recomplete()
+                          redraw()
+                      end
+                  elseif param == __LEGACY.keys["end"] then
+                      if nPos < #sLine then
+                          clear()
+                          nPos = #sLine
+                          recomplete()
+                          redraw()
+                      end
+                  elseif param == __LEGACY.keys.tab then
+                      acceptCompletion()
+                  end
+              elseif sEvent == "mouse_click" or sEvent == "mouse_drag" and param == 1 then
+                  local _, cy = term.getCursorPos()
+                  if param1 >= sx and param1 <= w and param2 == cy then
+                      nPos = math.min(math.max(nScroll + param1 - sx, 0), #sLine)
+                      redraw()
+                  end
+              elseif sEvent == "term_resize" then
+                  w = term.getSize()
+                  redraw()
+              end
+          end
+          local _, cy = term.getCursorPos()
+          term.setCursorBlink(false)
+          term.setCursorPos(w + 1, cy)
+          print()
+          return sLine
+    end
+    local f = __LEGACY.files.open("/system/bootloader.lua", "r")
+    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
     print(err)
     print("Press any key to continue")
     __LEGACY.os.pullEvent("key")
     __LEGACY.os.reboot()
   end
 end
-coroutine.yield()
-if arcos.getCurrentTask().user ~= "root" then
-    write("[escalation] Enter root password: ")
-    local pass = read("*")
-    local f = tasking.changeUser("root", pass)
-    if not f then
-        error("Invalid password!")
-    end
-end
-local args = { ... }
-local username = args[1]
-local password = "notset"
-if #args == 1 then
-    write("New Password: ")
-    password = read("*")
-elseif #args == 2 then
-    password = args[2]
-else
-    error("Too little or too many arguments")
-end
-arcos.createUser(username, password)local arc = require("arc")
-local files = require("files")
-local col = require("col")
-local args = { ... }
-local cmd = table.remove(args, 1)
-local repo = arc.getRepo()
-local function getTBI(a, b)
-    if not repo[a] then
-        error("Package not found: " .. a)
-    end
-    for index, value in ipairs(repo[a]["dependencies"]) do
-        getTBI(value, b)
-    end
-    if (not arc.isInstalled(a)) or arc.getIdata(a)["vId"] < repo[a]["vId"] then
-        table.insert(b, a)
-    end
-end
-if cmd == "fetch" then
-    arc.fetch()
-elseif cmd == "setrepo" then
-    col.expect(2, args[1], "string")
-    local fty, e = files.open("/config/arcrepo", "w")
-    if fty then
-        fty.write(args[1])
-        fty.close()
-        print("New repo: " .. args[1])
-    else
-        print("Failed to set new repo (check permissions)")
-    end
-elseif cmd == "install" then
-    local tobeinstalled = {}
-    local afterFunctions = {}
-    for index, value in ipairs(args) do
-        if not repo[value] then
-            error("Package not found: " .. value)
-        end
-        getTBI(value, tobeinstalled)
-    end
-    if #tobeinstalled > 0 then
-        term.setTextColor(col.lightGray)
-        print("These packages will be installed:")
-        print()
-        term.setTextColor(col.green)
-        print(table.concat(tobeinstalled, " "))
-        term.setTextColor(col.white)
-        print()
-        print("Do you want to proceed? [y/n] ")
-        local out = ({ arcos.ev("char") })[2]
-        if out == "y" then
-            for index, value in ipairs(tobeinstalled) do
-                print("(" .. index .. "/" .. #tobeinstalled .. ") " .. value)
-                table.insert(afterFunctions, arc.install(value))
-            end
-        else
-            print("Installation Aborted.")
-        end
-        for index, value in ipairs(afterFunctions) do
-            value()
-        end
-    end
-    print("Done")
-elseif cmd == "uninstall" then
-    for index, value in ipairs(args) do
-        if not arc.isInstalled(value) then
-            error("Package not installed: " .. value)
-        end
-    end
-    term.setTextColor(col.lightGray)
-    print("These packages will be uninstalled:")
-    print()
-    term.setTextColor(col.red)
-    print(table.concat(args, " "))
-    print()
-    term.setTextColor(col.white)
-    write("Do you want to proceed? [y/n] ")
-    local out = ({ arcos.ev("char") })[2]
-    print()
-    if out == "y" then
-        for index, value in ipairs(args) do
-            arc.uninstall(value)
-        end
-    else
-        print("Unistallation Aborted.")
-    end
-elseif cmd == "update" then
-    local toUpdate = arc.getUpdatable()
-    print("These packages will be updated:")
-    print()
-    term.setTextColor(col.magenta)
-    print(table.concat(toUpdate, " "))
-    print()
-    term.setTextColor(col.white)
-    write("Do you want to proceed? [y/n] ")
-    local out = ({ arcos.ev("char") })[2]
-    print()
-    if out == "y" then
-        for index, value in ipairs(toUpdate) do
-            arc.install(value)
-        end
-    else
-        print("Update Aborted.")
-    end
-else
-    printError("No command.")
-endlocal files = require("files")
-local f = ...
-if not f then error("No file specified!") end
-local fr = files.resolve(f)[1]
-if not fr then error("File does not exist") end
-local fop, e = files.open(fr, "r")
-if fop then
-    print(fop.read())
-    fop.close()
-else
-    error(e)
-endlocal files = require("files")
-local path = ...
-if not path then
-    error("No directory specified!")
-end
-local p = files.resolve(path)[1]
-if not files.exists(p) then
-    error(p .. ": Specified directory does not exist")
-end
-if not files.dir(p) then
-    error(p .. ": Specified path is not a directory.")
-end
-environ.workDir = plocal files = require("files")
-local s, t = ...
-if not s and t then
-    print("Usage: cp [src] [target]")
-    error()
-end
-local v, n = files.resolve(s)[1], files.resolve(t, true)[1]
-if not s and t then
-    print("Usage: cp [src] [target]")
-    error()
-end
-files.c(v, n)local files = require("files")
-local col = require("col")
-for index, value in ipairs(files.ls("/services/enabled")) do
-    local servFile, err = files.open("/services/enabled/"..value, "r")
-    if not servFile then
-        printError(err)
-        error()
-    end
-    for i in servFile.readLine do
-        if i:sub(1, 1) ~= "#" then 
-            arcos.log("Starting service: " .. i)
-            local currentServiceDone = false
-            local threadterm
-            if i:sub(1,1) == "l" then
-                local ttcp = {1, 1}
-                threadterm = {
-                    native = function()
-                        return term
-                    end,
-                    current = function()
-                        return term
-                    end,
-                    write = function(text)
-                        arcos.log(i .. ": " .. text)
-                    end,
-                    blit = function(text, ...)
-                        arcos.log(i .. ": " .. text)
-                    end,
-                    setTextColor = function(col) end,
-                    setBackgroundColor = function(col) end,
-                    setTextColour = function(col) end,
-                    setBackgroundColour = function(col) end,
-                    getTextColour = function() return col.white end,
-                    getBackgroundColour = function() return col.black end,
-                    getTextColor = function() return col.white end,
-                    getBackgroundColor = function() return col.black end,
-                    setCursorPos = function(cx, cy) ttcp = {cx, cy} end,
-                    getCursorPos = function() return ttcp[1], ttcp[2] end,
-                    scroll = function(sx) ttcp[2] = ttcp[2] - sx end,
-                    clear = function() end,
-                    isColor = function() return false end,
-                    isColour = function() return false end,
-                    getSize = function ()
-                        return 51, 19
-                    end
-                }
-            else
-                threadterm = term
-            end    
-            tasking.createTask("Service: " .. i:sub(3), function()
-                local ok, err = arcos.r({
-                    ackFinish = function()
-                        currentServiceDone = true
-                    end
-                }, "/services/" .. i:sub(3))
-                if ok then
-                    arcos.log("Service " .. i:sub(3) .. " ended.")
-                else
-                    arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
-                end
-                sleep(1)
-            end, 1, "root", threadterm)
-            if i:sub(2,2) == "|" then
-                repeat sleep(0.2)
-                until currentServiceDone
-            end
-            arcos.log("Started")
-        end
-    end
-end
-tasking.setTaskPaused(arcos.getCurrentTask()["pid"], true)
-coroutine.yield()
-local klb = arcos.getKernelLogBuffer()
-print(klb)local files = require("files")
-local col = require("col")
-local path = ... or environ.workDir
-local f = files.resolve(path)
-for _, fp in ipairs(f) do
-    if files.exists(fp) then
-        if files.dir(fp) then
-            for _, i in ipairs(files.ls(fp)) do
-                if files.dir(fp) then
-                    term.setTextColor(col.green)
-                else
-                    term.setTextColor(col.white)
-                end
-                write(i .. " ")
-            end
-            write("\n")
-        else
-            printError(fp .. " is not a directory.")
-        end
-    else
-        printError(fp .. " does not exist on this disk/filesystem.")
-    end
-endlocal files = require("files")
-local f = ...
-if not f then
-    error("No file specified")
-end
-local rf = files.resolve(f, true)[1]
-files.mkDir(rf)local files = require('files')
-local s, t = ...
-if not s and t then
-    print("Usage: mv [src] [target]")
-    error()
-end
-local v, n = files.resolve(s)[1], files.resolve(t, true)[1]
-if not s and t then
-    print("Usage: mv [src] [target]")
-    error()
-end
-files.m(v, n)local files = require("files")
-local f = ...
-if not f then error("No file specified!") end
-local fr = files.resolve(f)[1]
-if not fr then error("File does not exist") end
-files.rm(fr)if arcos.getCurrentTask().user ~= "root" then
-    write("[escalation] Enter root password: ")
-    local pass = read("*")
-    local f = tasking.changeUser("root", pass)
-    if not f then
-        error("Invalid password!")
-    end
-end
-local args = { ... }
-if #args ~= 1 then
-    error("Too many or too few args.")
-end
-local u = arcos.deleteUser(args[1])
-if not u then
-    print("Failed removing user.")
-endlocal col = require("col")
-local files = require("files")
-local tutils = require("tutils")
-term.setTextColor(col.blue)
-print(arcos.version())
-local confile = files.open("/config/arcshell", "r")
-local conf = {}
-if confile then
-    conf = tutils.dJSON(confile.read())
-    confile.close()
-else
-    return
-end
-local luaGlobal = setmetatable({}, {__index = _G})
-if not environ.workDir then environ.workDir = "/" end
-local function run(a1, ...)
-    local cmd = nil
-    if not a1 or a1 == "" then
-        return true
-    end
-    if a1:sub(1, 1) == "/" then
-        if files.exists(a1) then
-            cmd = a1
-        else
-            printError("File not found")
-            return false
-        end
-    elseif a1:sub(1, 2) == "./" then
-        if files.resolve(a1, false)[1] then
-            cmd = files.resolve(a1, false)[1]
-        else
-            printError("File not found")
-            return false
-        end
-    else
-        for i, v in ipairs(conf["path"]) do
-            for i, s in ipairs(files.ls(v)) do
-                local t = s
-                if t:sub(#t-3, #t) == ".lua" then
-                    t = t:sub(1, #t-4)
-                end
-                if t == a1 then
-                    cmd = v .. "/" .. s
-                end
-            end
-        end
-    end
-    if cmd == nil then
-        local cq = tutils.join({ a1, ... }, " ")
-        local chunkl, err = load(cq, "eval", nil, luaGlobal)
-        local chunklb, errb = load("return " .. cq, "eval", nil, luaGlobal)
-        if chunklb then
-            chunkl = chunklb
-            err = errb
-        else
-            print(errb)
-        end
-        if(err and err:sub(20, 36) == "syntax error near") then
-            err = "Command not found."
-        end
-        if not chunkl then
-            printError(err)
-            return false
-        end
-        local ok, err = pcall(chunkl)
-        if not ok then
-            printError(err)
-        else
-            print(tutils.s(err))
-        end
-        return ok
-    end
-    local ok, err = arcos.r({}, cmd, ...)
-    if not ok then
-        printError(err)
-    end
-    return ok, err
-end
-local history = {}
-while true
-do
-    local cTask = arcos.getCurrentTask()
-    if cTask.user == "root" then
-        term.setTextColor(col.red)
-    else
-        term.setTextColor(col.green)
-    end
-    write(cTask.user)
-    local a, err = pcall(arcos.getName)
-    if a then
-        term.setTextColor(col.gray)
-        write("@")
-        term.setTextColor(col.magenta)
-        if not pcall(write, tostring(err)) then
-            write("(none)")
-        end
-    end
-    write(" ")
-    if environ.envType then
-        term.setTextColor(col.yellow)
-        write("(" .. tostring(environ.envType) .. ") ")
-    end
-    term.setTextColor(col.gray) 
-    write(environ.workDir)
-    write(" ")
-    write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
-    term.setTextColor(col.white)
-    local cmd = read(nil, history)
-    table.insert(history, cmd)
-    local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
-    if not r then
-        pcall(printError, k)
-    end
-endlocal ui = require("ui")
-local col = require("col")
-if term then
-    local monitors = dev.monitor
-    local selecting = true
-    local terma = term
-    term.setPaletteColor(col.lightGray, 171/255, 171/255, 171/255)
-    local selection = {
-        ui.Button({
-            label = "Local",
-            x = 1,
-            y = 1,
-            callBack = function ()
-                terma = term
-                selecting = false
-                return false
-            end,
-            col = ui.UItheme.lighterBg,
-            textCol = ui.UItheme.fg
-        }),
-    }
-    for _, i in ipairs(monitors) do
-        table.insert(selection, 
-            ui.Button({
-                label = i.origName,
-                callBack = function ()
-                    terma = i
-                    selecting = false
-                    return false
-                end,
-                x = 1,
-                y = 1,
-                col = ui.UItheme.lighterBg,
-                textCol = ui.UItheme.fg
-            })
-        )
-    end
-    local ttw, tth = terma.getSize()
-    local monSelPage = {
-        ui.Label({
-            label = "Select an Output",
-            x=2,
-            y=2
-        }),
-        ui.ScrollPane({
-            children = selection,
-            height = tth-4,
-            width = ttw-2,
-            x = 2,
-            y = 4,
-            col = ui.UItheme.lighterBg,
-            showScrollBtns = false,
-        })
-    }
-    ui.RenderLoop(monSelPage, term, true)
-    while selecting do
-        if term then
-            ui.RenderLoop(monSelPage, term)
-        end
-    end
-    local counter = 0
-    local ox, oy = 0,0 
-    local tw, th = terma.getSize()
-    local pages = {}
-    local page = 1
-    pages[1] = {
-        ui.Label({
-            label = "Counter: "..counter,
-            x = 1,
-            y = 1
-        }),
-        ui.Label({
-            label = "I'm green!",
-            x = 1,
-            y = 2,
-            textCol = col.green
-        }),
-        ui.Label({
-            label = "I'm light blue on the background!",
-            x = 1,
-            y = 3,
-            col = col.lightBlue
-        }),
-        ui.Label({
-            label = "I'm multiline!\nSee?",
-            x = 1,
-            y = 4,
-            col = col.red,
-            textCol = col.white
-        }),
-        ui.Label({
-            x=13,
-            y=1,
-            label = "No key yet pressed"
-        }),
-    }
-    table.insert(
-        pages[1],
-        ui.Button(
-            {
-                callBack = function ()
-                    ui.PageTransition(pages[1], pages[2], false, 1, true, terma)
-                    page = 2
-                    return true
-                end,
-                x = tw - 5,
-                y = th - 1,
-                label = "Next",
-            }
-        )
-    )
-    local btn = ui.Button({
-        callBack = function ()
-            counter = counter + 1
-            pages[1][1].label = "Counter: " .. counter
-            return true
-        end,
-        label = "Increase counter",
-        x = 1,
-        y = 7,
-        col = ui.UItheme.buttonBg,
-        textCol = ui.UItheme.buttonFg
-    })
-    table.insert(pages[1], btn)
-    table.insert(pages[1],
-    ui.Label({
-        label = "Button width: " .. tostring(btn.getWH()[1]) .. ", height: " .. tostring(btn.getWH()[2]),
-        x = 1,
-        y = 8
-    })
-    )
-    local lbls = {}
-    for i = 1, 40, 1 do
-        table.insert(lbls, ui.Label({
-            label = "Hello world: " .. tostring(i),
-            x = 1,
-            y = 1
-        }))
-    end
-    local alignObject = ui.Align(1, 1, ui.Label{x=0, y=0, label="Center"}, {0.5, 0.5})
-    print(tostring(alignObject))
-    pages[2] = {
-        ui.Label({
-            label = "Level!",
-            x = 3,
-            y = 7,
-        }),
-        ui.Label({
-            label = "Level2!",
-            x = 3,
-            y = 17,
-        }),
-        ui.Label({
-            label = "XLevel!",
-            x = 20,
-            y = 2,
-        }),
-        ui.Label({
-            label = "XLevel2!",
-            x = 40,
-            y = 2,
-        }),
-        ui.ScrollPane({
-            width= 20,
-            height= 10,
-            x = 20,
-            y = 7,
-            children = lbls,
-            col = col.gray,
-            showScrollBtns = true
-        }),
-        alignObject
-    }
-    table.insert(
-        pages[2],
-        ui.Button(
-            {
-                callBack = function ()
-                    ui.PageTransition(pages[2], pages[1], false, 1, false, terma)
-                    page = 1
-                    return true
-                end,
-                x = tw - 5,
-                y = th - 1,
-                label = "Back",
-                col = col.gray,
-                textCol = col.white
-            }
-        )
-    )
-    if terma == term then
-        ui.PageTransition(monSelPage, pages[page], false, 1, true, terma)
-    else
-        ui.PageTransition(monSelPage, {
-            ui.Label{
-                label = "Test is being displayed on monitor." .. tostring(alignObject),
-                x = 2,
-                y = 2
-            }
-        }, false, 1, true, term)
-    end
-    local ls = false
-    ui.RenderLoop(pages[page], terma, true)
-    while true do
-        if terma then
-            ls = ui.RenderLoop(pages[page], terma, ls)
-            pages[2][2].label = tostring(pages[2][5].scroll)
-        end
-    end
-end
-term.clear()
-term.setCursorPos(1, 1)arcos.shutdown()arcos.reboot()local x = require("cellui")
-local runner = x["Runner"].new(x["typedefs"].CCTerminal.new(term),x["ScrollContainer"].new({}),nil)
-local tests = {
-}
-runner:run(){
-    "theme": {
-        "fg": "white",
-        "bg": "black"
-    },
-    "skipPrompt": true,
-    "defargs": "",
-    "autoUpdate": true,
-    "telemetry": false
-}mirkokral/ccarcos{
-    "path": [
-        "/apps",
-        "."
-    ]
-}arcos[
-    {
-        "name": "user",
-        "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb"
-    },
-    {
-        "name": "root",
-        "password": "ce5ca673d13b36118d54a7cf13aeb0ca012383bf771e713421b4d1fd841f539a"
-    }
-]{
-    "friendlyName": "arcos itself",
-    "description": "The package that has all the arcos files",
-    "owner": "arcos Development Team and contributors",
-    "version": "24.08.1",                   
-    "vId": 0,
-    "dependencies": [],
-    "isIndependable": true
-}d>apps
-d>config
-d>services
-d>system
-d>temporary
-d>user
-d>apis
-d>data
-d>config/apps
-d>config/arc
-d>services/enabled
-d>system/apis
-f>startup.lua
-f>apps/adduser.lua
-f>apps/arc.lua
-f>apps/cat.lua
-f>apps/cd.lua
-f>apps/cp.lua
-f>apps/init.lua
-f>apps/kmsg.lua
-f>apps/ls.lua
-f>apps/mkdir.lua
-f>apps/mv.lua
-f>apps/rm.lua
-f>apps/rmuser.lua
-f>apps/shell.lua
-f>apps/uitest.lua
-f>apps/clear.lua
-f>apps/shutdown.lua
-f>apps/reboot.lua
-f>apps/celluitest.lua
-f>config/aboot
-f>config/arcrepo
-f>config/arcshell
-f>config/hostname
-f>config/passwd
-f>config/arc/base.meta.json
-f>config/arc/base.uninstallIndex
-f>services/arcfix.lua
-f>services/elevator.lua
-f>services/elevatorSrv.lua
-f>services/elevatorStep.lua
-f>services/oobe.lua
-f>services/pms.lua
-f>services/shell.lua
-f>services/enabled/9 arcfix
-f>services/enabled/login
-f>system/bootloader.lua
-f>system/krnl.lua
-f>system/rel
-f>system/apis/arc.lua
-f>system/apis/col.lua
-f>system/apis/files.lua
-f>system/apis/hashing.lua
-f>system/apis/rd.lua
-f>system/apis/tutils.lua
-f>system/apis/ui.lua
-f>system/apis/window.lua
-f>data/PRIVACY.txt
-f>services/enabled/login
-f>config/passwd
-f>config/aboot
-f>config/arcshell
-f>config/arcrepoif arcos.getCurrentTask().user ~= "root" then
-    error("Not root!")
-end
-ackFinish()
-local modem
-local selectedFloor = -1
-local col = require("col")
-if arcos then
-    modem = dev ices.find("modem")
-else
-    modem = peripheral.find("modem")
-end
-local theme
-if arcos then
-    theme = {
-        bg = col.black,
-        elFloor = col.blue,
-        elFloorSel = col.magenta,
-        buttonColor = col.white
-    }
-else
-    theme = {
-        bg = colors.black,
-        elFloor = colors.brown,
-        elFloorSel = colors.yellow,
-        buttonColor = colors.white
-    }
-end
-local floors = {
-    {id=8, name="Outside"},
-    {id=3, name="Living"},
-    {id=4, name="Lab"},
-    {id=9, name="Spatial"},
-    {id=7, name="Bunker"}
-}
-local buttons = {
-    {
-        text = "[()]",
-        pos = 1,
-        callback = function()
-            modem.transmit(4590, 0, "")
-        end
-    },
-    {
-        text = "[ ]",
-        pos = 6,
-        callback = function()
-            modem.transmit(713, 0, "MatDoorOpen")
-        end
-    },
-    {
-        text = "[:]",
-        pos = 10,
-        callback = function()
-            modem.transmit(713, 0, "MatDoorClose")
-        end
-    }
-}
-local function reDraw()
-    term.setBackgroundColor(theme.bg)
-    term.clear()
-    term.setCursorPos(1, 1)
-    term.setTextColor(theme.buttonColor)
-    for i, v in ipairs(buttons) do
-        term.setCursorPos(v["pos"], 1)
-        write(v["text"])
-    end
-    term.setCursorPos(1, 2)
-    for i, v in ipairs(floors) do
-        if selectedFloor == v["id"] then
-            term.setTextColor(theme.elFloorSel)
-            print("> " .. v["name"])
-        else
-            term.setTextColor(theme.elFloor)
-            print("| " .. v["name"])
-        end
-    end
-end
-modem.open(711)
-reDraw()
-while true do
-    local seev
-    if arcos then
-        seev = table.pack(arcos.ev())
-    else
-        seev = table.pack(os.pullEvent())
-    end
-    if seev[1] == "modem_message" then
-        selectedFloor = seev[5]+1
-        reDraw()
-    end
-    if seev[1] == "mouse_click" then
-        if seev[4] == 1 then
-            for i, v in ipairs(buttons) do
-                if seev[3] >= v["pos"] and seev[3] <= v["pos"]+#v["text"] then
-                    v["callback"]()
-                end
-            end
-        end
-        if floors[seev[4]-1] then
-            modem.transmit(476, 0, floors[seev[4]-1]["id"]-1)
-            reDraw()
-        end
-    end
-endlocal currentFloor = -1
-local doorWaitFloor = 8
-local queue = {}
-local enderModem = dev.wmodem[1]
-local wiredModem = dev.modem[1]
-print("Hello!")
-print("EnderModem: " .. tostring(enderModem))
-print("WiredModem: " .. tostring(wiredModem))
-wiredModem.open(712)
-wiredModem.open(476)
-enderModem.open(476)
-local function has_value (tab, val)
-    for index, value in ipairs(tab) do
-        if value == val then
-            return true
-        end
-    end
-    return false
-end
-local function contains(table, element)
-    for _, value in pairs(table) do
-        if value == element then
-            return true
-        end
-    end
-    return false
-end
-local function changeFloor(floor, fakeit)
-    enderModem.transmit(711, 712, floor-1)
-    wiredModem.transmit(711, 712, floor-1)
-    print("Actual moving: " .. tostring(floor))
-    if floor == doorWaitFloor then
-        wiredModem.transmit(713, 712, "TopDoorOpen")
-    else
-        wiredModem.transmit(713, 712, "TopDoorClose")
-    end
-    local port = math.random(1, 65534)
-    wiredModem.transmit(713, port, (floor == 3 and "CCDoorOpen" or "CCDoorClose"))
-    print(floor == 3 and "CCDoorOpen" or "CCDoorClose")
-    if floor == doorWaitFloor then
-        print("Waiting for door")
-        local e
-        repeat
-            e = {arcos.ev("modem_message")}
-        until e[3] == 712 and e[5] == "TopDoorAck"
-    end
-    if not fakeit then
-        devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", true)
-        sleep(0.1)
-        devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", false)
-        sleep(0.1)
-        repeat
-            local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("front")
-            sleep(0.1)
-        until r
-    end
-end
-tasking.createTask("Queue task", function()
-    while true do
-        local newFloor = table.remove(queue, 1)
-        if newFloor then
-            print("Moving to floor: " .. tostring(newFloor))
-            changeFloor(newFloor)
-            print("Finished moving")
-            if #queue > 0 then sleep(5) end
-        else
-            sleep(1)
-        end
-    end
-end, 1, "root", term)
-tasking.createTask("PDtask", function ()
-    local pd = dev.playerDetector[1]
-    while true do
-        if pd.isPlayerInCoords({-2740, 66, 9016}, {-2738, 67, 9014}, "ChanesawWhatever") or pd.isPlayerInCoords({-2740, 66, 9016}, {-2738, 67, 9014}, "kkk8GJ") and currentFloor ~= 8 and not has_value(queue, 8)  then
-            table.insert(queue, 8)
-            print("Sending")
-        end
-        sleep(1)
-    end
-end, 1, "root", term, {})
-while true do
-    local event, side, channel, repChannel, msg, dist = arcos.ev("modem_message")
-    if channel == 476 and not contains(queue, tonumber(msg+1)) then
-        print("Queued floor " .. tonumber(msg + 1))
-        table.insert(queue, tonumber(msg + 1))
-    elseif channel == 477 and not contains(queue, tonumber(msg+1)) then
-        print("Faking floor " .. tonumber(msg + 1))
-        changeFloor(tonumber(msg+1), true)
-    else
-        print(channel)
-    end
-end
-local mdm = devices.find("modem")
-local currentFloor = -1
-if not mdm then
-    error("Modem not found")
-end
-local whitelistedPlayers = {
-    "ChanesawWhatever",
-    "emireri1498",
-    "kkk8GJ"
-}
-mdm.open(711)
-mdm.open(713)
-while true do
-    local _, side, channel, rc, msg, dist = arcos.ev("modem_message")
-    if channel == 713 then
-        print(msg)
-        if msg == "TopDoorOpen" then
-            rd.setO("back", true)
-        elseif msg == "TopDoorClose" then
-            rd.setO("back", false)
-        end
-    elseif channel == 711 then
-        currentFloor = tonumber(msg)
-    end
-end
-arc.fetch()
-local w, h = term.getSize()
-local pages = {}
-local page = 2
-local tobeinstalled = {}
-local atobeinstalled = {}
-local ipchildren = {}
-local init = "shell.lua"
-pages[1] = {
-    ui.Label({
-        label = "An error happened during setup!",
-        x = 2, y = 2,
-        textCol = col.red
-    }),
-    ui.Label({
-        label = "<insert error>",
-        x = 2, y = 4,
-        textCol = col.magenta
-    })
-}
-pages[2] = {}
-table.insert(pages[2],
-    ui.Label({
-        label = "Welcome to ",
-        x = 2,
-        y = 2
-    })
-)
-table.insert(pages[2],
-    ui.Label({
-        label = "cc",
-        x = 13,
-        y = 2,
-        textCol = col.gray
-    })
-)
-table.insert(pages[2],
-    ui.Label({
-        label = "arcos",
-        x = 15,
-        y = 2,
-        textCol = col.cyan
-    })
-)
-table.insert(pages[2],
-    ui.Label({
-        label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
-        x = 2,
-        y = 4,
-        textCol = ui.UItheme.lightBg
-    })
-)
-table.insert(pages[2],
-    ui.Button({
-        callBack = function ()
-            ui.PageTransition(pages[2], pages[3], false, 1, true, term)
-            page = 3
-            return true
-        end,
-        label = " Next ",
-        x = w-1-6,
-        y = h-1
-    })
-)
-pages[3] = {}
-table.insert(pages[3], ui.Label({
-    label = "Select a login screen.",
-    x = 2,
-    y = 2
-}))
-table.insert(pages[3], ui.Label({
-    label = ui.Wrap("A login screen is the program you see right after the init system.", w-2),
-    x = 2,
-    y = 3,
-    textCol = ui.UItheme.lightBg
-}))
-table.insert(pages[3], ui.ScrollPane({
-    x = 2,
-    y = 4+pages[3][2].getWH()[2],
-    col = ui.UItheme.lighterBg,
-    children = {
-        ui.Button{
-            label = "audm",
-            callBack = function ()
-                table.insert(tobeinstalled, "audm")
-                init = "audm.lua"
-                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
-                page = 4
-                return true
-            end,
-            x = 1,
-            y = 1
-        },
-        ui.Button{
-            label = "Shell",
-            callBack = function ()
-                init = "shell.lua"
-                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
-                page = 4
-                return true
-            end,
-            x = 1,
-            y = 1
-        }
-    },
-    height = h - 4-pages[3][2].getWH()[2],
-    width = w - 2,
-    showScrollBtns = false
-}))
-local repo = arc.getRepo()
-local function has_value (tab, val)
-    for index, value in ipairs(tab) do
-        if value == val then
-            return true
-        end
-    end
-    return false
-end
-local function pushPackageWithDependencies(pkg)
-    if repo[pkg] then
-        for _, v in ipairs(repo[pkg].dependencies) do
-            pushPackageWithDependencies(v)
-        end
-        if (not arc.isInstalled(pkg) or arc.getIdata(pkg)["vId"] < repo[pkg]["vId"]) and not has_value(atobeinstalled, pkg) then
-            table.insert(atobeinstalled, pkg)
-        end
-    end
-end
-pages[4] = {
-    ui.Label{
-        label = "Set computer label",
-        x = 2,
-        y = 2
-    },
-    ui.Label{
-        label = ui.Wrap("A computer label sets the computer's name in the inventory, and with mods like Jade also shows on the blockinfo.", w-2),
-        x = 2,
-        y = 3,
-        textCol = ui.UItheme.lightBg
-    },
-    ui.TextInput{
-        label = "arcos",
-        x = 2,
-        y = 3,
-        width = w-2
-    },
-    ui.Button{
-        label = "Done",
-        callBack = function ()
-            if pages[4][3].text ~= "" then
-                arcos.setName(pages[4][3].text)
-            end
-            for index, value in ipairs(tobeinstalled) do
-                pushPackageWithDependencies(value)
-            end
-            for index, value in ipairs(atobeinstalled) do
-                table.insert(ipchildren, ui.Label{
-                    label = value,
-                    x = 1,
-                    y = 1
-                })
-            end
-            ui.PageTransition(pages[4], pages[5], false, 1, true, term)
-            page = 5
-            return true
-        end,
-        x = w-4,
-        y = h-1
-    }
-}
-pages[4][3].y = 4 + pages[4][2].getWH()[2]
-pages[5] = {
-    ui.Label{
-        label = "Install packages",
-        x = 2,
-        y = 2
-    },
-    ui.ScrollPane{
-        height = h - 6,
-        width = w - 2,
-        x = 2,
-        y = 4,
-        children = ipchildren,
-        col = col.gray
-    },
-    ui.Button{
-        label = " Install ",
-        x = w-9,
-        y = h-1,
-        callBack = function ()
-            term.setCursorPos(w-10, h-1)
-            term.setBackgroundColor(col.gray)
-            term.setTextColor(col.white)
-            term.write("Installing")
-            term.setBackgroundColor(col.black)
-            term.setTextColor(col.white)
-            local afi = {}
-            for index, value in ipairs(atobeinstalled) do
-                table.insert(afi, arc.install(value))
-            end
-            for index, value in ipairs(afi) do
-                value()
-            end
-            local f, e = files.open("/services/enabled/login", "w")
-            f.write("o " .. init)
-            f.close()
-            ui.PageTransition(pages[5], pages[6], false, 1, true, term)
-            page = 6
-            return true
-        end
-    }
-}
-pages[6] = {
-    ui.Label{
-        label = "All finished!",
-        textCol = col.green,
-        x = 2,
-        y = 2
-    },
-    ui.Button{
-        callBack = function ()
-            arcos.reboot()
-            return true
-        end,
-        label = " Reboot ",
-        x = w-1-8,
-        y = h-1
-    }
-}
-local ls = true
-while true do
-    ls = ui.RenderLoop(pages[page], term, ls)
-endlocal currentPowerUsage = 0
-local f, e = files.open("/config/pmst", "r")
-local titemcount = 0
-local iup = 0
-local monitor = devices.get("left")
-local ed = dev.energyDetector[1]
-local me = dev.meBridge[1]
-local total = 0
-local rd = true
-if f then
-    total = tonumber(f.read())
-    f.close()
-else
-    total = 0
-end
-monitor.setTextScale(0.5)
-local function formatNum(number)
-    if not number then
-        return 0, ""
-    end
-    local on = number
-    local unitprefix = ""
-    if on > 1000 then
-        unitprefix = "k"
-        on = on / 1000
-    end
-    if on > 1000 then
-        unitprefix = "M"
-        on = on / 1000
-    end
-    if on > 1000 then
-        unitprefix = "G"
-        on = on / 1000
-    end
-    return math.floor(on), unitprefix
-end
-local screen = {
-    ui.Label({
-        label = "Current energy usage",
-        x = 2,
-        y = 4,
-        textCol = ui.UItheme.lighterBg
-    }),
-    ui.Label({
-        label = "Total energy usage",
-        x = 2,
-        y = 6,
-        textCol = ui.UItheme.lighterBg
-    }),
-    ui.Label({
-        label = "Total ME item count",
-        x = 2,
-        y = 8,
-        textCol = ui.UItheme.lighterBg
-    }),
-    ui.Label({
-        label = "Storage used",
-        x = 2,
-        y = 10,
-        textCol = ui.UItheme.lighterBg
-    })
-}
-local ceu = ui.Label({
-    label = " 0fe/t ",
-    x = 23,
-    y = 4,
-    col = ui.UItheme.lighterBg,
-})
-local teu = ui.Label({
-    label = " 0fe ",
-    x = 23,
-    y = 6,
-    col = ui.UItheme.lighterBg,
-})
-local tic = ui.Label({
-    label = " 0 items ",
-    x = 23,
-    y = 8,
-    col = ui.UItheme.lighterBg,
-})
-local uic = ui.Label({
-    label = " 0% ",
-    x = 23,
-    y = 10,
-    col = ui.UItheme.lighterBg,
-})
-local time = ui.Label({
-    label = "00:00",
-    x = ({ monitor.getSize() })[1]-1-5,
-    y = 2,
-})
-local btn1 = ui.Button({
-    label = " Lights on ",
-    x = 2,
-    y = 2,
-    callBack = function ()
-        dev.modem[1].transmit(713, 0, "MainLightsOn")
-    end
-})
-local btn2 = ui.Button({
-    label = " Lights off ",
-    x = 14,
-    y = 2,
-    callBack = function ()
-        dev.modem[1].transmit(713, 0, "MainLightsOff")
-    end
-})
-local ls = false
-local tid = arcos.startTimer(2.5)
-while rd do
-    local e
-    ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic, btn1, btn2}, monitor, ls)
-    if e[1] == "timer" and e[2] == tid then
-        local nf, err = files.open("/config/pmst", "w")
-        if nf then
-            nf.write(tostring(total))
-            nf.close()
-        end
-        sleep(0.1)
-        pcall(function (...)
-            currentPowerUsage = ed.getTransferRate()
-            total = total + ed.getTransferRate() * 10
-            titemcount = me.getUsedItemStorage()
-            iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
-        end)
-        local s = tutils.formatTime(arcos.time("ingame"))
-        time.x = ({ monitor.getSize() })[1]-1-#s
-        time.label = s
-        local teufmt, teuext
-        if total then
-            teufmt, teuext = formatNum(total)
-            teu.label = " " .. tostring(teufmt) .. teuext .. "fe "
-        end
-        if currentPowerUsage then
-            teufmt, teuext = formatNum(currentPowerUsage)
-            ceu.label = " " .. tostring(teufmt) .. teuext .. "fe/t "
-        end
-        if titemcount then
-            teufmt, teuext = formatNum(titemcount)
-            tic.label = " " .. tostring(teufmt) .. teuext .. " items "
-        end
-        uic.label = " " .. tostring(iup) .. "% "
-        ls = true
-        tid = arcos.startTimer(0.5)
-    end
-endarcos.r({}, "/apps/shell.lua")l|arcfix.lua
-o oobe.luafunction mysplit(inputstr, sep)
+coroutine.yield()function mysplit(inputstr, sep)
     if sep == nil then
       sep = "%s"
     end
@@ -1600,7 +520,7 @@ function main()
     fn(table.unpack(mysplit(args, " ")))
 end
 main()
-local args = {...}
+brokenlocal args = {...}
 local currentTask
 local cPid
 local kernelLogBuffer = "Start\n"
@@ -2207,7 +1127,7 @@ end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 while true do
     if #tasks > 0 then
-        ev = { os.pullEventRaw() }
+        ev = { coroutine.yield() }
         for d, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
                 _G.term = i["out"] or __LEGACY.term
@@ -2234,7 +1154,7 @@ while true do
         end, 1, "root", __LEGACY.term, {workDir = "/"})
     end
 end
-brokenlocal files = require("files")
+local files = require("files")
 local hashing = require("hashing")
 local tutils = require("tutils")
 local methods = {
@@ -2247,8 +1167,9 @@ local methods = {
     PATCH = true,
     TRACE = true,
 }
-local function getChosenRepo()
-    local rf, x = files.open("/config/arcrepo", "r")
+local function getChosenRepo(rootdir)
+    if not rootdir then rootdir = "/" end
+    local rf, x = files.open(rootdir .. "/config/arcrepo", "r")
     if not rf then
         return "mirkokral/ccarcos" -- Default to the main arcos repo
     end
@@ -2295,7 +1216,7 @@ local function wrap_request(_url, ...)
     local ok, err = __LEGACY.http.request(...)
     if ok then
         while true do
-            local event, param1, param2, param3 = os.pullEvent()
+            local event, param1, param2, param3 = arcos.ev()
             if event == "http_success" and param1 == _url then
                 return param2
             elseif event == "http_failure" and param1 == _url then
@@ -2315,8 +1236,9 @@ local function get(_url, _headers, _binary)
     assert(type(_binary) == "boolean" or type(_binary) == "nil")
     return wrap_request(_url, _url, nil, _headers, _binary)
 end
-local function getLatestCommit()
-    local f, e = __LEGACY.files.open("/config/arc/latestCommit.hash", "r")
+local function getLatestCommit(rootdir)
+    if not rootdir then rootdir = "/" end
+    local f, e = __LEGACY.files.open(rootdir .. "config/arc/latestCommit.hash", "r")
     if not f then 
         return ""
     else 
@@ -2325,20 +1247,25 @@ local function getLatestCommit()
         return rp
     end
 end
-local function checkForCD()
+local function checkForCD(rootdir)
+    if not rootdir then rootdir = "/" end
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
-    if not __LEGACY.files.exists("/config/arc") then
-        __LEGACY.files.makeDir("/config/arc")
+    if not __LEGACY.files.exists(rootdir .. "config") then
+        __LEGACY.files.makeDir(rootdir .. "/config")
+    end
+    if not __LEGACY.files.exists(rootdir .. "config/arc") then
+        __LEGACY.files.makeDir(rootdir .. "/config/arc")
     end
 end
-local function fetch()
+local function fetch(rootdir)
+    if not rootdir then rootdir = "/" end
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
     checkForCD()
-    local f2 = __LEGACY.files.open("/config/arc/latestCommit.hash", "w")    
+    local f2 = __LEGACY.files.open(rootdir .. "/config/arc/latestCommit.hash", "w")    
     local fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
         ["Authorization"] = "Bearer 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"
     })
@@ -2358,26 +1285,29 @@ local function fetch()
     if not f then
         return false
     end
-    local fa = __LEGACY.files.open("/config/arc/repo.json", "w")
+    local fa = __LEGACY.files.open(rootdir .. "/config/arc/repo.json", "w")
     fa.write(f.readAll())
     fa.close()
     f.close()
 end
-local function isInstalled(package)
-    return __LEGACY.files.exists("/config/arc/" .. package .. ".uninstallIndex")
+local function isInstalled(package, rootdir)
+    if not rootdir then rootdir = "/" end
+    return __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex")
 end
-local function getIdata(package)
-    if not __LEGACY.files.exists("/config/arc/" .. package .. ".meta.json") then
+local function getIdata(package, rootdir)
+    if not rootdir then rootdir = "/" end
+    if not __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
         return nil
     end
-    local f, e = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "r")
+    local f, e = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
     if not f then
         return nil
     end
     return __LEGACY.textutils.unserializeJSON(f.readAll())
 end
-local function getRepo()
-    local f = __LEGACY.files.open("/config/arc/repo.json", "r")
+local function getRepo(rootdir)
+    if not rootdir then rootdir = "/" end
+    local f = __LEGACY.files.open(rootdir .. "/config/arc/repo.json", "r")
     if not f then
         return {}
     end
@@ -2385,23 +1315,24 @@ local function getRepo()
     f.close()
     return uj
 end
-local function uninstall(package)
+local function uninstall(package, rootdir)
+    if not rootdir then rootdir = "/" end
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
-    if not __LEGACY.files.exists("/config/arc/" .. package .. ".uninstallIndex") then
+    if not __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
     local toDelete = { }
-    toDelete["/config/arc/" .. package .. ".uninstallIndex"] = ""
-    toDelete["/config/arc/" .. package .. ".meta.json"] = ""
-    local f = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "r")
+    toDelete[rootdir .. "/config/arc/" .. package .. ".uninstallIndex"] = ""
+    toDelete[rootdir .. "/config/arc/" .. package .. ".meta.json"] = ""
+    local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "r")
     for value in f.readLine do
         if value == nil then break end
         if value:sub(0, 1) == "f" then
-            toDelete["/" .. value:sub(4+64)] = value:sub(3, 3+64)
+            toDelete[rootdir .. "/" .. value:sub(4+64)] = value:sub(3, 3+64)
         else
-            toDelete["/" .. value:sub(3)] = "DIRECTORY"
+            toDelete[rootdir .. "/" .. value:sub(3)] = "DIRECTORY"
         end
     end
     for value, hash in pairs(toDelete) do
@@ -2474,19 +1405,20 @@ local arkivelib = {
         return outputfiles
     end
 }
-local function install(package)
+local function install(package, rootdir)
+    if not rootdir then rootdir = "/" end
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
-    checkForCD()
-    local repo = getRepo()
-    local latestCommit = getLatestCommit()
+    checkForCD(rootdir)
+    local repo = getRepo(rootdir)
+    local latestCommit = getLatestCommit(rootdir)
     local buildedpl = ""
     if not repo[package] then
         error("Package not found!")
     end
-    if __LEGACY.files.exists("/config/arc/" .. package .. ".meta.json") then
-        local f = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "r")
+    if __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
+        local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
         local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
         if ver < repo[package]["vId"] then
             local updateFile, e = get("https://raw.githubusercontent.com/" ..
@@ -2501,7 +1433,7 @@ local function install(package)
                     error(e)
                 end
             end
-            uninstall(package)
+            uninstall(package, rootdir)
         else
             error("Package already installed!")
         end
@@ -2514,8 +1446,8 @@ local function install(package)
     local ifx = arkivelib.unarchive(indexFile.readAll())
     for index, value in ipairs(ifx) do
         if value[2] == nil then
-            if not __LEGACY.files.exists("/" .. value[1]) then
-                __LEGACY.files.makeDir("/" .. value[1])
+            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
+                __LEGACY.files.makeDir(rootdir .. "/" .. value[1])
                 buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
         else
@@ -2523,14 +1455,14 @@ local function install(package)
     end
     for index, value in ipairs(ifx) do
         if value[2] == nil then
-            if not __LEGACY.files.exists("/" .. value[1]) then
-                __LEGACY.files.makeDir("/" .. value[1])
+            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
+                __LEGACY.files.makeDir(rootdir .. "/" .. value[1])
                 buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
         else
-            if not __LEGACY.files.exists("/" .. value[1]) then
+            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
                 local file = value[2]
-                local tfh, e = __LEGACY.files.open("/" .. value[1], "w")
+                local tfh, e = __LEGACY.files.open(rootdir .. "/" .. value[1], "w")
                 if not tfh then error(e) end
                 tfh.write(file)
                 tfh.close()
@@ -2547,32 +1479,33 @@ local function install(package)
             end
             local fd = file.readAll()
             file.close()
-            local tf = __LEGACY.files.open("/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
+            local tf = __LEGACY.files.open(rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
             tf.write(fd)
             tf.close()
-            arcos.r({}, "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
+            arcos.r({}, rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
         end
     end
     indexFile.close()
-    local insf = __LEGACY.files.open("/config/arc/" .. package .. ".meta.json", "w")
+    local insf = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "w")
     insf.write(__LEGACY.textutils.serializeJSON(pkg))
     insf.close()
-    local uinsf = __LEGACY.files.open("/config/arc/" .. package .. ".uninstallIndex", "w")
+    local uinsf = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "w")
     uinsf.write(buildedpl)
     uinsf.close()
     return function()
     end
 end
-local function getUpdatable()
+local function getUpdatable(rootdir)
+    if not rootdir then rootdir = "/" end
     local updatable = {}
-    for index, value in ipairs(files.ls("/config/arc/")) do
+    for index, value in ipairs(files.ls(rootdir .. "/config/arc/")) do
         if value:sub(#value - 14) == ".uninstallIndex" then
             local pk = value:sub(0, #value - 15)
-            local pf = __LEGACY.files.open("/config/arc/" .. pk .. ".meta.json", "r")
+            local pf = __LEGACY.files.open(rootdir .. "/config/arc/" .. pk .. ".meta.json", "r")
             local at = pf.readAll()
             local af = __LEGACY.textutils.unserializeJSON(at)
             pf.close()
-            if af["vId"] < getRepo()[pk]["vId"] then
+            if af["vId"] < getRepo(rootdir)[pk]["vId"] then
                 table.insert(updatable, pk)
             end
         end
@@ -9102,7 +8035,606 @@ local success, err = _G.xpcall(function()
 end, _hx_handle_error)
 if not success then _G.error(err) end
 return _hx_exports
-By using arcos, you automatically agree to these
+if arcos.getCurrentTask().user ~= "root" then
+    error("Not root!")
+end
+ackFinish()
+local modem
+local selectedFloor = -1
+local col = require("col")
+if arcos then
+    modem = devices.find("modem")
+else
+    modem = peripheral.find("modem")
+end
+local theme
+if arcos then
+    theme = {
+        bg = col.black,
+        elFloor = col.blue,
+        elFloorSel = col.magenta,
+        buttonColor = col.white
+    }
+else
+    theme = {
+        bg = colors.black,
+        elFloor = colors.brown,
+        elFloorSel = colors.yellow,
+        buttonColor = colors.white
+    }
+end
+local floors = {
+    {id=8, name="Outside"},
+    {id=3, name="Living"},
+    {id=4, name="Lab"},
+    {id=9, name="Spatial"},
+    {id=7, name="Bunker"}
+}
+local buttons = {
+    {
+        text = "[()]",
+        pos = 1,
+        callback = function()
+            modem.transmit(4590, 0, "")
+        end
+    },
+    {
+        text = "[ ]",
+        pos = 6,
+        callback = function()
+            modem.transmit(713, 0, "MatDoorOpen")
+        end
+    },
+    {
+        text = "[:]",
+        pos = 10,
+        callback = function()
+            modem.transmit(713, 0, "MatDoorClose")
+        end
+    }
+}
+local function reDraw()
+    term.setBackgroundColor(theme.bg)
+    term.clear()
+    term.setCursorPos(1, 1)
+    term.setTextColor(theme.buttonColor)
+    for i, v in ipairs(buttons) do
+        term.setCursorPos(v["pos"], 1)
+        write(v["text"])
+    end
+    term.setCursorPos(1, 2)
+    for i, v in ipairs(floors) do
+        if selectedFloor == v["id"] then
+            term.setTextColor(theme.elFloorSel)
+            print("> " .. v["name"])
+        else
+            term.setTextColor(theme.elFloor)
+            print("| " .. v["name"])
+        end
+    end
+end
+modem.open(711)
+reDraw()
+while true do
+    local seev
+    if arcos then
+        seev = table.pack(arcos.ev())
+    else
+        seev = table.pack(os.pullEvent())
+    end
+    if seev[1] == "modem_message" then
+        selectedFloor = seev[5]+1
+        reDraw()
+    end
+    if seev[1] == "mouse_click" then
+        if seev[4] == 1 then
+            for i, v in ipairs(buttons) do
+                if seev[3] >= v["pos"] and seev[3] <= v["pos"]+#v["text"] then
+                    v["callback"]()
+                end
+            end
+        end
+        if floors[seev[4]-1] then
+            modem.transmit(476, 0, floors[seev[4]-1]["id"]-1)
+            reDraw()
+        end
+    end
+endlocal currentFloor = -1
+local doorWaitFloor = 8
+local queue = {}
+local enderModem = dev.wmodem[1]
+local wiredModem = dev.modem[1]
+print("Hello!")
+print("EnderModem: " .. tostring(enderModem))
+print("WiredModem: " .. tostring(wiredModem))
+wiredModem.open(712)
+wiredModem.open(476)
+enderModem.open(476)
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+    return false
+end
+local function contains(table, element)
+    for _, value in pairs(table) do
+        if value == element then
+            return true
+        end
+    end
+    return false
+end
+local function changeFloor(floor, fakeit)
+    enderModem.transmit(711, 712, floor-1)
+    wiredModem.transmit(711, 712, floor-1)
+    print("Actual moving: " .. tostring(floor))
+    if floor == doorWaitFloor then
+        wiredModem.transmit(713, 712, "TopDoorOpen")
+    else
+        wiredModem.transmit(713, 712, "TopDoorClose")
+    end
+    local port = math.random(1, 65534)
+    wiredModem.transmit(713, port, (floor == 3 and "CCDoorOpen" or "CCDoorClose"))
+    print(floor == 3 and "CCDoorOpen" or "CCDoorClose")
+    if floor == doorWaitFloor then
+        print("Waiting for door")
+        local e
+        repeat
+            e = {arcos.ev("modem_message")}
+        until e[3] == 712 and e[5] == "TopDoorAck"
+    end
+    if not fakeit then
+        devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", true)
+        sleep(0.1)
+        devices.get("redstoneIntegrator_" .. tostring(floor)).setOutput("front", false)
+        sleep(0.1)
+        repeat
+            local r = devices.get("redstoneIntegrator_" .. tostring(floor)).getInput("front")
+            sleep(0.1)
+        until r
+    end
+end
+tasking.createTask("Queue task", function()
+    while true do
+        local newFloor = table.remove(queue, 1)
+        if newFloor then
+            print("Moving to floor: " .. tostring(newFloor))
+            changeFloor(newFloor)
+            print("Finished moving")
+            if #queue > 0 then sleep(5) end
+        else
+            sleep(1)
+        end
+    end
+end, 1, "root", term)
+tasking.createTask("PDtask", function ()
+    local pd = dev.playerDetector[1]
+    while true do
+        if pd.isPlayerInCoords({-2740, 66, 9016}, {-2738, 67, 9014}, "ChanesawWhatever") or pd.isPlayerInCoords({-2740, 66, 9016}, {-2738, 67, 9014}, "kkk8GJ") and currentFloor ~= 8 and not has_value(queue, 8)  then
+            table.insert(queue, 8)
+            print("Sending")
+        end
+        sleep(1)
+    end
+end, 1, "root", term, {})
+while true do
+    local event, side, channel, repChannel, msg, dist = arcos.ev("modem_message")
+    if channel == 476 and not contains(queue, tonumber(msg+1)) then
+        print("Queued floor " .. tonumber(msg + 1))
+        table.insert(queue, tonumber(msg + 1))
+    elseif channel == 477 and not contains(queue, tonumber(msg+1)) then
+        print("Faking floor " .. tonumber(msg + 1))
+        changeFloor(tonumber(msg+1), true)
+    else
+        print(channel)
+    end
+end
+local mdm = devices.find("modem")
+local currentFloor = -1
+if not mdm then
+    error("Modem not found")
+end
+local whitelistedPlayers = {
+    "ChanesawWhatever",
+    "emireri1498",
+    "kkk8GJ"
+}
+mdm.open(711)
+mdm.open(713)
+while true do
+    local _, side, channel, rc, msg, dist = arcos.ev("modem_message")
+    if channel == 713 then
+        print(msg)
+        if msg == "TopDoorOpen" then
+            rd.setO("back", true)
+        elseif msg == "TopDoorClose" then
+            rd.setO("back", false)
+        end
+    elseif channel == 711 then
+        currentFloor = tonumber(msg)
+    end
+end
+arc.fetch()
+local w, h = term.getSize()
+local pages = {}
+local page = 2
+local tobeinstalled = {}
+local atobeinstalled = {}
+local ipchildren = {}
+local init = "shell.lua"
+pages[1] = {
+    ui.Label({
+        label = "An error happened during setup!",
+        x = 2, y = 2,
+        textCol = col.red
+    }),
+    ui.Label({
+        label = "<insert error>",
+        x = 2, y = 4,
+        textCol = col.magenta
+    })
+}
+pages[2] = {}
+table.insert(pages[2],
+    ui.Label({
+        label = "Welcome to ",
+        x = 2,
+        y = 2
+    })
+)
+table.insert(pages[2],
+    ui.Label({
+        label = "cc",
+        x = 13,
+        y = 2,
+        textCol = col.gray
+    })
+)
+table.insert(pages[2],
+    ui.Label({
+        label = "arcos",
+        x = 15,
+        y = 2,
+        textCol = col.cyan
+    })
+)
+table.insert(pages[2],
+    ui.Label({
+        label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
+        x = 2,
+        y = 4,
+        textCol = ui.UItheme.lightBg
+    })
+)
+table.insert(pages[2],
+    ui.Button({
+        callBack = function ()
+            ui.PageTransition(pages[2], pages[3], false, 1, true, term)
+            page = 3
+            return true
+        end,
+        label = " Next ",
+        x = w-1-6,
+        y = h-1
+    })
+)
+pages[3] = {}
+table.insert(pages[3], ui.Label({
+    label = "Select a login screen.",
+    x = 2,
+    y = 2
+}))
+table.insert(pages[3], ui.Label({
+    label = ui.Wrap("A login screen is the program you see right after the init system.", w-2),
+    x = 2,
+    y = 3,
+    textCol = ui.UItheme.lightBg
+}))
+table.insert(pages[3], ui.ScrollPane({
+    x = 2,
+    y = 4+pages[3][2].getWH()[2],
+    col = ui.UItheme.lighterBg,
+    children = {
+        ui.Button{
+            label = "audm",
+            callBack = function ()
+                table.insert(tobeinstalled, "audm")
+                init = "audm.lua"
+                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
+                page = 4
+                return true
+            end,
+            x = 1,
+            y = 1
+        },
+        ui.Button{
+            label = "Shell",
+            callBack = function ()
+                init = "shell.lua"
+                ui.PageTransition(pages[3], pages[4], false, 1, true, term)
+                page = 4
+                return true
+            end,
+            x = 1,
+            y = 1
+        }
+    },
+    height = h - 4-pages[3][2].getWH()[2],
+    width = w - 2,
+    showScrollBtns = false
+}))
+local repo = arc.getRepo()
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+    return false
+end
+local function pushPackageWithDependencies(pkg)
+    if repo[pkg] then
+        for _, v in ipairs(repo[pkg].dependencies) do
+            pushPackageWithDependencies(v)
+        end
+        if (not arc.isInstalled(pkg) or arc.getIdata(pkg)["vId"] < repo[pkg]["vId"]) and not has_value(atobeinstalled, pkg) then
+            table.insert(atobeinstalled, pkg)
+        end
+    end
+end
+pages[4] = {
+    ui.Label{
+        label = "Set computer label",
+        x = 2,
+        y = 2
+    },
+    ui.Label{
+        label = ui.Wrap("A computer label sets the computer's name in the inventory, and with mods like Jade also shows on the blockinfo.", w-2),
+        x = 2,
+        y = 3,
+        textCol = ui.UItheme.lightBg
+    },
+    ui.TextInput{
+        label = "arcos",
+        x = 2,
+        y = 3,
+        width = w-2
+    },
+    ui.Button{
+        label = "Done",
+        callBack = function ()
+            if pages[4][3].text ~= "" then
+                arcos.setName(pages[4][3].text)
+            end
+            for index, value in ipairs(tobeinstalled) do
+                pushPackageWithDependencies(value)
+            end
+            for index, value in ipairs(atobeinstalled) do
+                table.insert(ipchildren, ui.Label{
+                    label = value,
+                    x = 1,
+                    y = 1
+                })
+            end
+            ui.PageTransition(pages[4], pages[5], false, 1, true, term)
+            page = 5
+            return true
+        end,
+        x = w-4,
+        y = h-1
+    }
+}
+pages[4][3].y = 4 + pages[4][2].getWH()[2]
+pages[5] = {
+    ui.Label{
+        label = "Install packages",
+        x = 2,
+        y = 2
+    },
+    ui.ScrollPane{
+        height = h - 6,
+        width = w - 2,
+        x = 2,
+        y = 4,
+        children = ipchildren,
+        col = col.gray
+    },
+    ui.Button{
+        label = " Install ",
+        x = w-9,
+        y = h-1,
+        callBack = function ()
+            term.setCursorPos(w-10, h-1)
+            term.setBackgroundColor(col.gray)
+            term.setTextColor(col.white)
+            term.write("Installing")
+            term.setBackgroundColor(col.black)
+            term.setTextColor(col.white)
+            local afi = {}
+            for index, value in ipairs(atobeinstalled) do
+                table.insert(afi, arc.install(value))
+            end
+            for index, value in ipairs(afi) do
+                value()
+            end
+            local f, e = files.open("/services/enabled/login", "w")
+            f.write("o " .. init)
+            f.close()
+            ui.PageTransition(pages[5], pages[6], false, 1, true, term)
+            page = 6
+            return true
+        end
+    }
+}
+pages[6] = {
+    ui.Label{
+        label = "All finished!",
+        textCol = col.green,
+        x = 2,
+        y = 2
+    },
+    ui.Button{
+        callBack = function ()
+            arcos.reboot()
+            return true
+        end,
+        label = " Reboot ",
+        x = w-1-8,
+        y = h-1
+    }
+}
+local ls = true
+while true do
+    ls = ui.RenderLoop(pages[page], term, ls)
+endlocal currentPowerUsage = 0
+local f, e = files.open("/config/pmst", "r")
+local titemcount = 0
+local iup = 0
+local monitor = devices.get("left")
+local ed = dev.energyDetector[1]
+local me = dev.meBridge[1]
+local total = 0
+local rd = true
+if f then
+    total = tonumber(f.read())
+    f.close()
+else
+    total = 0
+end
+monitor.setTextScale(0.5)
+local function formatNum(number)
+    if not number then
+        return 0, ""
+    end
+    local on = number
+    local unitprefix = ""
+    if on > 1000 then
+        unitprefix = "k"
+        on = on / 1000
+    end
+    if on > 1000 then
+        unitprefix = "M"
+        on = on / 1000
+    end
+    if on > 1000 then
+        unitprefix = "G"
+        on = on / 1000
+    end
+    return math.floor(on), unitprefix
+end
+local screen = {
+    ui.Label({
+        label = "Current energy usage",
+        x = 2,
+        y = 4,
+        textCol = ui.UItheme.lighterBg
+    }),
+    ui.Label({
+        label = "Total energy usage",
+        x = 2,
+        y = 6,
+        textCol = ui.UItheme.lighterBg
+    }),
+    ui.Label({
+        label = "Total ME item count",
+        x = 2,
+        y = 8,
+        textCol = ui.UItheme.lighterBg
+    }),
+    ui.Label({
+        label = "Storage used",
+        x = 2,
+        y = 10,
+        textCol = ui.UItheme.lighterBg
+    })
+}
+local ceu = ui.Label({
+    label = " 0fe/t ",
+    x = 23,
+    y = 4,
+    col = ui.UItheme.lighterBg,
+})
+local teu = ui.Label({
+    label = " 0fe ",
+    x = 23,
+    y = 6,
+    col = ui.UItheme.lighterBg,
+})
+local tic = ui.Label({
+    label = " 0 items ",
+    x = 23,
+    y = 8,
+    col = ui.UItheme.lighterBg,
+})
+local uic = ui.Label({
+    label = " 0% ",
+    x = 23,
+    y = 10,
+    col = ui.UItheme.lighterBg,
+})
+local time = ui.Label({
+    label = "00:00",
+    x = ({ monitor.getSize() })[1]-1-5,
+    y = 2,
+})
+local btn1 = ui.Button({
+    label = " Lights on ",
+    x = 2,
+    y = 2,
+    callBack = function ()
+        dev.modem[1].transmit(713, 0, "MainLightsOn")
+    end
+})
+local btn2 = ui.Button({
+    label = " Lights off ",
+    x = 14,
+    y = 2,
+    callBack = function ()
+        dev.modem[1].transmit(713, 0, "MainLightsOff")
+    end
+})
+local ls = false
+local tid = arcos.startTimer(2.5)
+while rd do
+    local e
+    ls, e = ui.RenderLoop({ screen[1], screen[2], screen[3], screen[4], time, teu, ceu, tic, uic, btn1, btn2}, monitor, ls)
+    if e[1] == "timer" and e[2] == tid then
+        local nf, err = files.open("/config/pmst", "w")
+        if nf then
+            nf.write(tostring(total))
+            nf.close()
+        end
+        sleep(0.1)
+        pcall(function (...)
+            currentPowerUsage = ed.getTransferRate()
+            total = total + ed.getTransferRate() * 10
+            titemcount = me.getUsedItemStorage()
+            iup = math.floor(me.getUsedItemStorage() / me.getTotalItemStorage()*100)
+        end)
+        local s = tutils.formatTime(arcos.time("ingame"))
+        time.x = ({ monitor.getSize() })[1]-1-#s
+        time.label = s
+        local teufmt, teuext
+        if total then
+            teufmt, teuext = formatNum(total)
+            teu.label = " " .. tostring(teufmt) .. teuext .. "fe "
+        end
+        if currentPowerUsage then
+            teufmt, teuext = formatNum(currentPowerUsage)
+            ceu.label = " " .. tostring(teufmt) .. teuext .. "fe/t "
+        end
+        if titemcount then
+            teufmt, teuext = formatNum(titemcount)
+            tic.label = " " .. tostring(teufmt) .. teuext .. " items "
+        end
+        uic.label = " " .. tostring(iup) .. "% "
+        ls = true
+        tid = arcos.startTimer(0.5)
+    end
+endarcos.r({}, "/apps/shell.lua")l|arcfix.lua
+o oobe.luaBy using arcos, you automatically agree to these
 terms. Agreement to this file is also required By
 the stock arcos installer.
 We (the arcos development team) may:
@@ -9126,4 +8658,715 @@ telemetry and sends the telemetry to the server)
 Turning off telemetry:
 To turn off telemetry, use gconfig or (if gconfig
 doesn't have telemetry stuff) modify /config/aboot,
-find the "telemetry" field and disable it
+find the "telemetry" field and disable it{
+    "theme": {
+        "fg": "white",
+        "bg": "black"
+    },
+    "skipPrompt": true,
+    "defargs": "",
+    "autoUpdate": true,
+    "telemetry": false
+}mirkokral/ccarcos{
+    "path": [
+        "/apps",
+        "."
+    ]
+}arcos[
+    {
+        "name": "user",
+        "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb"
+    },
+    {
+        "name": "root",
+        "password": "ce5ca673d13b36118d54a7cf13aeb0ca012383bf771e713421b4d1fd841f539a"
+    }
+]{
+    "friendlyName": "arcos itself",
+    "description": "The package that has all the arcos files",
+    "owner": "arcos Development Team and contributors",
+    "version": "24.08.1",                   
+    "vId": 0,
+    "dependencies": [],
+    "isIndependable": true
+}d>system
+d>user
+d>temporary
+d>services
+d>data
+d>config
+d>apps
+d>apis
+d>system/apis
+d>services/enabled
+d>config/apps
+d>config/arc
+f>startup.lua
+f>system/bootloader.lua
+f>system/rel
+f>system/krnl.lua
+f>system/apis/arc.lua
+f>system/apis/col.lua
+f>system/apis/files.lua
+f>system/apis/hashing.lua
+f>system/apis/rd.lua
+f>system/apis/tutils.lua
+f>system/apis/ui.lua
+f>system/apis/window.lua
+f>services/arcfix.lua
+f>services/elevator.lua
+f>services/elevatorSrv.lua
+f>services/elevatorStep.lua
+f>services/oobe.lua
+f>services/pms.lua
+f>services/shell.lua
+f>services/enabled/9 arcfix
+f>services/enabled/login
+f>data/PRIVACY.txt
+f>config/aboot
+f>config/arcrepo
+f>config/arcshell
+f>config/hostname
+f>config/passwd
+f>config/arc/base.meta.json
+f>config/arc/base.uninstallIndex
+f>apps/adduser.lua
+f>apps/arc.lua
+f>apps/cat.lua
+f>apps/cd.lua
+f>apps/cp.lua
+f>apps/init.lua
+f>apps/kmsg.lua
+f>apps/ls.lua
+f>apps/mkdir.lua
+f>apps/mv.lua
+f>apps/rm.lua
+f>apps/rmuser.lua
+f>apps/shell.lua
+f>apps/uitest.lua
+f>apps/clear.lua
+f>apps/shutdown.lua
+f>apps/reboot.lua
+f>apps/celluitest.lua
+f>services/enabled/login
+f>config/passwd
+f>config/aboot
+f>config/arcshell
+f>config/arcrepoif arcos.getCurrentTask().user ~= "root" then
+    write("[escalation] Enter root password: ")
+    local pass = read("*")
+    local f = tasking.changeUser("root", pass)
+    if not f then
+        error("Invalid password!")
+    end
+end
+local args = { ... }
+local username = args[1]
+local password = "notset"
+if #args == 1 then
+    write("New Password: ")
+    password = read("*")
+elseif #args == 2 then
+    password = args[2]
+else
+    error("Too little or too many arguments")
+end
+arcos.createUser(username, password)local arc = require("arc")
+local files = require("files")
+local col = require("col")
+local args = { ... }
+local cmd = table.remove(args, 1)
+local repo = arc.getRepo()
+local function getTBI(a, b)
+    if not repo[a] then
+        error("Package not found: " .. a)
+    end
+    for index, value in ipairs(repo[a]["dependencies"]) do
+        getTBI(value, b)
+    end
+    if (not arc.isInstalled(a)) or arc.getIdata(a)["vId"] < repo[a]["vId"] then
+        table.insert(b, a)
+    end
+end
+if cmd == "fetch" then
+    arc.fetch()
+elseif cmd == "setrepo" then
+    col.expect(2, args[1], "string")
+    local fty, e = files.open("/config/arcrepo", "w")
+    if fty then
+        fty.write(args[1])
+        fty.close()
+        print("New repo: " .. args[1])
+    else
+        print("Failed to set new repo (check permissions)")
+    end
+elseif cmd == "install" then
+    local tobeinstalled = {}
+    local afterFunctions = {}
+    for index, value in ipairs(args) do
+        if not repo[value] then
+            error("Package not found: " .. value)
+        end
+        getTBI(value, tobeinstalled)
+    end
+    if #tobeinstalled > 0 then
+        term.setTextColor(col.lightGray)
+        print("These packages will be installed:")
+        print()
+        term.setTextColor(col.green)
+        print(table.concat(tobeinstalled, " "))
+        term.setTextColor(col.white)
+        print()
+        print("Do you want to proceed? [y/n] ")
+        local out = ({ arcos.ev("char") })[2]
+        if out == "y" then
+            for index, value in ipairs(tobeinstalled) do
+                print("(" .. index .. "/" .. #tobeinstalled .. ") " .. value)
+                table.insert(afterFunctions, arc.install(value))
+            end
+        else
+            print("Installation Aborted.")
+        end
+        for index, value in ipairs(afterFunctions) do
+            value()
+        end
+    end
+    print("Done")
+elseif cmd == "uninstall" then
+    for index, value in ipairs(args) do
+        if not arc.isInstalled(value) then
+            error("Package not installed: " .. value)
+        end
+    end
+    term.setTextColor(col.lightGray)
+    print("These packages will be uninstalled:")
+    print()
+    term.setTextColor(col.red)
+    print(table.concat(args, " "))
+    print()
+    term.setTextColor(col.white)
+    write("Do you want to proceed? [y/n] ")
+    local out = ({ arcos.ev("char") })[2]
+    print()
+    if out == "y" then
+        for index, value in ipairs(args) do
+            arc.uninstall(value)
+        end
+    else
+        print("Unistallation Aborted.")
+    end
+elseif cmd == "update" then
+    local toUpdate = arc.getUpdatable()
+    print("These packages will be updated:")
+    print()
+    term.setTextColor(col.magenta)
+    print(table.concat(toUpdate, " "))
+    print()
+    term.setTextColor(col.white)
+    write("Do you want to proceed? [y/n] ")
+    local out = ({ arcos.ev("char") })[2]
+    print()
+    if out == "y" then
+        for index, value in ipairs(toUpdate) do
+            arc.install(value)
+        end
+    else
+        print("Update Aborted.")
+    end
+else
+    printError("No command.")
+endlocal files = require("files")
+local f = ...
+if not f then error("No file specified!") end
+local fr = files.resolve(f)[1]
+if not fr then error("File does not exist") end
+local fop, e = files.open(fr, "r")
+if fop then
+    print(fop.read())
+    fop.close()
+else
+    error(e)
+endlocal files = require("files")
+local path = ...
+if not path then
+    error("No directory specified!")
+end
+local p = files.resolve(path)[1]
+if not files.exists(p) then
+    error(p .. ": Specified directory does not exist")
+end
+if not files.dir(p) then
+    error(p .. ": Specified path is not a directory.")
+end
+environ.workDir = plocal files = require("files")
+local s, t = ...
+if not s and t then
+    print("Usage: cp [src] [target]")
+    error()
+end
+local v, n = files.resolve(s)[1], files.resolve(t, true)[1]
+if not s and t then
+    print("Usage: cp [src] [target]")
+    error()
+end
+files.c(v, n)local files = require("files")
+local col = require("col")
+for index, value in ipairs(files.ls("/services/enabled")) do
+    local servFile, err = files.open("/services/enabled/"..value, "r")
+    if not servFile then
+        printError(err)
+        error()
+    end
+    for i in servFile.readLine do
+        if i:sub(1, 1) ~= "#" then 
+            arcos.log("Starting service: " .. i)
+            local currentServiceDone = false
+            local threadterm
+            if i:sub(1,1) == "l" then
+                local ttcp = {1, 1}
+                threadterm = {
+                    native = function()
+                        return term
+                    end,
+                    current = function()
+                        return term
+                    end,
+                    write = function(text)
+                        arcos.log(i .. ": " .. text)
+                    end,
+                    blit = function(text, ...)
+                        arcos.log(i .. ": " .. text)
+                    end,
+                    setTextColor = function(col) end,
+                    setBackgroundColor = function(col) end,
+                    setTextColour = function(col) end,
+                    setBackgroundColour = function(col) end,
+                    getTextColour = function() return col.white end,
+                    getBackgroundColour = function() return col.black end,
+                    getTextColor = function() return col.white end,
+                    getBackgroundColor = function() return col.black end,
+                    setCursorPos = function(cx, cy) ttcp = {cx, cy} end,
+                    getCursorPos = function() return ttcp[1], ttcp[2] end,
+                    scroll = function(sx) ttcp[2] = ttcp[2] - sx end,
+                    clear = function() end,
+                    isColor = function() return false end,
+                    isColour = function() return false end,
+                    getSize = function ()
+                        return 51, 19
+                    end
+                }
+            else
+                threadterm = term
+            end    
+            tasking.createTask("Service: " .. i:sub(3), function()
+                local ok, err = arcos.r({
+                    ackFinish = function()
+                        currentServiceDone = true
+                    end
+                }, "/services/" .. i:sub(3))
+                if ok then
+                    arcos.log("Service " .. i:sub(3) .. " ended.")
+                else
+                    arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
+                end
+                sleep(1)
+            end, 1, "root", threadterm)
+            if i:sub(2,2) == "|" then
+                repeat sleep(0.2)
+                until currentServiceDone
+            end
+            arcos.log("Started")
+        end
+    end
+end
+tasking.setTaskPaused(arcos.getCurrentTask()["pid"], true)
+coroutine.yield()
+local klb = arcos.getKernelLogBuffer()
+print(klb)local files = require("files")
+local col = require("col")
+local path = ... or environ.workDir
+local f = files.resolve(path)
+for _, fp in ipairs(f) do
+    if files.exists(fp) then
+        if files.dir(fp) then
+            for _, i in ipairs(files.ls(fp)) do
+                if files.dir(fp) then
+                    term.setTextColor(col.green)
+                else
+                    term.setTextColor(col.white)
+                end
+                write(i .. " ")
+            end
+            write("\n")
+        else
+            printError(fp .. " is not a directory.")
+        end
+    else
+        printError(fp .. " does not exist on this disk/filesystem.")
+    end
+endlocal files = require("files")
+local f = ...
+if not f then
+    error("No file specified")
+end
+local rf = files.resolve(f, true)[1]
+files.mkDir(rf)local files = require('files')
+local s, t = ...
+if not s and t then
+    print("Usage: mv [src] [target]")
+    error()
+end
+local v, n = files.resolve(s)[1], files.resolve(t, true)[1]
+if not s and t then
+    print("Usage: mv [src] [target]")
+    error()
+end
+files.m(v, n)local files = require("files")
+local f = ...
+if not f then error("No file specified!") end
+local fr = files.resolve(f)[1]
+if not fr then error("File does not exist") end
+files.rm(fr)if arcos.getCurrentTask().user ~= "root" then
+    write("[escalation] Enter root password: ")
+    local pass = read("*")
+    local f = tasking.changeUser("root", pass)
+    if not f then
+        error("Invalid password!")
+    end
+end
+local args = { ... }
+if #args ~= 1 then
+    error("Too many or too few args.")
+end
+local u = arcos.deleteUser(args[1])
+if not u then
+    print("Failed removing user.")
+endlocal col = require("col")
+local files = require("files")
+local tutils = require("tutils")
+term.setTextColor(col.blue)
+print(arcos.version())
+local confile = files.open("/config/arcshell", "r")
+local conf = {}
+if confile then
+    conf = tutils.dJSON(confile.read())
+    confile.close()
+else
+    return
+end
+local luaGlobal = setmetatable({}, {__index = _G})
+if not environ.workDir then environ.workDir = "/" end
+local function run(a1, ...)
+    local cmd = nil
+    if not a1 or a1 == "" then
+        return true
+    end
+    if a1:sub(1, 1) == "/" then
+        if files.exists(a1) then
+            cmd = a1
+        else
+            printError("File not found")
+            return false
+        end
+    elseif a1:sub(1, 2) == "./" then
+        if files.resolve(a1, false)[1] then
+            cmd = files.resolve(a1, false)[1]
+        else
+            printError("File not found")
+            return false
+        end
+    else
+        for i, v in ipairs(conf["path"]) do
+            for i, s in ipairs(files.ls(v)) do
+                local t = s
+                if t:sub(#t-3, #t) == ".lua" then
+                    t = t:sub(1, #t-4)
+                end
+                if t == a1 then
+                    cmd = v .. "/" .. s
+                end
+            end
+        end
+    end
+    if cmd == nil then
+        local cq = tutils.join({ a1, ... }, " ")
+        local chunkl, err = load(cq, "eval", nil, luaGlobal)
+        local chunklb, errb = load("return " .. cq, "eval", nil, luaGlobal)
+        if chunklb then
+            chunkl = chunklb
+            err = errb
+        else
+            print(errb)
+        end
+        if(err and err:sub(20, 36) == "syntax error near") then
+            err = "Command not found."
+        end
+        if not chunkl then
+            printError(err)
+            return false
+        end
+        local ok, err = pcall(chunkl)
+        if not ok then
+            printError(err)
+        else
+            print(tutils.s(err))
+        end
+        return ok
+    end
+    local ok, err = arcos.r({}, cmd, ...)
+    if not ok then
+        printError(err)
+    end
+    return ok, err
+end
+local history = {}
+while true
+do
+    local cTask = arcos.getCurrentTask()
+    if cTask.user == "root" then
+        term.setTextColor(col.red)
+    else
+        term.setTextColor(col.green)
+    end
+    write(cTask.user)
+    local a, err = pcall(arcos.getName)
+    if a then
+        term.setTextColor(col.gray)
+        write("@")
+        term.setTextColor(col.magenta)
+        if not pcall(write, tostring(err)) then
+            write("(none)")
+        end
+    end
+    write(" ")
+    if environ.envType then
+        term.setTextColor(col.yellow)
+        write("(" .. tostring(environ.envType) .. ") ")
+    end
+    term.setTextColor(col.gray) 
+    write(environ.workDir)
+    write(" ")
+    write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
+    term.setTextColor(col.white)
+    local cmd = read(nil, history)
+    table.insert(history, cmd)
+    local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
+    if not r then
+        pcall(printError, k)
+    end
+endlocal ui = require("ui")
+local col = require("col")
+if term then
+    local monitors = dev.monitor
+    local selecting = true
+    local terma = term
+    term.setPaletteColor(col.lightGray, 171/255, 171/255, 171/255)
+    local selection = {
+        ui.Button({
+            label = "Local",
+            x = 1,
+            y = 1,
+            callBack = function ()
+                terma = term
+                selecting = false
+                return false
+            end,
+            col = ui.UItheme.lighterBg,
+            textCol = ui.UItheme.fg
+        }),
+    }
+    for _, i in ipairs(monitors) do
+        table.insert(selection, 
+            ui.Button({
+                label = i.origName,
+                callBack = function ()
+                    terma = i
+                    selecting = false
+                    return false
+                end,
+                x = 1,
+                y = 1,
+                col = ui.UItheme.lighterBg,
+                textCol = ui.UItheme.fg
+            })
+        )
+    end
+    local ttw, tth = terma.getSize()
+    local monSelPage = {
+        ui.Label({
+            label = "Select an Output",
+            x=2,
+            y=2
+        }),
+        ui.ScrollPane({
+            children = selection,
+            height = tth-4,
+            width = ttw-2,
+            x = 2,
+            y = 4,
+            col = ui.UItheme.lighterBg,
+            showScrollBtns = false,
+        })
+    }
+    ui.RenderLoop(monSelPage, term, true)
+    while selecting do
+        if term then
+            ui.RenderLoop(monSelPage, term)
+        end
+    end
+    local counter = 0
+    local ox, oy = 0,0 
+    local tw, th = terma.getSize()
+    local pages = {}
+    local page = 1
+    pages[1] = {
+        ui.Label({
+            label = "Counter: "..counter,
+            x = 1,
+            y = 1
+        }),
+        ui.Label({
+            label = "I'm green!",
+            x = 1,
+            y = 2,
+            textCol = col.green
+        }),
+        ui.Label({
+            label = "I'm light blue on the background!",
+            x = 1,
+            y = 3,
+            col = col.lightBlue
+        }),
+        ui.Label({
+            label = "I'm multiline!\nSee?",
+            x = 1,
+            y = 4,
+            col = col.red,
+            textCol = col.white
+        }),
+        ui.Label({
+            x=13,
+            y=1,
+            label = "No key yet pressed"
+        }),
+    }
+    table.insert(
+        pages[1],
+        ui.Button(
+            {
+                callBack = function ()
+                    ui.PageTransition(pages[1], pages[2], false, 1, true, terma)
+                    page = 2
+                    return true
+                end,
+                x = tw - 5,
+                y = th - 1,
+                label = "Next",
+            }
+        )
+    )
+    local btn = ui.Button({
+        callBack = function ()
+            counter = counter + 1
+            pages[1][1].label = "Counter: " .. counter
+            return true
+        end,
+        label = "Increase counter",
+        x = 1,
+        y = 7,
+        col = ui.UItheme.buttonBg,
+        textCol = ui.UItheme.buttonFg
+    })
+    table.insert(pages[1], btn)
+    table.insert(pages[1],
+    ui.Label({
+        label = "Button width: " .. tostring(btn.getWH()[1]) .. ", height: " .. tostring(btn.getWH()[2]),
+        x = 1,
+        y = 8
+    })
+    )
+    local lbls = {}
+    for i = 1, 40, 1 do
+        table.insert(lbls, ui.Label({
+            label = "Hello world: " .. tostring(i),
+            x = 1,
+            y = 1
+        }))
+    end
+    local alignObject = ui.Align(1, 1, ui.Label{x=0, y=0, label="Center"}, {0.5, 0.5})
+    print(tostring(alignObject))
+    pages[2] = {
+        ui.Label({
+            label = "Level!",
+            x = 3,
+            y = 7,
+        }),
+        ui.Label({
+            label = "Level2!",
+            x = 3,
+            y = 17,
+        }),
+        ui.Label({
+            label = "XLevel!",
+            x = 20,
+            y = 2,
+        }),
+        ui.Label({
+            label = "XLevel2!",
+            x = 40,
+            y = 2,
+        }),
+        ui.ScrollPane({
+            width= 20,
+            height= 10,
+            x = 20,
+            y = 7,
+            children = lbls,
+            col = col.gray,
+            showScrollBtns = true
+        }),
+        alignObject
+    }
+    table.insert(
+        pages[2],
+        ui.Button(
+            {
+                callBack = function ()
+                    ui.PageTransition(pages[2], pages[1], false, 1, false, terma)
+                    page = 1
+                    return true
+                end,
+                x = tw - 5,
+                y = th - 1,
+                label = "Back",
+                col = col.gray,
+                textCol = col.white
+            }
+        )
+    )
+    if terma == term then
+        ui.PageTransition(monSelPage, pages[page], false, 1, true, terma)
+    else
+        ui.PageTransition(monSelPage, {
+            ui.Label{
+                label = "Test is being displayed on monitor." .. tostring(alignObject),
+                x = 2,
+                y = 2
+            }
+        }, false, 1, true, term)
+    end
+    local ls = false
+    ui.RenderLoop(pages[page], terma, true)
+    while true do
+        if terma then
+            ls = ui.RenderLoop(pages[page], terma, ls)
+            pages[2][2].label = tostring(pages[2][5].scroll)
+        end
+    end
+end
+term.clear()
+term.setCursorPos(1, 1)arcos.shutdown()arcos.reboot()local x = require("cellui")
+local runner = x["Runner"].new(x["typedefs"].CCTerminal.new(term),x["ScrollContainer"].new({}),nil)
+local tests = {
+}
+runner:run()

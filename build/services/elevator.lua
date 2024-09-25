@@ -2,7 +2,7 @@ local modem
 local selectedFloor = -1
 local col = require("col")
 if arcos then
-    modem = dev ices.find("modem")
+    modem = devices.find("modem")
 else
     modem = peripheral.find("modem")
 end

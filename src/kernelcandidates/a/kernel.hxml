@@ -1,0 +1,5 @@
+--lua out/krnl.lua
+--class-path src
+--main kernel.Kernel
+--define CraftOS
+-D lua-vanilla

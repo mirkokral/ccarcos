@@ -22,12 +22,33 @@ for index, value in pairs(UIthemedefs) do
   term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
 end
 function _G.utd() end
+
 local live = ({ ... })[1] == "live"
 if not live then
   local configFile, err = fs.open("/config/aboot", "r")
   if not configFile then configFile = {autoUpdate = true} end -- Fallback
   local f = textutils.unserialiseJSON(configFile.readAll())
   configFile.close()
+  -- if f["autoUpdate"] then
+  --   -- print("Terminate to enter shell or wait 1 second to continue boot")
+  --   -- sleep(1)      
+  --   local f, e = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
+  --   if f then
+  --     local branch = textutils.unserialiseJSON(f.readAll())["sha"]
+  --     local cur = fs.open("/system/rel", "r")
+  --     if cur and cur.readAll() ~= branch then
+  --       shell.run("/system/installer.lua")
+  --       sleep(1)
+  --     end
+  --     f.close()
+  --   else
+  --     print("Update failed")
+  --     print("This could happen due to a github ratelimit, or due to the server not having http enabled. Please contact your administrator for further help or wait until the next hour until updating again.")
+  --     print()
+  --     printError(e)
+  --     sleep(5)
+  --   end
+  -- end
 end
 if live then
   if not fs.exists("/config/settings") then
@@ -68,6 +89,58 @@ function _G.strsplit(inputstr, sep)
   end
   return t
 end
+-- if not live then
+--   local f = http.get("https://api.github.com/repos/mirkokral/ccarcos/commits/main", headers)
+--   if f then
+--     local branch = textutils.unserialiseJSON(f.readAll())["sha"]
+
+--     file = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/objList.txt")
+--     if file then
+--       cont = file.readAll()
+--       pcall(file.close)
+--       local missingFiles = {}
+--       local missingDirs = {}
+--       for _, i in ipairs(strsplit(cont, "\n")) do
+--         -- print(i)
+--         action = string.sub(i, 1, 1)
+--         filename = string.sub(i, 3)
+--         if action == "d" and not fs.exists(filename) then
+--           table.insert(missingDirs, filename)
+--         end
+--         if action == "f" and not fs.exists("/" .. filename) then
+--           table.insert(missingFiles, filename)
+--         end
+--         if action == "r" and not fs.exists("/" .. filename) then
+--           table.insert(missingFiles, filename)
+--         end
+--       end
+--       if #missingDirs > 0 or #missingFiles > 0 then
+--         print("Repairing system...")
+--         for index, value in ipairs(missingDirs) do
+--           print("Repairing directory: " .. value)
+--           fs.makeDir(value)
+--         end
+--         for index, value in ipairs(missingFiles) do
+--           f = fs.open(value, "w")
+--           hf = http.get("https://raw.githubusercontent.com/mirkokral/ccarcos/" .. branch .. "/build/" .. value)
+--           if f and hf then
+--             print("Repairing file: " .. value)
+--             f.write(hf.readAll())
+--           end
+--           if hf then
+--             pcall(hf.close)
+--           end
+--           if f then
+--             pcall(f.close)
+--           end
+--         end
+--       end
+--     end
+--     pcall(f.close)
+--   else
+--     print("Fix check failed")
+--   end
+-- end
 local oldprr = os.pullEventRaw
 local oldpe = os.pullEvent
 local oldtr = term.redirect
@@ -159,6 +232,11 @@ local function fix(f, l)
     return f
   end
 end
+
+-- for k, v in pairs(__LEGACY) do
+--   __LEGACY[k] = fix(v)
+-- end
+
 local keptAPIs = { utd = true, printError = true, require = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, bit = true, ccemux = true, config = true, coroutine = true, debug = true, fs = true, http = true, mounter = true, os = true, periphemu = true, peripheral = true, redstone = true, rs = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
 local t = {}
 for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
@@ -181,13 +259,18 @@ function _G.term.native()
   _G.term.redirect = oldtr
   _G.os.pullEventRaw = oldprr
   _G.os.pullEvent = oldpe
+
+
   print("Successful escape")
+  -- _G.os.shutdown = oldst
   term.clear()
   term.setCursorPos(1, 1)
   term.setTextColor(__LEGACY.colors.white)
   function os.shutdown()
     os.shutdown = oldst
+
     local oldug = {}
+
     for k, v in pairs(_G) do
       oldug[k] = v
     end
@@ -207,8 +290,11 @@ function _G.term.native()
         end
       end
     end
+
     _G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
+      
           term.setCursorBlink(true)
+      
           local sLine
           if type(_sDefault) == "string" then
               sLine = _sDefault
@@ -220,6 +306,7 @@ function _G.term.native()
           if _sReplaceChar then
               _sReplaceChar = string.sub(_sReplaceChar, 1, 1)
           end
+      
           local tCompletions
           local nCompletion
           local function recomplete()
@@ -235,19 +322,25 @@ function _G.term.native()
                   nCompletion = nil
               end
           end
+      
           local function uncomplete()
               tCompletions = nil
               nCompletion = nil
           end
+      
           local w = term.getSize()
           local sx = term.getCursorPos()
+      
           local function redraw(_bClear)
               local cursor_pos = nPos - nScroll
               if sx + cursor_pos >= w then
+                  -- We've moved beyond the RHS, ensure we're on the edge.
                   nScroll = sx + nPos - w
               elseif cursor_pos < 0 then
+                  -- We've moved beyond the LHS, ensure we're on the edge.
                   nScroll = nPos
               end
+      
               local _, cy = term.getCursorPos()
               term.setCursorPos(sx, cy)
               local sReplace = _bClear and " " or _sReplaceChar
@@ -256,6 +349,7 @@ function _G.term.native()
               else
                   term.write(string.sub(sLine, nScroll + 1))
               end
+      
               if nCompletion then
                   local sCompletion = tCompletions[nCompletion]
                   local oldText, oldBg
@@ -275,19 +369,28 @@ function _G.term.native()
                       term.setBackgroundColor(oldBg)
                   end
               end
+      
               term.setCursorPos(sx + nPos - nScroll, cy)
           end
+      
           local function clear()
               redraw(true)
           end
+      
           recomplete()
           redraw()
+      
           local function acceptCompletion()
               if nCompletion then
+                  -- Clear
                   clear()
+      
+                  -- Find the common prefix of all the other suggestions which start with the same letter as the current one
                   local sCompletion = tCompletions[nCompletion]
                   sLine = sLine .. sCompletion
                   nPos = #sLine
+      
+                  -- Redraw
                   recomplete()
                   redraw()
               end
@@ -295,43 +398,57 @@ function _G.term.native()
           while true do
               local sEvent, param, param1, param2 = coroutine.yield()
               if sEvent == "char" then
+                  -- Typed key
                   clear()
                   sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
                   nPos = nPos + 1
                   recomplete()
                   redraw()
+      
               elseif sEvent == "paste" then
+                  -- Pasted text
                   clear()
                   sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
                   nPos = nPos + #param
                   recomplete()
                   redraw()
+      
               elseif sEvent == "key" then
                   if param == __LEGACY.keys.enter or param == __LEGACY.keys.numPadEnter then
+                      -- Enter/Numpad Enter
                       if nCompletion then
                           clear()
                           uncomplete()
                           redraw()
                       end
                       break
+      
                   elseif param == __LEGACY.keys.left then
+                      -- Left
                       if nPos > 0 then
                           clear()
                           nPos = nPos - 1
                           recomplete()
                           redraw()
                       end
+      
                   elseif param == __LEGACY.keys.right then
+                      -- Right
                       if nPos < #sLine then
+                          -- Move right
                           clear()
                           nPos = nPos + 1
                           recomplete()
                           redraw()
                       else
+                          -- Accept autocomplete
                           acceptCompletion()
                       end
+      
                   elseif param == __LEGACY.keys.up or param == __LEGACY.keys.down then
+                      -- Up or down
                       if nCompletion then
+                          -- Cycle completions
                           clear()
                           if param == __LEGACY.keys.up then
                               nCompletion = nCompletion - 1
@@ -345,9 +462,12 @@ function _G.term.native()
                               end
                           end
                           redraw()
+      
                       elseif _tHistory then
+                          -- Cycle history
                           clear()
                           if param == __LEGACY.keys.up then
+                              -- Up
                               if nHistoryPos == nil then
                                   if #_tHistory > 0 then
                                       nHistoryPos = #_tHistory
@@ -356,6 +476,7 @@ function _G.term.native()
                                   nHistoryPos = nHistoryPos - 1
                               end
                           else
+                              -- Down
                               if nHistoryPos == #_tHistory then
                                   nHistoryPos = nil
                               elseif nHistoryPos ~= nil then
@@ -371,8 +492,11 @@ function _G.term.native()
                           end
                           uncomplete()
                           redraw()
+      
                       end
+      
                   elseif param == __LEGACY.keys.backspace then
+                      -- Backspace
                       if nPos > 0 then
                           clear()
                           sLine = string.sub(sLine, 1, nPos - 1) .. string.sub(sLine, nPos + 1)
@@ -381,47 +505,64 @@ function _G.term.native()
                           recomplete()
                           redraw()
                       end
+      
                   elseif param == __LEGACY.keys.home then
+                      -- Home
                       if nPos > 0 then
                           clear()
                           nPos = 0
                           recomplete()
                           redraw()
                       end
+      
                   elseif param == __LEGACY.keys.delete then
+                      -- Delete
                       if nPos < #sLine then
                           clear()
                           sLine = string.sub(sLine, 1, nPos) .. string.sub(sLine, nPos + 2)
                           recomplete()
                           redraw()
                       end
+      
                   elseif param == __LEGACY.keys["end"] then
+                      -- End
                       if nPos < #sLine then
                           clear()
                           nPos = #sLine
                           recomplete()
                           redraw()
                       end
+      
                   elseif param == __LEGACY.keys.tab then
+                      -- Tab (accept autocomplete)
                       acceptCompletion()
+      
                   end
+      
               elseif sEvent == "mouse_click" or sEvent == "mouse_drag" and param == 1 then
                   local _, cy = term.getCursorPos()
                   if param1 >= sx and param1 <= w and param2 == cy then
+                      -- Ensure we don't scroll beyond the current line
                       nPos = math.min(math.max(nScroll + param1 - sx, 0), #sLine)
                       redraw()
                   end
+      
               elseif sEvent == "term_resize" then
+                  -- Terminal resized
                   w = term.getSize()
                   redraw()
+      
               end
           end
+      
           local _, cy = term.getCursorPos()
           term.setCursorBlink(false)
           term.setCursorPos(w + 1, cy)
           print()
+      
           return sLine
     end
+
     local f = __LEGACY.files.open("/system/bootloader.lua", "r")
     local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
     print(err)
@@ -430,4 +571,5 @@ function _G.term.native()
     __LEGACY.os.reboot()
   end
 end
+
 coroutine.yield()

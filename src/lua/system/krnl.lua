@@ -809,7 +809,7 @@ end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 while true do
     if #tasks > 0 then
-        ev = { os.pullEventRaw() }
+        ev = { coroutine.yield() }
         for d, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
                 _G.term = i["out"] or __LEGACY.term

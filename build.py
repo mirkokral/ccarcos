@@ -10,13 +10,13 @@ if not "options" in config:
 
 cf = []
 cd = []
-for root, dirs, files in os.walk("src/"):
+for root, dirs, files in os.walk("src/lua/"):
     for name in files:
-        if not os.path.join(root[4:], name) in cf:
-            cf.append(os.path.join(root[4:], name))
+        if not os.path.join(root[8:], name) in cf:
+            cf.append(os.path.join(root[8:], name))
     for name in dirs:
-        if not os.path.join(root[4:], name) in cd:
-            cd.append(os.path.join(root[4:], name))
+        if not os.path.join(root[8:], name) in cd:
+            cd.append(os.path.join(root[8:], name))
 config["compileFiles"] = cf
 config["mkDirs"] = cd
 if not "build" in os.listdir("."):
@@ -34,7 +34,7 @@ def recursiveMkdir(dir: str):
         pass
 def compileFile(filepathstr: str):
     recursiveMkdir(str(pathlib.Path(str(pathlib.Path("build/").absolute()) + "/" + filepathstr).absolute().parent))
-    with open(str(pathlib.Path("src/").absolute()) + "/" + filepathstr, "r") as file:
+    with open(str(pathlib.Path("src/lua/").absolute()) + "/" + filepathstr, "r") as file:
         outlines = []
         currentlyExcluding = 0
         inComment = False
@@ -54,7 +54,7 @@ def compileFile(filepathstr: str):
                         currentlyExcluding = not currentlyExcluding
             elif i.strip().startswith("--[["):
                 currentlyExcluding += 1
-                inComment = True
+                inComment = True    
             elif i.strip().startswith("--") or i.strip() == "":
                 pass
             elif i.strip().endswith("]]") and inComment:
