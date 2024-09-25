@@ -3,8 +3,8 @@
 |services/enabled|-1|
 |/index|0|
 |apis/rednet.lua|105|
-|services/rednet.lua|8982|
-|services/enabled/4 rednet|8994|
+|services/rednet.lua|9029|
+|services/enabled/4 rednet|9052|
 --ENDTABLE
 d>apis
 f>apis/rednet.lua
@@ -231,7 +231,7 @@ local function run()
         error("rednet is already running", 2)
     end
     started = true
-
+    local pruceRecvTimer = arcos.startTimer(10)
     while true do
         local event, p1, p2, p3, p4 = arcos.ev()
         if event == "modem_message" then
@@ -288,4 +288,4 @@ return {
     unhost = unhost,
     lookup = lookup,
     run = run
-}rednet.run()l rednet.lua
+}require("rednet").run()l rednet.lua

@@ -252,6 +252,6 @@ term.clear()
 term.setCursorPos(1, 2)
 term.setTextColor(colors.white)
 if shell then
-  fs.delete(shell.getRunningProgram())
+  pcall(fs.delete, shell.getRunningProgram())
 end
 os.reboot()

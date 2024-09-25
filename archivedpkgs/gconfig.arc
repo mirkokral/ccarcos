@@ -3,17 +3,23 @@
 |config/apps|-1|
 |/index|0|
 |apps/gconfig.lua|76|
-|config/apps/gconfig.json|3031|
+|config/apps/gconfig.json|3195|
 --ENDTABLE
 d>apps
 f>apps/gconfig.lua
 d>config
 d>config/apps
 f>config/apps/gconfig.json
+local files = require("files")
+local tutils = require("tutils")
+local ui = require("ui")
+local col = require("col")
+
 local w, h = term.getSize()
 local currentScreen = "main"
 local running = true
 local blcf = files.open("/config/aboot", "r")
+if not blcf then error("Broken system") end
 local blc = tutils.dJSON(blcf.read())
 local configScreens
 local function changeScreens(new, ot)
@@ -107,7 +113,7 @@ configScreens = {
             callBack = function ()
                 blc["defargs"] = configScreens.bl[4].text
                 local f = files.open("/config/aboot", "w")
-                f.write(tutils.sJSON(blc))
+                    .write(tutils.sJSON(blc))
                 f.close()
                 changeScreens("main", false)
                 return true

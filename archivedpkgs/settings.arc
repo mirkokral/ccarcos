@@ -34,6 +34,10 @@ and then re-run the `example` program to check it has changed.
 
 ]]
 
+local col = require("col")
+local tutils = require("tutils")
+local files = require("files")
+
 local expect = col
 local type, expect, field = type, expect.expect, expect.field
 

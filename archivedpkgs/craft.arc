@@ -5,9 +5,9 @@
 |data/craft/util|-1|
 |/index|0|
 |apis/_CEXPORTS.lua|136|
-|apps/craft.lua|405|
-|apps/edit.lua|17154|
-|data/craft/util/startup.lua|17197|
+|apps/craft.lua|450|
+|apps/edit.lua|17512|
+|data/craft/util/startup.lua|17555|
 --ENDTABLE
 d>apis
 f>apis/_CEXPORTS.lua
@@ -25,7 +25,21 @@ return {
     settings = __LEGACY.settings,
     textutils = __LEGACY.textutils,
     help = __LEGACY.help,
-}local craftos_env = {}
+    require = require,
+    package = package
+}local col = require("col")
+local files = require("files")
+local _CEXPORTS = nil
+local window = require("window")
+local rednet = require("rednet")
+local rd = require("rd")
+
+
+pcall(function()
+    _CEXPORTS = require("_CEXPORTS")
+end)
+
+local craftos_env = {}
 for key, value in pairs(_G) do
     craftos_env[key] = value
 end
@@ -467,6 +481,8 @@ craftos_env.paintutils = _CEXPORTS.paintutils
 craftos_env.settings = _CEXPORTS.settings
 craftos_env.textutils = _CEXPORTS.textutils
 craftos_env.help = _CEXPORTS.help
+craftos_env.require = _CEXPORTS.require
+craftos_env.package = _CEXPORTS.package
 craftos_env.window = window
 craftos_env.parallel = {
     waitForAll = function (...)
@@ -618,8 +634,8 @@ for _, v in ipairs(openedFilesToClose) do
 endarcos.r({}, "/apps/craft.lua", "edit", ...)shell.setDir(environ.workDir)
 -- parentShell = nil
 shell.run("/rom/startup.lua")
-term.setBackgroundColor(col.black)
-term.setTextColor(col.white)
+term.setBackgroundColor(colors.black)
+term.setTextColor(colors.white)
 term.clear()
 term.setCursorPos(1, 1)
 shell.run("shell", ...)

@@ -3,8 +3,8 @@
 |config/apps|-1|
 |/index|0|
 |apps/test.lua|94|
-|config/apps/test.icon|455|
-|config/apps/test.json|455|
+|config/apps/test.icon|510|
+|config/apps/test.json|510|
 --ENDTABLE
 d>apps
 f>apps/test.lua
@@ -12,6 +12,8 @@ d>config
 d>config/apps
 f>config/apps/test.icon
 f>config/apps/test.json
+local ui = require("ui")
+
 local page = {
     ui.Label{
         label = "Hello, world!",
@@ -27,7 +29,9 @@ local page = {
 
 local ls = true
 while true do
-    ls = ui.RenderLoop(page, term, ls)
+    if term then
+        ls = ui.RenderLoop(page, term, ls)
+    end
     
 end{
     "name": "Test Application",

@@ -10,7 +10,11 @@ d>config/desktops
 f>config/desktops/Shell
 d>services
 f>services/audm.lua
-/apps/shell.lualocal user = ""
+/apps/shell.lualocal files = require("files")
+local ui = require("ui")
+local col = require("col")
+if not term then error("No term") end
+local user = ""
 local we = files.ls("/config/desktops")
 local sq = {}
 

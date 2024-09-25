@@ -5,13 +5,13 @@ with open("archivedpkgs/base.arc", "wb") as f:
     files = []
     for p2, dirnames, filenames in os.walk("build/"):
         dirpath = p2[6:]
-        if dirpath == "objList.txt": continue
         for name in dirnames:
             if dirpath + "/" + name not in dirs:
                 dirs.append(dirpath + "/" + name)
 
         for name in filenames:
             if dirpath + "/" + name not in files:
+                if dirpath == "" and name == "objList.txt": continue
                 with open(p2 + "/" + name, "rb") as f2:
                     # print(name)
                     files.append([dirpath + "/" + name, f2.read()])
