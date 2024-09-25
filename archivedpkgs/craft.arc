@@ -5,9 +5,9 @@
 |data/craft/util|-1|
 |/index|0|
 |apis/_CEXPORTS.lua|136|
-|apps/craft.lua|450|
-|apps/edit.lua|17512|
-|data/craft/util/startup.lua|17555|
+|apps/craft.lua|468|
+|apps/edit.lua|17530|
+|data/craft/util/startup.lua|17573|
 --ENDTABLE
 d>apis
 f>apis/_CEXPORTS.lua
@@ -25,8 +25,8 @@ return {
     settings = __LEGACY.settings,
     textutils = __LEGACY.textutils,
     help = __LEGACY.help,
-    require = require,
-    package = package
+    require = __LEGACY.require,
+    package = __LEGACY.package
 }local col = require("col")
 local files = require("files")
 local _CEXPORTS = nil

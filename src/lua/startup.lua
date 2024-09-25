@@ -217,7 +217,7 @@ setmetatable(__LEGACY, {__index = function(self, i)
 })
 local function fix(f, l)
   if type(f) == "function" then
-    return setfenv(f, __LEGACY)
+    return debug.setfenv(f, __LEGACY)
   elseif type(f) == "table" and l ~= "_G" and l ~= "_ENV" then
     local fn = {}
     for k, v in pairs(f) do
@@ -278,18 +278,7 @@ function _G.term.native()
     local t = {}
     for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
     for _, k in ipairs(t) do _G[k] = nil end
-    for k, v in pairs(_G) do
-      if keptAPIs[k] then
-        if k == "_G" then
-          _G[k] = _G
-        elseif k == "__LEGACY" then
-          _G[k] = __LEGACY
-        else
-          print(k)
-          _G[k] = fix(v,k)
-        end
-      end
-    end
+
 
     _G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
       

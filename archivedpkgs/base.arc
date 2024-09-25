@@ -11,53 +11,53 @@
 |config/apps|-1|
 |config/arc|-1|
 |/startup.lua|0|
-|system/bootloader.lua|17173|
-|system/rel|18122|
-|system/krnl.lua|18128|
-|system/apis/arc.lua|37982|
-|system/apis/col.lua|51215|
-|system/apis/files.lua|55339|
-|system/apis/hashing.lua|66728|
-|system/apis/rd.lua|71363|
-|system/apis/tutils.lua|72367|
-|system/apis/ui.lua|73509|
-|system/apis/window.lua|94715|
-|system/apis/cellui.lua|109804|
-|services/arcfix.lua|253815|
-|services/elevator.lua|253900|
-|services/elevatorSrv.lua|256218|
-|services/elevatorStep.lua|259274|
-|services/oobe.lua|259866|
-|services/pms.lua|265611|
-|services/shell.lua|269191|
-|services/enabled/9 arcfix|269221|
-|services/enabled/login|269234|
-|data/PRIVACY.txt|269244|
-|config/aboot|270133|
-|config/arcrepo|270293|
-|config/arcshell|270310|
-|config/hostname|270362|
-|config/passwd|270367|
-|config/arc/base.meta.json|270617|
-|config/arc/base.uninstallIndex|270885|
-|apps/adduser.lua|272035|
-|apps/arc.lua|272549|
-|apps/cat.lua|275636|
-|apps/cd.lua|275912|
-|apps/cp.lua|276241|
-|apps/init.lua|276510|
-|apps/kmsg.lua|279441|
-|apps/ls.lua|279490|
-|apps/mkdir.lua|280163|
-|apps/mv.lua|280309|
-|apps/rm.lua|280578|
-|apps/rmuser.lua|280760|
-|apps/shell.lua|281164|
-|apps/uitest.lua|284243|
-|apps/clear.lua|289620|
-|apps/shutdown.lua|289656|
-|apps/reboot.lua|289672|
-|apps/celluitest.lua|289686|
+|system/bootloader.lua|16925|
+|system/rel|17874|
+|system/krnl.lua|17880|
+|system/apis/arc.lua|37734|
+|system/apis/col.lua|50967|
+|system/apis/files.lua|55091|
+|system/apis/hashing.lua|66480|
+|system/apis/rd.lua|71115|
+|system/apis/tutils.lua|72119|
+|system/apis/ui.lua|73261|
+|system/apis/window.lua|94467|
+|system/apis/cellui.lua|109556|
+|services/arcfix.lua|253567|
+|services/elevator.lua|253652|
+|services/elevatorSrv.lua|255970|
+|services/elevatorStep.lua|259026|
+|services/oobe.lua|259618|
+|services/pms.lua|265363|
+|services/shell.lua|268943|
+|services/enabled/9 arcfix|268973|
+|services/enabled/login|268986|
+|data/PRIVACY.txt|268996|
+|config/aboot|269885|
+|config/arcrepo|270045|
+|config/arcshell|270062|
+|config/hostname|270114|
+|config/passwd|270119|
+|config/arc/base.meta.json|270369|
+|config/arc/base.uninstallIndex|270637|
+|apps/adduser.lua|271787|
+|apps/arc.lua|272301|
+|apps/cat.lua|275388|
+|apps/cd.lua|275664|
+|apps/cp.lua|275993|
+|apps/init.lua|276262|
+|apps/kmsg.lua|279193|
+|apps/ls.lua|279242|
+|apps/mkdir.lua|279915|
+|apps/mv.lua|280061|
+|apps/rm.lua|280330|
+|apps/rmuser.lua|280512|
+|apps/shell.lua|280916|
+|apps/uitest.lua|283995|
+|apps/clear.lua|289372|
+|apps/shutdown.lua|289408|
+|apps/reboot.lua|289424|
+|apps/celluitest.lua|289438|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -205,7 +205,7 @@ setmetatable(__LEGACY, {__index = function(self, i)
 })
 local function fix(f, l)
   if type(f) == "function" then
-    return setfenv(f, __LEGACY)
+    return debug.setfenv(f, __LEGACY)
   elseif type(f) == "table" and l ~= "_G" and l ~= "_ENV" then
     local fn = {}
     for k, v in pairs(f) do
@@ -256,18 +256,6 @@ function _G.term.native()
     local t = {}
     for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
     for _, k in ipairs(t) do _G[k] = nil end
-    for k, v in pairs(_G) do
-      if keptAPIs[k] then
-        if k == "_G" then
-          _G[k] = _G
-        elseif k == "__LEGACY" then
-          _G[k] = __LEGACY
-        else
-          print(k)
-          _G[k] = fix(v,k)
-        end
-      end
-    end
     _G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
           term.setCursorBlink(true)
           local sLine
