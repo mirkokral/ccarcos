@@ -1,3 +1,8 @@
+---@diagnostic disable: duplicate-set-field
+-- C:Exc
+_G.__CPOSINFOFILE__ = "" -- Defined by the builder
+_G.__CPOSINFOLINE__ = 0 --  Defined by the builder
+-- C:End
 local args = {...}
 local currentTask
 local cPid
@@ -46,15 +51,12 @@ local function strsplit(inputstr, sep)
     return t
 end
 
--- This is a super long line of text to test out the wrapping feature of neovim. This is a super long line of text to test out the wrapping feature of neovim. This is a super long line of text to test out the wrapping feature of neovim. This is a super long line of text to test out the wrapping feature of neovim. 
- 
- 
 
 _G.apiUtils = {
     ---Executes a kernel panic
     ---@param err string Error to display
     ---@param file string File kernel panic source
-    ---@param line string File line
+    ---@param line number File line
     kernelPanic = function(err, file, line)
         __LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
         __LEGACY.term.setTextColor(__LEGACY.colors.black)
@@ -85,7 +87,7 @@ _G.arcos = {
     ---Shuts the system down
     shutdown = function ()
         __LEGACY.os.shutdown()
-        apiUtils.kernelPanic("Failed to turn off", "Kernel", "71")
+        apiUtils.kernelPanic("Failed to turn off", __CPOSINFOFILE__, __CPOSINFOLINE__)
     end,
     ---Logs a string
     ---@param txt string String to log
@@ -166,7 +168,7 @@ _G.arcos = {
         end
     end,
     ---Pulls an event with respect for the arcos thread executor.
-    ---@param filter string
+    ---@param filter string?
     ---@return table
     ev = function(filter)
         r = table.pack(coroutine.yield())
@@ -180,7 +182,7 @@ _G.arcos = {
         end
     end,
     ---Pulls an event with respect for the arcos thread executor. Ignores terminte
-    ---@param filter string
+    ---@param filter string?
     ---@return table
     rev = function(filter)
         r = table.pack(coroutine.yield())
@@ -240,11 +242,6 @@ _G.arcos = {
                     return compEnv
                 end
             end,
-            __newindex = function (t, k, v)
-                if k == "_G" then
-                    compEnv[k] = v
-                end
-            end
         })
         local f = __LEGACY.files.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
@@ -341,10 +338,10 @@ _G.term = {
     setBackgroundColor = function(col) end,
     setTextColour = function(col) end,
     setBackgroundColour = function(col) end,
-    getTextColour = function() return col.white end,
-    getBackgroundColour = function() return col.black end,
-    getTextColor = function() return col.white end,
-    getBackgroundColor = function() return col.black end,
+    getTextColour = function() return require("col").white end,
+    getBackgroundColour = function() return require("col").black end,
+    getTextColor = function() return require("col").white end,
+    getBackgroundColor = function() return require("col").black end,
     setCursorPos = function(cx, cy) end,
     scroll = function(sx) end,
     clear = function() end,
@@ -368,7 +365,7 @@ end
 ---@param ... string toprint
 function _G.printError(...)
     local oldtc = term.getTextColor()
-    term.setTextColor(col.red)
+    term.setTextColor(require("col").red)
     print(...)
     term.setTextColor(oldtc)
 end
@@ -380,7 +377,7 @@ _G.tasking = {
     ---@param nice number Task niceness, how many times to execute coroutine.resume during the tasks round
     ---@param user string Task user executor. Can only be current user and root if not root. changing to root asks for a password.
     ---@param out any The output, exposed as term to the task
-    ---@param env table The task environment
+    ---@param env table? The task environment
     ---@return integer pid The task process id
     createTask = function(name, callback, nice, user, out, env)
         if not env then env = arcos.getCurrentTask().env or {workDir = "/"} end
@@ -460,7 +457,10 @@ _G.tasking = {
     ---@param password string? New user password, ignored if root
     changeUser = function (user, password)
         if arcos.getCurrentTask().user == user then return true end
-        if arcos.getCurrentTask().user ~= "root" and not arcos.validateUser(user, password) then return "Invalid credentials" end
+        if arcos.getCurrentTask().user ~= "root" then
+            if not password then return "Invalid credentials" end 
+            if not arcos.validateUser(user, password) then return "Invalid credentials" end
+        end
         if not currentTask then return "No current task" end
         for index, value in ipairs(users) do
             if value.name == user then
@@ -547,7 +547,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], "Kernel", debug.getinfo(1).currentline)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], __CPOSINFOFILE__, __CPOSINFOLINE__)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -575,32 +575,123 @@ if config.printLogToFile then
         while true do coroutine.yield() end
     end
 end
-arcos.log("Seems like it works")
-for i, v in ipairs(__LEGACY.files.list("/system/apis/")) do
-    arcos.log("Loading API: " .. v)
-    arcos.loadAPI("/system/apis/" .. v)
-    
-end 
-for i, v in ipairs(files.ls("/apis/")) do
-    arcos.log("Loading UserAPI: " .. v)
-    arcos.loadAPI("/apis/" .. v)
-    
+
+---@type table
+_G.package = {
+    preload = {
+        string = string,
+        table = table,
+        package = package,
+        arcos = arcos,
+        bit32 = __LEGACY.bit32,
+        bit = __LEGACY.bit,
+        coroutine = coroutine,
+        os = arcos,
+        tasking = tasking,
+        utf8 = utf8,
+
+    },
+    loaded = {
+
+    },
+    ---@type table<function>
+    loaders = {
+        ---@param name string
+        ---@return function
+        function (name)
+            if not package.preload[name] then
+                error("no field package.preload['" .. name .. "']")
+            end
+            return function()
+                return package.preload[name]
+            end
+        end,
+        ---@param name string
+        ---@return function
+        function (name)
+            if not package.loaded[name] then
+                error("no field package.loaded['" .. name .. "']")
+            end
+            return function()
+                return package.loaded[name]
+            end
+        end,
+        ---@param name string
+        ---@return function
+        function (name)
+            local searchPaths = {"/", "/system/apis", "/apis"}
+            local searchSuffixes = {".lua", "init.lua"}
+            if environ and environ.workDir then
+                table.insert(searchPaths, environ.workDir)
+            end
+            for _, path in ipairs(searchPaths) do
+                for _, suffix in ipairs(searchSuffixes) do
+                    local file = path .. "/" .. name:gsub("%.", "/") .. suffix
+                    if __LEGACY.files.exists(file) then
+                        local compEnv = {}
+                        for k, v in pairs(_G) do
+                            compEnv[k] = v
+                        end
+                        if path ~= "/apis" and path ~= "/system/apis" then
+                            compEnv["apiUtils"] = nil
+                            compEnv["__LEGACY"] = nil
+                        end
+
+                        compEnv["_G"] = nil
+                        setmetatable(compEnv, {
+                            __index = function (t, k)
+                                if k == "_G" then
+                                    return compEnv
+                                end
+                            end,
+                        })
+
+                        local f, err = __LEGACY.files.open(file, "r")
+                        if not f then
+                            error(err)
+                        end
+                        local compFunc, err = load(f.readAll(), file, nil, compEnv)
+                        f.close()
+                        if compFunc == nil then
+                            error(err)
+                        end
+                        return compFunc
+                    end
+                end
+            end
+            error("Package not found.")
+        end
+    }
+}
+
+_G.require = function(modname)
+    local errors = {}
+    for _, loader in ipairs(package.loaders) do
+        local ok, func = pcall(loader, modname)
+        if ok then
+            local f = func()
+            package.loaded[modname] = f
+            return f
+        end
+        table.insert(errors, func)
+    end
+    error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
 
--- Small fix
-setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
+arcos.log("Seems like it works")
+local files = require("files")
+local tutils = require("tutils")
+local col = require("col")
+local hashing = require("hashing")
+debug.setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 
--- C:Exc
-_G.arc = require "src.system.apis.arc"
-_G.col = require "src.system.apis.col"
-_G.files = require "src.system.apis.files" 
-_G.hashing = require "src.system.apis.hashing"
-_G.rd = require "src.system.apis.rd"
-_G.tutils = require "src.system.apis.tutils"
-_G.ui = require "src.system.apis.ui"
--- C:End
-local passwdFile = files.open("/config/passwd", "r")
-users = tutils.dJSON(passwdFile.read())
+local passwdFile, e = files.open("/config/passwd", "r")
+if not passwdFile then
+    apiUtils.kernelPanic("Password file not found", __CPOSINFOFILE__, __CPOSINFOLINE__)
+    
+else
+    users = tutils.dJSON(passwdFile.read())
+end
 ---Gets the current home dir for the user
 ---@return string
 _G.arcos.getHome = function ()
@@ -646,7 +737,10 @@ _G.arcos.createUser = function (user, password)
         name = user,
         password = hashing.sha256(password)
     })
-    local ufx = files.open("/config/passwd", "w")
+    local ufx, e = files.open("/config/passwd", "w")
+    if not ufx then
+        error(e)
+    end
     ufx.write(tutils.sJSON(users))
     ufx.close()
     return true
@@ -691,7 +785,7 @@ local tab
 if f then
     tab = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), "Kernel", "174")
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), __CPOSINFOFILE__, __CPOSINFOLINE__)
 end
 
 for index, value in ipairs(arcos.getUsers()) do
@@ -705,12 +799,12 @@ tasking.createTask("Init", function()
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
-            apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "422")
+            apiUtils.kernelPanic("Init Died: " .. err, __CPOSINFOFILE__, __CPOSINFOLINE__)
         else
-            apiUtils.kernelPanic("Init Died with no errors.", "Kernel", "422")
+            apiUtils.kernelPanic("Init Died with no errors.", __CPOSINFOFILE__, __CPOSINFOLINE__)
         end
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "424")
+    apiUtils.kernelPanic("Init Died: " .. err, __CPOSINFOFILE__, __CPOSINFOLINE__)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 while true do

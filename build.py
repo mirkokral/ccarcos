@@ -37,7 +37,10 @@ def compileFile(filepathstr: str):
     with open(str(pathlib.Path("src/").absolute()) + "/" + filepathstr, "r") as file:
         outlines = []
         currentlyExcluding = 0
-        for i in file.readlines():
+        inComment = False
+        for l, i in enumerate(file.readlines()):
+            i.replace("__CPOSINFOFILE__", f'{filepathstr}')
+            i.replace("__CPOSINFOLINE__", f'{l}')
             if i.strip().startswith("-- C:"):
                 cmd = i.strip()[5:]
                 match cmd:
@@ -51,9 +54,10 @@ def compileFile(filepathstr: str):
                         currentlyExcluding = not currentlyExcluding
             elif i.strip().startswith("--[["):
                 currentlyExcluding += 1
+                inComment = True
             elif i.strip().startswith("--") or i.strip() == "":
                 pass
-            elif i.strip().endswith("]]") :
+            elif i.strip().endswith("]]") and inComment:
                 currentlyExcluding -= 1
             else:
                 if currentlyExcluding < 1:

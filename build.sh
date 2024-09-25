@@ -5,7 +5,7 @@ python build.py whole
 # Add cellui to build
 cd cellui
 haxe cellui.hxml
-cp out/celluilib.lua ../build/system/apis/cellui.lua
+cp out/cellui.lua ../build/system/apis/cellui.lua
 cd ..
 
 # Put build into the package

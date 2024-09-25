@@ -1,3 +1,8 @@
+local files = require("files")
+local ui = require("ui")
+local col = require("col")
+if not term then error("No term") end
+
 local file = ...
 if not file then
     error("No file specified")
@@ -20,7 +25,7 @@ local function genLX()
     lx = {}
     if files.exists(qf) then
         local f = files.open(qf, "r")
-        
+        if not f then error("Couldn't open file") end
         lx = {
             ui.TextInput{
                 label = f.read(),

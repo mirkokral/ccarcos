@@ -1,3 +1,5 @@
+local files = require("files")
+
 local f = ...
 if not f then error("No file specified!") end
 local fr = files.resolve(f)[1]

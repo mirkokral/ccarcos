@@ -1,3 +1,15 @@
 {
-    "Lua.completion.autoRequire": false
+    "Lua.completion.autoRequire": false,
+    "Lua.runtime.path": [
+        "src/system/apis/?.lua",
+        "src/system/apis/?/init.lua",
+        "cellui/out/?.lua"
+    ],
+    "Lua.diagnostics.disable": [
+        "deprecated"
+    ],
+    "Lua.workspace.ignoreDir": [
+        ".vscode",
+        "build"
+    ]
 }

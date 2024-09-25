@@ -1,4 +1,6 @@
-UItheme = {
+local col = require("col")
+local tutils = require("tutils")
+local UItheme = {
     bg = col.black,
     fg = col.white,
     buttonBg = col.cyan,
@@ -33,7 +35,7 @@ local function InitBuffer(mon)
         mon.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
     end
     local buf = {}
-    W, H = mon.getSize()
+    local W, H = mon.getSize()
     for i = 1, H, 1 do
         local tb = {}
         for i = 1, W, 1 do
@@ -68,7 +70,7 @@ local function ScrollPane(b)
     end
     local mbpressedatm = false
     local lastx, lasty = 0, 0
-    config.getDrawCommands = function()
+    config.getDrawCommands = function(termar)
         local dcBuf = {}
         local tw, th = config.width, config.height
         for i = 0, tw, 1 do
@@ -86,7 +88,7 @@ local function ScrollPane(b)
         local yo = 0
         for index, value in ipairs(config.children) do
             if value.y + yo - config.scroll + value.getWH()[1] > 0 and value.y + yo - config.scroll <= config.height then
-                local rc = value.getDrawCommands()
+                local rc = value.getDrawCommands(termar)
                 for index, value in ipairs(rc) do
                     table.insert(dcBuf, {
                         x = config.x + value.x - 1,
@@ -257,7 +259,7 @@ local function Label(b)
     end
     if not config.col then config.col = UItheme.bg end
     if not config.textCol then config.textCol = UItheme.fg end
-    config.getDrawCommands = function()
+    config.getDrawCommands = function(termar)
         local rcbuffer = {}
         local rx = 0
         local ry = 0
@@ -392,7 +394,7 @@ local function Align(x, y, widgettoalign, alignment, xw, xh)
 	widget.x = 0
 	widget.y = 0
 	local w = {}
-	function updateXY(termar)
+	local function updateXY(termar)
 	  widget.x = 0
 	  widget.y = 0
 	  local tw, th = termar.getSize()
@@ -414,7 +416,8 @@ local function Align(x, y, widgettoalign, alignment, xw, xh)
     	  return {x + widget.getWH()[1], y + widget.getWH()[2]}
       end,
       getDrawCommands = function (termar)
-    	  updateXY()
+          print(termar)
+    	  updateXY(termar)
     	  local rendercommands = {}
     	  local wrcs = widget.getDrawCommands(termar)
     	  for index,value  in ipairs(wrcs) do
@@ -432,7 +435,7 @@ local function Align(x, y, widgettoalign, alignment, xw, xh)
         if e[1]:sub(#e[1]-6) == "resize" then
           return true
         end
-    	end
+      end
 	}
 	return w
 end
@@ -468,15 +471,15 @@ local function Cpy(buf1, buf2, ox, oy)
         end
     end
 end
-local function RenderWidgets(wdg, ox, oy, buf)
+local function RenderWidgets(wdg, ox, oy, buf, outterm)
     local tw, th = #buf[1], #buf
     for i = 1, th, 1 do
         for ix = 1, tw, 1 do
-            blitAtPos(ix + ox, i + oy, ui.UItheme.bg, ui.UItheme.fg, " ", buf)
+            blitAtPos(ix + ox, i + oy, UItheme.bg, UItheme.fg, " ", buf)
         end
     end
     for index, value in ipairs(wdg) do
-        ui.DirectRender(value, ox, oy, buf)
+        DirectRender(value, ox, oy, buf, outterm)
     end
 end
 local function Lerp(callback, speed, deAccelAtEnd)
@@ -506,17 +509,19 @@ local function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
     local buf = InitBuffer(terma)
     local buf2 = InitBuffer(terma)
     local accel = 50
-    RenderWidgets(widgets1, 0, 0, buf)
-    RenderWidgets(widgets2, 0, 0, buf2)
+    RenderWidgets(widgets1, 0, 0, buf, terma)
+    RenderWidgets(widgets2, 0, 0, buf2, terma)
     speed = speed + 1
     if ontop then
         while ox < tw - 0.5 do
             ox = math.max(((ox / tw) + (accel / 100)) * tw, 0)
             accel = accel / speed
             local sbuf = InitBuffer(terma)
-            Cpy(buf, sbuf, 0, 0)
-            Cpy(buf2, sbuf, (tw - ox) * (dir and -1 or 1), 0)
-            Push(sbuf, terma)
+            if sbuf then
+                Cpy(buf, sbuf, 0, 0)
+                Cpy(buf2, sbuf, (tw - ox) * (dir and -1 or 1), 0)
+                Push(sbuf, terma)
+            end
             sbuf = nil
             sleep(1 / 20)
         end
@@ -526,9 +531,11 @@ local function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
             ox = math.max(((ox / tw) + (accel / 100)) * tw, 0)
             accel = accel * speed
             local sbuf = InitBuffer(terma)
-            Cpy(buf2, sbuf, 0, 0)
-            Cpy(buf, sbuf, (ox) * (dir and -1 or 1), 0)
-            Push(sbuf, terma)
+            if sbuf then
+                Cpy(buf2, sbuf, 0, 0)
+                Cpy(buf, sbuf, (ox) * (dir and -1 or 1), 0)
+                Push(sbuf, terma)
+            end
             sbuf = nil
             sleep(1 / 20)
         end
@@ -536,9 +543,11 @@ local function PageTransition(widgets1, widgets2, dir, speed, ontop, terma)
 end
 local function RenderLoop(toRender, outTerm, f)
     local function reRender()
-        local buf = ui.InitBuffer(outTerm)
-        ui.RenderWidgets(toRender, 0, 0, buf)
-        ui.Push(buf, outTerm)
+        local buf = InitBuffer(outTerm)
+        if buf then
+            RenderWidgets(toRender, 0, 0, buf, outTerm)
+            Push(buf, outTerm)
+        end
         buf = nil
     end
     if f then reRender() end

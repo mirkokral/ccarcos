@@ -1,3 +1,6 @@
+local col = require("col")
+local files = require("files")
+local tutils = require("tutils")
 term.setTextColor(col.blue)
 print(arcos.version())
 local confile = files.open("/config/arcshell", "r")
@@ -43,8 +46,15 @@ local function run(a1, ...)
         end
     end
     if cmd == nil then
-        local cq = "return " .. tutils.join({ a1, ... }, " ")
+        local cq = tutils.join({ a1, ... }, " ")
         local chunkl, err = load(cq, "eval", nil, luaGlobal)
+        local chunklb, errb = load("return " .. cq, "eval", nil, luaGlobal)
+        if chunklb then
+            chunkl = chunklb
+            err = errb
+        else
+            print(errb)
+        end
         if(err and err:sub(20, 36) == "syntax error near") then
             err = "Command not found."
         end

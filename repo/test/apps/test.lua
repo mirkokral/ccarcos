@@ -1,3 +1,5 @@
+local ui = require("ui")
+
 local page = {
     ui.Label{
         label = "Hello, world!",
@@ -13,6 +15,8 @@ local page = {
 
 local ls = true
 while true do
-    ls = ui.RenderLoop(page, term, ls)
+    if term then
+        ls = ui.RenderLoop(page, term, ls)
+    end
     
 end

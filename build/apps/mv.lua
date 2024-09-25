@@ -1,3 +1,4 @@
+local files = require('files')
 local s, t = ...
 if not s and t then
     print("Usage: mv [src] [target]")

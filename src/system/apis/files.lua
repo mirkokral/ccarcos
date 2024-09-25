@@ -1,3 +1,14 @@
+local col = require("col")
+local tutils = require("tutils")
+
+
+
+---Combine paths
+---@param ... string
+---@return string
+local function combine(...)
+    return __LEGACY.files.combine(...)
+end
 ---Gets the permissions for this user for a file
 ---@param file string File path
 ---@param user string? User
@@ -63,6 +74,35 @@ end
 local function can(on, what)
     return getPermissions(on)[what]
 end
+
+---Gets the parent dir of a filepath
+---@param path string
+---@return string
+local function par(path)
+    return __LEGACY.files.getDir(path)
+end
+---Gets the size of a file
+---@param path string
+---@return number   
+local function size(path)
+    if cant(path, "read") then
+        error("No permission for this action")
+    end
+    return __LEGACY.files.getSize(path)
+end
+---Gets the drive path for path
+---@param path string
+---@return string
+local function drive(path)
+    return __LEGACY.files.getDrive(path)
+end
+---Gets free space at path
+---@param path string
+---@return number
+local function freeSpace(path)
+    return __LEGACY.files.getFreeSpace(path)
+end
+
 
 ---Gets the readonly status of a file
 ---@param path string
@@ -244,7 +284,7 @@ local function resolve(f, keepNonExistent)
             
         end
     end
-    if not keepNonExistent and not files.exists("/" .. tutils.join(out, "/")) then return {} end
+    if not keepNonExistent and not exists("/" .. tutils.join(out, "/")) then return {} end
     for _, rmi in ipairs(frmItems) do
         
         table.remove(out, rmi)
@@ -318,14 +358,14 @@ local function complete(sPath, sLocation, bIncludeFiles, bIncludeDirs)
         local nSlash = string.find(sPath, "[/\\]", nStart)
         if nSlash then
             local sPart = string.sub(sPath, nStart, nSlash - 1)
-            sDir = files.combine(sDir, sPart)
+            sDir = combine(sDir, sPart)
             nStart = nSlash + 1
         else
             sName = string.sub(sPath, nStart)
         end
     end
 
-    if files.dir(sDir) then
+    if dir(sDir) then
         local tResults = {}
         if bIncludeDirs and sPath == "" then
             table.insert(tResults, ".")
@@ -337,13 +377,13 @@ local function complete(sPath, sLocation, bIncludeFiles, bIncludeDirs)
                 table.insert(tResults, bIncludeDirs and "." or "./")
             end
         end
-        local tFiles = files.ls(sDir)
+        local tFiles = ls(sDir)
         for n = 1, #tFiles do
             local sFile = tFiles[n]
             if #sFile >= #sName and string.sub(sFile, 1, #sName) == sName and (
                 bIncludeHidden or sFile:sub(1, 1) ~= "." or sName:sub(1, 1) == "."
             ) then
-                local bIsDir = files.dir(files.combine(sDir, sFile))
+                local bIsDir = dir(combine(sDir, sFile))
                 local sResult = string.sub(sFile, #sName + 1)
                 if bIsDir then
                     table.insert(tResults, sResult .. "/")
@@ -367,16 +407,16 @@ local function find_aux(path, parts, i, out)
     local part = parts[i]
     if not part then
         -- If we're at the end of the pattern, ensure our path exists and append it.
-        if files.exists(path) then out[#out + 1] = path end
+        if exists(path) then out[#out + 1] = path end
     elseif part.exact then
         -- If we're an exact match, just recurse into this directory.
-        return find_aux(files.combine(path, part.contents), parts, i + 1, out)
+        return find_aux(combine(path, part.contents), parts, i + 1, out)
     else
         -- Otherwise we're a pattern. Check we're a directory, then recurse into each
         -- matching file.
-        if not files.dir(path) then return end
+        if not dir(path) then return end
 
-        local files = files.ls(path)
+        local files = ls(path)
         for j = 1, #files do
             local file = files[j]
             if file:find(part.contents) then find_aux(__LEGACY.files.combine(path, file), parts, i + 1, out) end
@@ -399,7 +439,7 @@ local find_escape = {
 local function find(pattern)
     expect(1, pattern, "string")
 
-    pattern = files.combine(pattern) -- Normalise the path, removing ".."s.
+    pattern = combine(pattern) -- Normalise the path, removing ".."s.
 
     -- If the pattern is trying to search outside the computer root, just abort.
     -- This will fail later on anyway.
@@ -409,7 +449,7 @@ local function find(pattern)
 
     -- If we've no wildcards, just check the file exists.
     if not pattern:find("[*?]") then
-        if files.exists(pattern) then return { pattern } else return {} end
+        if exists(pattern) then return { pattern } else return {} end
     end
 
     local parts = {}
@@ -435,46 +475,13 @@ end
 local function driveRoot(sPath)
     expect(1, sPath, "string")
     -- Force the root directory to be a mount.
-    return files.par(sPath) == ".." or files.drive(sPath) ~= files.drive(files.par(sPath))
-end
----Combine paths
----@param ... string
----@return string
-local function combine(...)
-    return __LEGACY.files.combine(...)
+    return par(sPath) == ".." or drive(sPath) ~= drive(par(sPath))
 end
 ---Gets the name of a filepath
 ---@param path string
 ---@return string
 local function name(path)
     return __LEGACY.files.getName(path)
-end
----Gets the parent dir of a filepath
----@param path string
----@return string
-local function par(path)
-    return __LEGACY.files.getDir(path)
-end
----Gets the size of a file
----@param path string
----@return number   
-local function size(path)
-    if cant(path, "read") then
-        error("No permission for this action")
-    end
-    return __LEGACY.files.getSize(path)
-end
----Gets the drive path for path
----@param path string
----@return string
-local function drive(path)
-    return __LEGACY.files.getDrive(path)
-end
----Gets free space at path
----@param path string
----@return number
-local function freeSpace(path)
-    return __LEGACY.files.getFreeSpace(path)
 end
 ---Gets path capacity
 ---@param path string

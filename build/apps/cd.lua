@@ -1,3 +1,4 @@
+local files = require("files")
 local path = ...
 if not path then
     error("No directory specified!")

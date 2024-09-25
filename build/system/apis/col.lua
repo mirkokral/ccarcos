@@ -1,3 +1,4 @@
+local bit = require("bit")
 local white = 0x1
 local orange = 0x2
 local magenta = 0x4
@@ -15,7 +16,7 @@ local green = 0x2000
 local red = 0x4000
 local black = 0x8000
 local function expect(n, v, ...)
-    r = false
+    local r = false
     for index, value in ipairs({ ... }) do
         if type(v) == value then
             r = true
@@ -26,13 +27,7 @@ local function expect(n, v, ...)
         error("Argument " .. n .. " is not valid!")
     end
 end
-if not bit32 then
-    if bit then
-        bit32 = bit
-    else
-        bit32 = {}
-    end
-end
+local bit32 = bit
 local function combine(...)
     local r = 0
     for i = 1, select('#', ...) do

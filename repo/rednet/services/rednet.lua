@@ -1,1 +1,1 @@
-rednet.run()
+require("rednet").run()

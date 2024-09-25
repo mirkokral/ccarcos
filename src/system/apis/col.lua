@@ -1,3 +1,5 @@
+local bit = require("bit")
+
 ---@alias Color number
 
 ---White: Written as `0` in paint files and [`term.blit`], has a default
@@ -64,12 +66,13 @@ local red = 0x4000
 ---@type Color
 local black = 0x8000
 
+
 ---Excepts
 ---@param n number Argument index
 ---@param v any Argument
 ---@param ... type type
 local function expect(n, v, ...)
-    r = false
+    local r = false
     for index, value in ipairs({ ... }) do
         if type(v) == value then
             r = true
@@ -80,14 +83,7 @@ local function expect(n, v, ...)
         error("Argument " .. n .. " is not valid!")
     end
 end
-if not bit32 then
-    if bit then
-        bit32 = bit
-        
-    else
-        bit32 = {}
-    end
-end
+local bit32 = bit
 
 local function combine(...)
     local r = 0

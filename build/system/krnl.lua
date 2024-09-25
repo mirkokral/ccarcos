@@ -66,7 +66,7 @@ _G.arcos = {
     end,
     shutdown = function ()
         __LEGACY.os.shutdown()
-        apiUtils.kernelPanic("Failed to turn off", "Kernel", "71")
+        apiUtils.kernelPanic("Failed to turn off", __CPOSINFOFILE__, __CPOSINFOLINE__)
     end,
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
@@ -172,11 +172,6 @@ _G.arcos = {
                     return compEnv
                 end
             end,
-            __newindex = function (t, k, v)
-                if k == "_G" then
-                    compEnv[k] = v
-                end
-            end
         })
         local f = __LEGACY.files.open(path, "r")
         local compFunc, err = load(f.readAll(), path, nil, compEnv)
@@ -243,7 +238,7 @@ function _G.sleep(time)
 end
 function _G.printError(...)
     local oldtc = term.getTextColor()
-    term.setTextColor(col.red)
+    term.setTextColor(require("col").red)
     print(...)
     term.setTextColor(oldtc)
 end
@@ -313,7 +308,10 @@ _G.tasking = {
     end,
     changeUser = function (user, password)
         if arcos.getCurrentTask().user == user then return true end
-        if arcos.getCurrentTask().user ~= "root" and not arcos.validateUser(user, password) then return "Invalid credentials" end
+        if arcos.getCurrentTask().user ~= "root" then
+            if not password then return "Invalid credentials" end 
+            if not arcos.validateUser(user, password) then return "Invalid credentials" end
+        end
         if not currentTask then return "No current task" end
         for index, value in ipairs(users) do
             if value.name == user then
@@ -391,7 +389,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], "Kernel", debug.getinfo(1).currentline)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], __CPOSINFOFILE__, __CPOSINFOLINE__)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -419,18 +417,106 @@ if config.printLogToFile then
         while true do coroutine.yield() end
     end
 end
-arcos.log("Seems like it works")
-for i, v in ipairs(__LEGACY.files.list("/system/apis/")) do
-    arcos.log("Loading API: " .. v)
-    arcos.loadAPI("/system/apis/" .. v)
-end 
-for i, v in ipairs(files.ls("/apis/")) do
-    arcos.log("Loading UserAPI: " .. v)
-    arcos.loadAPI("/apis/" .. v)
+_G.package = {
+    preload = {
+        string = string,
+        table = table,
+        package = package,
+        arcos = arcos,
+        bit32 = __LEGACY.bit32,
+        bit = __LEGACY.bit,
+        coroutine = coroutine,
+        os = arcos,
+        tasking = tasking,
+        utf8 = utf8,
+    },
+    loaded = {
+    },
+    loaders = {
+        function (name)
+            if not package.preload[name] then
+                error("no field package.preload['" .. name .. "']")
+            end
+            return function()
+                return package.preload[name]
+            end
+        end,
+        function (name)
+            if not package.loaded[name] then
+                error("no field package.loaded['" .. name .. "']")
+            end
+            return function()
+                return package.loaded[name]
+            end
+        end,
+        function (name)
+            local searchPaths = {"/", "/system/apis", "/apis"}
+            local searchSuffixes = {".lua", "init.lua"}
+            if environ and environ.workDir then
+                table.insert(searchPaths, environ.workDir)
+            end
+            for _, path in ipairs(searchPaths) do
+                for _, suffix in ipairs(searchSuffixes) do
+                    local file = path .. "/" .. name:gsub("%.", "/") .. suffix
+                    if __LEGACY.files.exists(file) then
+                        local compEnv = {}
+                        for k, v in pairs(_G) do
+                            compEnv[k] = v
+                        end
+                        if path ~= "/apis" and path ~= "/system/apis" then
+                            compEnv["apiUtils"] = nil
+                            compEnv["__LEGACY"] = nil
+                        end
+                        compEnv["_G"] = nil
+                        setmetatable(compEnv, {
+                            __index = function (t, k)
+                                if k == "_G" then
+                                    return compEnv
+                                end
+                            end,
+                        })
+                        local f, err = __LEGACY.files.open(file, "r")
+                        if not f then
+                            error(err)
+                        end
+                        local compFunc, err = load(f.readAll(), file, nil, compEnv)
+                        f.close()
+                        if compFunc == nil then
+                            error(err)
+                        end
+                        return compFunc
+                    end
+                end
+            end
+            error("Package not found.")
+        end
+    }
+}
+_G.require = function(modname)
+    local errors = {}
+    for _, loader in ipairs(package.loaders) do
+        local ok, func = pcall(loader, modname)
+        if ok then
+            local f = func()
+            package.loaded[modname] = f
+            return f
+        end
+        table.insert(errors, func)
+    end
+    error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
-setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
-local passwdFile = files.open("/config/passwd", "r")
-users = tutils.dJSON(passwdFile.read())
+arcos.log("Seems like it works")
+local files = require("files")
+local tutils = require("tutils")
+local col = require("col")
+local hashing = require("hashing")
+debug.setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
+local passwdFile, e = files.open("/config/passwd", "r")
+if not passwdFile then
+    apiUtils.kernelPanic("Password file not found", __CPOSINFOFILE__, __CPOSINFOLINE__)
+else
+    users = tutils.dJSON(passwdFile.read())
+end
 _G.arcos.getHome = function ()
     if not files.exists("/user/" .. arcos.getCurrentTask().user) then
         files.mkDir("/user/" .. arcos.getCurrentTask().user)
@@ -465,7 +551,10 @@ _G.arcos.createUser = function (user, password)
         name = user,
         password = hashing.sha256(password)
     })
-    local ufx = files.open("/config/passwd", "w")
+    local ufx, e = files.open("/config/passwd", "w")
+    if not ufx then
+        error(e)
+    end
     ufx.write(tutils.sJSON(users))
     ufx.close()
     return true
@@ -494,7 +583,7 @@ local tab
 if f then
     tab = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), "Kernel", "174")
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), __CPOSINFOFILE__, __CPOSINFOLINE__)
 end
 for index, value in ipairs(arcos.getUsers()) do
     if not files.exists("/user/" .. value) then
@@ -506,12 +595,12 @@ tasking.createTask("Init", function()
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
-            apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "422")
+            apiUtils.kernelPanic("Init Died: " .. err, __CPOSINFOFILE__, __CPOSINFOLINE__)
         else
-            apiUtils.kernelPanic("Init Died with no errors.", "Kernel", "422")
+            apiUtils.kernelPanic("Init Died with no errors.", __CPOSINFOFILE__, __CPOSINFOLINE__)
         end
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "424")
+    apiUtils.kernelPanic("Init Died: " .. err, __CPOSINFOFILE__, __CPOSINFOLINE__)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 while true do

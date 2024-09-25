@@ -1,7 +1,13 @@
+local files = require("files")
+local tutils = require("tutils")
+local ui = require("ui")
+local col = require("col")
+
 local w, h = term.getSize()
 local currentScreen = "main"
 local running = true
 local blcf = files.open("/config/aboot", "r")
+if not blcf then error("Broken system") end
 local blc = tutils.dJSON(blcf.read())
 local configScreens
 local function changeScreens(new, ot)

@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 if arcos.getCurrentTask().user ~= "root" then
     error("Not root!")
 end

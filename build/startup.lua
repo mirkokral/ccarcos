@@ -2,6 +2,24 @@ if arcos then return end
 term.clear()
 local UIthemedefs = {
 }
+if not colors then local colors = {
+  white = 0,
+  orange = 0,
+  magenta = 0,
+  lightBlue = 0,
+  yellow = 0,
+  lime = 0,
+  pink = 0,
+  gray = 0,
+  lightGray = 0,
+  cyan = 0,
+  purple = 0,
+  blue = 0,
+  brown = 0,
+  green = 0,
+  red = 0,
+  black = 0,
+} end
 UIthemedefs[colors.white] = { 236, 239, 244 }
 UIthemedefs[colors.orange] = { 0, 0, 0 }
 UIthemedefs[colors.magenta] = { 180, 142, 173 }
@@ -58,7 +76,7 @@ else
     end
   end
 end
-function _G.strsplit(inputstr, sep)
+local function strsplit(inputstr, sep)
   if sep == nil then
       sep = "%s"
   end
@@ -154,7 +172,7 @@ local delete = { os = { "version", "pullEventRaw", "pullEvent", "run", "loadAPI"
 for k, v in pairs(delete) do for _, a in ipairs(v) do _G[k][a] = nil end end
 _G.term.redirect = function() end
 _G.error = function() end
-setfenv(utd, __LEGACY)
+debug.setfenv(utd, __LEGACY)
 function _G.term.native()
   _G.error = olderr
   _G.term.redirect = oldtr
@@ -170,8 +188,11 @@ function _G.term.native()
     for k, v in pairs(_G) do
       oldug[k] = v
     end
-    local f = __LEGACY.files.open("/system/bootloader.lua", "r")
-    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
+    local f, e = __LEGACY.files.open("/system/bootloader.lua", "r")
+    if not f then error(e) end
+    local l, e = load(f.readAll(), "Bootloader", nil, _G)
+    if not l then error(e) end
+    local ok, err = pcall(l)
     print(err)
     print("Press any key to continue")
     __LEGACY.os.pullEvent("key")

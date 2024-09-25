@@ -1,6 +1,7 @@
+
 bash build.sh
+rm -rf ~/.local/share/craftos-pc/computer/120/
 mkdir ~/.local/share/craftos-pc/computer/120
-rm -rf ~/.local/share/craftos-pc/computer/120/*
 cp build/* ~/.local/share/craftos-pc/computer/120/ -r
 echo "o shell.lua" > ~/.local/share/craftos-pc/computer/120/services/enabled/login
 echo '{"theme": {"fg": "white","bg": "black"},"skipPrompt": true,"defargs": "--fileLog","autoUpdate": false}' > ~/.local/share/craftos-pc/computer/120/config/aboot

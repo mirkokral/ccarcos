@@ -217,7 +217,7 @@ local function run()
         error("rednet is already running", 2)
     end
     started = true
-
+    local pruceRecvTimer = arcos.startTimer(10)
     while true do
         local event, p1, p2, p3, p4 = arcos.ev()
         if event == "modem_message" then

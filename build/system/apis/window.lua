@@ -1,3 +1,4 @@
+local col = require("col")
 local expect = col.expect
 local tHex = {
     [col.white] = "0",

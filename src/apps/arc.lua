@@ -1,3 +1,7 @@
+local arc = require("arc")
+local files = require("files")
+local col = require("col")
+
 local args = { ... }
 local cmd = table.remove(args, 1)
 local repo = arc.getRepo()
@@ -18,10 +22,14 @@ if cmd == "fetch" then
     arc.fetch()
 elseif cmd == "setrepo" then
     col.expect(2, args[1], "string")
-    local fty = files.open("/config/arcrepo", "w")
-    fty.write(args[1])
-    fty.close()
-    print("New repo: " .. args[1])
+    local fty, e = files.open("/config/arcrepo", "w")
+    if fty then
+        fty.write(args[1])
+        fty.close()
+        print("New repo: " .. args[1])
+    else
+        print("Failed to set new repo (check permissions)")
+    end
 elseif cmd == "install" then
     local tobeinstalled = {}
     local afterFunctions = {}

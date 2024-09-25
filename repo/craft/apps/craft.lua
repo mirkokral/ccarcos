@@ -1,3 +1,15 @@
+local col = require("col")
+local files = require("files")
+local _CEXPORTS = nil
+local window = require("window")
+local rednet = require("rednet")
+local rd = require("rd")
+
+
+pcall(function()
+    _CEXPORTS = require("_CEXPORTS")
+end)
+
 local craftos_env = {}
 for key, value in pairs(_G) do
     craftos_env[key] = value
@@ -440,6 +452,8 @@ craftos_env.paintutils = _CEXPORTS.paintutils
 craftos_env.settings = _CEXPORTS.settings
 craftos_env.textutils = _CEXPORTS.textutils
 craftos_env.help = _CEXPORTS.help
+craftos_env.require = _CEXPORTS.require
+craftos_env.package = _CEXPORTS.package
 craftos_env.window = window
 craftos_env.parallel = {
     waitForAll = function (...)

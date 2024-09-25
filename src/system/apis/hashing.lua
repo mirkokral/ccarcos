@@ -64,13 +64,19 @@ local function band(a, b, c, ...)
 		a = a % MOD
 		b = b % MOD
 		z = ((a + b) - bxor1(a,b)) / 2
-		if c then z = bit32.band(z, c, ...) end
+		if c then z = require("bit32").band(z, c, ...) end
 		return z
 	elseif a then return a % MOD
 	else return MODM end
 end
 
 local function bnot(x) return (-1 - x) % MOD end
+
+local function lshift(a, disp)
+---@diagnostic disable-next-line: undefined-global
+	if disp < 0 then return rshift(a,-disp) end 
+	return (a * 2 ^ disp) % 2 ^ 32
+end
 
 local function rshift1(a, disp)
 	if disp < 0 then return lshift(a,-disp) end
@@ -82,10 +88,6 @@ local function rshift(x, disp)
 	return rshift1(x % MOD, disp)
 end
 
-local function lshift(a, disp)
-	if disp < 0 then return rshift(a,-disp) end 
-	return (a * 2 ^ disp) % 2 ^ 32
-end
 
 local function rrotate(x, disp)
     x = x % MOD

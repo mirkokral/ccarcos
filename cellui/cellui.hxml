@@ -1,4 +1,4 @@
---lua out/celluilib.lua
+--lua out/cellui.lua
 --class-path src
 -m Main
 -D lua-vanilla

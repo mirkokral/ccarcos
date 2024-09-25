@@ -1,7 +1,7 @@
 -- SPDX-FileCopyrightText: 2017 Daniel Ratcliffe
 --
 -- SPDX-License-Identifier: LicenseRef-CCPL
-
+local col = require("col")
 local expect = col.expect
 
 local tHex = {

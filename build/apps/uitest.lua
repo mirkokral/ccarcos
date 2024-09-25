@@ -1,3 +1,5 @@
+local ui = require("ui")
+local col = require("col")
 if term then
     local monitors = dev.monitor
     local selecting = true

@@ -28,6 +28,7 @@ f>apps/uitest.lua
 f>apps/clear.lua
 f>apps/shutdown.lua
 f>apps/reboot.lua
+f>apps/celluitest.lua
 f>config/aboot
 f>config/arcrepo
 f>config/arcshell

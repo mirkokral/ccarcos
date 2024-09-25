@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+package;
 import Coloring.Colors;
 import UI;
 import typedefs.Terminal;

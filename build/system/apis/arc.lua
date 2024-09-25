@@ -1,3 +1,6 @@
+local files = require("files")
+local hashing = require("hashing")
+local tutils = require("tutils")
 local methods = {
     GET = true,
     POST = true,

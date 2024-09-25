@@ -1,3 +1,7 @@
+local files = require("files")
+local ui = require("ui")
+local col = require("col")
+if not term then error("No term") end
 local user = ""
 local we = files.ls("/config/desktops")
 local sq = {}
