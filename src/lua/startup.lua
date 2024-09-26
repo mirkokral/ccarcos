@@ -513,7 +513,7 @@ _G.write = function(...)
   local sx, sy = term.getSize()
   local wordsToPrint = {}
   for i = 1, args.n do
-    local word = args[i]
+    local word = tostring(args[i])
     for i = 0, #word do
       ox, oy = term.getCursorPos()
       local char = string.sub(word, i, i)
@@ -571,13 +571,12 @@ function _G.term.native()
     end
     local keptAPIs = { utd = true, printError = true, require = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, bit = true, coroutine = true, debug = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
     local t = {}
-    for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
-    for _, k in ipairs(t) do _G[k] = nil end
-
+    for k in pairs(oldug) do if not keptAPIs[k] then table.insert(t, k) end end
+    for _, k in ipairs(t) do oldug[k] = nil end
 
 
     local f = __LEGACY.files.open("/system/bootloader.lua", "r")
-    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
+    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
     print(err)
     while true do
       coroutine.yield()

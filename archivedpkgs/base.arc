@@ -10,50 +10,50 @@
 |services/enabled|-1|
 |config/apps|-1|
 |/startup.lua|0|
-|system/bootloader.lua|14961|
-|system/rel|15910|
-|system/krnl.lua|15916|
-|system/apis/arc.lua|36893|
-|system/apis/col.lua|49408|
-|system/apis/files.lua|53532|
-|system/apis/hashing.lua|64940|
-|system/apis/rd.lua|69575|
-|system/apis/tutils.lua|70579|
-|system/apis/ui.lua|71721|
-|system/apis/window.lua|92927|
-|system/apis/cellui.lua|108016|
-|services/arcfix.lua|251890|
-|services/elevator.lua|251975|
-|services/elevatorSrv.lua|254293|
-|services/oobe.lua|257349|
-|services/pms.lua|263292|
-|services/shell.lua|267043|
-|services/enabled/9 arcfix|267073|
-|services/enabled/login|267086|
-|data/PRIVACY.txt|267096|
-|config/aboot|267985|
-|config/arcrepo|268145|
-|config/arcshell|268162|
-|config/hostname|268214|
-|config/passwd|268219|
-|apps/adduser.lua|268469|
-|apps/arc.lua|268983|
-|apps/cat.lua|272070|
-|apps/cd.lua|272346|
-|apps/cp.lua|272675|
-|apps/init.lua|272944|
-|apps/kmsg.lua|276262|
-|apps/ls.lua|276311|
-|apps/mkdir.lua|276984|
-|apps/mv.lua|277130|
-|apps/rm.lua|277399|
-|apps/rmuser.lua|277581|
-|apps/shell.lua|277985|
-|apps/uitest.lua|281818|
-|apps/clear.lua|287195|
-|apps/shutdown.lua|287231|
-|apps/reboot.lua|287247|
-|apps/celluitest.lua|287261|
+|system/bootloader.lua|14980|
+|system/rel|15929|
+|system/krnl.lua|15935|
+|system/apis/arc.lua|37479|
+|system/apis/col.lua|49994|
+|system/apis/files.lua|54118|
+|system/apis/hashing.lua|65526|
+|system/apis/rd.lua|70161|
+|system/apis/tutils.lua|71165|
+|system/apis/ui.lua|72307|
+|system/apis/window.lua|93513|
+|system/apis/cellui.lua|108602|
+|services/arcfix.lua|252476|
+|services/elevator.lua|252561|
+|services/elevatorSrv.lua|254879|
+|services/oobe.lua|257935|
+|services/pms.lua|263878|
+|services/shell.lua|267629|
+|services/enabled/9 arcfix|267659|
+|services/enabled/login|267672|
+|data/PRIVACY.txt|267682|
+|config/aboot|268571|
+|config/arcrepo|268731|
+|config/arcshell|268748|
+|config/hostname|268800|
+|config/passwd|268805|
+|apps/adduser.lua|269055|
+|apps/arc.lua|269569|
+|apps/cat.lua|272615|
+|apps/cd.lua|272891|
+|apps/cp.lua|273220|
+|apps/init.lua|273489|
+|apps/kmsg.lua|276561|
+|apps/ls.lua|276610|
+|apps/mkdir.lua|277283|
+|apps/mv.lua|277429|
+|apps/rm.lua|277698|
+|apps/rmuser.lua|277880|
+|apps/shell.lua|278284|
+|apps/uitest.lua|282117|
+|apps/clear.lua|287494|
+|apps/shutdown.lua|287530|
+|apps/reboot.lua|287546|
+|apps/celluitest.lua|287560|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -453,7 +453,7 @@ _G.write = function(...)
   local sx, sy = term.getSize()
   local wordsToPrint = {}
   for i = 1, args.n do
-    local word = args[i]
+    local word = tostring(args[i])
     for i = 0, #word do
       ox, oy = term.getCursorPos()
       local char = string.sub(word, i, i)
@@ -503,10 +503,10 @@ function _G.term.native()
     end
     local keptAPIs = { utd = true, printError = true, require = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, bit = true, coroutine = true, debug = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
     local t = {}
-    for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
-    for _, k in ipairs(t) do _G[k] = nil end
+    for k in pairs(oldug) do if not keptAPIs[k] then table.insert(t, k) end end
+    for _, k in ipairs(t) do oldug[k] = nil end
     local f = __LEGACY.files.open("/system/bootloader.lua", "r")
-    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, _G))
+    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
     print(err)
     while true do
       coroutine.yield()
@@ -565,12 +565,14 @@ if config.printLogToFile then
         while true do coroutine.yield() end
     end
 end
+_G.term = term.native()
 local oldw = _G.write
 _G.write = function(...)
     local isNextSetC = false
     local nextCommand = ""
     local args = {...}
-    for i, v in ipairs(args) do
+    for i, vn in ipairs(args) do
+        local v = tostring(vn)
         for xi = 0, #v do
             local char = v:sub(xi, xi)
             if isNextSetC then
@@ -637,7 +639,7 @@ _G.arcos = {
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
-            term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
+            print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
         if config.printLogToFile and logfile then
             logfile.write(kernelLogBuffer)
@@ -653,7 +655,7 @@ _G.arcos = {
         else
             local meta = __LEGACY.textutils.unserializeJSON(f.readAll())
             f.close()
-            return meta.version
+            return "arcos " .. meta.version
         end
     end,
     getName = function()
@@ -765,32 +767,7 @@ _G.arcos = {
     end,
     clock = function() return __LEGACY.os.clock() end,
     loadAPI = function(api)
-        assert(type(api) == "string", "Invalid argument: api")
-        arcos.log(api)
-        local tabEnv = {}
-        local s = strsplit(api, "/")
-        local v = s[#s]
-        if string.sub(v, #v-3) == ".lua" then
-            v = v:sub(1, #v-4)
-        end 
-        setmetatable(tabEnv, {__index = _G})
-        local f, e = __LEGACY.files.open(api, "r")
-        if not f then
-            error(e)
-        end
-        local funcApi, err = load(f.readAll(), v, nil, tabEnv)
-        f.close()
-        local ok, res
-        if funcApi then
-            ok, res = pcall(funcApi)
-            if not ok then
-                error(res)
-            end 
-        else
-            error(err)
-        end
-        arcos.log("Loaded api " .. v)
-        _G[v] = res
+        error("Use require instead of loadAPI.")
     end,
     startTimer = function(d) 
         return __LEGACY.os.startTimer(d)
@@ -822,7 +799,6 @@ end
 _G.tasking = {
     createTask = function(name, callback, nice, user, out, env)
         if not env then env = arcos.getCurrentTask().env or {workDir = "/"} end
-        arcos.log("Creating task: "..name)
         if not user then
             if currentTask then
                 user = currentTask["user"]
@@ -839,6 +815,7 @@ _G.tasking = {
             write("\nEnter root password")
             local password = read()
             if not arcos.validateUser("root", password) then
+                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.")
                 error("Invalid password")
             end
         end
@@ -855,7 +832,6 @@ _G.tasking = {
         return #tasks
     end,
     killTask = function(pid)
-        arcos.log("Killing task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
             user = "root"
         })["user"] then
@@ -876,7 +852,6 @@ _G.tasking = {
         return returnstuff
     end,
     setTaskPaused = function(pid, paused)
-        arcos.log("Setting pf on task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
             user = "root"
         })["user"] then
@@ -966,7 +941,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 592)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 565)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -1090,7 +1065,7 @@ local hashing = require("hashing")
 debug.setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 local passwdFile, e = files.open("/config/passwd", "r")
 if not passwdFile then
-    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 732)
+    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 705)
 else
     users = tutils.dJSON(passwdFile.read())
 end
@@ -1157,7 +1132,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 472"
+        return "arckernel 496"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -1165,7 +1140,7 @@ local tab
 if f then
     tab = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 836)
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 809)
 end
 for index, value in ipairs(arcos.getUsers()) do
     if not files.exists("/user/" .. value) then
@@ -1177,14 +1152,27 @@ tasking.createTask("Init", function()
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
-            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 850)
+            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 823)
         else
-            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 852)
+            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 825)
         end
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 855)
+    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 828)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
+local function syscall(ev)
+    if ev[1] == "panic" and #ev == 4 and type(ev[2]) == "string" and type(ev[3]) == "string" and type(ev[4]) == "number" then
+        if arcos.getCurrentTask()["user"] == "root" then
+            apiUtils.kernelPanic(ev[2], ev[3], ev[4])
+            return true
+        else
+            return false
+        end
+    else
+        arcos.log("Invalid syscall or syscall usage: " .. ev[1])
+        return nil
+    end
+end
 while kpError == nil do
     local f = 0
     for index, value in ipairs(tasks) do
@@ -1200,7 +1188,15 @@ while kpError == nil do
                     cPid = index
                     local event = table.remove(value.tQueue, 1)
                     _G.environ = value["env"]
-                    local sc = table.pack(coroutine.resume(value["crt"], table.unpack(event)))
+                    local sca = table.pack(coroutine.resume(value["crt"], table.unpack(event)))
+                    local sc = {table.unpack(sca, 2, #sca)}
+                    if not sca[1] then
+                        table.remove(tasks, index)
+                    end
+                    if sc[1] == "syscall" then
+                        table.insert(value.tQueue, syscall({table.unpack(sc, 2, #sc)}))
+                        __LEGACY.os.queueEvent("syscall_success")
+                    end
                     value["env"] = _G.environ
                     if kpError then break end
                 end
@@ -1209,6 +1205,8 @@ while kpError == nil do
         end
     else
         local ev = table.pack(coroutine.yield())
+        if ev[1] == "term_resize" then
+        end 
         if ev[1] == "terminate" then
         else
             for index, value in ipairs(tasks) do
@@ -1217,14 +1215,20 @@ while kpError == nil do
         end
     end
 end
-__LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
-__LEGACY.term.setTextColor(__LEGACY.colors.black)
-__LEGACY.term.setCursorPos(1, 1)
-__LEGACY.term.clear()
-print("arcos has forcefully shut off, due to a critical error.")
-print("This is probably a system issue")
-print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
+term.setBackgroundColor(0x4000)
+term.setTextColor(0x8000)
+term.setCursorPos(1, 1)
+term.clear()
+print("arcos has forcefully shut off, due to an error.")
+print("If this is the first time you've seen these errors, try restarting your computer.")
+print("If this problem continues:")
+print("- If this started happening after an update, open an issue at github.com/mirkokral/ccarcos, and wait for an update")
+print("- Try removing or disconnecting any newly installed hardware or software.")
+print("- If using a multiboot/bios solution, check if your multiboot/bios solution supports TLCO and open an issue there")
+print()
 print(kpError)
+print()
+print("If needed, contact @mirko56 on discord for further assistance.")
 while true do
     coroutine.yield()
 endlocal files = require("files")
@@ -8780,7 +8784,6 @@ elseif cmd == "install" then
         getTBI(value, tobeinstalled)
     end
     if #tobeinstalled > 0 then
-        term.setTextColor(col.lightGray)
         print("These packages will be installed:")
         print()
         term.setTextColor(col.green)
@@ -8891,7 +8894,6 @@ for index, value in ipairs(files.ls("/services/enabled")) do
     write("\011f2Group \011f0" .. value .. "\n")
     for i in servFile.readLine do
         if i:sub(1, 1) ~= "#" then 
-            arcos.log("Starting service: " .. i)
             local currentServiceDone = false
             local threadterm
             if i:sub(1,1) == "l" then
@@ -8937,9 +8939,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                     end
                 }, "/services/" .. i:sub(3))
                 if ok then
-                    arcos.log("Service " .. i:sub(3) .. " ended.")
                 else
-                    arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
                     write("\011f8| \011f7[\011fe Failed \011f7] \011f0" .. require("tutils").split(i:sub(3), "/")[1] .. "\n")
                     write("\011f8| \011f0" .. err)
                 end
@@ -8950,7 +8950,6 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                 until currentServiceDone
             end
             write("\011f8| \011f7[\011fd OK \011f7] \011f0" .. require("tutils").split(i:sub(3), ".")[1] .. "\n")
-            arcos.log("Started")
         end
     end
 end

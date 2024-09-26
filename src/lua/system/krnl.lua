@@ -26,14 +26,14 @@ if config.printLogToFile then
         while true do coroutine.yield() end
     end
 end
-
+_G.term = term.native()
 local oldw = _G.write
 _G.write = function(...)
     local isNextSetC = false
     local nextCommand = ""
     local args = {...}
-    for i, v in ipairs(args) do
-        
+    for i, vn in ipairs(args) do
+        local v = tostring(vn)
         for xi = 0, #v do
             local char = v:sub(xi, xi)
             if isNextSetC then
@@ -121,7 +121,7 @@ _G.arcos = {
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
-            term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
+            print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
         if config.printLogToFile and logfile then
             logfile.write(kernelLogBuffer)
@@ -140,7 +140,7 @@ _G.arcos = {
         else
             local meta = __LEGACY.textutils.unserializeJSON(f.readAll())
             f.close()
-            return meta.version
+            return "arcos " .. meta.version
         end
     end,
     ---Gets the computer name
@@ -305,32 +305,7 @@ _G.arcos = {
     ---Loads an API. This shouldn't be used outside of the kernel, but there are cases where it's needed.
     ---@param api string
     loadAPI = function(api)
-        assert(type(api) == "string", "Invalid argument: api")
-        arcos.log(api)
-        local tabEnv = {}
-        local s = strsplit(api, "/")
-        local v = s[#s]
-        if string.sub(v, #v-3) == ".lua" then
-            v = v:sub(1, #v-4)
-        end 
-        setmetatable(tabEnv, {__index = _G})
-        local f, e = __LEGACY.files.open(api, "r")
-        if not f then
-            error(e)
-        end
-        local funcApi, err = load(f.readAll(), v, nil, tabEnv)
-        f.close()
-        local ok, res
-        if funcApi then
-            ok, res = pcall(funcApi)
-            if not ok then
-                error(res)
-            end 
-        else
-            error(err)
-        end
-        arcos.log("Loaded api " .. v)
-        _G[v] = res
+        error("Use require instead of loadAPI.")
     end,
     ---Starts a timer
     ---@param d number Timer duration in seconds
@@ -423,7 +398,6 @@ _G.tasking = {
     ---@return integer pid The task process id
     createTask = function(name, callback, nice, user, out, env)
         if not env then env = arcos.getCurrentTask().env or {workDir = "/"} end
-        arcos.log("Creating task: "..name)
         if not user then
             if currentTask then
                 user = currentTask["user"]
@@ -440,6 +414,7 @@ _G.tasking = {
             write("\nEnter root password")
             local password = read()
             if not arcos.validateUser("root", password) then
+                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.")
                 error("Invalid password")
             end
         end
@@ -460,7 +435,6 @@ _G.tasking = {
     ---Kills task. Can only be current user task if not root
     ---@param pid number The actual pid
     killTask = function(pid)
-        arcos.log("Killing task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
             user = "root"
         })["user"] then
@@ -487,7 +461,6 @@ _G.tasking = {
     ---@param pid number The pid of the task to set
     ---@param paused boolean New paused status
     setTaskPaused = function(pid, paused)
-        arcos.log("Setting pf on task: " .. pid)
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
             user = "root"
         })["user"] then
@@ -856,6 +829,25 @@ tasking.createTask("Init", function()
     apiUtils.kernelPanic("Init Died: " .. err, __CPOSINFOFILE__, __CPOSINFOLINE__)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
+
+---Execute a syscall
+---@param ev any[]
+---@param v any[][]
+---@return any
+local function syscall(ev)
+    if ev[1] == "panic" and #ev == 4 and type(ev[2]) == "string" and type(ev[3]) == "string" and type(ev[4]) == "number" then
+        if arcos.getCurrentTask()["user"] == "root" then
+            apiUtils.kernelPanic(ev[2], ev[3], ev[4])
+            return true
+        else
+            return false
+        end
+    else
+        arcos.log("Invalid syscall or syscall usage: " .. ev[1])
+        return nil
+    end
+end
+
 while kpError == nil do
     local f = 0
     for index, value in ipairs(tasks) do
@@ -891,7 +883,17 @@ while kpError == nil do
                     cPid = index
                     local event = table.remove(value.tQueue, 1)
                     _G.environ = value["env"]
-                    local sc = table.pack(coroutine.resume(value["crt"], table.unpack(event)))
+                    local sca = table.pack(coroutine.resume(value["crt"], table.unpack(event)))
+                    local sc = {table.unpack(sca, 2, #sca)}
+                    if not sca[1] then
+                        -- Delete task
+                        table.remove(tasks, index)
+                    end
+                    -- print(require("tutils").s(sc[1]))
+                    if sc[1] == "syscall" then
+                        table.insert(value.tQueue, syscall({table.unpack(sc, 2, #sc)}))
+                        __LEGACY.os.queueEvent("syscall_success")
+                    end
                     value["env"] = _G.environ
                     if kpError then break end
                 end
@@ -903,8 +905,12 @@ while kpError == nil do
         -- print("Pulling")
         local ev = table.pack(coroutine.yield())
         -- print(ev[1])
+        if ev[1] == "term_resize" then
+            
+        end 
         if ev[1] == "terminate" then
         else
+
             for index, value in ipairs(tasks) do
                 table.insert(value.tQueue, ev)
             end
@@ -913,14 +919,20 @@ while kpError == nil do
     -- print("Fake")
 end
 
-__LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
-__LEGACY.term.setTextColor(__LEGACY.colors.black)
-__LEGACY.term.setCursorPos(1, 1)
-__LEGACY.term.clear()
-print("arcos has forcefully shut off, due to a critical error.")
-print("This is probably a system issue")
-print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
+term.setBackgroundColor(0x4000)
+term.setTextColor(0x8000)
+term.setCursorPos(1, 1)
+term.clear()
+print("arcos has forcefully shut off, due to an error.")
+print("If this is the first time you've seen these errors, try restarting your computer.")
+print("If this problem continues:")
+print("- If this started happening after an update, open an issue at github.com/mirkokral/ccarcos, and wait for an update")
+print("- Try removing or disconnecting any newly installed hardware or software.")
+print("- If using a multiboot/bios solution, check if your multiboot/bios solution supports TLCO and open an issue there")
+print()
 print(kpError)
+print()
+print("If needed, contact @mirko56 on discord for further assistance.")
 while true do
     coroutine.yield()
 end

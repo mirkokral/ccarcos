@@ -41,7 +41,6 @@ elseif cmd == "install" then
         
     end
     if #tobeinstalled > 0 then
-        term.setTextColor(col.lightGray)
         print("These packages will be installed:")
         print()
         term.setTextColor(col.green)

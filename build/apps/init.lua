@@ -10,7 +10,6 @@ for index, value in ipairs(files.ls("/services/enabled")) do
     write("\011f2Group \011f0" .. value .. "\n")
     for i in servFile.readLine do
         if i:sub(1, 1) ~= "#" then 
-            arcos.log("Starting service: " .. i)
             local currentServiceDone = false
             local threadterm
             if i:sub(1,1) == "l" then
@@ -56,9 +55,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                     end
                 }, "/services/" .. i:sub(3))
                 if ok then
-                    arcos.log("Service " .. i:sub(3) .. " ended.")
                 else
-                    arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
                     write("\011f8| \011f7[\011fe Failed \011f7] \011f0" .. require("tutils").split(i:sub(3), "/")[1] .. "\n")
                     write("\011f8| \011f0" .. err)
                 end
@@ -69,7 +66,6 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                 until currentServiceDone
             end
             write("\011f8| \011f7[\011fd OK \011f7] \011f0" .. require("tutils").split(i:sub(3), ".")[1] .. "\n")
-            arcos.log("Started")
         end
     end
 end
