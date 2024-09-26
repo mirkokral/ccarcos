@@ -1,5 +1,4 @@
 local files = require("files")
-local hashing = require("hashing")
 local tutils = require("tutils")
 local methods = {
     GET = true,
@@ -174,35 +173,13 @@ local function uninstall(package, rootdir)
     for value in f.readLine do
         if value == nil then break end
         if value:sub(0, 1) == "f" then
-            toDelete[rootdir .. "/" .. value:sub(4+64)] = value:sub(3, 3+64)
+            toDelete[rootdir .. "/" .. value:sub(3)] = "FILE"
         else
             toDelete[rootdir .. "/" .. value:sub(3)] = "DIRECTORY"
         end
     end
     for value, hash in pairs(toDelete) do
-        if hash == "" then
-            __LEGACY.files.delete(value)
-        elseif hash ~= "DIRECTORY" then
-            local f, e = __LEGACY.files.open(value, "r")
-            if f then
-                local fhash = hashing.sha256(f.readAll())
-                local hmismatch = {}
-                for i = 1, #fhash, 1 do
-                    local c1 = fhash:sub(i, i)
-                    local c2 = hash:sub(i, i)
-                    if c1 ~= c2 then
-                        print("Mismatch: " .. c1 .. " != " .. c2)
-                        table.insert(hmismatch, c1)
-                    end
-                end
-                if #hmismatch == 0 then
-                    __LEGACY.files.delete(value)
-                else
-                    __LEGACY.files.delete(value)
-                end
-            else
-            end
-        end
+        __LEGACY.files.delete(value)
     end
     for value, hash in pairs(toDelete) do
         if hash == "DIRECTORY" then
@@ -312,7 +289,7 @@ local function install(package, rootdir)
                 if not tfh then error(e) end
                 tfh.write(file)
                 tfh.close()
-                buildedpl = buildedpl .. "f "  .. hashing.sha256(value[2]) .. " " .. value[1] .. "\n"
+                buildedpl = buildedpl .. "f "  .. value[1] .. "\n"
             end
         end
     end

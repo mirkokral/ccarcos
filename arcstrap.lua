@@ -22,6 +22,8 @@ local function make_bitop_uncached(t, m)
 			a = (a - am) / m
 			b = (b - bm) / m
 			p = p*m
+      os.queueEvent("amogus")
+      os.pullEvent("amogus")
 		end
 		res = res + (a + b) * p
 		return res
@@ -341,7 +343,7 @@ local arkivelib = {
 
 function installPackageS1(tpkg)
   local dataFile, err = get(sourceURL .. tpkg .. ".arc")
-  print(sourceURL .. "/" .. tpkg .. ".arc")
+  -- print(sourceURL .. "/" .. tpkg .. ".arc")
   if not dataFile then
     print("Failed to get index file. Error: " .. err)
     print(
@@ -354,7 +356,7 @@ function installPackageS1(tpkg)
   for k, v in ipairs(data) do
     if v[2] == nil then
       fs.makeDir("/" .. v[1])
-      table.insert(uninstallIndexLines, "d> " .. v[1])
+      table.insert(uninstallIndexLines, "d>" .. v[1])
     else
       if fs.exists("/" .. v[1]) then fs.delete("/" .. v[1]) end
       local f, e = fs.open("/" .. v[1], "w")
@@ -365,7 +367,7 @@ function installPackageS1(tpkg)
         print(e)
         sleep(5)
       end
-      table.insert(uninstallIndexLines, "f> " .. sha256(v[2]) .. " " .. v[1])
+      table.insert(uninstallIndexLines, "f>" .. v[1])
     end
   end
 
@@ -373,7 +375,7 @@ end
 
 function installPackage(tpkg)
   print("Bootstrapping " .. tpkg)
-  print(cnURL .. "/repo/" .. tpkg .. "/entry")
+  -- print(cnURL .. "/repo/" .. tpkg .. "/entry")
   local iFile, err = get(cnURL .. "/repo/" .. tpkg .. "/entry")
   if not iFile then error(err) end
   local ind = textutils.unserializeJSON(iFile.readAll())

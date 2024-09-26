@@ -14,47 +14,47 @@
 |system/rel|15910|
 |system/krnl.lua|15916|
 |system/apis/arc.lua|36893|
-|system/apis/col.lua|50192|
-|system/apis/files.lua|54316|
-|system/apis/hashing.lua|65724|
-|system/apis/rd.lua|70359|
-|system/apis/tutils.lua|71363|
-|system/apis/ui.lua|72505|
-|system/apis/window.lua|93711|
-|system/apis/cellui.lua|108800|
-|services/arcfix.lua|252674|
-|services/elevator.lua|252759|
-|services/elevatorSrv.lua|255077|
-|services/elevatorStep.lua|258133|
-|services/oobe.lua|258725|
-|services/pms.lua|264470|
-|services/shell.lua|268050|
-|services/enabled/9 arcfix|268080|
-|services/enabled/login|268093|
-|data/PRIVACY.txt|268103|
-|config/aboot|268992|
-|config/arcrepo|269152|
-|config/arcshell|269169|
-|config/hostname|269221|
-|config/passwd|269226|
-|apps/adduser.lua|269476|
-|apps/arc.lua|269990|
-|apps/cat.lua|273077|
-|apps/cd.lua|273353|
-|apps/cp.lua|273682|
-|apps/init.lua|273951|
-|apps/kmsg.lua|277170|
-|apps/ls.lua|277219|
-|apps/mkdir.lua|277892|
-|apps/mv.lua|278038|
-|apps/rm.lua|278307|
-|apps/rmuser.lua|278489|
-|apps/shell.lua|278893|
-|apps/uitest.lua|282726|
-|apps/clear.lua|288103|
-|apps/shutdown.lua|288139|
-|apps/reboot.lua|288155|
-|apps/celluitest.lua|288169|
+|system/apis/col.lua|49306|
+|system/apis/files.lua|53430|
+|system/apis/hashing.lua|64838|
+|system/apis/rd.lua|69473|
+|system/apis/tutils.lua|70477|
+|system/apis/ui.lua|71619|
+|system/apis/window.lua|92825|
+|system/apis/cellui.lua|107914|
+|services/arcfix.lua|251788|
+|services/elevator.lua|251873|
+|services/elevatorSrv.lua|254191|
+|services/elevatorStep.lua|257247|
+|services/oobe.lua|257839|
+|services/pms.lua|263584|
+|services/shell.lua|267164|
+|services/enabled/9 arcfix|267194|
+|services/enabled/login|267207|
+|data/PRIVACY.txt|267217|
+|config/aboot|268106|
+|config/arcrepo|268266|
+|config/arcshell|268283|
+|config/hostname|268335|
+|config/passwd|268340|
+|apps/adduser.lua|268590|
+|apps/arc.lua|269104|
+|apps/cat.lua|272191|
+|apps/cd.lua|272467|
+|apps/cp.lua|272796|
+|apps/init.lua|273065|
+|apps/kmsg.lua|276284|
+|apps/ls.lua|276333|
+|apps/mkdir.lua|277006|
+|apps/mv.lua|277152|
+|apps/rm.lua|277421|
+|apps/rmuser.lua|277603|
+|apps/shell.lua|278007|
+|apps/uitest.lua|281840|
+|apps/clear.lua|287217|
+|apps/shutdown.lua|287253|
+|apps/reboot.lua|287269|
+|apps/celluitest.lua|287283|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -1158,7 +1158,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 464"
+        return "arckernel 469"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -1229,7 +1229,6 @@ print(kpError)
 while true do
     coroutine.yield()
 endlocal files = require("files")
-local hashing = require("hashing")
 local tutils = require("tutils")
 local methods = {
     GET = true,
@@ -1404,35 +1403,13 @@ local function uninstall(package, rootdir)
     for value in f.readLine do
         if value == nil then break end
         if value:sub(0, 1) == "f" then
-            toDelete[rootdir .. "/" .. value:sub(4+64)] = value:sub(3, 3+64)
+            toDelete[rootdir .. "/" .. value:sub(3)] = "FILE"
         else
             toDelete[rootdir .. "/" .. value:sub(3)] = "DIRECTORY"
         end
     end
     for value, hash in pairs(toDelete) do
-        if hash == "" then
-            __LEGACY.files.delete(value)
-        elseif hash ~= "DIRECTORY" then
-            local f, e = __LEGACY.files.open(value, "r")
-            if f then
-                local fhash = hashing.sha256(f.readAll())
-                local hmismatch = {}
-                for i = 1, #fhash, 1 do
-                    local c1 = fhash:sub(i, i)
-                    local c2 = hash:sub(i, i)
-                    if c1 ~= c2 then
-                        print("Mismatch: " .. c1 .. " != " .. c2)
-                        table.insert(hmismatch, c1)
-                    end
-                end
-                if #hmismatch == 0 then
-                    __LEGACY.files.delete(value)
-                else
-                    __LEGACY.files.delete(value)
-                end
-            else
-            end
-        end
+        __LEGACY.files.delete(value)
     end
     for value, hash in pairs(toDelete) do
         if hash == "DIRECTORY" then
@@ -1542,7 +1519,7 @@ local function install(package, rootdir)
                 if not tfh then error(e) end
                 tfh.write(file)
                 tfh.close()
-                buildedpl = buildedpl .. "f "  .. hashing.sha256(value[2]) .. " " .. value[1] .. "\n"
+                buildedpl = buildedpl .. "f "  .. value[1] .. "\n"
             end
         end
     end
