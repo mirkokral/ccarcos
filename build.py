@@ -39,8 +39,6 @@ def compileFile(filepathstr: str):
         currentlyExcluding = 0
         inComment = False
         for l, i in enumerate(file.readlines()):
-            i.replace("__CPOSINFOFILE__", f'{filepathstr}')
-            i.replace("__CPOSINFOLINE__", f'{l}')
             if i.strip().startswith("-- C:"):
                 cmd = i.strip()[5:]
                 match cmd:
@@ -61,6 +59,9 @@ def compileFile(filepathstr: str):
                 currentlyExcluding -= 1
             else:
                 if currentlyExcluding < 1:
+                    i = i.replace("__CPOSINFOFILE__", f'{filepathstr}')
+                    i = i.replace("__CPOSINFOLINE__", f'{l}')
+                    i = i.replace("__CCOMPILECOUNT__", f'{config["buildCount"]}')
                     outlines.append(i)
         with open(pathlib.Path("build/" + filepathstr), "w") as writeFile:
             writeFile.writelines(outlines)
@@ -104,8 +105,8 @@ match sys.argv[1]:
 
         with open("build/objList.txt", "w") as f:
             f.write('\n'.join(objectListLines))
-        with open("build/config/arc/base.uninstallIndex", "w") as f:
-            f.write('\n'.join(packageListLines))
+        # with open("build/config/arc/base.uninstallIndex", "w") as f:
+        #     f.write('\n'.join(packageListLines))
         if "buildCount" in config:
             config["buildCount"] = config["buildCount"] + 1
         else:

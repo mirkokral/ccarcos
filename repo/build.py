@@ -2,11 +2,14 @@ import os, os.path
 import shutil
 import arclib
 import sys
+import json
 files = os.listdir('.')
+index = {}
 # print(files)
 class InvalidPackageError(Exception):...
 for erm in files:
-    if os.path.isdir(erm):
+    if os.path.isdir(erm) and not erm.startswith("__"):
+        cpi = {}
         if os.path.exists(erm + "/build.sh") and os.path.isfile(erm + "/build.sh"):
             os.system(f'bash -c "cd {erm}; bash build.sh; cd .."');
             if not os.path.exists(erm + "/out") or not os.path.isdir(erm + "/out"):
@@ -30,7 +33,8 @@ for erm in files:
                 built = []
                 for aaa in dirs: built.append([aaa, None])
                 for aaa in files: built.append([aaa[0], aaa[1]])
-                f.write(arclib.archive(built))
+                if not os.path.exists(f"{erm}/out/meta"):
+                    f.write(arclib.archive(built))
         else:
             with open(f"../archivedpkgs/{erm}.arc", "wb") as f:
                 if(os.path.exists(f"{erm}/out")):
@@ -51,10 +55,12 @@ for erm in files:
                     for name in filenames:
                         if dirpath.split("/")[0] == "out": continue
                         # print(dirpath + "/" + name)
-                        if dirpath + "/" + name not in files:
-                            with open(p2 + "/" + name, "rb") as f2:
+                        with open(p2 + "/" + name, "rb") as f2:
+                            l = f2.read()
+                            if dirpath + "/" + name == "/entry":
+                                cpi = json.loads(l.decode())
+                            elif dirpath + "/" + name not in files:
                                 # print(name)
-                                l = f2.read()
                                 files.append([dirpath + "/" + name, l])
                                 with open(f"{erm}/out/{dirpath}/{name}", "wb") as f3:
                                     f3.write(l)
@@ -63,4 +69,9 @@ for erm in files:
                 built = []
                 for aaa in dirs: built.append([aaa, None])
                 for aaa in files: built.append([aaa[0], aaa[1]])
-                f.write(arclib.archive(built))
+                if not os.path.exists(f"{erm}/out/meta"):
+                    f.write(arclib.archive(built))
+        index[erm] = cpi
+
+with open("index.json", "w") as f:
+    json.dump(index, f, indent=2)

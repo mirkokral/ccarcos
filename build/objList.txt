@@ -9,7 +9,6 @@ d>apis
 d>system/apis
 d>services/enabled
 d>config/apps
-d>config/arc
 f>startup.lua
 f>system/bootloader.lua
 f>system/rel
@@ -37,8 +36,6 @@ f>config/arcrepo
 f>config/arcshell
 f>config/hostname
 f>config/passwd
-f>config/arc/base.meta.json
-f>config/arc/base.uninstallIndex
 f>apps/adduser.lua
 f>apps/arc.lua
 f>apps/cat.lua

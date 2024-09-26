@@ -1,8 +1,33 @@
 local col = require("col")
 local files = require("files")
 local tutils = require("tutils")
+local arc = require("arc")
 term.setTextColor(col.blue)
 print(arcos.version())
+term.setTextColor(col.gray)
+arc.fetch()
+if #arc.getUpdatable() > 0 then
+    write(#arc.getUpdatable() .. " updates are availabe. Use ")
+    term.setTextColor(col.magenta)
+    write("arc update")
+    term.setTextColor(col.gray)
+    print(" to update.")
+end
+local secRisks = {}
+if arcos.validateUser("root", "toor") then
+    table.insert(secRisks, "The root account password has not yet been changed.")
+end
+if arcos.validateUser("user", "user") then
+    table.insert(secRisks, "The user account password has not yet been changed.")
+end
+if #secRisks > 0 then
+    print()
+    term.setTextColor(col.red)
+    print("Security risks")
+    term.setTextColor(col.lightGray)
+    print("- " .. table.concat(secRisks, "\n- "))
+end
+print()
 local confile = files.open("/config/arcshell", "r")
 local conf = {}
 if confile then
@@ -13,7 +38,7 @@ else
 end
 local luaGlobal = setmetatable({}, {__index = _G})
 if not environ.workDir then environ.workDir = "/" end
-local function run(a1, ...)
+local function run(a1, ...) 
     local cmd = nil
     if not a1 or a1 == "" then
         return true

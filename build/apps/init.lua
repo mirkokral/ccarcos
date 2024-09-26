@@ -1,11 +1,13 @@
 local files = require("files")
 local col = require("col")
+write("\011f8Welcome to \011f2arcos\011f8!\n")
 for index, value in ipairs(files.ls("/services/enabled")) do
     local servFile, err = files.open("/services/enabled/"..value, "r")
     if not servFile then
         printError(err)
         error()
     end
+    write("\011f2Group \011f0" .. value .. "\n")
     for i in servFile.readLine do
         if i:sub(1, 1) ~= "#" then 
             arcos.log("Starting service: " .. i)
@@ -57,6 +59,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                     arcos.log("Service " .. i:sub(3) .. " ended.")
                 else
                     arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
+                    write("\011f7[\011fe Failed \011f7 \011f0" .. i:sub(3) .. "\n")
                 end
                 sleep(1)
             end, 1, "root", threadterm)
@@ -64,6 +67,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                 repeat sleep(0.2)
                 until currentServiceDone
             end
+            write("| \011f7[\011fd OK \011f7] \011f0" .. require("tutils").split(i:sub(3), ".")[1] .. "\n")
             arcos.log("Started")
         end
     end

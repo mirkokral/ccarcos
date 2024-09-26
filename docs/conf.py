@@ -9,7 +9,7 @@
 project = 'arcos2'
 copyright = '2024, kkk8GJ (mirkokral), emireri1498 (emir4169)'
 author = 'kkk8GJ (mirkokral), emireri1498 (emir4169)'
-release = '24.08a "Vertica"'
+release = '24.09b "Sillicum"'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

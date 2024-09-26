@@ -2940,10 +2940,6 @@ Runner.log = function(t,posInfos)
   if not _hx_status and _hx_result == "_hx_pcall_break" then
   elseif not _hx_status then 
     local _g = _hx_result;
-    
-            local fear, err = fs.open("log.txt", "a")
-            if fear then fear.write(t .. "\n") fear.close() end
-            ;
   elseif _hx_result ~= _hx_pcall_default then
     return _hx_result
   end;

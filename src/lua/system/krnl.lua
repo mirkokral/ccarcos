@@ -2,8 +2,10 @@
 -- C:Exc
 _G.__CPOSINFOFILE__ = "" -- Defined by the builder
 _G.__CPOSINFOLINE__ = 0 --  Defined by the builder
+_G.__CCOMPILECOUNT__ = 0 -- Defined by the builder
 -- C:End
 local args = {...}
+local kpError = nil
 local currentTask
 local cPid
 local kernelLogBuffer = "Start\n"
@@ -25,7 +27,45 @@ if config.printLogToFile then
     end
 end
 
-
+local oldw = _G.write
+_G.write = function(...)
+    local isNextSetC = false
+    local nextCommand = ""
+    local args = {...}
+    for i, v in ipairs(args) do
+        
+        for xi = 0, #v do
+            local char = v:sub(xi, xi)
+            if isNextSetC then
+                nextCommand = char
+                isNextSetC = false
+            elseif #nextCommand > 0 then
+                if nextCommand == "b" then
+                    
+                    isNextSetC = false
+                    local value = tonumber(char, 16)
+                    if not value then return nil end
+                
+                    term.setBackgroundColor(2 ^ value)
+                elseif nextCommand == "f" then
+                    
+                    isNextSetC = false
+                    local value = tonumber(char, 16)
+                    if not value then return nil end
+                
+                    term.setTextColor(2 ^ value)
+                    
+                end
+                nextCommand = ""
+            elseif char == "\011" then
+                    isNextSetC = true
+            else
+                oldw(char)
+            end
+            
+        end
+    end
+end
 local function recursiveRemove(r)
     for _, i in ipairs(__LEGACY.files.list(r)) do
         if __LEGACY.files.isDir(i) then
@@ -58,21 +98,8 @@ _G.apiUtils = {
     ---@param file string File kernel panic source
     ---@param line number File line
     kernelPanic = function(err, file, line)
-        __LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
-        __LEGACY.term.setTextColor(__LEGACY.colors.black)
-        __LEGACY.term.setCursorPos(1, 1)
-        __LEGACY.term.clear()
-        print("arcos has forcefully shut off, due to a critical error.")
-        print("This is probably a system issue")
-        print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
-        print("Suspected location: " .. debug.getinfo(2).source .. ":" .. debug.getinfo(2).currentline)
-        print("Error: " .. err)
-        
+        kpError = "Suspected location: " .. file .. ":" .. line .. "\n" .. "Error: " .. err
         tasks = {}
-        if tasking then tasking.createTask("n", function() while true do coroutine.yield() end end, 1, "root", __LEGACY.term, environ) end
-        while true do
-            coroutine.yield()
-        end
     end
 
 }
@@ -94,16 +121,27 @@ _G.arcos = {
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
-            __LEGACY.term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
+            term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
         end
         if config.printLogToFile and logfile then
             logfile.write(kernelLogBuffer)
         end
     end,
     ---Returns the arcos version
-    ---@return string
+    ---@return string           
     version = function ()
-        return "arcos 24.08 \"Vertica\" (Alpha release)"
+        -- parse it from the package "base"
+        if __LEGACY.files.exists("/config/arc/devenv.lock") then
+            return "arcos development environment"
+        end
+        local f, e = __LEGACY.files.open("/config/arc/base.meta.json", "r")
+        if not f then
+            return "invalid package metadata"
+        else
+            local meta = __LEGACY.textutils.unserializeJSON(f.readAll())
+            f.close()
+            return meta.version
+        end
     end,
     ---Gets the computer name
     ---@return string
@@ -319,6 +357,9 @@ _G.arcos = {
 
     id = __LEGACY.os.getComputerID()
 }
+
+_G.os = _G.arcos
+
 -- C:Exc
 
 _G.term = {
@@ -353,6 +394,7 @@ _G.term = {
 }
 
 -- C:End
+
 ---Sleeps for a time, respects arcos thread executor
 ---@param time number Sleep time
 function _G.sleep(time)
@@ -409,9 +451,10 @@ _G.tasking = {
             user = user,
             out = out,
             env = env,
-            paused = false
+            paused = false,
+            tQueue = {}
         })
-        sleep(0.1) -- Yield so that the task can actually start
+        
         return #tasks
     end,
     ---Kills task. Can only be current user task if not root
@@ -448,7 +491,7 @@ _G.tasking = {
         if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
             user = "root"
         })["user"] then
-            tasks[pid]["paused"] = true
+            tasks[pid]["paused"] = paused
             
         end
     end,
@@ -780,6 +823,12 @@ _G.write = function(...) end
 _G.read = function(r, v, a) return "" end
 -- C:End
 
+_G.kernel = {
+    uname = function ()
+        return "arckernel __CCOMPILECOUNT__"
+    end
+}
+
 local f, err = files.open("/config/passwd", "r")
 local tab
 if f then
@@ -807,35 +856,71 @@ tasking.createTask("Init", function()
     apiUtils.kernelPanic("Init Died: " .. err, __CPOSINFOFILE__, __CPOSINFOLINE__)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
-while true do
-    if #tasks > 0 then
-        ev = { coroutine.yield() }
-        for d, i in ipairs(tasks) do
-            for _ = 1, i["nice"], 1 do
-                _G.term = i["out"] or __LEGACY.term
-                if not i["paused"] then
-                    currentTask = i
-                    cPid = d
-                    _G.environ = i["env"]
-                    coroutine.resume(i["crt"], table.unpack(ev))
-                    i["env"] = _G.environ
+while kpError == nil do
+    local f = 0
+    for index, value in ipairs(tasks) do
+        if not value.paused then
+            f = f + #value.tQueue
+        end
+    end
+    if f > 0 then
+        --[[
+        For some reason the following coded has these side-effects:
+        - Literally makes the fucking server crash
+        - Uses 100% cpu
+        - What the fuck
+        ]] 
+
+        -- __LEGACY.os.queueEvent("fakeevent")
+        -- local f = {}
+        -- repeat 
+        --     table.insert(f, table.pack(coroutine.yield()))
+        -- until f[#f][1] == "fakeevent"
+        -- for index, value in ipairs(tasks) do
+        --     for i, v in ipairs(f) do
+        --         table.insert(value.tQueue, v)
+        --     end
+        -- end
+
+        for index, value in ipairs(tasks) do
+            if not value.paused then
+                -- print("Not Paused task: " .. value.name)
+                if #value.tQueue > 0 then       
+                    -- print("Task has queue: " .. value.name)
+                    currentTask = value
+                    cPid = index
+                    local event = table.remove(value.tQueue, 1)
+                    _G.environ = value["env"]
+                    local sc = table.pack(coroutine.resume(value["crt"], table.unpack(event)))
+                    value["env"] = _G.environ
+                    if kpError then break end
                 end
+            else
+                -- print("Paused task: " .. value.name)
             end
-            if coroutine.status(i["crt"]) == "dead" then
-                arcos.log("Task " .. i["name"] .. " died.")
-                table.remove(tasks, d)
+        end
+    else
+        -- print("Pulling")
+        local ev = table.pack(coroutine.yield())
+        -- print(ev[1])
+        if ev[1] == "terminate" then
+        else
+            for index, value in ipairs(tasks) do
+                table.insert(value.tQueue, ev)
             end
         end
     end
-    if #tasks <= 0 then
-        tasking.createTask("Emergency shell", function ()
-            term.setBackgroundColor(col.black)
-            term.setTextColor(col.white)
-            print("Kernel Emergency Shell System - No tasks.")
-            arcos.r({}, "/apps/shell.lua")
-        end, 1, "root", __LEGACY.term, {workDir = "/"})
-        -- sleep(5)
-        -- __LEGACY.os.reboot()
-    end
-    -- sleep()
+    -- print("Fake")
+end
+
+__LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
+__LEGACY.term.setTextColor(__LEGACY.colors.black)
+__LEGACY.term.setCursorPos(1, 1)
+__LEGACY.term.clear()
+print("arcos has forcefully shut off, due to a critical error.")
+print("This is probably a system issue")
+print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
+print(kpError)
+while true do
+    coroutine.yield()
 end

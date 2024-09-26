@@ -198,7 +198,9 @@ local function uninstall(package, rootdir)
                 if #hmismatch == 0 then
                     __LEGACY.files.delete(value)
                 else
+                    __LEGACY.files.delete(value)
                 end
+            else
             end
         end
     end

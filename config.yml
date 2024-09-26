@@ -1,4 +1,4 @@
-buildCount: 281
+buildCount: 460
 compileFiles:
 - startup.lua
 - system/bootloader.lua
@@ -27,8 +27,6 @@ compileFiles:
 - config/arcshell
 - config/hostname
 - config/passwd
-- config/arc/base.meta.json
-- config/arc/base.uninstallIndex
 - apps/adduser.lua
 - apps/arc.lua
 - apps/cat.lua
@@ -59,7 +57,6 @@ mkDirs:
 - system/apis
 - services/enabled
 - config/apps
-- config/arc
 nrFiles:
 - services/enabled/login
 - config/passwd

@@ -257,7 +257,7 @@ end
 ---@param keepNonExistent boolean? Keep non existent files 
 ---@return string[]
 local function resolve(f, keepNonExistent)
-    local p = f:sub(1, 1) == "/" and "/" or (environ.workDir or "/")
+    local p = f:sub(1, 1) == "/" and "/" or (arcos.getCurrentTask().env.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
     

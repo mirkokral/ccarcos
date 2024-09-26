@@ -108,10 +108,10 @@ import UI;
         try {
             untyped __lua__("peripheral.wrap(\"back\").transmit(630, 630, t)");
         } catch (e) {
-            untyped __lua__('
-            local fear, err = fs.open("log.txt", "a")
-            if fear then fear.write(t .. "\\n") fear.close() end
-            ');
+            // untyped __lua__('
+            // local fear, err = fs.open("log.txt", "a")
+            // if fear then fear.write(t .. "\\n") fear.close() end
+            // ');
         }
         // #end
     }

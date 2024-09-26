@@ -18,6 +18,6 @@ class Logger {
             lString = '[${d.getEpoch(Since.ComputerStart)}] [${pos.fileName}:${pos.lineNumber}] ${text}';
         }
         logBuf += lString + "\n";
-        Sys.println(lString);
+        // Sys.println(lString);
     }
 }

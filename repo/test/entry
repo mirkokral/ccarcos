@@ -1,0 +1,9 @@
+{
+    "friendlyName": "Test Application",
+    "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
+    "owner": "TNC™ Development and Management Team",
+    "version": "24.08.3",
+    "vId": 3,
+    "dependencies": [],
+    "isIndependable": true
+}

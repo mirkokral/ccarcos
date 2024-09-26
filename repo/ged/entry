@@ -1,0 +1,9 @@
+{
+    "friendlyName": "Editor",
+    "description": "A simple WIP editor.",
+    "owner": "TNC™ Development and Management Team",
+    "version": "24.08.6",
+    "vId": 6,
+    "dependencies": [],
+    "isIndependable": true
+}

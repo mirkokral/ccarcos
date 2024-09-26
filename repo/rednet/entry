@@ -1,0 +1,9 @@
+{
+    "friendlyName": "RedNet",
+    "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
+    "owner": "TNC™ Development and Management Team",
+    "version": "4",
+    "vId": 4,
+    "dependencies": [],
+    "isIndependable": false
+}
