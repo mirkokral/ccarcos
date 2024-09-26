@@ -64,7 +64,8 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                     
                 else
                     arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
-                    write("\011f7[\011fe Failed \011f7 \011f0" .. i:sub(3) .. "\n")
+                    write("\011f8| \011f7[\011fe Failed \011f7] \011f0" .. require("tutils").split(i:sub(3), "/")[1] .. "\n")
+                    write("\011f8| \011f0" .. err)
 
                 end
                 sleep(1)
@@ -73,7 +74,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                 repeat sleep(0.2)
                 until currentServiceDone
             end
-            write("| \011f7[\011fd OK \011f7] \011f0" .. require("tutils").split(i:sub(3), ".")[1] .. "\n")
+            write("\011f8| \011f7[\011fd OK \011f7] \011f0" .. require("tutils").split(i:sub(3), ".")[1] .. "\n")
             arcos.log("Started")
         end
         -- ::ct::

@@ -14,47 +14,47 @@
 |system/rel|15910|
 |system/krnl.lua|15916|
 |system/apis/arc.lua|36893|
-|system/apis/col.lua|49306|
-|system/apis/files.lua|53430|
-|system/apis/hashing.lua|64838|
-|system/apis/rd.lua|69473|
-|system/apis/tutils.lua|70477|
-|system/apis/ui.lua|71619|
-|system/apis/window.lua|92825|
-|system/apis/cellui.lua|107914|
-|services/arcfix.lua|251788|
-|services/elevator.lua|251873|
-|services/elevatorSrv.lua|254191|
-|services/elevatorStep.lua|257247|
-|services/oobe.lua|257839|
-|services/pms.lua|263584|
-|services/shell.lua|267164|
-|services/enabled/9 arcfix|267194|
-|services/enabled/login|267207|
-|data/PRIVACY.txt|267217|
-|config/aboot|268106|
-|config/arcrepo|268266|
-|config/arcshell|268283|
-|config/hostname|268335|
-|config/passwd|268340|
-|apps/adduser.lua|268590|
-|apps/arc.lua|269104|
-|apps/cat.lua|272191|
-|apps/cd.lua|272467|
-|apps/cp.lua|272796|
-|apps/init.lua|273065|
-|apps/kmsg.lua|276284|
-|apps/ls.lua|276333|
-|apps/mkdir.lua|277006|
-|apps/mv.lua|277152|
-|apps/rm.lua|277421|
-|apps/rmuser.lua|277603|
-|apps/shell.lua|278007|
-|apps/uitest.lua|281840|
-|apps/clear.lua|287217|
-|apps/shutdown.lua|287253|
-|apps/reboot.lua|287269|
-|apps/celluitest.lua|287283|
+|system/apis/col.lua|49408|
+|system/apis/files.lua|53532|
+|system/apis/hashing.lua|64940|
+|system/apis/rd.lua|69575|
+|system/apis/tutils.lua|70579|
+|system/apis/ui.lua|71721|
+|system/apis/window.lua|92927|
+|system/apis/cellui.lua|108016|
+|services/arcfix.lua|251890|
+|services/elevator.lua|251975|
+|services/elevatorSrv.lua|254293|
+|services/elevatorStep.lua|257349|
+|services/oobe.lua|257941|
+|services/pms.lua|263686|
+|services/shell.lua|267266|
+|services/enabled/9 arcfix|267296|
+|services/enabled/login|267309|
+|data/PRIVACY.txt|267319|
+|config/aboot|268208|
+|config/arcrepo|268368|
+|config/arcshell|268385|
+|config/hostname|268437|
+|config/passwd|268442|
+|apps/adduser.lua|268692|
+|apps/arc.lua|269206|
+|apps/cat.lua|272293|
+|apps/cd.lua|272569|
+|apps/cp.lua|272898|
+|apps/init.lua|273167|
+|apps/kmsg.lua|276485|
+|apps/ls.lua|276534|
+|apps/mkdir.lua|277207|
+|apps/mv.lua|277353|
+|apps/rm.lua|277622|
+|apps/rmuser.lua|277804|
+|apps/shell.lua|278208|
+|apps/uitest.lua|282041|
+|apps/clear.lua|287418|
+|apps/shutdown.lua|287454|
+|apps/reboot.lua|287470|
+|apps/celluitest.lua|287484|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -1158,7 +1158,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 469"
+        return "arckernel 470"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -1402,11 +1402,13 @@ local function uninstall(package, rootdir)
     local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "r")
     for value in f.readLine do
         if value == nil then break end
+        if tutils.split(value:sub(3), "/")[1] == "config" then goto continue end
         if value:sub(0, 1) == "f" then
             toDelete[rootdir .. "/" .. value:sub(3)] = "FILE"
         else
             toDelete[rootdir .. "/" .. value:sub(3)] = "DIRECTORY"
         end
+        ::continue::
     end
     for value, hash in pairs(toDelete) do
         __LEGACY.files.delete(value)
@@ -8948,7 +8950,8 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                     arcos.log("Service " .. i:sub(3) .. " ended.")
                 else
                     arcos.log("Service " .. i:sub(3) .. " failed with error: " .. tostring(err))
-                    write("\011f7[\011fe Failed \011f7 \011f0" .. i:sub(3) .. "\n")
+                    write("\011f8| \011f7[\011fe Failed \011f7] \011f0" .. require("tutils").split(i:sub(3), "/")[1] .. "\n")
+                    write("\011f8| \011f0" .. err)
                 end
                 sleep(1)
             end, 1, "root", threadterm)
@@ -8956,7 +8959,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                 repeat sleep(0.2)
                 until currentServiceDone
             end
-            write("| \011f7[\011fd OK \011f7] \011f0" .. require("tutils").split(i:sub(3), ".")[1] .. "\n")
+            write("\011f8| \011f7[\011fd OK \011f7] \011f0" .. require("tutils").split(i:sub(3), ".")[1] .. "\n")
             arcos.log("Started")
         end
     end

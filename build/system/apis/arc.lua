@@ -172,11 +172,13 @@ local function uninstall(package, rootdir)
     local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "r")
     for value in f.readLine do
         if value == nil then break end
+        if tutils.split(value:sub(3), "/")[1] == "config" then goto continue end
         if value:sub(0, 1) == "f" then
             toDelete[rootdir .. "/" .. value:sub(3)] = "FILE"
         else
             toDelete[rootdir .. "/" .. value:sub(3)] = "DIRECTORY"
         end
+        ::continue::
     end
     for value, hash in pairs(toDelete) do
         __LEGACY.files.delete(value)
