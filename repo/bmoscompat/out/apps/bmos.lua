@@ -1,0 +1,1 @@
+arcos.r({}, "/apps/craft.lua", "/data/bmos/bmos.lua")

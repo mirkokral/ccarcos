@@ -1,0 +1,5 @@
+d>apps
+f>apps/gconfig.lua
+d>config
+d>config/apps
+f>config/apps/gconfig.json

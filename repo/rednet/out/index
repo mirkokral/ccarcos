@@ -1,0 +1,6 @@
+d>apis
+f>apis/rednet.lua
+d>services
+f>services/rednet.lua
+d>services/enabled
+f>services/enabled/4 rednet

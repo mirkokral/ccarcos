@@ -1,4 +1,5 @@
 import os, os.path
+import shutil
 import arclib
 import sys
 files = os.listdir('.')
@@ -13,7 +14,7 @@ for erm in files:
             with open(f"../archivedpkgs/{erm}.arc", "wb") as f:
                 dirs = []
                 files = []
-                for p2, dirnames, filenames in os.walk(f"{erm}/build/"):
+                for p2, dirnames, filenames in os.walk(f"{erm}/out/"):
                     a = len(erm)+7
                     dirpath = p2[a:]
                     for name in dirnames:
@@ -32,20 +33,32 @@ for erm in files:
                 f.write(arclib.archive(built))
         else:
             with open(f"../archivedpkgs/{erm}.arc", "wb") as f:
+                if(os.path.exists(f"{erm}/out")):
+                    shutil.rmtree(f"{erm}/out")
+                os.mkdir(f"{erm}/out")
                 dirs = []
                 files = []
                 for p2, dirnames, filenames in os.walk(f"{erm}/"):
                     a = len(erm)+1
                     dirpath = p2[a:]
                     for name in dirnames:
+                        if dirpath.split("/")[0] == "out": continue
+                        if dirpath + "/" + name == "/out": continue
                         if dirpath + "/" + name not in dirs:
                             dirs.append(dirpath + "/" + name)
+                            os.mkdir(f"{erm}/out/{dirpath}/{name}")
 
                     for name in filenames:
+                        if dirpath.split("/")[0] == "out": continue
+                        # print(dirpath + "/" + name)
                         if dirpath + "/" + name not in files:
                             with open(p2 + "/" + name, "rb") as f2:
                                 # print(name)
-                                files.append([dirpath + "/" + name, f2.read()])
+                                l = f2.read()
+                                files.append([dirpath + "/" + name, l])
+                                with open(f"{erm}/out/{dirpath}/{name}", "wb") as f3:
+                                    f3.write(l)
+                                
 
                 built = []
                 for aaa in dirs: built.append([aaa, None])

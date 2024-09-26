@@ -11,7 +11,7 @@ echo '{"theme": {"fg": "white","bg": "black"},"skipPrompt": false,"defargs": "--
 for i in "${installPackages[@]}"
 do
     echo RSyncing package: $i
-    rsync -rI repo/$i/ ~/.local/share/craftos-pc/computer/120/
+    rsync -rI repo/$i/out/ ~/.local/share/craftos-pc/computer/120/
 done
 touch lockfile
 ( craftos --gui -i 120; rm lockfile )
