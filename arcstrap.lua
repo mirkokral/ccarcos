@@ -193,12 +193,30 @@ function getChosenRepo()
   return "mirkokral/ccarcos"
 end
 
+local UIthemedefs = {
+}
+UIthemedefs[colors.white] = { 236, 239, 244 }
+UIthemedefs[colors.orange] = { 0, 0, 0 }
+UIthemedefs[colors.magenta] = { 180, 142, 173 }
+UIthemedefs[colors.lightBlue] = { 0, 0, 0 }
+UIthemedefs[colors.yellow] = { 235, 203, 139 }
+UIthemedefs[colors.lime] = { 163, 190, 140 }
+UIthemedefs[colors.pink] = { 0, 0, 0 }
+UIthemedefs[colors.gray] = { 76, 86, 106 }
+UIthemedefs[colors.lightGray] = { 216, 222, 233 }
+UIthemedefs[colors.cyan] = { 136, 192, 208 }
+UIthemedefs[colors.purple] = { 0, 0, 0 }
+UIthemedefs[colors.blue] = { 129, 161, 193 }
+UIthemedefs[colors.brown] = { 0, 0, 0 }
+UIthemedefs[colors.green] = { 163, 190, 140 }
+UIthemedefs[colors.red] = { 191, 97, 106 }
+UIthemedefs[colors.black] = { 59, 66, 82 }
 for index, value in pairs(UIthemedefs) do
   term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
 end
 local fr, e = http.get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
   ["Authorization"] = "Bearer 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"
-})
+})      
 if not fr then
   fr, e = http.get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
   })
@@ -206,9 +224,9 @@ if not fr then
     return false
   end
 end
-local commit = fr.readAll()
-local cnURL = "http://raw.githubusercontent.com/" .. getChosenRepo() .. "/" .. commit
-local sourceURL = cnURL .. "archivedpkgs/"
+local ncommit = textutils.unserializeJSON(fr.readAll()).sha 
+local cnURL = "http://raw.githubusercontent.com/" .. getChosenRepo() .. "/" .. ncommit
+local sourceURL = cnURL .. "/archivedpkgs/"
 function mstrsplit(inputstr, sep)
   if sep == nil then
     sep = "%s"
@@ -321,8 +339,9 @@ local arkivelib = {
 }
 
 
-function installPackageS1(pkg)
-  local dataFile, err = get(sourceURL .. pkg .. ".arc  ")
+function installPackageS1(tpkg)
+  local dataFile, err = get(sourceURL .. tpkg .. ".arc")
+  print(sourceURL .. "/" .. tpkg .. ".arc")
   if not dataFile then
     print("Failed to get index file. Error: " .. err)
     print(
@@ -349,26 +368,29 @@ function installPackageS1(pkg)
       table.insert(uninstallIndexLines, "f> " .. sha256(v[2]) .. " " .. v[1])
     end
   end
+
 end
 
-function installPackage(pkg)
-  print("Bootstrapping " .. pkg)
-  local iFile, err = get(cnURL .. "/repo/" .. pkg .. "/entry")
+function installPackage(tpkg)
+  print("Bootstrapping " .. tpkg)
+  print(cnURL .. "/repo/" .. tpkg .. "/entry")
+  local iFile, err = get(cnURL .. "/repo/" .. tpkg .. "/entry")
   if not iFile then error(err) end
   local ind = textutils.unserializeJSON(iFile.readAll())
   for k, v in ipairs(ind.dependencies) do
     installPackage(v)
   end
-  installPackageS1(pkg)
+  installPackageS1(tpkg)
   if not fs.exists("/config") then fs.makeDir("/config") end
   if not fs.exists("/config/arc") then fs.makeDir("/config/arc") end
-  local f, e = fs.open("/config/arc/" .. pkg .. ".meta.json", "w")
+  local f, e = fs.open("/config/arc/" .. tpkg .. ".meta.json", "w")
   f.write(textutils.serializeJSON(ind))
   f.close()
   local fn, en = fs.open("/config/arc/latestCommit", "w")
   if not fn then error(en) end
-  fn.write(commit)
+  fn.write(ncommit)
   fn.close()
 end
 
-installPackage({ ... })
+installPackage(...)
+print("Bootstrapping finished")
