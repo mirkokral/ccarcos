@@ -25,36 +25,35 @@
 |services/arcfix.lua|251890|
 |services/elevator.lua|251975|
 |services/elevatorSrv.lua|254293|
-|services/elevatorStep.lua|257349|
-|services/oobe.lua|257941|
-|services/pms.lua|263686|
-|services/shell.lua|267266|
-|services/enabled/9 arcfix|267296|
-|services/enabled/login|267309|
-|data/PRIVACY.txt|267319|
-|config/aboot|268208|
-|config/arcrepo|268368|
-|config/arcshell|268385|
-|config/hostname|268437|
-|config/passwd|268442|
-|apps/adduser.lua|268692|
-|apps/arc.lua|269206|
-|apps/cat.lua|272293|
-|apps/cd.lua|272569|
-|apps/cp.lua|272898|
-|apps/init.lua|273167|
-|apps/kmsg.lua|276485|
-|apps/ls.lua|276534|
-|apps/mkdir.lua|277207|
-|apps/mv.lua|277353|
-|apps/rm.lua|277622|
-|apps/rmuser.lua|277804|
-|apps/shell.lua|278208|
-|apps/uitest.lua|282041|
-|apps/clear.lua|287418|
-|apps/shutdown.lua|287454|
-|apps/reboot.lua|287470|
-|apps/celluitest.lua|287484|
+|services/oobe.lua|257349|
+|services/pms.lua|263292|
+|services/shell.lua|267043|
+|services/enabled/9 arcfix|267073|
+|services/enabled/login|267086|
+|data/PRIVACY.txt|267096|
+|config/aboot|267985|
+|config/arcrepo|268145|
+|config/arcshell|268162|
+|config/hostname|268214|
+|config/passwd|268219|
+|apps/adduser.lua|268469|
+|apps/arc.lua|268983|
+|apps/cat.lua|272070|
+|apps/cd.lua|272346|
+|apps/cp.lua|272675|
+|apps/init.lua|272944|
+|apps/kmsg.lua|276262|
+|apps/ls.lua|276311|
+|apps/mkdir.lua|276984|
+|apps/mv.lua|277130|
+|apps/rm.lua|277399|
+|apps/rmuser.lua|277581|
+|apps/shell.lua|277985|
+|apps/uitest.lua|281818|
+|apps/clear.lua|287195|
+|apps/shutdown.lua|287231|
+|apps/reboot.lua|287247|
+|apps/celluitest.lua|287261|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -1158,7 +1157,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 470"
+        return "arckernel 472"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -8282,31 +8281,10 @@ while true do
         print(channel)
     end
 end
-local mdm = devices.find("modem")
-local currentFloor = -1
-if not mdm then
-    error("Modem not found")
-end
-local whitelistedPlayers = {
-    "ChanesawWhatever",
-    "emireri1498",
-    "kkk8GJ"
-}
-mdm.open(711)
-mdm.open(713)
-while true do
-    local _, side, channel, rc, msg, dist = arcos.ev("modem_message")
-    if channel == 713 then
-        print(msg)
-        if msg == "TopDoorOpen" then
-            rd.setO("back", true)
-        elseif msg == "TopDoorClose" then
-            rd.setO("back", false)
-        end
-    elseif channel == 711 then
-        currentFloor = tonumber(msg)
-    end
-end
+local arc = require("arc")
+local ui = require("ui")
+local col = require("col")
+local files = require("files")
 arc.fetch()
 local w, h = term.getSize()
 local pages = {}
@@ -8511,8 +8489,12 @@ pages[5] = {
                 value()
             end
             local f, e = files.open("/services/enabled/login", "w")
-            f.write("o " .. init)
-            f.close()
+            if f then
+                f.write("o " .. init)
+                f.close()
+            else
+                error(e)
+            end
             ui.PageTransition(pages[5], pages[6], false, 1, true, term)
             page = 6
             return true
@@ -8539,7 +8521,10 @@ pages[6] = {
 local ls = true
 while true do
     ls = ui.RenderLoop(pages[page], term, ls)
-endlocal currentPowerUsage = 0
+endlocal ui = require("ui")
+local files = require("files")
+local tutils = require("tutils")
+local currentPowerUsage = 0
 local f, e = files.open("/config/pmst", "r")
 local titemcount = 0
 local iup = 0
@@ -8549,7 +8534,10 @@ local me = dev.meBridge[1]
 local total = 0
 local rd = true
 if f then
-    total = tonumber(f.read())
+    local l = tonumber(f.read())
+    if l then
+        total = l
+    end
     f.close()
 else
     total = 0
@@ -8636,6 +8624,7 @@ local btn1 = ui.Button({
     y = 2,
     callBack = function ()
         dev.modem[1].transmit(713, 0, "MainLightsOn")
+        return true
     end
 })
 local btn2 = ui.Button({
@@ -8644,6 +8633,7 @@ local btn2 = ui.Button({
     y = 2,
     callBack = function ()
         dev.modem[1].transmit(713, 0, "MainLightsOff")
+        return true
     end
 })
 local ls = false

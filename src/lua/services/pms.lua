@@ -1,3 +1,7 @@
+local ui = require("ui")
+local files = require("files")
+local tutils = require("tutils")
+
 local currentPowerUsage = 0
 local f, e = files.open("/config/pmst", "r")
 local titemcount = 0
@@ -8,7 +12,10 @@ local me = dev.meBridge[1]
 local total = 0
 local rd = true
 if f then
-    total = tonumber(f.read())
+    local l = tonumber(f.read())
+    if l then
+        total = l
+    end
     f.close()
     
 else
@@ -100,6 +107,7 @@ local btn1 = ui.Button({
     y = 2,
     callBack = function ()
         dev.modem[1].transmit(713, 0, "MainLightsOn")
+        return true
     end
 })
 local btn2 = ui.Button({
@@ -108,6 +116,7 @@ local btn2 = ui.Button({
     y = 2,
     callBack = function ()
         dev.modem[1].transmit(713, 0, "MainLightsOff")
+        return true
     end
 })
 

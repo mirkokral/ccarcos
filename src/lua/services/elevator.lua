@@ -1,6 +1,7 @@
 local modem
 local selectedFloor = -1
 local col = require("col")
+
 if arcos then
     modem = devices.find("modem")
 else

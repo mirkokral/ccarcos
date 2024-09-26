@@ -24,7 +24,6 @@ f>system/apis/window.lua
 f>services/arcfix.lua
 f>services/elevator.lua
 f>services/elevatorSrv.lua
-f>services/elevatorStep.lua
 f>services/oobe.lua
 f>services/pms.lua
 f>services/shell.lua

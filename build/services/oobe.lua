@@ -1,3 +1,7 @@
+local arc = require("arc")
+local ui = require("ui")
+local col = require("col")
+local files = require("files")
 arc.fetch()
 local w, h = term.getSize()
 local pages = {}
@@ -202,8 +206,12 @@ pages[5] = {
                 value()
             end
             local f, e = files.open("/services/enabled/login", "w")
-            f.write("o " .. init)
-            f.close()
+            if f then
+                f.write("o " .. init)
+                f.close()
+            else
+                error(e)
+            end
             ui.PageTransition(pages[5], pages[6], false, 1, true, term)
             page = 6
             return true

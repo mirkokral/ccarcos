@@ -1,4 +1,4 @@
-buildCount: 471
+buildCount: 473
 compileFiles:
 - startup.lua
 - system/bootloader.lua
@@ -15,7 +15,6 @@ compileFiles:
 - services/arcfix.lua
 - services/elevator.lua
 - services/elevatorSrv.lua
-- services/elevatorStep.lua
 - services/oobe.lua
 - services/pms.lua
 - services/shell.lua
