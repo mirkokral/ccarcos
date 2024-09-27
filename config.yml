@@ -1,4 +1,4 @@
-buildCount: 534
+buildCount: 536
 compileFiles:
 - startup.lua
 - system/bootloader.lua
