@@ -16,7 +16,8 @@ local config = {
     init = "/apps/init.lua",
     printLogToConsole = false,
     printLogToFile = false,
-    telemetry = true
+    telemetry = true,
+    quiet = false
 }
 local logfile = nil
 if config.printLogToFile then
@@ -120,9 +121,10 @@ _G.arcos = {
     end,
     ---Logs a string
     ---@param txt string String to log
-    log = function(txt)
+    ---@param level number The log level. 0 = Print to console only if printlog flag, 1 = Print to console unless quiet flag is set, 2 = Always print to console
+    log = function(txt, level)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
-        if config["printLogToConsole"] then
+        if (level == 0 and config["printLogToConsole"]) or (level == 1 and not config["quiet"]) or (level == 2) then
             print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
         if config.printLogToFile and logfile then
@@ -347,10 +349,10 @@ _G.term = {
         return term
     end,
     write = function(text)
-        arcos.log(i .. ": " .. text)
+        arcos.log(i .. ": " .. text, 0)
     end,
     blit = function(text, ...)
-        arcos.log(i .. ": " .. text)
+        arcos.log(i .. ": " .. text, 0)
     end,
     setTextColor = function(col) end,
     setBackgroundColor = function(col) end,
@@ -416,7 +418,8 @@ _G.tasking = {
             write("\nEnter root password")
             local password = read()
             if not arcos.validateUser("root", password) then
-                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.")
+                write("Sorry")
+                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.", 1)
                 error("Invalid password")
             end
         end
@@ -585,6 +588,9 @@ while true do
     if arg == "fileLog" then
         config["printLogToFile"] = true
     end
+    if arg == "quiet" then
+        config["quiet"] = true
+    end
 end
 if config.printLogToFile then
     logfile, error = __LEGACY.files.open("/system/log.txt", "w")
@@ -696,7 +702,7 @@ _G.require = function(modname)
     error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
 
-arcos.log("Seems like it works")
+arcos.log("Hello, world!", 1)
 local files = require("files")
 local tutils = require("tutils")
 local col = require("col")
@@ -819,7 +825,7 @@ for index, value in ipairs(arcos.getUsers()) do
 end
 
 tasking.createTask("Init", function()
-    arcos.log("Starting Init")
+    arcos.log("Starting Init", 0)
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
@@ -845,7 +851,7 @@ local function syscall(ev)
             return false
         end
     else
-        arcos.log("Invalid syscall or syscall usage: " .. ev[1])
+        arcos.log("Invalid syscall or syscall usage: " .. ev[1], 0)
         return nil
     end
 end
@@ -907,10 +913,34 @@ while kpError == nil do
         -- print("Pulling")
         local ev = table.pack(coroutine.yield())
         -- print(ev[1])
-        if ev[1] == "term_resize" then
-            
-        end 
-        if ev[1] == "terminate" then
+        if ev[1] == "key" and ev[2] == require("keys").scrollLock then
+            local ks = require("keys")
+            local _, cmd = arcos.rev("key")
+            if cmd == ks.k then
+                arcos.log("Killing all tasks because of sysrq sequence", 1)
+                tasks = {}
+
+            elseif cmd == ks.s then
+                -- Run emergency shell
+                arcos.log("Starting emergency shell because of sysrq sequence", 1)
+                tasking.createTask("Emergency shell", function ()
+                    write("Enter root password: ")
+                    local pw = read()
+                    if not arcos.validateUser("root", pw) then
+                        write("Invalid password")
+                    else
+                        arcos.r({}, "/apps/shell.lua")
+                    end
+                end, 1, "root", __LEGACY.term, {workDir = "/"})
+
+            elseif cmd == ks.h then
+                arcos.log("-- SYSRQ Help --", 2)
+                arcos.log("S: Run emergency shell", 2)
+                arcos.log("H: Show this help", 2)
+            else
+                arcos.log("Invalid sysrq command", 1)
+            end
+        elseif ev[1] == "terminate" then
         else
 
             for index, value in ipairs(tasks) do
@@ -931,6 +961,7 @@ print("If this problem continues:")
 print("- If this started happening after an update, open an issue at github.com/mirkokral/ccarcos, and wait for an update")
 print("- Try removing or disconnecting any newly installed hardware or software.")
 print("- If using a multiboot/bios solution, check if your multiboot/bios solution supports TLCO and open an issue there")
+print("- On boot, try pressing the scroll lock key and s. That should put you into an emergency shell.")
 print()
 print(kpError)
 print()

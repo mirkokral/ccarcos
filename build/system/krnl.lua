@@ -10,7 +10,8 @@ local config = {
     init = "/apps/init.lua",
     printLogToConsole = false,
     printLogToFile = false,
-    telemetry = true
+    telemetry = true,
+    quiet = false
 }
 local logfile = nil
 if config.printLogToFile then
@@ -91,11 +92,11 @@ _G.arcos = {
     end,
     shutdown = function ()
         __LEGACY.os.shutdown()
-        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 118)
+        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 119)
     end,
-    log = function(txt)
+    log = function(txt, level)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
-        if config["printLogToConsole"] then
+        if (level == 0 and config["printLogToConsole"]) or (level == 1 and not config["quiet"]) or (level == 2) then
             print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
         if config.printLogToFile and logfile then
@@ -272,7 +273,8 @@ _G.tasking = {
             write("\nEnter root password")
             local password = read()
             if not arcos.validateUser("root", password) then
-                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.")
+                write("Sorry")
+                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.", 1)
                 error("Invalid password")
             end
         end
@@ -398,7 +400,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 567)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 570)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -417,6 +419,9 @@ while true do
     end
     if arg == "fileLog" then
         config["printLogToFile"] = true
+    end
+    if arg == "quiet" then
+        config["quiet"] = true
     end
 end
 if config.printLogToFile then
@@ -514,7 +519,7 @@ _G.require = function(modname)
     end
     error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
-arcos.log("Seems like it works")
+arcos.log("Hello, world!", 1)
 local files = require("files")
 local tutils = require("tutils")
 local col = require("col")
@@ -522,7 +527,7 @@ local hashing = require("hashing")
 debug.setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 local passwdFile, e = files.open("/config/passwd", "r")
 if not passwdFile then
-    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 707)
+    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 713)
 else
     users = tutils.dJSON(passwdFile.read())
 end
@@ -589,7 +594,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 537"
+        return "arckernel 541"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -597,7 +602,7 @@ local tab
 if f then
     tab = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 811)
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 817)
 end
 for index, value in ipairs(arcos.getUsers()) do
     if not files.exists("/user/" .. value) then
@@ -605,16 +610,16 @@ for index, value in ipairs(arcos.getUsers()) do
     end    
 end
 tasking.createTask("Init", function()
-    arcos.log("Starting Init")
+    arcos.log("Starting Init", 0)
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
-            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 825)
+            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 831)
         else
-            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 827)
+            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 833)
         end
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 830)
+    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 836)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 local function syscall(ev)
@@ -626,7 +631,7 @@ local function syscall(ev)
             return false
         end
     else
-        arcos.log("Invalid syscall or syscall usage: " .. ev[1])
+        arcos.log("Invalid syscall or syscall usage: " .. ev[1], 0)
         return nil
     end
 end
@@ -662,9 +667,31 @@ while kpError == nil do
         end
     else
         local ev = table.pack(coroutine.yield())
-        if ev[1] == "term_resize" then
-        end 
-        if ev[1] == "terminate" then
+        if ev[1] == "key" and ev[2] == require("keys").scrollLock then
+            local ks = require("keys")
+            local _, cmd = arcos.rev("key")
+            if cmd == ks.k then
+                arcos.log("Killing all tasks because of sysrq sequence", 1)
+                tasks = {}
+            elseif cmd == ks.s then
+                arcos.log("Starting emergency shell because of sysrq sequence", 1)
+                tasking.createTask("Emergency shell", function ()
+                    write("Enter root password: ")
+                    local pw = read()
+                    if not arcos.validateUser("root", pw) then
+                        write("Invalid password")
+                    else
+                        arcos.r({}, "/apps/shell.lua")
+                    end
+                end, 1, "root", __LEGACY.term, {workDir = "/"})
+            elseif cmd == ks.h then
+                arcos.log("-- SYSRQ Help --", 2)
+                arcos.log("S: Run emergency shell", 2)
+                arcos.log("H: Show this help", 2)
+            else
+                arcos.log("Invalid sysrq command", 1)
+            end
+        elseif ev[1] == "terminate" then
         else
             for index, value in ipairs(tasks) do
                 table.insert(value.tQueue, ev)
@@ -682,6 +709,7 @@ print("If this problem continues:")
 print("- If this started happening after an update, open an issue at github.com/mirkokral/ccarcos, and wait for an update")
 print("- Try removing or disconnecting any newly installed hardware or software.")
 print("- If using a multiboot/bios solution, check if your multiboot/bios solution supports TLCO and open an issue there")
+print("- On boot, try pressing the scroll lock key and s. That should put you into an emergency shell.")
 print()
 print(kpError)
 print()

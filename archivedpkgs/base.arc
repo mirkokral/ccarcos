@@ -10,51 +10,51 @@
 |services/enabled|-1|
 |config/apps|-1|
 |/startup.lua|0|
-|system/bootloader.lua|14980|
-|system/rel|15929|
-|system/krnl.lua|15935|
-|system/apis/arc.lua|37581|
-|system/apis/col.lua|50096|
-|system/apis/files.lua|54220|
-|system/apis/hashing.lua|65832|
-|system/apis/rd.lua|70467|
-|system/apis/tutils.lua|71471|
-|system/apis/ui.lua|72613|
-|system/apis/window.lua|93848|
-|system/apis/keys.lua|108937|
-|system/apis/cellui.lua|108957|
-|services/arcfix.lua|252831|
-|services/elevator.lua|252916|
-|services/elevatorSrv.lua|255234|
-|services/oobe.lua|258290|
-|services/pms.lua|264233|
-|services/shell.lua|267984|
-|services/enabled/9 arcfix|268014|
-|services/enabled/login|268027|
-|data/PRIVACY.txt|268037|
-|config/aboot|268926|
-|config/arcrepo|269086|
-|config/arcshell|269103|
-|config/hostname|269155|
-|config/passwd|269160|
-|apps/adduser.lua|269410|
-|apps/arc.lua|269924|
-|apps/cat.lua|272970|
-|apps/cd.lua|273246|
-|apps/cp.lua|273575|
-|apps/init.lua|273844|
-|apps/kmsg.lua|276916|
-|apps/ls.lua|276965|
-|apps/mkdir.lua|277638|
-|apps/mv.lua|277784|
-|apps/rm.lua|278053|
-|apps/rmuser.lua|278235|
-|apps/shell.lua|278639|
-|apps/uitest.lua|282665|
-|apps/clear.lua|288042|
-|apps/shutdown.lua|288078|
-|apps/reboot.lua|288094|
-|apps/celluitest.lua|288108|
+|system/bootloader.lua|15004|
+|system/rel|15953|
+|system/krnl.lua|15959|
+|system/apis/arc.lua|38985|
+|system/apis/col.lua|51500|
+|system/apis/files.lua|55624|
+|system/apis/hashing.lua|67236|
+|system/apis/rd.lua|71871|
+|system/apis/tutils.lua|72875|
+|system/apis/ui.lua|74017|
+|system/apis/window.lua|95252|
+|system/apis/keys.lua|110341|
+|system/apis/cellui.lua|110361|
+|services/arcfix.lua|254235|
+|services/elevator.lua|254320|
+|services/elevatorSrv.lua|256638|
+|services/oobe.lua|259694|
+|services/pms.lua|265637|
+|services/shell.lua|269388|
+|services/enabled/9 arcfix|269418|
+|services/enabled/login|269431|
+|data/PRIVACY.txt|269441|
+|config/aboot|270330|
+|config/arcrepo|270490|
+|config/arcshell|270507|
+|config/hostname|270559|
+|config/passwd|270564|
+|apps/adduser.lua|270814|
+|apps/arc.lua|271328|
+|apps/cat.lua|274374|
+|apps/cd.lua|274650|
+|apps/cp.lua|274979|
+|apps/init.lua|275248|
+|apps/kmsg.lua|278326|
+|apps/ls.lua|278375|
+|apps/mkdir.lua|279048|
+|apps/mv.lua|279194|
+|apps/rm.lua|279463|
+|apps/rmuser.lua|279645|
+|apps/shell.lua|280049|
+|apps/uitest.lua|284075|
+|apps/clear.lua|289452|
+|apps/shutdown.lua|289488|
+|apps/reboot.lua|289504|
+|apps/celluitest.lua|289518|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -506,6 +506,7 @@ function _G.term.native()
     local t = {}
     for k in pairs(oldug) do if not keptAPIs[k] then table.insert(t, k) end end
     for _, k in ipairs(t) do oldug[k] = nil end
+    oldug["_G"] = oldug
     local f = __LEGACY.files.open("/system/bootloader.lua", "r")
     local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
     print(err)
@@ -556,7 +557,8 @@ local config = {
     init = "/apps/init.lua",
     printLogToConsole = false,
     printLogToFile = false,
-    telemetry = true
+    telemetry = true,
+    quiet = false
 }
 local logfile = nil
 if config.printLogToFile then
@@ -637,11 +639,11 @@ _G.arcos = {
     end,
     shutdown = function ()
         __LEGACY.os.shutdown()
-        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 118)
+        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 119)
     end,
-    log = function(txt)
+    log = function(txt, level)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
-        if config["printLogToConsole"] then
+        if (level == 0 and config["printLogToConsole"]) or (level == 1 and not config["quiet"]) or (level == 2) then
             print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
         end
         if config.printLogToFile and logfile then
@@ -818,7 +820,8 @@ _G.tasking = {
             write("\nEnter root password")
             local password = read()
             if not arcos.validateUser("root", password) then
-                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.")
+                write("Sorry")
+                arcos.log(currentTask["user"] .. " tried to create a task with user " .. user .. " but failed the password check.", 1)
                 error("Invalid password")
             end
         end
@@ -944,7 +947,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 567)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 570)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -963,6 +966,9 @@ while true do
     end
     if arg == "fileLog" then
         config["printLogToFile"] = true
+    end
+    if arg == "quiet" then
+        config["quiet"] = true
     end
 end
 if config.printLogToFile then
@@ -1060,7 +1066,7 @@ _G.require = function(modname)
     end
     error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
-arcos.log("Seems like it works")
+arcos.log("Hello, world!", 1)
 local files = require("files")
 local tutils = require("tutils")
 local col = require("col")
@@ -1068,7 +1074,7 @@ local hashing = require("hashing")
 debug.setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 local passwdFile, e = files.open("/config/passwd", "r")
 if not passwdFile then
-    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 707)
+    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 713)
 else
     users = tutils.dJSON(passwdFile.read())
 end
@@ -1135,7 +1141,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 537"
+        return "arckernel 541"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -1143,7 +1149,7 @@ local tab
 if f then
     tab = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 811)
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 817)
 end
 for index, value in ipairs(arcos.getUsers()) do
     if not files.exists("/user/" .. value) then
@@ -1151,16 +1157,16 @@ for index, value in ipairs(arcos.getUsers()) do
     end    
 end
 tasking.createTask("Init", function()
-    arcos.log("Starting Init")
+    arcos.log("Starting Init", 0)
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
-            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 825)
+            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 831)
         else
-            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 827)
+            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 833)
         end
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 830)
+    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 836)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 local function syscall(ev)
@@ -1172,7 +1178,7 @@ local function syscall(ev)
             return false
         end
     else
-        arcos.log("Invalid syscall or syscall usage: " .. ev[1])
+        arcos.log("Invalid syscall or syscall usage: " .. ev[1], 0)
         return nil
     end
 end
@@ -1208,9 +1214,31 @@ while kpError == nil do
         end
     else
         local ev = table.pack(coroutine.yield())
-        if ev[1] == "term_resize" then
-        end 
-        if ev[1] == "terminate" then
+        if ev[1] == "key" and ev[2] == require("keys").scrollLock then
+            local ks = require("keys")
+            local _, cmd = arcos.rev("key")
+            if cmd == ks.k then
+                arcos.log("Killing all tasks because of sysrq sequence", 1)
+                tasks = {}
+            elseif cmd == ks.s then
+                arcos.log("Starting emergency shell because of sysrq sequence", 1)
+                tasking.createTask("Emergency shell", function ()
+                    write("Enter root password: ")
+                    local pw = read()
+                    if not arcos.validateUser("root", pw) then
+                        write("Invalid password")
+                    else
+                        arcos.r({}, "/apps/shell.lua")
+                    end
+                end, 1, "root", __LEGACY.term, {workDir = "/"})
+            elseif cmd == ks.h then
+                arcos.log("-- SYSRQ Help --", 2)
+                arcos.log("S: Run emergency shell", 2)
+                arcos.log("H: Show this help", 2)
+            else
+                arcos.log("Invalid sysrq command", 1)
+            end
+        elseif ev[1] == "terminate" then
         else
             for index, value in ipairs(tasks) do
                 table.insert(value.tQueue, ev)
@@ -1228,6 +1256,7 @@ print("If this problem continues:")
 print("- If this started happening after an update, open an issue at github.com/mirkokral/ccarcos, and wait for an update")
 print("- Try removing or disconnecting any newly installed hardware or software.")
 print("- If using a multiboot/bios solution, check if your multiboot/bios solution supports TLCO and open an issue there")
+print("- On boot, try pressing the scroll lock key and s. That should put you into an emergency shell.")
 print()
 print(kpError)
 print()
@@ -8920,10 +8949,10 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                         return term
                     end,
                     write = function(text)
-                        arcos.log(i .. ": " .. text)
+                        arcos.log(i .. ": " .. text, 0)
                     end,
                     blit = function(text, ...)
-                        arcos.log(i .. ": " .. text)
+                        arcos.log(i .. ": " .. text, 0)
                     end,
                     setTextColor = function(col) end,
                     setBackgroundColor = function(col) end,

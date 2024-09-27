@@ -573,7 +573,7 @@ function _G.term.native()
     local t = {}
     for k in pairs(oldug) do if not keptAPIs[k] then table.insert(t, k) end end
     for _, k in ipairs(t) do oldug[k] = nil end
-
+    oldug["_G"] = oldug
 
     local f = __LEGACY.files.open("/system/bootloader.lua", "r")
     local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))

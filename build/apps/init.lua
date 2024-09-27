@@ -22,10 +22,10 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                         return term
                     end,
                     write = function(text)
-                        arcos.log(i .. ": " .. text)
+                        arcos.log(i .. ": " .. text, 0)
                     end,
                     blit = function(text, ...)
-                        arcos.log(i .. ": " .. text)
+                        arcos.log(i .. ": " .. text, 0)
                     end,
                     setTextColor = function(col) end,
                     setBackgroundColor = function(col) end,
