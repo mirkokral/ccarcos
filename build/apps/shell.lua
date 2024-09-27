@@ -4,20 +4,26 @@ local tutils = require("tutils")
 local arc = require("arc")
 term.setTextColor(col.blue)
 print(arcos.version())
-term.setTextColor(col.gray)
-arc.fetch()
-if #arc.getUpdatable() > 0 then
-    write(#arc.getUpdatable() .. " updates are availabe. Use ")
-    term.setTextColor(col.magenta)
-    write("arc update")
-    term.setTextColor(col.gray)
-    print(" to update.")
+term.setTextColor(col.lightGray)
+if arcos.getCurrentTask().user == "root" then
+    arc.fetch()
 end
+pcall(function ()
+    if #arc.getUpdatable() > 0 then
+        local f = #arc.getUpdatable() > 0
+        print()
+        write(#arc.getUpdatable() .. " " .. f == 1 and "update is" or "updates are" .. " availabe. Use ")
+        term.setTextColor(col.magenta)
+        write("arc update")
+        term.setTextColor(col.lightGray)    
+        print(" to update.")
+    end
+end)
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
     table.insert(secRisks, "The root account password has not yet been changed.")
 end
-if arcos.validateUser("user", "user") then
+if arcos.validateUser("user", "user") then  
     table.insert(secRisks, "The user account password has not yet been changed.")
 end
 if #secRisks > 0 then

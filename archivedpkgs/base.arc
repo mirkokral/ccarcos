@@ -50,11 +50,11 @@
 |apps/rm.lua|278053|
 |apps/rmuser.lua|278235|
 |apps/shell.lua|278639|
-|apps/uitest.lua|282448|
-|apps/clear.lua|287825|
-|apps/shutdown.lua|287861|
-|apps/reboot.lua|287877|
-|apps/celluitest.lua|287891|
+|apps/uitest.lua|282665|
+|apps/clear.lua|288042|
+|apps/shutdown.lua|288078|
+|apps/reboot.lua|288094|
+|apps/celluitest.lua|288108|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -1135,7 +1135,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 535"
+        return "arckernel 537"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -9035,20 +9035,26 @@ local tutils = require("tutils")
 local arc = require("arc")
 term.setTextColor(col.blue)
 print(arcos.version())
-term.setTextColor(col.gray)
-arc.fetch()
-if #arc.getUpdatable() > 0 then
-    write(#arc.getUpdatable() .. " updates are availabe. Use ")
-    term.setTextColor(col.magenta)
-    write("arc update")
-    term.setTextColor(col.gray)
-    print(" to update.")
+term.setTextColor(col.lightGray)
+if arcos.getCurrentTask().user == "root" then
+    arc.fetch()
 end
+pcall(function ()
+    if #arc.getUpdatable() > 0 then
+        local f = #arc.getUpdatable() > 0
+        print()
+        write(#arc.getUpdatable() .. " " .. f == 1 and "update is" or "updates are" .. " availabe. Use ")
+        term.setTextColor(col.magenta)
+        write("arc update")
+        term.setTextColor(col.lightGray)    
+        print(" to update.")
+    end
+end)
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
     table.insert(secRisks, "The root account password has not yet been changed.")
 end
-if arcos.validateUser("user", "user") then
+if arcos.validateUser("user", "user") then  
     table.insert(secRisks, "The user account password has not yet been changed.")
 end
 if #secRisks > 0 then
