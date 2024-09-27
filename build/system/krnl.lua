@@ -20,13 +20,14 @@ if config.printLogToFile then
         while true do coroutine.yield() end
     end
 end
-_G.term = term.native()
+term.redirect(term.native())
 local oldw = _G.write
 _G.write = function(...)
     local isNextSetC = false
     local nextCommand = ""
     local args = {...}
     for i, vn in ipairs(args) do
+        if i > 1 then term.write(" ") end
         local v = tostring(vn)
         for xi = 0, #v do
             local char = v:sub(xi, xi)
@@ -54,6 +55,7 @@ _G.write = function(...)
         end
     end
 end
+_G.print = function(...) write(...) write("\n") end
 local function recursiveRemove(r)
     for _, i in ipairs(__LEGACY.files.list(r)) do
         if __LEGACY.files.isDir(i) then
@@ -89,7 +91,7 @@ _G.arcos = {
     end,
     shutdown = function ()
         __LEGACY.os.shutdown()
-        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 116)
+        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 118)
     end,
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
@@ -396,7 +398,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 565)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 567)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -520,7 +522,7 @@ local hashing = require("hashing")
 debug.setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 local passwdFile, e = files.open("/config/passwd", "r")
 if not passwdFile then
-    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 705)
+    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 707)
 else
     users = tutils.dJSON(passwdFile.read())
 end
@@ -587,7 +589,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 496"
+        return "arckernel 527"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -595,7 +597,7 @@ local tab
 if f then
     tab = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 809)
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 811)
 end
 for index, value in ipairs(arcos.getUsers()) do
     if not files.exists("/user/" .. value) then
@@ -607,12 +609,12 @@ tasking.createTask("Init", function()
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
-            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 823)
+            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 825)
         else
-            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 825)
+            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 827)
         end
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 828)
+    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 830)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 local function syscall(ev)

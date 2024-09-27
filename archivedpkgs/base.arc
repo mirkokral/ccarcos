@@ -13,47 +13,48 @@
 |system/bootloader.lua|14980|
 |system/rel|15929|
 |system/krnl.lua|15935|
-|system/apis/arc.lua|37479|
-|system/apis/col.lua|49994|
-|system/apis/files.lua|54118|
-|system/apis/hashing.lua|65526|
-|system/apis/rd.lua|70161|
-|system/apis/tutils.lua|71165|
-|system/apis/ui.lua|72307|
-|system/apis/window.lua|93513|
-|system/apis/cellui.lua|108602|
-|services/arcfix.lua|252476|
-|services/elevator.lua|252561|
-|services/elevatorSrv.lua|254879|
-|services/oobe.lua|257935|
-|services/pms.lua|263878|
-|services/shell.lua|267629|
-|services/enabled/9 arcfix|267659|
-|services/enabled/login|267672|
-|data/PRIVACY.txt|267682|
-|config/aboot|268571|
-|config/arcrepo|268731|
-|config/arcshell|268748|
-|config/hostname|268800|
-|config/passwd|268805|
-|apps/adduser.lua|269055|
-|apps/arc.lua|269569|
-|apps/cat.lua|272615|
-|apps/cd.lua|272891|
-|apps/cp.lua|273220|
-|apps/init.lua|273489|
-|apps/kmsg.lua|276561|
-|apps/ls.lua|276610|
-|apps/mkdir.lua|277283|
-|apps/mv.lua|277429|
-|apps/rm.lua|277698|
-|apps/rmuser.lua|277880|
-|apps/shell.lua|278284|
-|apps/uitest.lua|282117|
-|apps/clear.lua|287494|
-|apps/shutdown.lua|287530|
-|apps/reboot.lua|287546|
-|apps/celluitest.lua|287560|
+|system/apis/arc.lua|37578|
+|system/apis/col.lua|50093|
+|system/apis/files.lua|54217|
+|system/apis/hashing.lua|65829|
+|system/apis/rd.lua|70464|
+|system/apis/tutils.lua|71468|
+|system/apis/ui.lua|72610|
+|system/apis/window.lua|93816|
+|system/apis/keys.lua|108905|
+|system/apis/cellui.lua|108925|
+|services/arcfix.lua|252799|
+|services/elevator.lua|252884|
+|services/elevatorSrv.lua|255202|
+|services/oobe.lua|258258|
+|services/pms.lua|264201|
+|services/shell.lua|267952|
+|services/enabled/9 arcfix|267982|
+|services/enabled/login|267995|
+|data/PRIVACY.txt|268005|
+|config/aboot|268894|
+|config/arcrepo|269054|
+|config/arcshell|269071|
+|config/hostname|269123|
+|config/passwd|269128|
+|apps/adduser.lua|269378|
+|apps/arc.lua|269892|
+|apps/cat.lua|272938|
+|apps/cd.lua|273214|
+|apps/cp.lua|273543|
+|apps/init.lua|273812|
+|apps/kmsg.lua|276884|
+|apps/ls.lua|276933|
+|apps/mkdir.lua|277606|
+|apps/mv.lua|277752|
+|apps/rm.lua|278021|
+|apps/rmuser.lua|278203|
+|apps/shell.lua|278607|
+|apps/uitest.lua|282416|
+|apps/clear.lua|287793|
+|apps/shutdown.lua|287829|
+|apps/reboot.lua|287845|
+|apps/celluitest.lua|287859|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -565,13 +566,14 @@ if config.printLogToFile then
         while true do coroutine.yield() end
     end
 end
-_G.term = term.native()
+term.redirect(term.native())
 local oldw = _G.write
 _G.write = function(...)
     local isNextSetC = false
     local nextCommand = ""
     local args = {...}
     for i, vn in ipairs(args) do
+        if i > 1 then term.write(" ") end
         local v = tostring(vn)
         for xi = 0, #v do
             local char = v:sub(xi, xi)
@@ -599,6 +601,7 @@ _G.write = function(...)
         end
     end
 end
+_G.print = function(...) write(...) write("\n") end
 local function recursiveRemove(r)
     for _, i in ipairs(__LEGACY.files.list(r)) do
         if __LEGACY.files.isDir(i) then
@@ -634,7 +637,7 @@ _G.arcos = {
     end,
     shutdown = function ()
         __LEGACY.os.shutdown()
-        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 116)
+        apiUtils.kernelPanic("Failed to turn off", system/krnl.lua, 118)
     end,
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
@@ -941,7 +944,7 @@ while true do
         break
     end
     if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 565)
+        apiUtils.kernelPanic("Invalid argument: " .. args[i], system/krnl.lua, 567)
     end
     local arg = string.sub(args[i], 3)
     if arg == "forceNice" then
@@ -1065,7 +1068,7 @@ local hashing = require("hashing")
 debug.setfenv(read, setmetatable({colors = col, colours = col}, {__index = _G}))
 local passwdFile, e = files.open("/config/passwd", "r")
 if not passwdFile then
-    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 705)
+    apiUtils.kernelPanic("Password file not found", system/krnl.lua, 707)
 else
     users = tutils.dJSON(passwdFile.read())
 end
@@ -1132,7 +1135,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 496"
+        return "arckernel 527"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -1140,7 +1143,7 @@ local tab
 if f then
     tab = tutils.dJSON(f.read())
 else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 809)
+    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), system/krnl.lua, 811)
 end
 for index, value in ipairs(arcos.getUsers()) do
     if not files.exists("/user/" .. value) then
@@ -1152,12 +1155,12 @@ tasking.createTask("Init", function()
     local ok, err = pcall(function()
         local ok, err = arcos.r({}, config["init"])
         if err then
-            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 823)
+            apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 825)
         else
-            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 825)
+            apiUtils.kernelPanic("Init Died with no errors.", system/krnl.lua, 827)
         end
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 828)
+    apiUtils.kernelPanic("Init Died: " .. err, system/krnl.lua, 830)
 end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 local function syscall(ev)
@@ -2092,6 +2095,15 @@ local function attributes(path)
     attr.permissions = getPermissionsForAll(path)
     return attr
 end
+local function read(path) 
+    local file, error = open(path, "r")
+    if not file then
+        return nil, error
+    end
+    local r = file.read()
+    file.close()
+    return r, nil
+end
 return {
     open = open,
     ls = ls,
@@ -2114,6 +2126,7 @@ return {
     capacity = capacity,
     attributes = attributes,
     par = par,
+    read = read,
 }
 local MOD = 2^32
 local MODM = MOD-1
@@ -3386,7 +3399,7 @@ local function create(parent, nX, nY, nWidth, nHeight, bStartVisible)
     end
     return window
 end
-return {create = create}-- Generated by Haxe 4.3.6
+return {create = create}return __LEGACY.keys-- Generated by Haxe 4.3.6
 local _hx_hidden = {__id__=true, hx__closures=true, super=true, prototype=true, __fields__=true, __ifields__=true, __class__=true, __properties__=true, __fields__=true, __name__=true}
 
 _hx_array_mt = {
@@ -9095,7 +9108,6 @@ local function run(a1, ...)
             chunkl = chunklb
             err = errb
         else
-            print(errb)
         end
         if(err and err:sub(20, 36) == "syntax error near") then
             err = "Command not found."

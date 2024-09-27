@@ -80,7 +80,7 @@ local function run(a1, ...)
             chunkl = chunklb
             err = errb
         else
-            print(errb)
+            -- print(errb)
         end
         if(err and err:sub(20, 36) == "syntax error near") then
             err = "Command not found."

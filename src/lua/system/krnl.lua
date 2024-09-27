@@ -26,13 +26,14 @@ if config.printLogToFile then
         while true do coroutine.yield() end
     end
 end
-_G.term = term.native()
+term.redirect(term.native())
 local oldw = _G.write
 _G.write = function(...)
     local isNextSetC = false
     local nextCommand = ""
     local args = {...}
     for i, vn in ipairs(args) do
+        if i > 1 then term.write(" ") end
         local v = tostring(vn)
         for xi = 0, #v do
             local char = v:sub(xi, xi)
@@ -66,6 +67,7 @@ _G.write = function(...)
         end
     end
 end
+_G.print = function(...) write(...) write("\n") end
 local function recursiveRemove(r)
     for _, i in ipairs(__LEGACY.files.list(r)) do
         if __LEGACY.files.isDir(i) then

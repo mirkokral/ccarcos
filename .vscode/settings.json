@@ -3,7 +3,8 @@
     "Lua.runtime.path": [
         "src/lua/system/apis/?.lua",
         "src/lua/system/apis/?/init.lua",
-        "src/cellui/out/?.lua"
+        "src/cellui/out/?.lua",
+        "repo/?/apis/?.lua"
     ],
     "Lua.diagnostics.disable": [
         "deprecated"

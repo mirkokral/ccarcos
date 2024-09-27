@@ -1,4 +1,4 @@
-buildCount: 497
+buildCount: 528
 compileFiles:
 - startup.lua
 - system/bootloader.lua
@@ -12,6 +12,7 @@ compileFiles:
 - system/apis/tutils.lua
 - system/apis/ui.lua
 - system/apis/window.lua
+- system/apis/keys.lua
 - services/arcfix.lua
 - services/elevator.lua
 - services/elevatorSrv.lua

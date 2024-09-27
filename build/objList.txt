@@ -21,6 +21,7 @@ f>system/apis/rd.lua
 f>system/apis/tutils.lua
 f>system/apis/ui.lua
 f>system/apis/window.lua
+f>system/apis/keys.lua
 f>services/arcfix.lua
 f>services/elevator.lua
 f>services/elevatorSrv.lua

@@ -507,7 +507,19 @@ local function attributes(path)
     return attr
 end
 
-
+---Read a file
+---@param path string
+---@return string?
+---@return string?
+local function read(path) 
+    local file, error = open(path, "r")
+    if not file then
+        return nil, error
+    end
+    local r = file.read()
+    file.close()
+    return r, nil
+end
 
 return {
     open = open,
@@ -531,4 +543,5 @@ return {
     capacity = capacity,
     attributes = attributes,
     par = par,
+    read = read,
 }

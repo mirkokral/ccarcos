@@ -1,0 +1,9 @@
+{
+    "friendlyName": "Brainfuck",
+    "description": "Funny programming language",
+    "owner": "arcos Development Team and contributors",
+    "version": "v1",
+    "vId": 1,
+    "dependencies": [],
+    "isIndependable": true
+}

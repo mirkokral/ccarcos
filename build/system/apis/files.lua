@@ -351,6 +351,15 @@ local function attributes(path)
     attr.permissions = getPermissionsForAll(path)
     return attr
 end
+local function read(path) 
+    local file, error = open(path, "r")
+    if not file then
+        return nil, error
+    end
+    local r = file.read()
+    file.close()
+    return r, nil
+end
 return {
     open = open,
     ls = ls,
@@ -373,4 +382,5 @@ return {
     capacity = capacity,
     attributes = attributes,
     par = par,
+    read = read,
 }
