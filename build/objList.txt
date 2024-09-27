@@ -54,6 +54,8 @@ f>apps/clear.lua
 f>apps/shutdown.lua
 f>apps/reboot.lua
 f>apps/celluitest.lua
+f>apps/attach.lua
+f>apps/detach.lua
 r>services/enabled/login
 r>config/passwd
 r>config/aboot

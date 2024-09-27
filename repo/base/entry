@@ -2,8 +2,8 @@
     "friendlyName": "arcos itself",
     "description": "The package that has all the arcos files",
     "owner": "arcos Development Team and contributors",
-    "version": "24.09p11b \"Sillicum\"",
-    "vId": 11,
+    "version": "24.09p12b \"Sillicum\"",
+    "vId": 12,
     "dependencies": [],
     "isIndependable": true
 }

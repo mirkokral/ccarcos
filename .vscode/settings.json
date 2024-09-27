@@ -1,5 +1,5 @@
 {
-    "Lua.completion.autoRequire": false,
+    "Lua.completion.autoRequire": true,
     "Lua.runtime.path": [
         "src/lua/system/apis/?.lua",
         "src/lua/system/apis/?/init.lua",

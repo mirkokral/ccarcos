@@ -3477,7 +3477,7 @@ files.mkDir(rf)if term then
     for _, i in ipairs(monitors) do
         table.insert(selection, 
             ui.Button({
-                label = i.origName,
+                label = i.name,
                 callBack = function ()
                     terma = i
                     selecting = false
