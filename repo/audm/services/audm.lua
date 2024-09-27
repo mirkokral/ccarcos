@@ -120,7 +120,34 @@ while running do
         if e[1] == "key" and e[2] == require("keys").tab and loginPage[4].focus then
             loginPage[2].focus = false
             loginPage[4].focus = false
-            if loginPage[5].callback() then
+            -- TODO: Add login validation
+            if arcos.validateUser(loginPage[2].text, loginPage[4].text) then
+                running = false
+            else
+                local frunnin = true
+                local w = {
+                    ui.Label{
+                        label = "Incorrect Password!",
+                        x = 2,
+                        y = 2,
+                        textCol = col.red
+                    },
+                    ui.Button{
+                        label = " OK ",
+                        x = w-4,
+                        y = h-1,
+                        callBack = function ()
+                            frunnin = false
+                            return true
+                        end
+                    }
+                }
+                ui.PageTransition(loginPage, w, false, 1, true, term)
+                local frls = true
+                while frunnin do
+                    frls = ui.RenderLoop(w, term, frls)
+                end
+                ui.PageTransition(w, loginPage, false, 1, false, term)
                 ls = true
             end
         end

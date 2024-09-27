@@ -5,13 +5,15 @@ local arc = require("arc")
 
 term.setTextColor(col.blue)
 print(arcos.version())
-term.setTextColor(col.gray)
+term.setTextColor(col.lightGray)
 arc.fetch()
 if #arc.getUpdatable() > 0 then
-    write(#arc.getUpdatable() .. " updates are availabe. Use ")
+    local f = #arc.getUpdatable() > 0
+    print()
+    write(#arc.getUpdatable() .. " " .. f == 1 and "update is" or "updates are" .. " availabe. Use ")
     term.setTextColor(col.magenta)
     write("arc update")
-    term.setTextColor(col.gray)
+    term.setTextColor(col.lightGray)
     print(" to update.")
 end
 local secRisks = {}
