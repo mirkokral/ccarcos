@@ -375,7 +375,7 @@ local function Button(b)
     local config = { col = UItheme.buttonBg, textCol = UItheme.buttonFg }
     for i, v in pairs(b) do
         config[i] = v
-    end
+    end 
     local o = Label(config)
     o.onEvent = function(e)
         local rt = false
@@ -387,6 +387,7 @@ local function Button(b)
         end
         return rt
     end
+    o.callback = b.callBack
     return o
 end
 local function Align(x, y, widgettoalign, alignment, xw, xh)

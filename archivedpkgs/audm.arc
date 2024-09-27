@@ -93,8 +93,8 @@ loginPage = {
                     },
                     ui.Button{
                         label = " OK ",
-                        x = w-1-4,
-                        y = h-2,
+                        x = w-4,
+                        y = h-1,
                         callBack = function ()
                             frunnin = false
                             return true
@@ -128,18 +128,18 @@ while running do
         ls = ui.RenderLoop(uiSelPage, term, ls)
     else
         local e
-        ls, e = ui.RenderLoop(loginPage, term, ls)
-        if e[1] == "key" and (e[2] == require("keys").enter or e[2] == require("keys").tab) and loginPage[2].focus then
-            loginPage[2].focus = false
-            loginPage[4].focus = true
-            ls = true
-        end
+        ls, e = ui.RenderLoop(loginPage, term, ls)      
         if e[1] == "key" and e[2] == require("keys").tab and loginPage[4].focus then
             loginPage[2].focus = false
             loginPage[4].focus = false
             if loginPage[5].callback() then
                 ls = true
             end
+        end
+        if e[1] == "key" and (e[2] == require("keys").enter or e[2] == require("keys").tab) and loginPage[2].focus then
+            loginPage[2].focus = false
+            loginPage[4].focus = true
+            ls = true
         end
     end
 end

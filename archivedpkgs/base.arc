@@ -20,41 +20,41 @@
 |system/apis/rd.lua|70467|
 |system/apis/tutils.lua|71471|
 |system/apis/ui.lua|72613|
-|system/apis/window.lua|93819|
-|system/apis/keys.lua|108908|
-|system/apis/cellui.lua|108928|
-|services/arcfix.lua|252802|
-|services/elevator.lua|252887|
-|services/elevatorSrv.lua|255205|
-|services/oobe.lua|258261|
-|services/pms.lua|264204|
-|services/shell.lua|267955|
-|services/enabled/9 arcfix|267985|
-|services/enabled/login|267998|
-|data/PRIVACY.txt|268008|
-|config/aboot|268897|
-|config/arcrepo|269057|
-|config/arcshell|269074|
-|config/hostname|269126|
-|config/passwd|269131|
-|apps/adduser.lua|269381|
-|apps/arc.lua|269895|
-|apps/cat.lua|272941|
-|apps/cd.lua|273217|
-|apps/cp.lua|273546|
-|apps/init.lua|273815|
-|apps/kmsg.lua|276887|
-|apps/ls.lua|276936|
-|apps/mkdir.lua|277609|
-|apps/mv.lua|277755|
-|apps/rm.lua|278024|
-|apps/rmuser.lua|278206|
-|apps/shell.lua|278610|
-|apps/uitest.lua|282419|
-|apps/clear.lua|287796|
-|apps/shutdown.lua|287832|
-|apps/reboot.lua|287848|
-|apps/celluitest.lua|287862|
+|system/apis/window.lua|93848|
+|system/apis/keys.lua|108937|
+|system/apis/cellui.lua|108957|
+|services/arcfix.lua|252831|
+|services/elevator.lua|252916|
+|services/elevatorSrv.lua|255234|
+|services/oobe.lua|258290|
+|services/pms.lua|264233|
+|services/shell.lua|267984|
+|services/enabled/9 arcfix|268014|
+|services/enabled/login|268027|
+|data/PRIVACY.txt|268037|
+|config/aboot|268926|
+|config/arcrepo|269086|
+|config/arcshell|269103|
+|config/hostname|269155|
+|config/passwd|269160|
+|apps/adduser.lua|269410|
+|apps/arc.lua|269924|
+|apps/cat.lua|272970|
+|apps/cd.lua|273246|
+|apps/cp.lua|273575|
+|apps/init.lua|273844|
+|apps/kmsg.lua|276916|
+|apps/ls.lua|276965|
+|apps/mkdir.lua|277638|
+|apps/mv.lua|277784|
+|apps/rm.lua|278053|
+|apps/rmuser.lua|278235|
+|apps/shell.lua|278639|
+|apps/uitest.lua|282448|
+|apps/clear.lua|287825|
+|apps/shutdown.lua|287861|
+|apps/reboot.lua|287877|
+|apps/celluitest.lua|287891|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -1135,7 +1135,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 529"
+        return "arckernel 533"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -2758,7 +2758,7 @@ local function Button(b)
     local config = { col = UItheme.buttonBg, textCol = UItheme.buttonFg }
     for i, v in pairs(b) do
         config[i] = v
-    end
+    end 
     local o = Label(config)
     o.onEvent = function(e)
         local rt = false
@@ -2770,6 +2770,7 @@ local function Button(b)
         end
         return rt
     end
+    o.callback = b.callBack
     return o
 end
 local function Align(x, y, widgettoalign, alignment, xw, xh)

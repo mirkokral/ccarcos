@@ -589,7 +589,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 529"
+        return "arckernel 533"
     end
 }
 local f, err = files.open("/config/passwd", "r")

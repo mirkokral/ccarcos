@@ -1,12 +1,12 @@
 #!/bin/bash 
 
-installPackages=("craft" "rednet" "brainfuck")
+installPackages=("craft" "rednet" "brainfuck" "audm")
 
 bash fullbuild.sh
 rm -rf ~/.local/share/craftos-pc/computer/120/
 mkdir ~/.local/share/craftos-pc/computer/120
 cp build/* ~/.local/share/craftos-pc/computer/120/ -r
-echo "o shell.lua" > ~/.local/share/craftos-pc/computer/120/services/enabled/login
+echo "o audm.lua" > ~/.local/share/craftos-pc/computer/120/services/enabled/login
 mkdir ~/.local/share/craftos-pc/computer/120/config/arc
 touch ~/.local/share/craftos-pc/computer/120/config/arc/devenv.lock
 echo '{"theme": {"fg": "white","bg": "black"},"skipPrompt": true,"defargs": "--printLog","autoUpdate": false}' > ~/.local/share/craftos-pc/computer/120/config/aboot

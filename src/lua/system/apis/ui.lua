@@ -503,7 +503,8 @@ local function Button(b)
     local config = { col = UItheme.buttonBg, textCol = UItheme.buttonFg }
     for i, v in pairs(b) do
         config[i] = v
-    end
+    end 
+    ---@type Button
     local o = Label(config)
     o.onEvent = function(e)
         local rt = false
@@ -515,6 +516,7 @@ local function Button(b)
         end
         return rt
     end
+    o.callback = b.callBack
     ---@diagnostic disable-next-line: return-type-mismatch
     return o
 end
