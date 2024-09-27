@@ -13,48 +13,48 @@
 |system/bootloader.lua|14980|
 |system/rel|15929|
 |system/krnl.lua|15935|
-|system/apis/arc.lua|37578|
-|system/apis/col.lua|50093|
-|system/apis/files.lua|54217|
-|system/apis/hashing.lua|65829|
-|system/apis/rd.lua|70464|
-|system/apis/tutils.lua|71468|
-|system/apis/ui.lua|72610|
-|system/apis/window.lua|93816|
-|system/apis/keys.lua|108905|
-|system/apis/cellui.lua|108925|
-|services/arcfix.lua|252799|
-|services/elevator.lua|252884|
-|services/elevatorSrv.lua|255202|
-|services/oobe.lua|258258|
-|services/pms.lua|264201|
-|services/shell.lua|267952|
-|services/enabled/9 arcfix|267982|
-|services/enabled/login|267995|
-|data/PRIVACY.txt|268005|
-|config/aboot|268894|
-|config/arcrepo|269054|
-|config/arcshell|269071|
-|config/hostname|269123|
-|config/passwd|269128|
-|apps/adduser.lua|269378|
-|apps/arc.lua|269892|
-|apps/cat.lua|272938|
-|apps/cd.lua|273214|
-|apps/cp.lua|273543|
-|apps/init.lua|273812|
-|apps/kmsg.lua|276884|
-|apps/ls.lua|276933|
-|apps/mkdir.lua|277606|
-|apps/mv.lua|277752|
-|apps/rm.lua|278021|
-|apps/rmuser.lua|278203|
-|apps/shell.lua|278607|
-|apps/uitest.lua|282416|
-|apps/clear.lua|287793|
-|apps/shutdown.lua|287829|
-|apps/reboot.lua|287845|
-|apps/celluitest.lua|287859|
+|system/apis/arc.lua|37581|
+|system/apis/col.lua|50096|
+|system/apis/files.lua|54220|
+|system/apis/hashing.lua|65832|
+|system/apis/rd.lua|70467|
+|system/apis/tutils.lua|71471|
+|system/apis/ui.lua|72613|
+|system/apis/window.lua|93819|
+|system/apis/keys.lua|108908|
+|system/apis/cellui.lua|108928|
+|services/arcfix.lua|252802|
+|services/elevator.lua|252887|
+|services/elevatorSrv.lua|255205|
+|services/oobe.lua|258261|
+|services/pms.lua|264204|
+|services/shell.lua|267955|
+|services/enabled/9 arcfix|267985|
+|services/enabled/login|267998|
+|data/PRIVACY.txt|268008|
+|config/aboot|268897|
+|config/arcrepo|269057|
+|config/arcshell|269074|
+|config/hostname|269126|
+|config/passwd|269131|
+|apps/adduser.lua|269381|
+|apps/arc.lua|269895|
+|apps/cat.lua|272941|
+|apps/cd.lua|273217|
+|apps/cp.lua|273546|
+|apps/init.lua|273815|
+|apps/kmsg.lua|276887|
+|apps/ls.lua|276936|
+|apps/mkdir.lua|277609|
+|apps/mv.lua|277755|
+|apps/rm.lua|278024|
+|apps/rmuser.lua|278206|
+|apps/shell.lua|278610|
+|apps/uitest.lua|282419|
+|apps/clear.lua|287796|
+|apps/shutdown.lua|287832|
+|apps/reboot.lua|287848|
+|apps/celluitest.lua|287862|
 --ENDTABLE
 if arcos then return end
 term.clear()
@@ -1135,7 +1135,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 527"
+        return "arckernel 529"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -1197,7 +1197,7 @@ while kpError == nil do
                         table.remove(tasks, index)
                     end
                     if sc[1] == "syscall" then
-                        table.insert(value.tQueue, syscall({table.unpack(sc, 2, #sc)}))
+                        table.insert(value.tQueue, 1, syscall({table.unpack(sc, 2, #sc)}))
                         __LEGACY.os.queueEvent("syscall_success")
                     end
                     value["env"] = _G.environ

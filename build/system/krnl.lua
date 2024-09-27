@@ -589,7 +589,7 @@ _G.arcos.deleteUser = function (user)
 end
 _G.kernel = {
     uname = function ()
-        return "arckernel 527"
+        return "arckernel 529"
     end
 }
 local f, err = files.open("/config/passwd", "r")
@@ -651,7 +651,7 @@ while kpError == nil do
                         table.remove(tasks, index)
                     end
                     if sc[1] == "syscall" then
-                        table.insert(value.tQueue, syscall({table.unpack(sc, 2, #sc)}))
+                        table.insert(value.tQueue, 1, syscall({table.unpack(sc, 2, #sc)}))
                         __LEGACY.os.queueEvent("syscall_success")
                     end
                     value["env"] = _G.environ

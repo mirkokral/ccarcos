@@ -370,6 +370,14 @@ function installPackageS1(tpkg)
       table.insert(uninstallIndexLines, "f>" .. v[1])
     end
   end
+  local f, e = fs.open("/config/arc/" .. tpkg .. ".uninstallIndex", "w")
+  if f then
+    f.write(table.concat(uninstallIndexLines, "\n"))
+    f.close()
+  else
+    print(e)
+    sleep(5)
+  end
 
 end
 

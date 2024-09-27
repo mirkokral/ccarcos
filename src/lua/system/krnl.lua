@@ -893,7 +893,7 @@ while kpError == nil do
                     end
                     -- print(require("tutils").s(sc[1]))
                     if sc[1] == "syscall" then
-                        table.insert(value.tQueue, syscall({table.unpack(sc, 2, #sc)}))
+                        table.insert(value.tQueue, 1, syscall({table.unpack(sc, 2, #sc)}))
                         __LEGACY.os.queueEvent("syscall_success")
                     end
                     value["env"] = _G.environ

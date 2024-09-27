@@ -129,12 +129,12 @@ while running do
     else
         local e
         ls, e = ui.RenderLoop(loginPage, term, ls)
-        if e[1] == "key" and (e[2] == 258 or e[2] == 257) and loginPage[2].focus then
+        if e[1] == "key" and (e[2] == require("keys").enter or e[2] == require("keys").tab) and loginPage[2].focus then
             loginPage[2].focus = false
             loginPage[4].focus = true
             ls = true
         end
-        if e[1] == "key" and e[2] == 257 and loginPage[4].focus then
+        if e[1] == "key" and e[2] == require("keys").tab and loginPage[4].focus then
             loginPage[2].focus = false
             loginPage[4].focus = false
             if loginPage[5].callback() then
