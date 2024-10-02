@@ -171,9 +171,12 @@ local function uninstall(package, rootdir)
         ::continue::
     end
     for value, hash in pairs(toDelete) do
-        
+        if hash == "DIRECTORY" and #require("files").list(value) > 0 then
+            goto continue
+        end
         require("files").delete(value)
         
+        ::continue::
     end
     for value, hash in pairs(toDelete) do
         if hash == "DIRECTORY" then

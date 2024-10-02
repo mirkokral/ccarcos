@@ -14,54 +14,54 @@
 |system/rel|26146|
 |system/krnl.lua|26152|
 |system/apis/arc.lua|198459|
-|system/apis/col.lua|209671|
-|system/apis/files.lua|213795|
-|system/apis/hashing.lua|223476|
-|system/apis/rd.lua|228111|
-|system/apis/tutils.lua|229024|
-|system/apis/ui.lua|232714|
-|system/apis/window.lua|253889|
-|system/apis/keys.lua|268978|
-|system/apis/arcos.lua|269024|
-|system/apis/syscall.lua|272892|
-|system/apis/devices.lua|273618|
-|system/apis/dev.lua|274630|
-|system/apis/tasking.lua|274761|
-|system/apis/cellui.lua|275254|
-|services/arcfix.lua|419175|
-|services/elevator.lua|419350|
-|services/elevatorSrv.lua|421792|
-|services/oobe.lua|425002|
-|services/pms.lua|431065|
-|services/shell.lua|434935|
-|services/enabled/9 arcfix|434996|
-|services/enabled/login|435009|
-|data/PRIVACY.txt|435019|
-|config/aboot|435908|
-|config/arcrepo|436068|
-|config/arcshell|436085|
-|config/hostname|436137|
-|config/passwd|436142|
-|apps/adduser.lua|436392|
-|apps/arc.lua|436972|
-|apps/cat.lua|440049|
-|apps/cd.lua|440325|
-|apps/cp.lua|440654|
-|apps/init.lua|440923|
-|apps/kmsg.lua|444109|
-|apps/ls.lua|444169|
-|apps/mkdir.lua|444842|
-|apps/mv.lua|444988|
-|apps/rm.lua|445257|
-|apps/rmuser.lua|445439|
-|apps/shell.lua|445909|
-|apps/uitest.lua|449507|
-|apps/clear.lua|454907|
-|apps/shutdown.lua|454943|
-|apps/reboot.lua|454970|
-|apps/celluitest.lua|454995|
-|apps/attach.lua|455153|
-|apps/detach.lua|455413|
+|system/apis/col.lua|209804|
+|system/apis/files.lua|213928|
+|system/apis/hashing.lua|223609|
+|system/apis/rd.lua|228244|
+|system/apis/tutils.lua|229157|
+|system/apis/ui.lua|232847|
+|system/apis/window.lua|254022|
+|system/apis/keys.lua|269111|
+|system/apis/arcos.lua|269157|
+|system/apis/syscall.lua|273025|
+|system/apis/devices.lua|273751|
+|system/apis/dev.lua|274763|
+|system/apis/tasking.lua|274894|
+|system/apis/cellui.lua|275387|
+|services/arcfix.lua|419308|
+|services/elevator.lua|419483|
+|services/elevatorSrv.lua|421925|
+|services/oobe.lua|425135|
+|services/pms.lua|431198|
+|services/shell.lua|435068|
+|services/enabled/9 arcfix|435129|
+|services/enabled/login|435142|
+|data/PRIVACY.txt|435152|
+|config/aboot|436041|
+|config/arcrepo|436201|
+|config/arcshell|436218|
+|config/hostname|436270|
+|config/passwd|436275|
+|apps/adduser.lua|436525|
+|apps/arc.lua|437105|
+|apps/cat.lua|440182|
+|apps/cd.lua|440458|
+|apps/cp.lua|440787|
+|apps/init.lua|441056|
+|apps/kmsg.lua|444242|
+|apps/ls.lua|444302|
+|apps/mkdir.lua|444975|
+|apps/mv.lua|445121|
+|apps/rm.lua|445390|
+|apps/rmuser.lua|445572|
+|apps/shell.lua|446042|
+|apps/uitest.lua|449640|
+|apps/clear.lua|455040|
+|apps/shutdown.lua|455076|
+|apps/reboot.lua|455103|
+|apps/celluitest.lua|455128|
+|apps/attach.lua|455286|
+|apps/detach.lua|455546|
 --ENDTABLE
 if arcos or xnarcos then return end
 local function strsplit(inputstr, sep)
@@ -6243,7 +6243,11 @@ local function uninstall(package, rootdir)
         ::continue::
     end
     for value, hash in pairs(toDelete) do
+        if hash == "DIRECTORY" and #require("files").list(value) > 0 then
+            goto continue
+        end
         require("files").delete(value)
+        ::continue::
     end
     for value, hash in pairs(toDelete) do
         if hash == "DIRECTORY" then
