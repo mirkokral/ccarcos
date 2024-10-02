@@ -5,9 +5,9 @@
 |data/craft/util|-1|
 |/index|0|
 |apis/_CEXPORTS.lua|136|
-|apps/craft.lua|468|
-|apps/edit.lua|15026|
-|data/craft/util/startup.lua|15069|
+|apps/craft.lua|405|
+|apps/edit.lua|14950|
+|data/craft/util/startup.lua|15004|
 --ENDTABLE
 d>apis
 f>apis/_CEXPORTS.lua
@@ -25,19 +25,16 @@ return {
     settings = __LEGACY.settings,
     textutils = __LEGACY.textutils,
     help = __LEGACY.help,
-    require = __LEGACY.require,
-    package = __LEGACY.package
-}local col = require("col")
+}
+local arcos = require("arcos")
+local devices = require("devices")
+local tasking = require("tasking")
+local col = require("col")
 local files = require("files")
-local _CEXPORTS = nil
 local window = require("window")
 local rednet = require("rednet")
 local rd = require("rd")
 
-
-pcall(function()
-    _CEXPORTS = require("_CEXPORTS")
-end)
 
 local craftos_env = {}
 for key, value in pairs(_G) do
@@ -176,7 +173,7 @@ craftos_env.os = {
     end,
     pullEvent = arcos.ev,
     pullEventRaw = arcos.rev,
-    sleep = sleep,
+    sleep = arcos.sleep,
     version = function() return "CraftOS 1.8 Compat on " .. arcos.version() end, 
     run = arcos.r,
     queueEvent = arcos.queue,
@@ -355,9 +352,9 @@ end
 craftos_env.paintutils = _CEXPORTS.paintutils
 craftos_env.settings = _CEXPORTS.settings
 craftos_env.textutils = _CEXPORTS.textutils
-craftos_env.help = _CEXPORTS.help
-craftos_env.require = _CEXPORTS.require
-craftos_env.package = _CEXPORTS.package
+craftos_env.help = nil
+craftos_env.require = nil
+craftos_env.package = nil
 craftos_env.window = window
 craftos_env.parallel = {
     waitForAll = function (...)
@@ -506,7 +503,7 @@ local ok, err = arcos.r(craftos_env, "/rom/programs/shell.lua", "/data/craft/uti
 if not ok then printError(err) end
 for _, v in ipairs(openedFilesToClose) do
     pcall(v.close)
-endarcos.r({}, "/apps/craft.lua", "edit", ...)shell.setDir(environ.workDir)
+endrequire("arcos").r({}, "/apps/craft.lua", "edit", ...)shell.setDir(environ.workDir)
 -- parentShell = nil
 shell.run("/rom/startup.lua")
 term.setBackgroundColor(colors.black)

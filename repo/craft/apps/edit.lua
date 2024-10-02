@@ -1,1 +1,1 @@
-arcos.r({}, "/apps/craft.lua", "edit", ...)
+require("arcos").r({}, "/apps/craft.lua", "edit", ...)

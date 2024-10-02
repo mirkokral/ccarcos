@@ -5,37 +5,37 @@ class TerminalBackend extends Output {
     public function write(s: String) {
         for (i in 0...s.length) {
             if (s.charAt(i) == "\n") {
-                var o = Term.getCursorPos();
-                Term.setCursorPos(1, o.y);
+                var o = term.getCursorPos();
+                term.setCursorPos(1, o.y);
                 this.setCursorPosRelative(0, 1);
             } else {
-                Term.write(s.charAt(i));
+                term.write(s.charAt(i));
             }
         }
     }
     public function clear() {
-        Term.clear();
+        term.clear();
     }
     public function setFGColor(col: Color) {
-        Term.setTextColor(col.bitASC);
+        term.setTextColor(col.bitASC);
     }
     public function setBGColor(col: Color) {
-        Term.setBackgroundColor(col.bitASC);
+        term.setBackgroundColor(col.bitASC);
     }
     public function setCursorPos(x: Int, y: Int) {
-        Term.setCursorPos(x, y);
+        term.setCursorPos(x, y);
     }
     public function getCursorPos(): Vector2i {
         return Vector2i.fromCPos(Term.getCursorPos());
     }
     public function setCursorPosRelative(x: Int, y: Int) {
-        var o = Term.getCursorPos();
+        var o = term.getCursorPos();
         o.x += x;
         o.y += y;
-        Term.setCursorPos(o.x, o.y);
-        if(o.y > Term.getSize().y) {
-            Term.scroll((o.y - Term.getSize().y-2)*-1);
-            Term.setCursorPos(o.x, Term.getSize().y);
+        term.setCursorPos(o.x, o.y);
+        if(o.y > term.getSize().y) {
+            term.scroll((o.y - term.getSize().y-2)*-1);
+            term.setCursorPos(o.x, term.getSize().y);
         }
     }
     public function get_size(): Vector2i {
@@ -46,7 +46,7 @@ class TerminalBackend extends Output {
         for (color in newc) {
             this.apalette[i-1] = color;
             // Sys.println(Math.pow(2, i));
-            Term.setPaletteColor(Std.int(Math.max(Math.pow(2, i), 1)), color.red/255.0, color.green/255.0, color.blue/255.0);
+            term.setPaletteColor(Std.int(Math.max(Math.pow(2, i), 1)), color.red/255.0, color.green/255.0, color.blue/255.0);
             i++;
         };
         return this.apalette;

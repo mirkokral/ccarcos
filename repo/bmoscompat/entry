@@ -3,7 +3,7 @@
     "description": "A WIP BM-OS subsystem",
     "owner":"AdamTheDumbPerson",
     "version": "1",
-    "vId": 50,
+    "vId": 51,
     "dependencies": ["craft"],
     "isIndependable": true
 }

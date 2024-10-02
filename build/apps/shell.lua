@@ -2,23 +2,9 @@ local col = require("col")
 local files = require("files")
 local tutils = require("tutils")
 local arc = require("arc")
+local arcos = require("arcos")
 term.setTextColor(col.blue)
 print(arcos.version())
-term.setTextColor(col.lightGray)
-if arcos.getCurrentTask().user == "root" then
-    arc.fetch()
-end
-pcall(function ()
-    if #arc.getUpdatable() > 0 then
-        local f = #arc.getUpdatable() > 0
-        print()
-        write(#arc.getUpdatable() .. " " .. f == 1 and "update is" or "updates are" .. " availabe. Use ")
-        term.setTextColor(col.magenta)
-        write("arc update")
-        term.setTextColor(col.lightGray)    
-        print(" to update.")
-    end
-end)
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
     table.insert(secRisks, "The root account password has not yet been changed.")
@@ -96,7 +82,7 @@ local function run(a1, ...)
         if not ok then
             printError(err)
         else
-            print(tutils.s(err))
+            print(tutils.s(err, true))
         end
         return ok
     end
@@ -135,7 +121,7 @@ do
     write(" ")
     write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
     term.setTextColor(col.white)
-    local cmd = read(nil, history)
+    local cmd = read(nil, history) or ""
     table.insert(history, cmd)
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
     if not r then

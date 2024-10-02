@@ -13,6 +13,8 @@ f>services/audm.lua
 /apps/shell.lualocal files = require("files")
 local ui = require("ui")
 local col = require("col")
+local arcos = require("arcos")
+local tasking = require("tasking")
 if not term then error("No term") end
 local user = ""
 local we = files.ls("/config/desktops")
@@ -172,12 +174,16 @@ while running do
 end
 local user = loginPage[2].text
 tasking.createTask("s", function ()
-    local f, e = files.open("/config/desktops/" .. sel, "r")
-    if f then
-        term.clear()
-        term.setCursorPos(1, 1)
-        term.setBackgroundColor(col.black)
-        term.setTextColor(col.white)
-        arcos.r({}, f.read())
-    end
+    local ok, err = pcall(function (...)
+        local f, e = files.open("/config/desktops/" .. sel, "r")
+        if f then
+            term.clear()
+            term.setCursorPos(1, 1)
+            term.setBackgroundColor(col.black)
+            term.setTextColor(col.white)
+            local ok, err = arcos.r({}, f.read())
+            if not ok then printError(err) end
+        end
+    end)
+    if not ok then printError(err) end  
 end, 1, user, term, environ)

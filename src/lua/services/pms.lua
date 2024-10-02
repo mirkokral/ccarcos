@@ -1,6 +1,10 @@
+local arcos = require('arcos')
+local sleep = arcos.sleep
 local ui = require("ui")
 local files = require("files")
 local tutils = require("tutils")
+local devices = require("devices")
+local dev = require("dev")
 
 local currentPowerUsage = 0
 local f, e = files.open("/config/pmst", "r")

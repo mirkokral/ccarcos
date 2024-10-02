@@ -1,9 +1,8 @@
-buildCount: 583
+buildCount: 915
 compileFiles:
 - startup.lua
 - system/bootloader.lua
 - system/rel
-- system/krnl.lua
 - system/apis/arc.lua
 - system/apis/col.lua
 - system/apis/files.lua
@@ -13,6 +12,11 @@ compileFiles:
 - system/apis/ui.lua
 - system/apis/window.lua
 - system/apis/keys.lua
+- system/apis/arcos.lua
+- system/apis/syscall.lua
+- system/apis/devices.lua
+- system/apis/dev.lua
+- system/apis/tasking.lua
 - services/arcfix.lua
 - services/elevator.lua
 - services/elevatorSrv.lua

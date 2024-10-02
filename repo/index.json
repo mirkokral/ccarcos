@@ -3,8 +3,8 @@
     "friendlyName": "arcui Display Manager",
     "description": "A display manager that uses the UI library",
     "owner": "TNC\u2122 Development and Management Team",
-    "version": "24.08.20",
-    "vId": 20,
+    "version": "24.08.21",
+    "vId": 21,
     "dependencies": [],
     "isIndependable": true
   },
@@ -13,7 +13,7 @@
     "description": "A WIP BM-OS subsystem",
     "owner": "AdamTheDumbPerson",
     "version": "1",
-    "vId": 50,
+    "vId": 51,
     "dependencies": [
       "craft"
     ],
@@ -23,8 +23,8 @@
     "friendlyName": "Craft",
     "description": "A compatibility layer to run CraftOS apps",
     "owner": "TNC\u2122 Development and Management Team",
-    "version": "39",
-    "vId": 39,
+    "version": "40",
+    "vId": 40,
     "dependencies": [
       "rednet"
     ],
@@ -34,8 +34,8 @@
     "friendlyName": "Tweaks",
     "description": "A graphical application for tweaking the system configuration",
     "owner": "TNC\u2122 Development and Management Team",
-    "version": "24.08.11",
-    "vId": 11,
+    "version": "24.08.12",
+    "vId": 12,
     "dependencies": [],
     "isIndependable": true
   },
@@ -43,8 +43,8 @@
     "friendlyName": "Editor",
     "description": "A simple WIP editor.",
     "owner": "TNC\u2122 Development and Management Team",
-    "version": "24.08.6",
-    "vId": 6,
+    "version": "24.08.7",
+    "vId": 7,
     "dependencies": [],
     "isIndependable": true
   },
@@ -52,8 +52,8 @@
     "friendlyName": "RedNet",
     "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
     "owner": "TNC\u2122 Development and Management Team",
-    "version": "4",
-    "vId": 4,
+    "version": "5",
+    "vId": 5,
     "dependencies": [],
     "isIndependable": false
   },
@@ -61,8 +61,8 @@
     "friendlyName": "Test Application",
     "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
     "owner": "TNC\u2122 Development and Management Team",
-    "version": "24.08.3",
-    "vId": 3,
+    "version": "24.08.4",
+    "vId": 4,
     "dependencies": [],
     "isIndependable": true
   },
@@ -70,8 +70,8 @@
     "friendlyName": "arcos itself",
     "description": "The package that has all the arcos files",
     "owner": "arcos Development Team and contributors",
-    "version": "24.09p12b \"Sillicum\"",
-    "vId": 12,
+    "version": "24.09p13b \"Sillicum\"",
+    "vId": 13,
     "dependencies": [],
     "isIndependable": true
   },
@@ -79,8 +79,8 @@
     "friendlyName": "Brainfuck",
     "description": "Funny programming language",
     "owner": "arcos Development Team and contributors",
-    "version": "v1",
-    "vId": 1,
+    "version": "v2",
+    "vId": 2,
     "dependencies": [],
     "isIndependable": true
   }

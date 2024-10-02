@@ -3,8 +3,8 @@
 |services/enabled|-1|
 |/index|0|
 |apis/rednet.lua|105|
-|services/rednet.lua|9029|
-|services/enabled/4 rednet|9052|
+|services/rednet.lua|9097|
+|services/enabled/4 rednet|9120|
 --ENDTABLE
 d>apis
 f>apis/rednet.lua
@@ -12,6 +12,10 @@ d>services
 f>services/rednet.lua
 d>services/enabled
 f>services/enabled/4 rednet
+local arcos = require("arcos")
+local devices = require("devices")
+
+
 CHANNEL_BROADCAST = 65535
 CHANNEL_REPEAT = 65535
 MAX_ID_CHANNELS= 65530

@@ -10,544 +10,306 @@
 |services/enabled|-1|
 |config/apps|-1|
 |/startup.lua|0|
-|system/bootloader.lua|15020|
-|system/rel|15969|
-|system/krnl.lua|15975|
-|system/apis/arc.lua|58194|
-|system/apis/col.lua|70709|
-|system/apis/files.lua|74833|
-|system/apis/hashing.lua|86445|
-|system/apis/rd.lua|91080|
-|system/apis/tutils.lua|92084|
-|system/apis/ui.lua|93226|
-|system/apis/window.lua|114461|
-|system/apis/keys.lua|129550|
-|system/apis/cellui.lua|129570|
-|services/arcfix.lua|273444|
-|services/elevator.lua|273588|
-|services/elevatorSrv.lua|275906|
-|services/oobe.lua|278962|
-|services/pms.lua|284905|
-|services/shell.lua|288656|
-|services/enabled/9 arcfix|288686|
-|services/enabled/login|288699|
-|data/PRIVACY.txt|288709|
-|config/aboot|289598|
-|config/arcrepo|289758|
-|config/arcshell|289775|
-|config/hostname|289827|
-|config/passwd|289832|
-|apps/adduser.lua|290082|
-|apps/arc.lua|290596|
-|apps/cat.lua|293642|
-|apps/cd.lua|293918|
-|apps/cp.lua|294247|
-|apps/init.lua|294516|
-|apps/kmsg.lua|297594|
-|apps/ls.lua|297643|
-|apps/mkdir.lua|298316|
-|apps/mv.lua|298462|
-|apps/rm.lua|298731|
-|apps/rmuser.lua|298913|
-|apps/shell.lua|299317|
-|apps/uitest.lua|303343|
-|apps/clear.lua|308716|
-|apps/shutdown.lua|308752|
-|apps/reboot.lua|308768|
-|apps/celluitest.lua|308782|
-|apps/attach.lua|308940|
-|apps/detach.lua|309200|
+|system/bootloader.lua|25210|
+|system/rel|26146|
+|system/krnl.lua|26152|
+|system/apis/arc.lua|198459|
+|system/apis/col.lua|209671|
+|system/apis/files.lua|213795|
+|system/apis/hashing.lua|223476|
+|system/apis/rd.lua|228111|
+|system/apis/tutils.lua|229024|
+|system/apis/ui.lua|232714|
+|system/apis/window.lua|253889|
+|system/apis/keys.lua|268978|
+|system/apis/arcos.lua|269024|
+|system/apis/syscall.lua|272892|
+|system/apis/devices.lua|273618|
+|system/apis/dev.lua|274630|
+|system/apis/tasking.lua|274761|
+|system/apis/cellui.lua|275254|
+|services/arcfix.lua|419175|
+|services/elevator.lua|419350|
+|services/elevatorSrv.lua|421792|
+|services/oobe.lua|425002|
+|services/pms.lua|431065|
+|services/shell.lua|434935|
+|services/enabled/9 arcfix|434996|
+|services/enabled/login|435009|
+|data/PRIVACY.txt|435019|
+|config/aboot|435908|
+|config/arcrepo|436068|
+|config/arcshell|436085|
+|config/hostname|436137|
+|config/passwd|436142|
+|apps/adduser.lua|436392|
+|apps/arc.lua|436972|
+|apps/cat.lua|440049|
+|apps/cd.lua|440325|
+|apps/cp.lua|440654|
+|apps/init.lua|440923|
+|apps/kmsg.lua|444109|
+|apps/ls.lua|444169|
+|apps/mkdir.lua|444842|
+|apps/mv.lua|444988|
+|apps/rm.lua|445257|
+|apps/rmuser.lua|445439|
+|apps/shell.lua|445909|
+|apps/uitest.lua|449507|
+|apps/clear.lua|454907|
+|apps/shutdown.lua|454943|
+|apps/reboot.lua|454970|
+|apps/celluitest.lua|454995|
+|apps/attach.lua|455153|
+|apps/detach.lua|455413|
 --ENDTABLE
-if arcos then return end
-term.clear()
-local UIthemedefs = {
-}
-UIthemedefs[colors.white] = { 236, 239, 244 }
-UIthemedefs[colors.orange] = { 0, 0, 0 }
-UIthemedefs[colors.magenta] = { 180, 142, 173 }
-UIthemedefs[colors.lightBlue] = { 0, 0, 0 }
-UIthemedefs[colors.yellow] = { 235, 203, 139 }
-UIthemedefs[colors.lime] = { 163, 190, 140 }
-UIthemedefs[colors.pink] = { 0, 0, 0 }
-UIthemedefs[colors.gray] = { 76, 86, 106 }
-UIthemedefs[colors.lightGray] = { 146, 154, 170 }
-UIthemedefs[colors.cyan] = { 136, 192, 208 }
-UIthemedefs[colors.purple] = { 0, 0, 0 }
-UIthemedefs[colors.blue] = { 129, 161, 193 }
-UIthemedefs[colors.brown] = { 0, 0, 0 }
-UIthemedefs[colors.green] = { 163, 190, 140 }
-UIthemedefs[colors.red] = { 191, 97, 106 }
-UIthemedefs[colors.black] = { 59, 66, 82 }
-for index, value in pairs(UIthemedefs) do
-  term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
-end
-function _G.utd() end
-local live = ({ ... })[1] == "live"
-if not live then
-  local configFile, err = fs.open("/config/aboot", "r")
-  if not configFile then configFile = { autoUpdate = true } end -- Fallback
-  local f = textutils.unserialiseJSON(configFile.readAll())
-  configFile.close()
-end
-if live then
-  if not fs.exists("/config/settings") then
-    local f, e = fs.open("/config/settings", "w")
-    local f2, e2 = fs.open("/.settings", "r")
-    if f and f2 then
-      f.write(f2.readAll())
+if arcos or xnarcos then return end
+local function strsplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
     end
-    if f then
-      f.close()
+    if inputstr == nil then 
+        return {""}
     end
-    if f2 then
-      f2.close()
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
     end
-  end
-else
-  if not fs.exists("/.arcliveenv/config/settings") then
-    local f, e = fs.open("/.arcliveenv/config/settings", "w")
-    local f2, e2 = fs.open("/.settings", "r")
-    if f and f2 then
-      f.write(f2.readAll())
+    if t == {} then
+        t = { inputstr }
     end
-    if f then
-      f.close()
+    local nt = {}
+    for i, v in ipairs(t) do
+        if v ~= "" then
+            table.insert(nt, v)
+        end
     end
-    if f2 then
-      f2.close()
+    if nt == {} then
+        nt = { "" }
     end
-  end
+    return nt
 end
-function _G.strsplit(inputstr, sep)
-  if sep == nil then
-    sep = "%s"
-  end
-  local t = {}
-  for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-    table.insert(t, str)
-  end
-  return t
+local __LEGACY = {}
+for k,v in pairs(_G) do
+    __LEGACY[k] = v
 end
-local oldprr = os.pullEventRaw
-local oldpe = os.pullEvent
-local oldtr = term.redirect
-local oldtn = term.native
-local oldst = os.shutdown
-local olderr = error
-_G.__LEGACY = {}
-for key, value in pairs(_G) do
-  __LEGACY[key] = value
-end
-__LEGACY.ofs = __LEGACY.fs
-if live then
-  __LEGACY.fs = {
-    list = function(f)
-      return __LEGACY.ofs.list("/.arcliveenv/" .. f)
-    end,
-    delete = function(f)
-      return __LEGACY.ofs.delete("/.arcliveenv/" .. f)
-    end,
-    exists = function(f)
-      return __LEGACY.ofs.exists("/.arcliveenv/" .. f)
-    end,
-    makeDir = function(f)
-      return __LEGACY.ofs.makeDir("/.arcliveenv/" .. f)
-    end,
-    isDir = function(f)
-      return __LEGACY.ofs.isDir("/.arcliveenv/" .. f)
-    end,
-    move = function(f, k)
-      return __LEGACY.ofs.move("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
-    end,
-    copy = function(f, k)
-      return __LEGACY.ofs.copy("/.arcliveenv/" .. f, "/.arcliveenv/" .. f)
-    end,
-    open = function(o, m)
-      return __LEGACY.ofs.open("/.arcliveenv/" .. o, m)
-    end,
-    complete = function(path, loc, ...)
-      return __LEGACY.ofs.complete(path, "/.arcliveenv/" .. loc, ...)
-    end,
-    find = function(loc)
-      return __LEGACY.ofs.find("/.arcliveenv/" .. loc)
-    end,
-    isDriveRoot = function(path)
-      if path == "/" or path == "" then return true end
-      return __LEGACY.ofs.isDriveRoot("/.arcliveenv/" .. loc)
-    end,
-    combine = __LEGACY.ofs.combine,
-    getName = __LEGACY.ofs.getName,
-    getDir = __LEGACY.ofs.getDir,
-    getSize = function(f)
-      return __LEGACY.ofs.getSize("/.arcliveenv/" .. f)
-    end,
-    isReadOnly = function(f)
-      return __LEGACY.ofs.isReadOnly("/.arcliveenv/" .. f)
-    end,
-    getDrive = function(f)
-      return __LEGACY.ofs.getDrive("/.arcliveenv/" .. f)
-    end,
-    getFreeSpace = function(f)
-      return __LEGACY.ofs.getFreeSpace("/.arcliveenv/" .. f)
-    end,
-    getCapacity = function(f)
-      return __LEGACY.ofs.getCapacity("/.arcliveenv/" .. f)
-    end,
-    attributes = function(f)
-      return __LEGACY.ofs.attributes("/.arcliveenv/" .. f)
-    end
-  }
-end
-__LEGACY.files = __LEGACY.fs
-setmetatable(__LEGACY, {
-  __index = function(self, i)
-    if i == "_G" or i == "_ENV" then return __LEGACY end
-  end
-})
-local function fix(f, l)
-  return f
-end
-for k, v in pairs(__LEGACY) do
-  if k ~= "_G" and k ~= "_ENV" and k ~= "__LEGACY" then
-    __LEGACY[k] = fix(v, k)
-  end
-end
-local keptAPIs = { utd = true, printError = true, require = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, bit = true, ccemux = true, config = true, coroutine = true, debug = true, fs = true, http = true, mounter = true, os = true, periphemu = true, peripheral = true, redstone = true, rs = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
-local t = {}
-for k in pairs(_G) do if not keptAPIs[k] then table.insert(t, k) end end
-for _, k in ipairs(t) do _G[k] = nil end
-_G.http.checkURL = _G.http.checkURLAsync
-_G.http.websocket = _G.http.websocketAsync
-if _G.commands then _G.commands = _G.commands.native end
-if _G.turtle then _G.turtle.native, _G.turtle.craft = nil end
-local delete = { os = { "version", "pullEventRaw", "pullEvent", "run", "loadAPI", "unloadAPI", "sleep" }, http = { "get", "post", "put", "delete", "patch", "options", "head", "trace", "listen", "checkURLAsync", "websocketAsync" }, fs = { "complete", "isDriveRoot" } }
-for k, v in pairs(delete) do for _, a in ipairs(v) do _G[k][a] = nil end end
-_G.term.redirect = function() end
-_G.error = function() end
+__LEGACY["_G"] = __LEGACY
 _G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
-  term.setCursorBlink(true)
-  local sLine
-  if type(_sDefault) == "string" then
-    sLine = _sDefault
-  else
-    sLine = ""
-  end
-  local nHistoryPos
-  local nPos, nScroll = #sLine, 0
-  if _sReplaceChar then
-    _sReplaceChar = string.sub(_sReplaceChar, 1, 1)
-  end
-  local tCompletions
-  local nCompletion
-  local function recomplete()
-    if _fnComplete and nPos == #sLine then
-      tCompletions = _fnComplete(sLine)
-      if tCompletions and #tCompletions > 0 then
-        nCompletion = 1
-      else
-        nCompletion = nil
-      end
+    term.setCursorBlink(true)
+    local sLine
+    if type(_sDefault) == "string" then
+        sLine = _sDefault
     else
-      tCompletions = nil
-      nCompletion = nil
+        sLine = ""
     end
-  end
-  local function uncomplete()
-    tCompletions = nil
-    nCompletion = nil
-  end
-  local w = term.getSize()
-  local sx = term.getCursorPos()
-  local function redraw(_bClear)
-    local cursor_pos = nPos - nScroll
-    if sx + cursor_pos >= w then
-      nScroll = sx + nPos - w
-    elseif cursor_pos < 0 then
-      nScroll = nPos
+    local nHistoryPos
+    local nPos, nScroll = #sLine, 0
+    if _sReplaceChar then
+        _sReplaceChar = string.sub(_sReplaceChar, 1, 1)
+    end
+    local tCompletions
+    local nCompletion
+    local function recomplete()
+        if _fnComplete and nPos == #sLine then
+            tCompletions = _fnComplete(sLine)
+            if tCompletions and #tCompletions > 0 then
+                nCompletion = 1
+            else
+                nCompletion = nil
+            end
+        else
+            tCompletions = nil
+            nCompletion = nil
+        end
+    end
+    local function uncomplete()
+        tCompletions = nil
+        nCompletion = nil
+    end
+    local w = term.getSize()
+    local sx = term.getCursorPos()
+    local function redraw(_bClear)
+        local cursor_pos = nPos - nScroll
+        if sx + cursor_pos >= w then
+            nScroll = sx + nPos - w
+        elseif cursor_pos < 0 then
+            nScroll = nPos
+        end
+        local _, cy = term.getCursorPos()
+        term.setCursorPos(sx, cy)
+        local sReplace = _bClear and " " or _sReplaceChar
+        if sReplace then
+            term.write(string.rep(sReplace, math.max(#sLine - nScroll, 0)))
+        else
+            term.write(string.sub(sLine, nScroll + 1))
+        end
+        if nCompletion then
+            local sCompletion = tCompletions[nCompletion]
+            local oldText, oldBg
+            if not _bClear then
+                oldText = term.getTextColor()
+                oldBg = term.getBackgroundColor()
+                term.setTextColor(__LEGACY.colors.white)
+                term.setBackgroundColor(__LEGACY.colors.gray)
+            end
+            if sReplace then
+                term.write(string.rep(sReplace, #sCompletion))
+            else
+                term.write(sCompletion)
+            end
+            if not _bClear then
+                term.setTextColor(oldText)
+                term.setBackgroundColor(oldBg)
+            end
+        end
+        term.setCursorPos(sx + nPos - nScroll, cy)
+    end
+    local function clear()
+        redraw(true)
+    end
+    recomplete()
+    redraw()
+    local function acceptCompletion()
+        if nCompletion then
+            clear()
+            local sCompletion = tCompletions[nCompletion]
+            sLine = sLine .. sCompletion
+            nPos = #sLine
+            recomplete()
+            redraw()
+        end
+    end
+    while true do
+        local sEvent, param, param1, param2 = coroutine.yield()
+        if sEvent == "char" then
+            clear()
+            sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
+            nPos = nPos + 1
+            recomplete()
+            redraw()
+        elseif sEvent == "paste" then
+            clear()
+            sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
+            nPos = nPos + #param
+            recomplete()
+            redraw()
+        elseif sEvent == "key" then
+            if param == __LEGACY.keys.enter or param == __LEGACY.keys.numPadEnter then
+                if nCompletion then
+                    clear()
+                    uncomplete()
+                    redraw()
+                end
+                break
+            elseif param == __LEGACY.keys.left then
+                if nPos > 0 then
+                    clear()
+                    nPos = nPos - 1
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.right then
+                if nPos < #sLine then
+                    clear()
+                    nPos = nPos + 1
+                    recomplete()
+                    redraw()
+                else
+                    acceptCompletion()
+                end
+            elseif param == __LEGACY.keys.up or param == __LEGACY.keys.down then
+                if nCompletion then
+                    clear()
+                    if param == __LEGACY.keys.up then
+                        nCompletion = nCompletion - 1
+                        if nCompletion < 1 then
+                            nCompletion = #tCompletions
+                        end
+                    elseif param == __LEGACY.keys.down then
+                        nCompletion = nCompletion + 1
+                        if nCompletion > #tCompletions then
+                            nCompletion = 1
+                        end
+                    end
+                    redraw()
+                elseif _tHistory then
+                    clear()
+                    if param == __LEGACY.keys.up then
+                        if nHistoryPos == nil then
+                            if #_tHistory > 0 then
+                                nHistoryPos = #_tHistory
+                            end
+                        elseif nHistoryPos > 1 then
+                            nHistoryPos = nHistoryPos - 1
+                        end
+                    else
+                        if nHistoryPos == #_tHistory then
+                            nHistoryPos = nil
+                        elseif nHistoryPos ~= nil then
+                            nHistoryPos = nHistoryPos + 1
+                        end
+                    end
+                    if nHistoryPos then
+                        sLine = _tHistory[nHistoryPos]
+                        nPos, nScroll = #sLine, 0
+                    else
+                        sLine = ""
+                        nPos, nScroll = 0, 0
+                    end
+                    uncomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.backspace then
+                if nPos > 0 then
+                    clear()
+                    sLine = string.sub(sLine, 1, nPos - 1) .. string.sub(sLine, nPos + 1)
+                    nPos = nPos - 1
+                    if nScroll > 0 then nScroll = nScroll - 1 end
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.home then
+                if nPos > 0 then
+                    clear()
+                    nPos = 0
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.delete then
+                if nPos < #sLine then
+                    clear()
+                    sLine = string.sub(sLine, 1, nPos) .. string.sub(sLine, nPos + 2)
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys["end"] then
+                if nPos < #sLine then
+                    clear()
+                    nPos = #sLine
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.tab then
+                acceptCompletion()
+            end
+        elseif sEvent == "mouse_click" or sEvent == "mouse_drag" and param == 1 then
+            local _, cy = term.getCursorPos()
+            if param1 >= sx and param1 <= w and param2 == cy then
+                nPos = math.min(math.max(nScroll + param1 - sx, 0), #sLine)
+                redraw()
+            end
+        elseif sEvent == "term_resize" then
+            w = term.getSize()
+            redraw()
+        end
     end
     local _, cy = term.getCursorPos()
-    term.setCursorPos(sx, cy)
-    local sReplace = _bClear and " " or _sReplaceChar
-    if sReplace then
-      term.write(string.rep(sReplace, math.max(#sLine - nScroll, 0)))
-    else
-      term.write(string.sub(sLine, nScroll + 1))
-    end
-    if nCompletion then
-      local sCompletion = tCompletions[nCompletion]
-      local oldText, oldBg
-      if not _bClear then
-        oldText = term.getTextColor()
-        oldBg = term.getBackgroundColor()
-        term.setTextColor(__LEGACY.colors.white)
-        term.setBackgroundColor(__LEGACY.colors.gray)
-      end
-      if sReplace then
-        term.write(string.rep(sReplace, #sCompletion))
-      else
-        term.write(sCompletion)
-      end
-      if not _bClear then
-        term.setTextColor(oldText)
-        term.setBackgroundColor(oldBg)
-      end
-    end
-    term.setCursorPos(sx + nPos - nScroll, cy)
-  end
-  local function clear()
-    redraw(true)
-  end
-  recomplete()
-  redraw()
-  local function acceptCompletion()
-    if nCompletion then
-      clear()
-      local sCompletion = tCompletions[nCompletion]
-      sLine = sLine .. sCompletion
-      nPos = #sLine
-      recomplete()
-      redraw()
-    end
-  end
-  while true do
-    local sEvent, param, param1, param2 = coroutine.yield()
-    if sEvent == "char" then
-      clear()
-      sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
-      nPos = nPos + 1
-      recomplete()
-      redraw()
-    elseif sEvent == "paste" then
-      clear()
-      sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
-      nPos = nPos + #param
-      recomplete()
-      redraw()
-    elseif sEvent == "key" then
-      if param == __LEGACY.keys.enter or param == __LEGACY.keys.numPadEnter then
-        if nCompletion then
-          clear()
-          uncomplete()
-          redraw()
-        end
-        break
-      elseif param == __LEGACY.keys.left then
-        if nPos > 0 then
-          clear()
-          nPos = nPos - 1
-          recomplete()
-          redraw()
-        end
-      elseif param == __LEGACY.keys.right then
-        if nPos < #sLine then
-          clear()
-          nPos = nPos + 1
-          recomplete()
-          redraw()
-        else
-          acceptCompletion()
-        end
-      elseif param == __LEGACY.keys.up or param == __LEGACY.keys.down then
-        if nCompletion then
-          clear()
-          if param == __LEGACY.keys.up then
-            nCompletion = nCompletion - 1
-            if nCompletion < 1 then
-              nCompletion = #tCompletions
-            end
-          elseif param == __LEGACY.keys.down then
-            nCompletion = nCompletion + 1
-            if nCompletion > #tCompletions then
-              nCompletion = 1
-            end
-          end
-          redraw()
-        elseif _tHistory then
-          clear()
-          if param == __LEGACY.keys.up then
-            if nHistoryPos == nil then
-              if #_tHistory > 0 then
-                nHistoryPos = #_tHistory
-              end
-            elseif nHistoryPos > 1 then
-              nHistoryPos = nHistoryPos - 1
-            end
-          else
-            if nHistoryPos == #_tHistory then
-              nHistoryPos = nil
-            elseif nHistoryPos ~= nil then
-              nHistoryPos = nHistoryPos + 1
-            end
-          end
-          if nHistoryPos then
-            sLine = _tHistory[nHistoryPos]
-            nPos, nScroll = #sLine, 0
-          else
-            sLine = ""
-            nPos, nScroll = 0, 0
-          end
-          uncomplete()
-          redraw()
-        end
-      elseif param == __LEGACY.keys.backspace then
-        if nPos > 0 then
-          clear()
-          sLine = string.sub(sLine, 1, nPos - 1) .. string.sub(sLine, nPos + 1)
-          nPos = nPos - 1
-          if nScroll > 0 then nScroll = nScroll - 1 end
-          recomplete()
-          redraw()
-        end
-      elseif param == __LEGACY.keys.home then
-        if nPos > 0 then
-          clear()
-          nPos = 0
-          recomplete()
-          redraw()
-        end
-      elseif param == __LEGACY.keys.delete then
-        if nPos < #sLine then
-          clear()
-          sLine = string.sub(sLine, 1, nPos) .. string.sub(sLine, nPos + 2)
-          recomplete()
-          redraw()
-        end
-      elseif param == __LEGACY.keys["end"] then
-        if nPos < #sLine then
-          clear()
-          nPos = #sLine
-          recomplete()
-          redraw()
-        end
-      elseif param == __LEGACY.keys.tab then
-        acceptCompletion()
-      end
-    elseif sEvent == "mouse_click" or sEvent == "mouse_drag" and param == 1 then
-      local _, cy = term.getCursorPos()
-      if param1 >= sx and param1 <= w and param2 == cy then
-        nPos = math.min(math.max(nScroll + param1 - sx, 0), #sLine)
-        redraw()
-      end
-    elseif sEvent == "term_resize" then
-      w = term.getSize()
-      redraw()
-    end
-  end
-  local _, cy = term.getCursorPos()
-  term.setCursorBlink(false)
-  term.setCursorPos(0, cy)
-  write("\n")
-  return sLine
-end
-local function split(inputstr, sep)
-  if sep == nil then
-    sep = "%s"
-  end
-  local t = {}
-  for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-    table.insert(t, str)
-  end
-  return t
-end
-_G.write = function(...)
-  local args = table.pack(...)
-  if #args < 1 then return end
-  local ox, oy = term.getCursorPos()
-  local sx, sy = term.getSize()
-  local wordsToPrint = {}
-  for i = 1, args.n do
-    local word = tostring(args[i])
-    for i = 0, #word do
-      ox, oy = term.getCursorPos()
-      local char = string.sub(word, i, i)
-      if char == "\n" then
-        term.setCursorPos(1, oy + 1)
-        if table.pack(term.getCursorPos())[2] > sy then
-          term.scroll(1)
-          term.setCursorPos(1, sy)
-        end
-      else
-        term.write(char)
-      end
-      ox, oy = term.getCursorPos()
-      if table.pack(term.getCursorPos())[1] > sx then
-        term.setCursorPos(1, oy + 1)
-        if table.pack(term.getCursorPos())[2] > sy then
-          term.scroll(1)
-          term.setCursorPos(1, sy)
-        end
-      end
-    end
-  end
-end
-_G.print = function(...)
-  if #{ ... } == 0 or ({ ... })[1] == nil then
+    term.setCursorBlink(false)
+    term.setCursorPos(0, cy)
     write("\n")
-    return
-  end
-  write(..., "\n")
+    return sLine
 end
-setfenv(utd, __LEGACY)
-function _G.term.native()
-  _G.error = olderr
-  _G.term.native = oldtn
-  _G.os.pullEventRaw = oldprr
-  _G.os.pullEvent = oldpe
-  print("Successful escape")
-  term.clear()
-  term.setCursorPos(1, 1)
-  term.setTextColor(__LEGACY.colors.white)
-  function os.shutdown()
-    _G.term.redirect = oldtr
-    os.shutdown = oldst
-    local oldug = {}
-    for k, v in pairs(_G) do
-      oldug[k] = v
-    end
-    local keptAPIs = { utd = true, printError = true, require = true, print = true, write = true, read = true, keys = true, __LEGACY = true, bit32 = true, periphemu=true, bit = true, coroutine = true, debug = true, term = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
-    local t = {}
-    for k in pairs(oldug) do if not keptAPIs[k] then table.insert(t, k) end end
-    for _, k in ipairs(t) do oldug[k] = nil end
-    oldug["_G"] = oldug
-    local f = __LEGACY.files.open("/system/bootloader.lua", "r")
-    local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
-    print(err)
-    while true do
-      coroutine.yield()
-    end
-  end
-end
-coroutine.yield()
-function mysplit(inputstr, sep)
-    if sep == nil then
-      sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-      table.insert(t, str)
-    end
-    return t
-  end
-function main()
-    local cf = __LEGACY.files.open("/config/aboot", "r")
-    local config = __LEGACY.textutils.unserialiseJSON(cf.readAll())
-    cf.close()
-    __LEGACY.term.setTextColor(__LEGACY.colors[config["theme"]["fg"]])
-    __LEGACY.term.setBackgroundColor(__LEGACY.colors[config["theme"]["bg"]])
-    __LEGACY.term.clear()
-    __LEGACY.term.setCursorPos(1, 1)
-    local args = config["defargs"] or ""
-    if not config["skipPrompt"] then
-        write("krnl: ")
-        args = read()
-    end
-    local f = __LEGACY.files.open("/system/krnl.lua", "r")
-    local fn, e = load(f.readAll(), "/system/krnl.lua", nil, setmetatable({}, {__index = _G}))
-    if not fn then error(e) end
-    fn(table.unpack(mysplit(args, " ")))
-end
-main()
-brokenlocal json = (function()
+_G.json = (function()
     local json = { _version = "0.1.2" }
     local encode
     local escape_char_map = {
@@ -829,75 +591,52 @@ brokenlocal json = (function()
     end
     return json
 end)()
-local args = { ... }
-local kpError = nil
-local currentTask
-local cPid
-local kernelLogBuffer = "Start\n"
-local tasks = {}
-local permmatrix
-local config = {
-    forceNice = nil,
-    init = "/apps/init.lua",
-    printLogToConsole = false,
-    printLogToFile = false,
-    telemetry = true,
-    quiet = false
-}
-local function strsplit(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    if t == {} then
-        t = { inputstr }
-    end
-    local nt = {}
-    for i, v in ipairs(t) do
-        if v ~= "" then
-            table.insert(nt, v)
-        end
-    end
-    if t == {} then
-        t = { "" }
-    end
-    return nt
-end
-local KDriversImpl = {
+_G.KDriversImpl = {
     files = {
         open = function(path, mode)
-            return __LEGACY.files.open(path, mode)
+            return fs.open(path, mode)
         end,
         list = function(path)
-            return __LEGACY.files.list(path)
+            return fs.list(path)
         end,
         type = function(path)
-            return __LEGACY.files.isDir(path) and "directory" or "file"
+            return fs.isDir(path) and "directory" or "file"
         end,
         exists = function(path)
-            return __LEGACY.files.exists(path)
+            return fs.exists(path)
         end,
         copy = function(src, dest)
-            return __LEGACY.files.copy(src, dest)
+            return fs.copy(src, dest)
         end,
         unlink = function(path)
-            return __LEGACY.files.delete(path)
+            return fs.delete(path)
         end,
         mkDir = function(path)
-            return __LEGACY.files.makeDir(path)
+            return fs.makeDir(path)
         end,
-        getPermissions = function(path, user)
+        attributes = function(path)
+            local attr = fs.attributes(path)
+            attr.capacity = fs.getCapacity(path)
+            attr.driveRoot = fs.isDriveRoot(path)
+            return attr
+        end,
+        getPermissions = function(file, user)
+            if strsplit(file, "/") == {file} then
+                return {
+                    read = true,
+                    write = true,
+                    listed = true
+                }
+            end
             local read = true
             local write = true
             local listed = true
-            if user == nil then user = xnarcos.getCurrentTask().user end
-            if __LEGACY.files.isReadOnly(file) then
+            if fs.isReadOnly(file) then
                 write = false
             end
-            if strsplit(file, "/")[#strsplit(file, "/")]:sub(1, 1) == "$" then -- Metadata files
+            local fpn = strsplit(file, "/")
+            if #fpn == 0 then fpn = {""} end
+            if fpn[#fpn]:sub(1, 1) == "$" then -- Metadata files
                 return {
                     read = false,
                     write = false,
@@ -906,15 +645,15 @@ local KDriversImpl = {
             end
             local disallowedfiles = { "startup.lua", "startup" }
             for index, value in ipairs(disallowedfiles) do
-                if strsplit(file, "/")[1] == value then -- Metadata files
+                if fpn[1] == value then -- Metadata files
                     return {
-                        read = false,
-                        write = false,
+                        read = user == "root",
+                        write = user == "root",
                         listed = false,
                     }
                 end
             end
-            if strsplit(file, "/")[#strsplit(file, "/")]:sub(1, 1) == "." then
+            if fpn[#fpn]:sub(1, 1) == "." then
                 listed = false
             end
             return {
@@ -923,509 +662,396 @@ local KDriversImpl = {
                 listed = listed,
             }
         end
-    }
-}
-_G.syscall = {
-    run = function(syscall, ...)
-        return table.unpack(table.pack(coroutine.yield("syscall", syscall, ...)), 2)
-    end
-}
-local logfile = nil
-if config.printLogToFile then
-    logfile, error = KDriversImpl.files.open("/system/log.txt", "w")
-    if not logfile then
-        print(error)
-        while true do coroutine.yield() end
-    end
-end
-term.redirect(term.native())
-local oldw = _G.write
-_G.write = function(...)
-    local isNextSetC = false
-    local nextCommand = ""
-    local args = { ... }
-    for i, vn in ipairs(args) do
-        if i > 1 then term.write(" ") end
-        local v = tostring(vn)
-        for xi = 0, #v do
-            local char = v:sub(xi, xi)
-            if isNextSetC then
-                nextCommand = char
-                isNextSetC = false
-            elseif #nextCommand > 0 then
-                if nextCommand == "b" then
-                    isNextSetC = false
-                    local value = tonumber(char, 16)
-                    if not value then return nil end
-                    term.setBackgroundColor(2 ^ value)
-                elseif nextCommand == "f" then
-                    isNextSetC = false
-                    local value = tonumber(char, 16)
-                    if not value then return nil end
-                    term.setTextColor(2 ^ value)
-                end
-                nextCommand = ""
-            elseif char == "\011" then
-                isNextSetC = true
-            else
-                oldw(char)
-            end
-        end
-    end
-end
-_G.print = function(...)
-    write(...)
-    write("\n")
-end
-local function recursiveRemove(r)
-    for _, i in ipairs(KDriversImpl.files.list(r)) do
-        if KDriversImpl.files.type(i) == "directory" then
-            recursiveRemove(i)
-        else
-            KDriversImpl.files.unlink(i)
-        end
-    end
-end
-for _, i in ipairs(KDriversImpl.files.list("/temporary/")) do
-    recursiveRemove("/temporary/" .. i)
-end
-local users = {}
-_G.apiUtils = {
-    kernelPanic = function(err, file, line)
-        kpError = "Suspected location: " .. file .. ":" .. line .. "\n" .. "Error: " .. err
-        tasks = {}
-    end
-}
-_G.xnarcos = {
-    reboot = function()
-        syscallxe("reboot")
-    end,
-    shutdown = function()
-        syscallxe("shutdown")
-    end,
-    log = function(txt, level)
-        kernelLogBuffer = kernelLogBuffer ..
-            "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
-        if (level == 0 and config["printLogToConsole"]) or (level == 1 and not config["quiet"]) or (level == 2) then
-            print("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt)
-        end
-        if config.printLogToFile and logfile then
-            logfile.write(kernelLogBuffer)
-        end
-    end,
-    version = function()
-        if KDriversImpl.files.exists("/config/arc/devenv.lock") then
-            return "arcos development environment"
-        end
-        local f, e = KDriversImpl.files.open("/config/arc/base.meta.json", "r")
-        if not f then
-            return "invalid package metadata"
-        else
-            xnarcos.log("Loading package metadata", 1)
-            local meta = json.decode(f.readAll())
-            f.close()
-            return "arcos " .. meta.version
-        end
-    end,
-    getName = function()
-        return __LEGACY.os.getComputerLabel()
-    end,
-    setName = function(new)
-        if xnarcos.getCurrentTask().user == "root" then
-            __LEGACY.os.setComputerLabel(new)
-        end
-    end,
-    getCurrentTask = function()
-        if currentTask then
-            return {
-                pid = cPid,
-                name = currentTask["name"],
-                user = currentTask["user"],
-                nice = currentTask["nice"],
-                paused = currentTask["paused"],
-                env = currentTask["env"]
-            }
-        end
-        return {
-            pid = -1,
-            name = "kernelspace",
-            user = "root",
-            nice = 1,
-            paused = false,
-            env = {}
+    },
+    terminal = {
+        write = function(str)
+            term.write(str)
+        end,
+        clear = function()
+            term.clear()
+        end,
+        getCursorPos = function()
+            return term.getCursorPos()
+        end,
+        setCursorPos = function(x, y)
+            term.setCursorPos(x, y)
+        end,
+        getCursorBlink = function()
+            return term.getCursorBlink()
+        end,
+        setCursorBlink = function(blink)
+            term.setCursorBlink(blink)
+        end,
+        isColor = function()
+            return term.isColor()
+        end,
+        getSize = function()
+            return term.getSize()
+        end,
+        setTextColor = function(color)
+            term.setTextColor(color)
+        end,
+        getTextColor = function()
+            return term.getTextColor()
+        end,
+        setBackgroundColor = function(x)
+            return term.setBackgroundColor(x)
+        end,
+        getBackgroundColor = function()
+            return term.getBackgroundColor()
+        end,
+        setPaletteColor = function(color, r, g, b)
+            term.setPaletteColor(color, r, g, b)
+        end,
+        setPaletteColour = function(color, r, g, b)
+            term.setPaletteColor(color, r, g, b)
+        end,
+        getPaletteColor = function(color)
+            return term.getPaletteColor(color)
+        end,
+        getPaletteColour = function(color)
+            return term.getPaletteColor(color)
+        end,
+        scroll = function(n)
+            term.scroll(n)
+        end,
+        clearLine = function()
+            term.clearLine()
+        end,
+        blit = function(c, v, s)
+            term.blit(c, v, s)
+        end,
+        pMap = colors,
+        kMap = keys
+    },
+    computer = {
+        id = os.getComputerID(),
+        uptime = os.clock,
+        label = os.getComputerLabel,
+        setlabel = os.setComputerLabel,
+        time = os.time,
+        day = os.day,
+        epoch = os.epoch,
+        date = os.date,
+        power = {
+            shutdown = os.shutdown,
+            reboot = os.reboot
         }
-    end,
-    getUsers = function()
-        local f = {}
-        for index, value in ipairs(users) do
-            table.insert(f, value.name)
-        end
-        return f
-    end,
-    getKernelLogBuffer = function()
-        if not currentTask or currentTask["user"] == "root" then
-            return kernelLogBuffer
-        else
-            return nil
-        end
-    end,
-    ev = function(filter)
-        r = table.pack(coroutine.yield())
-        if r[1] == "terminate" then
-            error("Terminated")
-        end
-        if not filter or r[1] == filter then
-            return table.unpack(r)
-        else
-            return xnarcos.ev(filter)
-        end
-    end,
-    rev = function(filter)
-        r = table.pack(coroutine.yield())
-        if not filter or r[1] == filter then
-            return table.unpack(r)
-        else
-            return xnarcos.ev(filter)
-        end
-    end,
-    time = function(t)
-        return __LEGACY.os.time(t)
-    end,
-    day = function(t)
-        return __LEGACY.os.day(t)
-    end,
-    epoch = function(t)
-        return __LEGACY.os.epoch(t)
-    end,
-    date = function(format, time)
-        return __LEGACY.os.date(format, time)
-    end,
-    r = function(env, path, ...)
-        assert(type(env) == "table", "Invalid argument: env")
-        assert(type(path) == "string", "Invalid argument: path")
-        local compEnv = {}
-        for k, v in pairs(_G) do
-            compEnv[k] = v
-        end
-        for k, v in pairs(env) do
-            compEnv[k] = v
-        end
-        compEnv["apiUtils"] = nil
-        compEnv["__LEGACY"] = nil
-        compEnv["_G"] = nil
-        setmetatable(compEnv, {
-            __index = function(t, k)
-                if k == "_G" then
-                    return compEnv
+    },
+    timers = {
+        start = os.startTimer,
+        cancel = os.cancelTimer,
+        setalarm = os.setAlarm,
+        cancelalarm = os.cancelAlarm
+    },
+    workarounds = {
+        preventTooLongWithoutYielding = function(handleEvent)
+            os.queueEvent("fakeEvent")
+            local f = true
+            while f do
+                local x = { coroutine.yield() }
+                if x[1] == "fakeEvent" then
+                    f = false
+                    break
+                else
+                    handleEvent(x)
                 end
-            end,
-        })
-        local f = KDriversImpl.files.open(path, "r")
-        local compFunc, err = load(f.readAll(), path, nil, compEnv)
-        f.close()
-        if compFunc == nil then
-            return false, "Failed to load function: " .. err
-        else
-            setfenv(compFunc, compEnv)
-            local ok, err = pcall(compFunc, ...)
-            return ok, err
+            end
         end
-    end,
-    queue = function(ev, ...)
-        __LEGACY.os.queueEvent(ev, ...)
-    end,
-    clock = function() return __LEGACY.os.clock() end,
-    loadAPI = function(api)
-        error("Use require instead of loadAPI.")
-    end,
-    startTimer = function(d)
-        return __LEGACY.os.startTimer(d)
-    end,
-    cancelTimer = function(d)
-        return __LEGACY.os.cancelTimer(d)
-    end,
-    setAlarm = function(d)
-        return __LEGACY.os.setAlarm(d)
-    end,
-    cancelAlarm = function(d)
-        return __LEGACY.os.cancelAlarm(d)
-    end,
-    id = __LEGACY.os.getComputerID()
+    },
+    devc = {
+        get = function(w)
+            if w == "net" and http then
+                return {
+                    sendRequest = function(reqType, url, headers, body)
+                        local req = http.request {
+                            url = url,
+                            method = reqType,
+                            headers = headers,
+                            body = body
+                        }
+                        while true do
+                            local event, param1, param2, param3 = os.pullEvent()
+                            if event == "http_success" and param1 == url then
+                                return param2
+                            elseif event == "http_failure" and param1 == url then
+                                return nil, param2, param3
+                            end
+                        end
+                    end
+                }
+            end
+            return peripheral.wrap(w)
+        end,
+        type = function(n)
+            if n == "net" and http then
+                return "network_adapter"
+            end
+            return peripheral.getType(n)
+        end,
+        list = function()
+            local c = peripheral.getNames()
+            if http then table.insert(c, "net") end
+            return c
+        end
+    },
+    pullEvent = coroutine.yield,
 }
-_G.arcos = {
-    reboot = function()
-        coroutine.yield("syscall", "reboot")
-    end,
-    shutdown = function()
-        coroutine.yield("syscall", "shutdown")
-    end,
-    log = function(txt, level)
-        coroutine.yield("syscall", "log", txt, level)
-    end,
-    version = function()
-        return coroutine.yield("syscall", "version")
-    end,
-    getName = function()
-        return coroutine.yield("syscall", "getName")
-    end,
-    setName = function(new)
-        coroutine.yield("syscall", "setName", new)
-    end,
-    getCurrentTask = function()
-        return coroutine.yield("syscall", "getCurrentTask")
-    end,
-    getUsers = function()
-        return coroutine.yield("syscall", "getUsers")
-    end,
-    getKernelLogBuffer = function()
-        return coroutine.yield("syscall", "getKernelLogBuffer")
-    end,
-    ev = function(filter)
-        r = table.pack(coroutine.yield())
-        if r[1] == "terminate" then
-            error("Terminated")
-        end
-        if not filter or r[1] == filter then
-            return table.unpack(r)
-        else
-            return xnarcos.ev(filter)
-        end
-    end,
-    rev = function(filter)
-        r = table.pack(coroutine.yield())
-        if not filter or r[1] == filter then
-            return table.unpack(r)
-        else
-            return xnarcos.ev(filter)
-        end
-    end,
-    time = function(t)
-        return coroutine.yield("syscall", "time", t)
-    end,
-    day = function(t)
-        return coroutine.yield("syscall", "day", t)
-    end,
-    epoch = function(t)
-        return coroutine.yield("syscall", "epoch", t)
-    end,
-    date = function(format, time)
-        return coroutine.yield("syscall", "date", format, time)
-    end,
-    r = function(env, path, ...)
-        assert(type(env) == "table", "Invalid argument: env")
-        assert(type(path) == "string", "Invalid argument: path")
-        local compEnv = {}
-        for k, v in pairs(_G) do
-            compEnv[k] = v
-        end
-        for k, v in pairs(env) do
-            compEnv[k] = v
-        end
-        compEnv["apiUtils"] = nil
-        compEnv["__LEGACY"] = nil
-        compEnv["_G"] = nil
-        setmetatable(compEnv, {
-            __index = function(t, k)
-                if k == "_G" then
-                    return compEnv
-                end
-            end,
-        })
-        local f = KDriversImpl.files.open(path, "r")
-        local compFunc, err = load(f.readAll(), path, nil, compEnv)
-        f.close()
-        if compFunc == nil then
-            return false, "Failed to load function: " .. err
-        else
-            setfenv(compFunc, compEnv)
-            local ok, err = pcall(compFunc, ...)
-            return ok, err
-        end
-    end,
-    queue = function(ev, ...)
-        coroutine.yield("syscall", "queue", ev, ...)
-    end,
-    clock = function()
-        return coroutine.yield("syscall", "clock")
-    end,
-    loadAPI = function(api)
-        error("Use require instead of loadAPI.")
-    end,
-    startTimer = function(d)
-        return coroutine.yield("syscall", "startTimer", d)
-    end,
-    cancelTimer = function(d)
-        return coroutine.yield("syscall", "cancelTimer", d)
-    end,
-    setAlarm = function(d)
-        return coroutine.yield("syscall", "setAlarm", d)
-    end,
-    cancelAlarm = function(d)
-        return coroutine.yield("syscall", "cancelAlarm", d)
-    end,
-    id = __LEGACY.os.getComputerID(),
-    getHome = function()
-        return coroutine.yield("syscall", "getHome")
-    end,
-    validateUser = function(user, pass)
-        return coroutine.yield("syscall", "validateUser", user, pass)
-    end,
-    createUser = function (user, pass)
-        return coroutine.yield("syscall", "createUser", user, pass)
-    end,
-    deleteUser = function (user)
-        return coroutine.yield("syscall", "deleteUser", user)
-    end
-}
-function _G.sleep(time)
-    if not time then time = 0.05 end
-    local tId = xnarcos.startTimer(time)
-    repeat
-        _, i = xnarcos.ev("timer")
-    until i == tId
+local oldug = {}
+local oldug2 = {}
+for k, v in pairs(_G) do
+    oldug2[k] = v
 end
-function _G.printError(...)
-    local oldtc = term.getTextColor()
-    term.setTextColor(require("col").red)
-    print(...)
-    term.setTextColor(oldtc)
+for k, v in pairs(_G) do
+    oldug[k] = v
 end
-_G.tasking = {
-    createTask = function(name, callback, nice, user, out, env)
-        if not env then env = xnarcos.getCurrentTask().env or { workDir = "/" } end
-        if not user then
-            if currentTask then
-                user = currentTask["user"]
-            else
-                user = ""
-            end
-        end
-        if currentTask and user ~= "root" then
-            if user ~= currentTask["user"] and not currentTask["user"] == "root" then
-                return 1
-            end
-        end
-        if currentTask and user == "root" and currentTask["user"] ~= "root" then
-            write("\nEnter root password")
-            local password = read()
-            if not xnarcos.validateUser("root", password) then
-                write("Sorry")
-                xnarcos.log(
-                    currentTask["user"] ..
-                    " tried to create a task with user " .. user .. " but failed the password check.",
-                    1)
-                error("Invalid password")
-            end
-        end
-        table.insert(tasks, {
-            name = name,
-            crt = coroutine.create(callback),
-            nice = nice,
-            user = user,
-            out = out,
-            env = env,
-            paused = false,
-            tQueue = {}
-        })
-        return #tasks
-    end,
-    killTask = function(pid)
-        if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
-                user = "root"
-            })["user"] then
-            table.remove(tasks, pid)
-        end
-    end,
-    getTasks = function()
-        local returnstuff = {}
-        for i, v in ipairs(tasks) do
-            table.insert(returnstuff, {
-                pid = i,
-                name = v["name"],
-                user = v["user"],
-                nice = v["nice"],
-                paused = v["paused"]
-            })
-        end
-        return returnstuff
-    end,
-    setTaskPaused = function(pid, paused)
-        if not currentTask or currentTask["user"] == "root" or tasks[pid]["user"] == (currentTask or {
-                user = "root"
-            })["user"] then
-            tasks[pid]["paused"] = paused
-        end
-    end,
-    changeUser = function(user, password)
-        if xnarcos.getCurrentTask().user == user then return true end
-        if xnarcos.getCurrentTask().user ~= "root" then
-            if not password then return "Invalid credentials" end
-            if not xnarcos.validateUser(user, password) then return "Invalid credentials" end
-        end
-        if not currentTask then return "No current task" end
-        for index, value in ipairs(users) do
-            if value.name == user then
-                currentTask["user"] = user
-                return true
-            end
-        end
-        return "User non-existent"
-    end
-}
-local i = 0
+local keptAPIs = { utd = true, printError = true, KDriversImpl = true, json = true, require = true, print = true, write = true, read = true, bit32 = true, periphemu = true, bit = true, coroutine = true, debug = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
+local t = {}
+for k in pairs(oldug) do if not keptAPIs[k] then table.insert(t, k) end end
+for _, k in ipairs(t) do oldug[k] = nil end
+oldug["_G"] = oldug
+local f = KDriversImpl.files.open("/system/bootloader.lua", "r")
+local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
+print(err)
 while true do
-    i = i + 1
-    if args[i] == nil then
-        break
+    coroutine.yield()
+end
+coroutine.yield()
+local term = KDriversImpl.terminal
+function mysplit(inputstr, sep)
+    if sep == nil then
+      sep = "%s"
     end
-    if args[i]:sub(1, 2) ~= "--" then
-        apiUtils.kernelPanic("Invalid argument: " .. args[i], "system/krnl.lua", 1183)
+    local t = {}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+      table.insert(t, str)
     end
-    local arg = string.sub(args[i], 3)
-    if arg == "forceNice" then
-        i = i + 1
-        config["forceNice"] = tonumber(args[i])
+    return t
+  end
+function main()
+    local cf = KDriversImpl.files.open("/config/aboot", "r")
+    local config = json.decode(cf.readAll())
+    cf.close()
+    term.setTextColor(term.pMap[config["theme"]["fg"]])
+    term.setBackgroundColor(term.pMap[config["theme"]["bg"]])
+    term.clear()
+    term.setCursorPos(1, 1)
+    local args = config["defargs"] or ""
+    if not config["skipPrompt"] then
+      term.write("krnl: ")
+        args = read() or ""
     end
-    if arg == "init" then
-        i = i + 1
-        config["init"] = args[i]
+    local f = KDriversImpl.files.open("/system/krnl.lua", "r")      
+    local fn, e = load(f.readAll(), "/system/krnl.lua", nil, setmetatable({}, {__index = _G}))
+    if not fn then error(e) end
+    fn(table.unpack(mysplit(args, " ")))
+end
+main()
+broken-- Generated by Haxe 4.3.6
+local _hx_hidden = {__id__=true, hx__closures=true, super=true, prototype=true, __fields__=true, __ifields__=true, __class__=true, __properties__=true, __fields__=true, __name__=true}
+
+_hx_array_mt = {
+    __newindex = function(t,k,v)
+        local len = t.length
+        t.length =  k >= len and (k + 1) or len
+        rawset(t,k,v)
     end
-    if arg == "noTel" then
-        config.telemetry = false
+}
+
+function _hx_is_array(o)
+    return type(o) == "table"
+        and o.__enum__ == nil
+        and getmetatable(o) == _hx_array_mt
+end
+
+
+
+function _hx_tab_array(tab, length)
+    tab.length = length
+    return setmetatable(tab, _hx_array_mt)
+end
+
+
+
+function _hx_print_class(obj, depth)
+    local first = true
+    local result = ''
+    for k,v in pairs(obj) do
+        if _hx_hidden[k] == nil then
+            if first then
+                first = false
+            else
+                result = result .. ', '
+            end
+            if _hx_hidden[k] == nil then
+                result = result .. k .. ':' .. _hx_tostring(v, depth+1)
+            end
+        end
     end
-    if arg == "printLog" then
-        config["printLogToConsole"] = true
-    end
-    if arg == "fileLog" then
-        config["printLogToFile"] = true
-    end
-    if arg == "quiet" then
-        config["quiet"] = true
+    return '{ ' .. result .. ' }'
+end
+
+function _hx_print_enum(o, depth)
+    if o.length == 2 then
+        return o[0]
+    else
+        local str = o[0] .. "("
+        for i = 2, (o.length-1) do
+            if i ~= 2 then
+                str = str .. "," .. _hx_tostring(o[i], depth+1)
+            else
+                str = str .. _hx_tostring(o[i], depth+1)
+            end
+        end
+        return str .. ")"
     end
 end
-if config.printLogToFile then
-    logfile, error = KDriversImpl.files.open("/system/log.txt", "w")
-    if not logfile then
-        print(error)
-        while true do coroutine.yield() end
+
+function _hx_tostring(obj, depth)
+    if depth == nil then
+        depth = 0
+    elseif depth > 5 then
+        return "<...>"
+    end
+
+    local tstr = _G.type(obj)
+    if tstr == "string" then return obj
+    elseif tstr == "nil" then return "null"
+    elseif tstr == "number" then
+        if obj == _G.math.POSITIVE_INFINITY then return "Infinity"
+        elseif obj == _G.math.NEGATIVE_INFINITY then return "-Infinity"
+        elseif obj == 0 then return "0"
+        elseif obj ~= obj then return "NaN"
+        else return _G.tostring(obj)
+        end
+    elseif tstr == "boolean" then return _G.tostring(obj)
+    elseif tstr == "userdata" then
+        local mt = _G.getmetatable(obj)
+        if mt ~= nil and mt.__tostring ~= nil then
+            return _G.tostring(obj)
+        else
+            return "<userdata>"
+        end
+    elseif tstr == "function" then return "<function>"
+    elseif tstr == "thread" then return "<thread>"
+    elseif tstr == "table" then
+        if obj.__enum__ ~= nil then
+            return _hx_print_enum(obj, depth)
+        elseif obj.toString ~= nil and not _hx_is_array(obj) then return obj:toString()
+        elseif _hx_is_array(obj) then
+            if obj.length > 5 then
+                return "[...]"
+            else
+                local str = ""
+                for i=0, (obj.length-1) do
+                    if i == 0 then
+                        str = str .. _hx_tostring(obj[i], depth+1)
+                    else
+                        str = str .. "," .. _hx_tostring(obj[i], depth+1)
+                    end
+                end
+                return "[" .. str .. "]"
+            end
+        elseif obj.__class__ ~= nil then
+            return _hx_print_class(obj, depth)
+        else
+            local buffer = {}
+            local ref = obj
+            if obj.__fields__ ~= nil then
+                ref = obj.__fields__
+            end
+            for k,v in pairs(ref) do
+                if _hx_hidden[k] == nil then
+                    _G.table.insert(buffer, _hx_tostring(k, depth+1) .. ' : ' .. _hx_tostring(obj[k], depth+1))
+                end
+            end
+
+            return "{ " .. table.concat(buffer, ", ") .. " }"
+        end
+    else
+        _G.error("Unknown Lua type", 0)
+        return ""
     end
 end
+
+local function _hx_obj_newindex(t,k,v)
+    t.__fields__[k] = true
+    rawset(t,k,v)
+end
+
+local _hx_obj_mt = {__newindex=_hx_obj_newindex, __tostring=_hx_tostring}
+
+local function _hx_a(...)
+  local __fields__ = {};
+  local ret = {__fields__ = __fields__};
+  local max = select('#',...);
+  local tab = {...};
+  local cur = 1;
+  while cur < max do
+    local v = tab[cur];
+    __fields__[v] = true;
+    ret[v] = tab[cur+1];
+    cur = cur + 2
+  end
+  return setmetatable(ret, _hx_obj_mt)
+end
+
+local function _hx_e()
+  return setmetatable({__fields__ = {}}, _hx_obj_mt)
+end
+
+local function _hx_o(obj)
+  return setmetatable(obj, _hx_obj_mt)
+end
+
+local function _hx_new(prototype)
+  return setmetatable({__fields__ = {}}, {__newindex=_hx_obj_newindex, __index=prototype, __tostring=_hx_tostring})
+end
+
+function _hx_field_arr(obj)
+    local res = {}
+    local idx = 0
+    if obj.__fields__ ~= nil then
+        obj = obj.__fields__
+    end
+    for k,v in pairs(obj) do
+        if _hx_hidden[k] == nil then
+            res[idx] = k
+            idx = idx + 1
+        end
+    end
+    return _hx_tab_array(res, idx)
+end
+
+local _hxClasses = {}
+local Int = _hx_e();
+local Dynamic = _hx_e();
+local Float = _hx_e();
+local Bool = _hx_e();
+local Class = _hx_e();
+local Enum = _hx_e();
+
+
+---@type table
 _G.package = {
     preload = {
         string = string,
         table = table,
         package = package,
-        arcos = arcos,
-        bit32 = __LEGACY.bit32,
-        bit = __LEGACY.bit,
+        bit32 = bit32,
+        bit = bit,
         coroutine = coroutine,
-        os = arcos,
-        tasking = tasking,
         utf8 = utf8,
+
     },
+    isarcos = true,
     loaded = {
+
     },
+    ---@type table<function>
     loaders = {
+        ---@param name string
+        ---@return function
         function(name)
             if not package.preload[name] then
                 error("no field package.preload['" .. name .. "']")
@@ -1434,6 +1060,8 @@ _G.package = {
                 return package.preload[name]
             end
         end,
+        ---@param name string
+        ---@return function
         function(name)
             if not package.loaded[name] then
                 error("no field package.loaded['" .. name .. "']")
@@ -1442,6 +1070,8 @@ _G.package = {
                 return package.loaded[name]
             end
         end,
+        ---@param name string
+        ---@return function
         function(name)
             local searchPaths = { "/", "/system/apis", "/apis" }
             local searchSuffixes = { ".lua", "init.lua" }
@@ -1458,8 +1088,10 @@ _G.package = {
                         end
                         if path ~= "/apis" and path ~= "/system/apis" then
                             compEnv["apiUtils"] = nil
-                            compEnv["__LEGACY"] = nil
+                            compEnv["xnarcos"] = nil
+                            compEnv["KDriversImpl"] = nil
                         end
+
                         compEnv["_G"] = nil
                         setmetatable(compEnv, {
                             __index = function(t, k)
@@ -1468,6 +1100,7 @@ _G.package = {
                                 end
                             end,
                         })
+
                         local f, err = KDriversImpl.files.open(file, "r")
                         if not f then
                             error(err)
@@ -1485,6 +1118,7 @@ _G.package = {
         end
     }
 }
+
 _G.require = function(modname)
     local errors = {}
     for _, loader in ipairs(package.loaders) do
@@ -1498,384 +1132,4978 @@ _G.require = function(modname)
     end
     error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
-local tutils = require("tutils")
-xnarcos.log("Hello, world!", 1)
-local col = require("col")
-local hashing = require("hashing")
-debug.setfenv(read, setmetatable({ colors = col, colours = col }, { __index = _G }))
-local passwdFile, e = KDriversImpl.files.open("/config/passwd", "r")
-if not passwdFile then
-    apiUtils.kernelPanic("Password file not found", "system/krnl.lua", 1325)
-else
-    xnarcos.log("Decoding passwd file", 1)
-    local fx = passwdFile.readAll()
-    users = json.decode(fx)
+
+
+local Array = _hx_e()
+local Date = _hx_e()
+local FileMode = _hx_e()
+local Device = _hx_e()
+local PeripheralDevice = _hx_e()
+local Devices = _hx_e()
+local FileAttributes = _hx_e()
+local ColorMap = _hx_e()
+local KernelConfig = _hx_e()
+local Out = _hx_e()
+__filesystem_Filesystem = _hx_e()
+local WrappedFilesystem = _hx_e()
+local FSElem = _hx_e()
+local KFSDriver = _hx_e()
+local HalFSDriver = _hx_e()
+local Kernel = _hx_e()
+local Lambda = _hx_e()
+local Logger = _hx_e()
+local Main = _hx_e()
+local Math = _hx_e()
+local Reflect = _hx_e()
+local String = _hx_e()
+local Std = _hx_e()
+local StringBuf = _hx_e()
+local StringTools = _hx_e()
+local ValueType = _hx_e()
+local Type = _hx_e()
+local User = _hx_e()
+local UserManager = _hx_e()
+__filesystem_FileHandle = _hx_e()
+__haxe_StackItem = _hx_e()
+__haxe__CallStack_CallStack_Impl_ = _hx_e()
+__haxe_IMap = _hx_e()
+__haxe_Exception = _hx_e()
+__haxe_Json = _hx_e()
+__haxe_Log = _hx_e()
+__haxe_NativeStackTrace = _hx_e()
+__haxe__Rest_Rest_Impl_ = _hx_e()
+__haxe_ValueException = _hx_e()
+__haxe_crypto_Sha256 = _hx_e()
+__haxe_ds_IntMap = _hx_e()
+__haxe_ds_ObjectMap = _hx_e()
+__haxe_ds_StringMap = _hx_e()
+__haxe_exceptions_PosException = _hx_e()
+__haxe_exceptions_NotImplementedException = _hx_e()
+__haxe_format_JsonParser = _hx_e()
+__haxe_format_JsonPrinter = _hx_e()
+__haxe_io_Bytes = _hx_e()
+__haxe_io_Encoding = _hx_e()
+__haxe_iterators_ArrayIterator = _hx_e()
+__haxe_iterators_ArrayKeyValueIterator = _hx_e()
+__haxe_macro_Error = _hx_e()
+__lua_Boot = _hx_e()
+__lua_Thread = _hx_e()
+__lua_UserData = _hx_e()
+__lua_PairTools = _hx_e()
+__scheduler_TaskInfo = _hx_e()
+__scheduler_Task = _hx_e()
+__scheduler_Scheduler = _hx_e()
+__syscall_Syscall = _hx_e()
+__syscall_SyscallExtension = _hx_e()
+__syscall_SyscallInterface = _hx_e()
+__syscall__SyscallInterface_SyscallInterface_Fields_ = _hx_e()
+__syscall_extensions_ArcosExtension = _hx_e()
+__syscall_extensions_ExampleDevice = _hx_e()
+__syscall_extensions_DeviceExtension = _hx_e()
+__syscall_extensions__DeviceExtension_DeviceExtension_Fields_ = _hx_e()
+__syscall_extensions_FilesystemExtension = _hx_e()
+__syscall_extensions_TaskingExtension = _hx_e()
+
+local _hx_bind, _hx_bit, _hx_staticToInstance, _hx_funcToField, _hx_maxn, _hx_print, _hx_apply_self, _hx_box_mr, _hx_bit_clamp, _hx_table, _hx_bit_raw
+local _hx_pcall_default = {};
+local _hx_pcall_break = {};
+
+Array.new = function() 
+  local self = _hx_new(Array.prototype)
+  Array.super(self)
+  return self
 end
-_G.xnarcos.getHome = function()
-    if not KDriversImpl.files.exists("/user/" .. xnarcos.getCurrentTask().user) then
-        KDriversImpl.files.mkDir("/user/" .. xnarcos.getCurrentTask().user)
-    end
-    return "/user/" .. xnarcos.getCurrentTask().user
+Array.super = function(self) 
+  _hx_tab_array(self, 0);
 end
-_G.xnarcos.validateUser = function(user, password)
-    for index, value in ipairs(users) do
-        if value.name == user and value.password == hashing.sha256(password) then
-            if not KDriversImpl.files.exists("/user/" .. user) then
-                KDriversImpl.files.mkDir("/user/" .. user)
-            end
-        end
-    end
-    for index, value in ipairs(users) do
-        if value.name == user and value.password == hashing.sha256(password) then
-            return true
-        end
-    end
-    return false
+Array.__name__ = true
+Array.prototype = _hx_e();
+Array.prototype.length= nil;
+Array.prototype.concat = function(self,a) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = self;
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    _g:push(i);
+  end;
+  local ret = _g;
+  local _g = 0;
+  while (_g < a.length) do _hx_do_first_1 = false;
+    
+    local i = a[_g];
+    _g = _g + 1;
+    ret:push(i);
+  end;
+  do return ret end
 end
-_G.xnarcos.createUser = function(user, password)
-    if xnarcos.getCurrentTask().user ~= "root" then
-        return false
-    end
-    for index, value in ipairs(users) do
-        if value.name == user then
-            return false
-        end
-    end
-    table.insert(users, {
-        name = user,
-        password = hashing.sha256(password)
-    })
-    local ufx, e = KDriversImpl.files.open("/config/passwd", "w")
-    if not ufx then
-        error(e)
-    end
-    ufx.write(json.decode(users))
-    ufx.close()
-    return true
+Array.prototype.join = function(self,sep) 
+  local tbl = ({});
+  local _g_current = 0;
+  local _g_array = self;
+  while (_g_current < _g_array.length) do _hx_do_first_1 = false;
+    
+    _g_current = _g_current + 1;
+    local i = _g_array[_g_current - 1];
+    _G.table.insert(tbl, Std.string(i));
+  end;
+  do return _G.table.concat(tbl, sep) end
 end
-_G.xnarcos.deleteUser = function(user)
-    if xnarcos.getCurrentTask().user ~= "root" then
-        return false
-    end
-    if user == "root" then
-        return false
-    end
-    local todel = nil
-    for index, value in ipairs(users) do
-        if value.name == user then
-            todel = index
-        end
-    end
-    if todel then
-        table.remove(users, todel)
-        return true
-    end
-    return false
+Array.prototype.pop = function(self) 
+  if (self.length == 0) then 
+    do return nil end;
+  end;
+  local ret = self[self.length - 1];
+  self[self.length - 1] = nil;
+  self.length = self.length - 1;
+  do return ret end
 end
-local regDevices = {}
-_G.devices = {
-    present = function(name)
-        local names = devices.names()
-        for _, v in ipairs(names) do
-            if v == name then
-                return true
-            end
-        end
-        return false
-    end,
-    type = function(dev)
-        return table.unpack(dev.types)
-    end,
-    hasType = function(dev, type)
-        for _, v in ipairs(dev.types) do
-            if v == type then
-                return true
-            end
-        end
-        return false
-    end,
-    methods = function(name)
-    end,
-    name = function(peripheral)
-        return peripheral.name
-    end,
-    call = function(name, method, ...)
-        return devices.get(name)[method](...)
-    end,
-    get = function(what)
-        return syscall.run("devices.get", what)
-    end,
-    find = function(what)
-        return syscall.run("devices.find", what)
-    end,
-    names = function()
-        return syscall.run("devices.names")
-    end,
-    add = function(device)
-        if xnarcos.getCurrentTask().user ~= "root" then
-            xnarcos.log("User " .. xnarcos.getCurrentTask().user .. " does not have root access", 1)
-            return false
-        end
-        for k, v in ipairs(regDevices) do
-            if v.name == device.name then
-                xnarcos.log("Device already exists: " .. device.name, 1)
-                return false
-            end
-        end
-        xnarcos.log("Device connected: " .. device.name, 1)
-        for _, v in ipairs(tasks) do
-            table.insert(v.tQueue, {
-                [1] = "device_connected",
-                [2] = device.name
-            })
-        end
-        table.insert(regDevices, device)
-        device.onActivate()
-        return true
-    end,
-    remove = function(deviceName)
-        if xnarcos.getCurrentTask().user ~= "root" then
-            return false
-        end
-        for index, value in ipairs(regDevices) do
-            if value.name == deviceName then
-                xnarcos.log("Device disconnected: " .. deviceName, 1)
-                for _, v in ipairs(tasks) do
-                    table.insert(v.tQueue, {
-                        [1] = "device_disconnected",
-                        [2] = deviceName
-                    })
-                end
-                table.remove(regDevices, index)
-                return true
-            end
-        end
-        return false
-    end
-}
-local function syscallxe(ev)
-    if ev[1] == "panic" and #ev == 4 and type(ev[2]) == "string" and type(ev[3]) == "string" and type(ev[4]) == "number" then
-        if xnarcos.getCurrentTask()["user"] == "root" then
-            apiUtils.kernelPanic(ev[2], ev[3], ev[4])
-            return true
-        else
-            return false
-        end
-    elseif ev[1] == "devices.get" and #ev == 2 and type(ev[2]) == "string" then
-        for _, v in ipairs(regDevices) do
-            if v.name == ev[2] then
-                return v
-            end
-        end
-        return nil
-    elseif ev[1] == "devices.find" and #ev == 2 and type(ev[2]) == "string" then
-        local out = {}
-        for _, v in ipairs(regDevices) do
-            for index, value in ipairs(v.types) do
-                if value == ev[2] then
-                    table.insert(out, v)
-                end
-            end
-        end
-        return table.unpack(out)
-    elseif ev[1] == "devices.names" and #ev == 1 then
-        local out = {}
-        for _, v in ipairs(regDevices) do
-            table.insert(out, v.name)
-        end
-        return table.unpack(out)
-    elseif ev[1] == "shutdown" then
-        if __LEGACY and __LEGACY.os and __LEGACY.os.shutdown then
-            xnarcos.log("Shutting down...", 2)
-            sleep(1)
-            __LEGACY.os.shutdown()
-        else
-            error("Shutting down")
-        end
-        return true
-    elseif ev[1] == "reboot" then
-        if __LEGACY and __LEGACY.os and __LEGACY.os.reboot then
-            __LEGACY.os.reboot()
-        else
-            xnarcos.log("Rebooting...", 2)
-            sleep(1)
-            error("Rebooting")
-        end
-        return true
-    elseif xnarcos[ev[1]] then
-        return xnarcos[ev[1]](table.unpack(ev, 2))
+Array.prototype.push = function(self,x) 
+  self[self.length] = x;
+  do return self.length end
+end
+Array.prototype.reverse = function(self) 
+  local tmp;
+  local i = 0;
+  while (i < Std.int(self.length / 2)) do _hx_do_first_1 = false;
+    
+    tmp = self[i];
+    self[i] = self[(self.length - i) - 1];
+    self[(self.length - i) - 1] = tmp;
+    i = i + 1;
+  end;
+end
+Array.prototype.shift = function(self) 
+  if (self.length == 0) then 
+    do return nil end;
+  end;
+  local ret = self[0];
+  if (self.length == 1) then 
+    self[0] = nil;
+  else
+    if (self.length > 1) then 
+      self[0] = self[1];
+      _G.table.remove(self, 1);
+    end;
+  end;
+  local tmp = self;
+  tmp.length = tmp.length - 1;
+  do return ret end
+end
+Array.prototype.slice = function(self,pos,_end) 
+  if ((_end == nil) or (_end > self.length)) then 
+    _end = self.length;
+  else
+    if (_end < 0) then 
+      _end = _G.math.fmod((self.length - (_G.math.fmod(-_end, self.length))), self.length);
+    end;
+  end;
+  if (pos < 0) then 
+    pos = _G.math.fmod((self.length - (_G.math.fmod(-pos, self.length))), self.length);
+  end;
+  if ((pos > _end) or (pos > self.length)) then 
+    do return _hx_tab_array({}, 0) end;
+  end;
+  local ret = _hx_tab_array({}, 0);
+  local _g = pos;
+  local _g1 = _end;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    ret:push(self[i]);
+  end;
+  do return ret end
+end
+Array.prototype.sort = function(self,f) 
+  local i = 0;
+  local l = self.length;
+  while (i < l) do _hx_do_first_1 = false;
+    
+    local swap = false;
+    local j = 0;
+    local max = (l - i) - 1;
+    while (j < max) do _hx_do_first_2 = false;
+      
+      if (f(self[j], self[j + 1]) > 0) then 
+        local tmp = self[j + 1];
+        self[j + 1] = self[j];
+        self[j] = tmp;
+        swap = true;
+      end;
+      j = j + 1;
+    end;
+    if (not swap) then 
+      break;
+    end;
+    i = i + 1;
+  end;
+end
+Array.prototype.splice = function(self,pos,len) 
+  if ((len < 0) or (pos > self.length)) then 
+    do return _hx_tab_array({}, 0) end;
+  else
+    if (pos < 0) then 
+      pos = self.length - (_G.math.fmod(-pos, self.length));
+    end;
+  end;
+  len = Math.min(len, self.length - pos);
+  local ret = _hx_tab_array({}, 0);
+  local _g = pos;
+  local _g1 = pos + len;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    ret:push(self[i]);
+    self[i] = self[i + len];
+  end;
+  local _g = pos + len;
+  local _g1 = self.length;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    self[i] = self[i + len];
+  end;
+  local tmp = self;
+  tmp.length = tmp.length - len;
+  do return ret end
+end
+Array.prototype.toString = function(self) 
+  local tbl = ({});
+  _G.table.insert(tbl, "[");
+  _G.table.insert(tbl, self:join(","));
+  _G.table.insert(tbl, "]");
+  do return _G.table.concat(tbl, "") end
+end
+Array.prototype.unshift = function(self,x) 
+  local len = self.length;
+  local _g = 0;
+  local _g1 = len;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    self[len - i] = self[(len - i) - 1];
+  end;
+  self[0] = x;
+end
+Array.prototype.insert = function(self,pos,x) 
+  if (pos > self.length) then 
+    pos = self.length;
+  end;
+  if (pos < 0) then 
+    pos = self.length + pos;
+    if (pos < 0) then 
+      pos = 0;
+    end;
+  end;
+  local cur_len = self.length;
+  while (cur_len > pos) do _hx_do_first_1 = false;
+    
+    self[cur_len] = self[cur_len - 1];
+    cur_len = cur_len - 1;
+  end;
+  self[pos] = x;
+end
+Array.prototype.remove = function(self,x) 
+  local _g = 0;
+  local _g1 = self.length;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    if (self[i] == x) then 
+      local _g = i;
+      local _g1 = self.length - 1;
+      while (_g < _g1) do _hx_do_first_2 = false;
+        
+        _g = _g + 1;
+        local j = _g - 1;
+        self[j] = self[j + 1];
+      end;
+      self[self.length - 1] = nil;
+      self.length = self.length - 1;
+      do return true end;
+    end;
+  end;
+  do return false end
+end
+Array.prototype.contains = function(self,x) 
+  local _g = 0;
+  local _g1 = self.length;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    if (self[i] == x) then 
+      do return true end;
+    end;
+  end;
+  do return false end
+end
+Array.prototype.indexOf = function(self,x,fromIndex) 
+  local _end = self.length;
+  if (fromIndex == nil) then 
+    fromIndex = 0;
+  else
+    if (fromIndex < 0) then 
+      fromIndex = self.length + fromIndex;
+      if (fromIndex < 0) then 
+        fromIndex = 0;
+      end;
+    end;
+  end;
+  local _g = fromIndex;
+  local _g1 = _end;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    if (x == self[i]) then 
+      do return i end;
+    end;
+  end;
+  do return -1 end
+end
+Array.prototype.lastIndexOf = function(self,x,fromIndex) 
+  if ((fromIndex == nil) or (fromIndex >= self.length)) then 
+    fromIndex = self.length - 1;
+  else
+    if (fromIndex < 0) then 
+      fromIndex = self.length + fromIndex;
+      if (fromIndex < 0) then 
+        do return -1 end;
+      end;
+    end;
+  end;
+  local i = fromIndex;
+  while (i >= 0) do _hx_do_first_1 = false;
+    
+    if (self[i] == x) then 
+      do return i end;
     else
-        xnarcos.log("Invalid syscall or syscall usage: " .. ev[1], 0)
-        return nil
-    end
+      i = i - 1;
+    end;
+  end;
+  do return -1 end
 end
-_G.dev = {
-}
-setmetatable(_G.dev, {
-    __index = function(t, k)
-        return devices.find(k)
-    end
-})
-_G.kernel = {
-    uname = function()
-        return "arckernel 582"
-    end
-}
-local f, err = KDriversImpl.files.open("/config/passwd", "r")
-local tab
-if f then
-    xnarcos.log("Reading passwd file", 1)
-    local fx = f.readAll()
-    tab = json.decode(fx)
-else
-    apiUtils.kernelPanic("Could not read passwd file: " .. tostring(err), "system/krnl.lua", 1634)
+Array.prototype.copy = function(self) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = self;
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    _g:push(i);
+  end;
+  do return _g end
 end
-for index, value in ipairs(xnarcos.getUsers()) do
-    if not KDriversImpl.files.exists("/user/" .. value) then
-        KDriversImpl.files.mkDir("/user/" .. value)
-    end
+Array.prototype.map = function(self,f) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = self;
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    _g:push(f(i));
+  end;
+  do return _g end
 end
-tasking.createTask("Init", function()
-    xnarcos.log("Starting Init", 0)
-    local ok, err = pcall(function()
-        local ok, err = xnarcos.r({}, config["init"])
-        if err then
-            apiUtils.kernelPanic("Init Died: " .. err, "system/krnl.lua", 1648)
+Array.prototype.filter = function(self,f) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = self;
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (f(i)) then 
+      _g:push(i);
+    end;
+  end;
+  do return _g end
+end
+Array.prototype.iterator = function(self) 
+  do return __haxe_iterators_ArrayIterator.new(self) end
+end
+Array.prototype.keyValueIterator = function(self) 
+  do return __haxe_iterators_ArrayKeyValueIterator.new(self) end
+end
+Array.prototype.resize = function(self,len) 
+  if (self.length < len) then 
+    self.length = len;
+  else
+    if (self.length > len) then 
+      local _g = len;
+      local _g1 = self.length;
+      while (_g < _g1) do _hx_do_first_1 = false;
+        
+        _g = _g + 1;
+        local i = _g - 1;
+        self[i] = nil;
+      end;
+      self.length = len;
+    end;
+  end;
+end
+
+Array.prototype.__class__ =  Array
+
+Date.new = function(year,month,day,hour,min,sec) 
+  local self = _hx_new(Date.prototype)
+  Date.super(self,year,month,day,hour,min,sec)
+  return self
+end
+Date.super = function(self,year,month,day,hour,min,sec) 
+  self.t = _G.os.time(_hx_o({__fields__={year=true,month=true,day=true,hour=true,min=true,sec=true},year=year,month=month + 1,day=day,hour=hour,min=min,sec=sec}));
+  self.d = _G.os.date("*t", self.t);
+  self.dUTC = _G.os.date("!*t", self.t);
+end
+Date.__name__ = true
+Date.prototype = _hx_e();
+Date.prototype.d= nil;
+Date.prototype.dUTC= nil;
+Date.prototype.t= nil;
+Date.prototype.getHours = function(self) 
+  do return self.d.hour end
+end
+Date.prototype.getMinutes = function(self) 
+  do return self.d.min end
+end
+Date.prototype.getSeconds = function(self) 
+  do return self.d.sec end
+end
+Date.prototype.getFullYear = function(self) 
+  do return self.d.year end
+end
+Date.prototype.getMonth = function(self) 
+  do return self.d.month - 1 end
+end
+Date.prototype.getDate = function(self) 
+  do return self.d.day end
+end
+
+Date.prototype.__class__ =  Date
+_hxClasses["FileMode"] = { __ename__ = true, __constructs__ = _hx_tab_array({[0]="Read","Write"},2)}
+FileMode = _hxClasses["FileMode"];
+FileMode.Read = _hx_tab_array({[0]="Read",0,__enum__ = FileMode},2)
+
+FileMode.Write = _hx_tab_array({[0]="Write",1,__enum__ = FileMode},2)
+
+
+Device.new = function() 
+  local self = _hx_new(Device.prototype)
+  Device.super(self)
+  return self
+end
+Device.super = function(self) 
+  self.types = _hx_tab_array({}, 0);
+  self.name = "";
+end
+Device.__name__ = true
+Device.prototype = _hx_e();
+Device.prototype.name= nil;
+Device.prototype.types= nil;
+Device.prototype.dinterface= nil;
+Device.prototype.getHandle= nil;
+
+Device.prototype.__class__ =  Device
+
+PeripheralDevice.new = function(peripheralName) 
+  local self = _hx_new(PeripheralDevice.prototype)
+  PeripheralDevice.super(self,peripheralName)
+  return self
+end
+PeripheralDevice.super = function(self,peripheralName) 
+  self.data = "";
+  Device.super(self);
+  local per = KDriversImpl.devc.get(peripheralName);
+  if (per == nil) then 
+    _G.error(__haxe_Exception.thrown("Invalid device."),0);
+  end;
+  self.dinterface = per;
+  local length = nil;
+  local tab = __lua_PairTools.copy(_hx_table.pack(KDriversImpl.devc.type(peripheralName)));
+  local length = length;
+  local tmp;
+  if (length == nil) then 
+    length = _hx_table.maxn(tab);
+    if (length > 0) then 
+      local head = tab[1];
+      _G.table.remove(tab, 1);
+      tab[0] = head;
+      tmp = _hx_tab_array(tab, length);
+    else
+      tmp = _hx_tab_array({}, 0);
+    end;
+  else
+    tmp = _hx_tab_array(tab, length);
+  end;
+  self.types = tmp;
+  self.name = peripheralName;
+end
+PeripheralDevice.__name__ = true
+PeripheralDevice.prototype = _hx_e();
+PeripheralDevice.prototype.data= nil;
+PeripheralDevice.prototype.getHandle = function(self,mode) 
+  _G.error(__haxe_Exception.thrown("This device does not support file handles"),0);
+end
+
+PeripheralDevice.prototype.__class__ =  PeripheralDevice
+PeripheralDevice.__super__ = Device
+setmetatable(PeripheralDevice.prototype,{__index=Device.prototype})
+
+Devices.new = function(k) 
+  local self = _hx_new(Devices.prototype)
+  Devices.super(self,k)
+  return self
+end
+Devices.super = function(self,k) 
+  self.devices = _hx_tab_array({}, 0);
+  self.kernel = k;
+end
+Devices.__name__ = true
+Devices.prototype = _hx_e();
+Devices.prototype.devices= nil;
+Devices.prototype.kernel= nil;
+Devices.prototype.add = function(self,dev) 
+  local _g = 0;
+  local _g1 = self.devices;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local device = _g1[_g];
+    _g = _g + 1;
+    if (device.name == dev.name) then 
+      _G.error(__haxe_Exception.thrown("Device already exists"),0);
+    end;
+  end;
+  self.devices:push(dev);
+  Logger.log(Std.string("Device added: ") .. Std.string(dev.name), 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Devices.hx",lineNumber=55,className="Devices",methodName="add"}));
+  local _g = 0;
+  local _g1 = self.kernel.scheduler.tasks;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local task = _g1[_g];
+    _g = _g + 1;
+    task.taskQueue:push(_hx_tab_array({[0]="device_connected", dev.name}, 2));
+  end;
+end
+Devices.prototype.remove = function(self,name) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = self.devices;
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i.name ~= name) then 
+      _g:push(i);
+    end;
+  end;
+  self.devices = _g;
+  Logger.log(Std.string("Device removed: ") .. Std.string(name), 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Devices.hx",lineNumber=62,className="Devices",methodName="remove"}));
+  local _g = 0;
+  local _g1 = self.kernel.scheduler.tasks;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local task = _g1[_g];
+    _g = _g + 1;
+    task.taskQueue:push(_hx_tab_array({[0]="device_disconnected", name}, 2));
+  end;
+end
+
+Devices.prototype.__class__ =  Devices
+
+FileAttributes.new = function() 
+  local self = _hx_new(FileAttributes.prototype)
+  FileAttributes.super(self)
+  return self
+end
+FileAttributes.super = function(self) 
+end
+FileAttributes.__name__ = true
+FileAttributes.prototype = _hx_e();
+FileAttributes.prototype.size= nil;
+FileAttributes.prototype.isDir= nil;
+FileAttributes.prototype.isReadOnly= nil;
+FileAttributes.prototype.created= nil;
+FileAttributes.prototype.modified= nil;
+FileAttributes.prototype.capacity= nil;
+FileAttributes.prototype.driveRoot= nil;
+FileAttributes.prototype.permissions= nil;
+
+FileAttributes.prototype.__class__ =  FileAttributes
+
+ColorMap.new = {}
+ColorMap.__name__ = true
+ColorMap.prototype = _hx_e();
+ColorMap.prototype.white= nil;
+ColorMap.prototype.orange= nil;
+ColorMap.prototype.magenta= nil;
+ColorMap.prototype.lightBlue= nil;
+ColorMap.prototype.yellow= nil;
+ColorMap.prototype.lime= nil;
+ColorMap.prototype.pink= nil;
+ColorMap.prototype.gray= nil;
+ColorMap.prototype.lightGray= nil;
+ColorMap.prototype.cyan= nil;
+ColorMap.prototype.purple= nil;
+ColorMap.prototype.blue= nil;
+ColorMap.prototype.brown= nil;
+ColorMap.prototype.green= nil;
+ColorMap.prototype.red= nil;
+ColorMap.prototype.black= nil;
+
+ColorMap.prototype.__class__ =  ColorMap
+
+KernelConfig.new = {}
+KernelConfig.__name__ = true
+
+Out.new = {}
+Out.__name__ = true
+Out.write = function(...) 
+  local s = {...}
+  local words = String.prototype.split(__haxe__Rest_Rest_Impl_.toArray(s):join(" "), " ");
+  local comp = "";
+  local tmp = term;
+  local terminal = (function() 
+    local _hx_1
+    if (tmp ~= nil) then 
+    _hx_1 = tmp; else 
+    _hx_1 = KDriversImpl.terminal; end
+    return _hx_1
+  end )();
+  local cpos_x = terminal.getCursorPos();
+  local cpos_y = _G.select(2, terminal.getCursorPos());
+  local _g_current = 0;
+  local _g_array = words;
+  while (_g_current < _g_array.length) do _hx_do_first_1 = false;
+    
+    local _g_value = _g_array[_g_current];
+    _g_current = _g_current + 1;
+    local _g_key = _g_current - 1;
+    local index = _g_key;
+    local word = _g_value;
+    if ((cpos_x + #word) > terminal.getSize()) then 
+      comp = Std.string(comp) .. Std.string("\n");
+      cpos_x = 1;
+      cpos_y = cpos_y + 1;
+    end;
+    local _g = 0;
+    local _g1 = String.prototype.split(word, "");
+    while (_g < _g1.length) do _hx_do_first_2 = false;
+      
+      local char = _g1[_g];
+      _g = _g + 1;
+      comp = Std.string(comp) .. Std.string(char);
+      cpos_x = cpos_x + 1;
+    end;
+    if (index ~= (words.length - 1)) then 
+      comp = Std.string(comp) .. Std.string(" ");
+      cpos_x = cpos_x + 1;
+    end;
+  end;
+  local pointer = 0;
+  while (true) do _hx_do_first_1 = false;
+    
+    local char = _G.string.sub(comp, pointer + 1, pointer + 1);
+    if (char == "") then 
+      break;
+    end;
+    if (char == "\n") then 
+      local _hx_2_cursorPos_x, _hx_2_cursorPos_y = terminal.getCursorPos();
+      terminal.setCursorPos(1, _hx_2_cursorPos_y + 1);
+      if (_G.select(2, terminal.getCursorPos()) > _G.select(2, terminal.getSize())) then 
+        terminal.scroll(_G.select(2, terminal.getCursorPos()) - _G.select(2, terminal.getSize()));
+        terminal.setCursorPos(1, _G.select(2, terminal.getSize()));
+      end;
+    else
+      if (_G.string.byte(char, 1) == 11) then 
+        pointer = pointer + 1;
+        local command = _G.string.sub(comp, pointer + 1, pointer + 1);
+        pointer = pointer + 1;
+        local c2 = _G.string.sub(comp, pointer + 1, pointer + 1);
+        local cn;
+        local c2 = c2;
+        if (c2) == "0" then 
+          cn = KDriversImpl.terminal.pMap.white;
+        elseif (c2) == "1" then 
+          cn = KDriversImpl.terminal.pMap.orange;
+        elseif (c2) == "2" then 
+          cn = KDriversImpl.terminal.pMap.magenta;
+        elseif (c2) == "3" then 
+          cn = KDriversImpl.terminal.pMap.lightBlue;
+        elseif (c2) == "4" then 
+          cn = KDriversImpl.terminal.pMap.yellow;
+        elseif (c2) == "5" then 
+          cn = KDriversImpl.terminal.pMap.lime;
+        elseif (c2) == "6" then 
+          cn = KDriversImpl.terminal.pMap.pink;
+        elseif (c2) == "7" then 
+          cn = KDriversImpl.terminal.pMap.gray;
+        elseif (c2) == "8" then 
+          cn = KDriversImpl.terminal.pMap.lightGray;
+        elseif (c2) == "9" then 
+          cn = KDriversImpl.terminal.pMap.cyan;
+        elseif (c2) == "a" then 
+          cn = KDriversImpl.terminal.pMap.purple;
+        elseif (c2) == "b" then 
+          cn = KDriversImpl.terminal.pMap.blue;
+        elseif (c2) == "c" then 
+          cn = KDriversImpl.terminal.pMap.brown;
+        elseif (c2) == "d" then 
+          cn = KDriversImpl.terminal.pMap.green;
+        elseif (c2) == "e" then 
+          cn = KDriversImpl.terminal.pMap.red;
+        elseif (c2) == "f" then 
+          cn = KDriversImpl.terminal.pMap.black;else
+        cn = KDriversImpl.terminal.pMap.white; end;
+        if (command == "b") then 
+          terminal.setBackgroundColor(cn);
         else
-            apiUtils.kernelPanic("Init Died with no errors.", "system/krnl.lua", 1650)
-        end
+          if (command == "f") then 
+            terminal.setTextColor(cn);
+          end;
+        end;
+      else
+        terminal.write(char);
+      end;
+    end;
+    pointer = pointer + 1;
+  end;
+end
+Out.print = function(...) 
+  local s = {...}
+  local result = __lua_PairTools.copy(s);
+  _G.table.insert(result, "\n");
+  Out.write(_hx_table.unpack(result));
+end
+Out.read = function(sReplaceChar,tHistory,fnComplete,sDefault) 
+  if (sDefault == nil) then 
+    sDefault = "";
+  end;
+  local _hx_1_cursorPos_x, _hx_1_cursorPos_y = KDriversImpl.terminal.getCursorPos();
+  local xCutoff = (KDriversImpl.terminal.getSize() - _hx_1_cursorPos_x) - 1;
+  local length = nil;
+  local tab = __lua_PairTools.copy(tHistory);
+  local length = length;
+  local historyIndex;
+  if (length == nil) then 
+    length = _hx_table.maxn(tab);
+    if (length > 0) then 
+      local head = tab[1];
+      _G.table.remove(tab, 1);
+      tab[0] = head;
+      historyIndex = _hx_tab_array(tab, length);
+    else
+      historyIndex = _hx_tab_array({}, 0);
+    end;
+  else
+    historyIndex = _hx_tab_array(tab, length);
+  end;
+  local historyIndex = historyIndex.length;
+  KDriversImpl.terminal.setCursorPos(_hx_1_cursorPos_x, _hx_1_cursorPos_y + 1);
+  local s = sDefault;
+  local scroll = 0;
+  local redraw = function() 
+    KDriversImpl.terminal.setCursorBlink(true);
+    KDriversImpl.terminal.setCursorPos(_hx_1_cursorPos_x, _hx_1_cursorPos_y);
+    KDriversImpl.terminal.write(String.prototype.substr(s, scroll, xCutoff));
+  end;
+  while (true) do _hx_do_first_1 = false;
+    
+    local event = _hx_table.pack(KDriversImpl.pullEvent());
+    if (event[0] == "key") then 
+      if (event[1] == KDriversImpl.terminal.kMap.up) then 
+        historyIndex = historyIndex - 1;
+        if (historyIndex < 0) then 
+          historyIndex = 0;
+        end;
+        local length = nil;
+        local tab = __lua_PairTools.copy(tHistory);
+        local length = length;
+        local s1;
+        if (length == nil) then 
+          length = _hx_table.maxn(tab);
+          if (length > 0) then 
+            local head = tab[1];
+            _G.table.remove(tab, 1);
+            tab[0] = head;
+            s1 = _hx_tab_array(tab, length);
+          else
+            s1 = _hx_tab_array({}, 0);
+          end;
+        else
+          s1 = _hx_tab_array(tab, length);
+        end;
+        s = s1[historyIndex];
+        redraw();
+      end;
+      if (event[1] == KDriversImpl.terminal.kMap.down) then 
+        historyIndex = historyIndex + 1;
+        local length = nil;
+        local tab = __lua_PairTools.copy(tHistory);
+        local length = length;
+        local tmp;
+        if (length == nil) then 
+          length = _hx_table.maxn(tab);
+          if (length > 0) then 
+            local head = tab[1];
+            _G.table.remove(tab, 1);
+            tab[0] = head;
+            tmp = _hx_tab_array(tab, length);
+          else
+            tmp = _hx_tab_array({}, 0);
+          end;
+        else
+          tmp = _hx_tab_array(tab, length);
+        end;
+        if (historyIndex >= tmp.length) then 
+          local length = nil;
+          local tab = __lua_PairTools.copy(tHistory);
+          local length = length;
+          local historyIndex1;
+          if (length == nil) then 
+            length = _hx_table.maxn(tab);
+            if (length > 0) then 
+              local head = tab[1];
+              _G.table.remove(tab, 1);
+              tab[0] = head;
+              historyIndex1 = _hx_tab_array(tab, length);
+            else
+              historyIndex1 = _hx_tab_array({}, 0);
+            end;
+          else
+            historyIndex1 = _hx_tab_array(tab, length);
+          end;
+          historyIndex = historyIndex1.length - 1;
+        end;
+        local length = nil;
+        local tab = __lua_PairTools.copy(tHistory);
+        local length = length;
+        local s1;
+        if (length == nil) then 
+          length = _hx_table.maxn(tab);
+          if (length > 0) then 
+            local head = tab[1];
+            _G.table.remove(tab, 1);
+            tab[0] = head;
+            s1 = _hx_tab_array(tab, length);
+          else
+            s1 = _hx_tab_array({}, 0);
+          end;
+        else
+          s1 = _hx_tab_array(tab, length);
+        end;
+        s = s1[historyIndex];
+        redraw();
+      end;
+    end;
+  end;
+end
+
+__filesystem_Filesystem.new = {}
+__filesystem_Filesystem.__name__ = true
+__filesystem_Filesystem.prototype = _hx_e();
+__filesystem_Filesystem.prototype.open= nil;
+__filesystem_Filesystem.prototype.list= nil;
+__filesystem_Filesystem.prototype.exists= nil;
+__filesystem_Filesystem.prototype.attributes= nil;
+__filesystem_Filesystem.prototype.mkDir= nil;
+__filesystem_Filesystem.prototype.move= nil;
+__filesystem_Filesystem.prototype.copy= nil;
+__filesystem_Filesystem.prototype.remove= nil;
+__filesystem_Filesystem.prototype.getMountRoot= nil;
+__filesystem_Filesystem.prototype.getPermissions= nil;
+
+__filesystem_Filesystem.prototype.__class__ =  __filesystem_Filesystem
+
+WrappedFilesystem.new = function(fsd,cut) 
+  local self = _hx_new(WrappedFilesystem.prototype)
+  WrappedFilesystem.super(self,fsd,cut)
+  return self
+end
+WrappedFilesystem.super = function(self,fsd,cut) 
+  self.cut = 0;
+  self.cut = cut;
+  self.root = fsd;
+end
+WrappedFilesystem.__name__ = true
+WrappedFilesystem.prototype = _hx_e();
+WrappedFilesystem.prototype.cut= nil;
+WrappedFilesystem.prototype.root= nil;
+WrappedFilesystem.prototype.open = function(self,path,mode) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(path, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  do return tmp:open(_g:slice(self.cut):join("/"), mode) end
+end
+WrappedFilesystem.prototype.list = function(self,path) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(path, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  do return tmp:list(_g:slice(self.cut):join("/")) end
+end
+WrappedFilesystem.prototype.exists = function(self,path) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(path, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  do return tmp:exists(_g:slice(self.cut):join("/")) end
+end
+WrappedFilesystem.prototype.attributes = function(self,path) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(path, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  do return tmp:attributes(_g:slice(self.cut):join("/")) end
+end
+WrappedFilesystem.prototype.mkDir = function(self,path) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(path, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  tmp:mkDir(_g:slice(self.cut):join("/"));
+end
+WrappedFilesystem.prototype.move = function(self,source,destination) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(source, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  local tmp1 = _g:slice(self.cut):join("/");
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(destination, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  tmp:move(tmp1, _g:slice(self.cut):join("/"));
+end
+WrappedFilesystem.prototype.copy = function(self,source,destination) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(source, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  local tmp1 = _g:slice(self.cut):join("/");
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(destination, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  tmp:copy(tmp1, _g:slice(self.cut):join("/"));
+end
+WrappedFilesystem.prototype.remove = function(self,path) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(path, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  tmp:remove(_g:slice(self.cut):join("/"));
+end
+WrappedFilesystem.prototype.getMountRoot = function(self,path) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(path, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  do return tmp:getMountRoot(_g:slice(self.cut):join("/")) end
+end
+WrappedFilesystem.prototype.getPermissions = function(self,file,user) 
+  local tmp = self.root;
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(file, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  do return tmp:getPermissions(_g:slice(self.cut):join("/"), user) end
+end
+
+WrappedFilesystem.prototype.__class__ =  WrappedFilesystem
+WrappedFilesystem.__super__ = __filesystem_Filesystem
+setmetatable(WrappedFilesystem.prototype,{__index=__filesystem_Filesystem.prototype})
+
+FSElem.new = function(path,fs) 
+  local self = _hx_new(FSElem.prototype)
+  FSElem.super(self,path,fs)
+  return self
+end
+FSElem.super = function(self,path,fs) 
+  self.path = "";
+  self.path = path;
+  self.fs = fs;
+end
+FSElem.__name__ = true
+FSElem.prototype = _hx_e();
+FSElem.prototype.path= nil;
+FSElem.prototype.fs= nil;
+
+FSElem.prototype.__class__ =  FSElem
+
+KFSDriver.new = function() 
+  local self = _hx_new(KFSDriver.prototype)
+  KFSDriver.super(self)
+  return self
+end
+KFSDriver.super = function(self) 
+  self.mounts = _hx_tab_array({}, 0);
+end
+KFSDriver.__name__ = true
+KFSDriver.prototype = _hx_e();
+KFSDriver.prototype.mounts= nil;
+KFSDriver.prototype.getDrive = function(self,dir) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = String.prototype.split(dir, "/");
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i ~= "") then 
+      _g:push(i);
+    end;
+  end;
+  local fp = _g;
+  self.mounts:sort(function(a,b) 
+    do return #a.path - #b.path end;
+  end);
+  local _g = 0;
+  local _g1 = self.mounts;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local mount = _g1[_g];
+    _g = _g + 1;
+    local _g = _hx_tab_array({}, 0);
+    local _g1 = 0;
+    local _g2 = String.prototype.split(mount.path, "/");
+    while (_g1 < _g2.length) do _hx_do_first_2 = false;
+      
+      local i = _g2[_g1];
+      _g1 = _g1 + 1;
+      if (i ~= "") then 
+        _g:push(i);
+      end;
+    end;
+    local mountPath = _g;
+    if (mountPath == fp:slice(0, mountPath.length)) then 
+      do return WrappedFilesystem.new(mount.fs, mountPath.length) end;
+    end;
+  end;
+  local _g = 0;
+  local _g1 = self.mounts;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local mount = _g1[_g];
+    _g = _g + 1;
+    local _g = _hx_tab_array({}, 0);
+    local _g1 = 0;
+    local _g2 = String.prototype.split(mount.path, "/");
+    while (_g1 < _g2.length) do _hx_do_first_2 = false;
+      
+      local i = _g2[_g1];
+      _g1 = _g1 + 1;
+      if (i ~= "") then 
+        _g:push(i);
+      end;
+    end;
+    local mountPath = _g;
+    if (mountPath.length == 0) then 
+      do return WrappedFilesystem.new(mount.fs, 0) end;
+    end;
+  end;
+  _G.error(__haxe_Exception.thrown("No mount for path specified"),0);
+end
+KFSDriver.prototype.open = function(self,path,mode) 
+  do return self:getDrive(path):open(path, mode) end
+end
+KFSDriver.prototype.list = function(self,path) 
+  do return self:getDrive(path):list(path) end
+end
+KFSDriver.prototype.exists = function(self,path) 
+  do return self:getDrive(path):exists(path) end
+end
+KFSDriver.prototype.attributes = function(self,path) 
+  do return self:getDrive(path):attributes(path) end
+end
+KFSDriver.prototype.mkDir = function(self,path) 
+  self:getDrive(path):mkDir(path);
+end
+KFSDriver.prototype.move = function(self,source,destination) 
+  self:getDrive(source):move(source, destination);
+end
+KFSDriver.prototype.copy = function(self,source,destination) 
+  self:getDrive(source):copy(source, destination);
+end
+KFSDriver.prototype.remove = function(self,path) 
+  self:getDrive(path):remove(path);
+end
+KFSDriver.prototype.getMountRoot = function(self,path) 
+  do return self:getDrive(path):getMountRoot(path) end
+end
+KFSDriver.prototype.getPermissions = function(self,file,user) 
+  do return self:getDrive(file):getPermissions(file, user) end
+end
+
+KFSDriver.prototype.__class__ =  KFSDriver
+KFSDriver.__super__ = __filesystem_Filesystem
+setmetatable(KFSDriver.prototype,{__index=__filesystem_Filesystem.prototype})
+
+HalFSDriver.new = function() 
+  local self = _hx_new(HalFSDriver.prototype)
+  HalFSDriver.super(self)
+  return self
+end
+HalFSDriver.super = function(self) 
+end
+HalFSDriver.__name__ = true
+HalFSDriver.prototype = _hx_e();
+HalFSDriver.prototype.open = function(self,path,mode) 
+  local _hx_1_fH_fHandle, _hx_1_fH_error = KDriversImpl.files.open(path, mode);
+  local isopen = true;
+  if (_hx_1_fH_fHandle == nil) then 
+    _G.error(__haxe_Exception.thrown(_hx_1_fH_error),0);
+  end;
+  local fileh = __filesystem_FileHandle.new();
+  fileh.close = function(self) 
+    isopen = false;
+    _hx_1_fH_fHandle.close();
+   end;
+  fileh.flush = function(self) 
+    _hx_1_fH_fHandle.flush();
+   end;
+  fileh.read = function(self) 
+    do return _hx_1_fH_fHandle.readAll() end
+   end;
+  fileh.write = function(self,data) 
+    _hx_1_fH_fHandle.write(data);
+   end;
+  fileh.seek = function(self,whence,offset) 
+    _hx_1_fH_fHandle.seek(whence, offset);
+   end;
+  fileh.readLine = function(self) 
+    do return _hx_1_fH_fHandle.readLine() end
+   end;
+  fileh.readBytes = function(self,count) 
+    do return _hx_1_fH_fHandle.read(count) end
+   end;
+  fileh.writeLine = function(self,data) 
+    _hx_1_fH_fHandle.writeLine(data);
+   end;
+  fileh.getIfOpen = function(self) 
+    do return isopen end
+   end;
+  do return fileh end
+end
+HalFSDriver.prototype.list = function(self,path) 
+  local length = nil;
+  local tab = __lua_PairTools.copy(KDriversImpl.files.list(path));
+  local length = length;
+  if (length == nil) then 
+    length = _hx_table.maxn(tab);
+    if (length > 0) then 
+      local head = tab[1];
+      _G.table.remove(tab, 1);
+      tab[0] = head;
+      do return _hx_tab_array(tab, length) end;
+    else
+      do return _hx_tab_array({}, 0) end;
+    end;
+  else
+    do return _hx_tab_array(tab, length) end;
+  end;
+end
+HalFSDriver.prototype.exists = function(self,path) 
+  do return KDriversImpl.files.exists(path) end
+end
+HalFSDriver.prototype.attributes = function(self,path) 
+  do return KDriversImpl.files.attributes(path) end
+end
+HalFSDriver.prototype.mkDir = function(self,path) 
+  KDriversImpl.files.mkDir(path);
+end
+HalFSDriver.prototype.move = function(self,source,destination) 
+  KDriversImpl.files.copy(source, destination);
+  KDriversImpl.files.unlink(source);
+end
+HalFSDriver.prototype.copy = function(self,source,destination) 
+  KDriversImpl.files.copy(source, destination);
+end
+HalFSDriver.prototype.remove = function(self,path) 
+  KDriversImpl.files.unlink(path);
+end
+HalFSDriver.prototype.getMountRoot = function(self,path) 
+  do return "" end
+end
+HalFSDriver.prototype.getPermissions = function(self,file,user) 
+  do return KDriversImpl.files.getPermissions(file, user) end
+end
+
+HalFSDriver.prototype.__class__ =  HalFSDriver
+HalFSDriver.__super__ = __filesystem_Filesystem
+setmetatable(HalFSDriver.prototype,{__index=__filesystem_Filesystem.prototype})
+
+Kernel.new = function() 
+  local self = _hx_new(Kernel.prototype)
+  Kernel.super(self)
+  return self
+end
+Kernel.super = function(self) 
+  self.running = true;
+end
+Kernel.__name__ = true
+Kernel.prototype = _hx_e();
+Kernel.prototype.scheduler= nil;
+Kernel.prototype.userManager= nil;
+Kernel.prototype.rootFs= nil;
+Kernel.prototype.running= nil;
+Kernel.prototype.dm= nil;
+Kernel.prototype.panic = function(self,err,file,line,stack,pi) 
+  Logger.log("... Kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=362,className="Kernel",methodName="panic"}));
+  Logger.log(Std.string("Error: ") .. Std.string(err), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=363,className="Kernel",methodName="panic"}));
+  if (pi ~= nil) then 
+    Logger.log("This happened inside the kernel.", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=365,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("File: ") .. Std.string(pi.fileName), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=366,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("Line: ") .. Std.string(pi.lineNumber), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=367,className="Kernel",methodName="panic"}));
+  else
+    Logger.log(Std.string("File: ") .. Std.string(file), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=369,className="Kernel",methodName="panic"}));
+    if (stack ~= nil) then 
+      Logger.log("Stack:", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=371,className="Kernel",methodName="panic"}));
+      local _g = 0;
+      local _g1 = String.prototype.split(_hx_wrap_if_string_field(__haxe__CallStack_CallStack_Impl_,'toString')(stack), "\n");
+      while (_g < _g1.length) do _hx_do_first_1 = false;
+        
+        local item = _g1[_g];
+        _g = _g + 1;
+        if (StringTools.replace(item, " ", "") ~= "") then 
+          Logger.log(item, 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=374,className="Kernel",methodName="panic"}));
+        end;
+      end;
+    else
+      Logger.log(Std.string("Line: ") .. Std.string(line), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=378,className="Kernel",methodName="panic"}));
+    end;
+  end;
+  Logger.log("", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=381,className="Kernel",methodName="panic"}));
+  Logger.log("... End kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=382,className="Kernel",methodName="panic"}));
+  if (self.scheduler ~= nil) then 
+    self.scheduler.tasks = _hx_tab_array({}, 0);
+  end;
+  self.running = false;
+end
+Kernel.prototype.run = function(self) 
+  local usePreemption = true;
+  KDriversImpl.terminal.clear();
+  KDriversImpl.terminal.setCursorPos(1, 1);
+  Logger.log(Std.string("Syne ") .. Std.string("Helica"), 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=395,className="Kernel",methodName="run"}));
+  if ((debug == nil) or (debug.sethook == nil)) then 
+    Logger.log("Platform doesn't support pre-emption, disabing.", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=397,className="Kernel",methodName="run"}));
+    usePreemption = false;
+  else
+    Logger.log("Using preemption", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=400,className="Kernel",methodName="run"}));
+    usePreemption = true;
+  end;
+  Logger.log("Creating filesystem", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=403,className="Kernel",methodName="run"}));
+  self.rootFs = KFSDriver.new();
+  self.rootFs.mounts:push(FSElem.new("", HalFSDriver.new()));
+  Logger.log("Loading users", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=406,className="Kernel",methodName="run"}));
+  self.userManager = UserManager.new(self);
+  self.userManager:load();
+  Logger.log("Creating scheduler", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=409,className="Kernel",methodName="run"}));
+  self.scheduler = __scheduler_Scheduler.new(usePreemption, self);
+  Logger.log("Managing devices", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=416,className="Kernel",methodName="run"}));
+  self.dm = Devices.new(self);
+  local _g = 0;
+  local length = nil;
+  local tab = __lua_PairTools.copy(KDriversImpl.devc.list());
+  local length = length;
+  local _g1;
+  if (length == nil) then 
+    length = _hx_table.maxn(tab);
+    if (length > 0) then 
+      local head = tab[1];
+      _G.table.remove(tab, 1);
+      tab[0] = head;
+      _g1 = _hx_tab_array(tab, length);
+    else
+      _g1 = _hx_tab_array({}, 0);
+    end;
+  else
+    _g1 = _hx_tab_array(tab, length);
+  end;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local s = _g1[_g];
+    _g = _g + 1;
+    self.dm:add(PeripheralDevice.new(s));
+  end;
+  self.scheduler.tasks[self.scheduler:addTask("B", function() 
+    local _hx_status, _hx_result = pcall(function() 
+    
+        
+					local env = {}
+					local path = "/apps/init.lua"
+					local compEnv = {}
+					for k, v in pairs(_G) do
+						compEnv[k] = v
+					end
+					for k, v in pairs(env) do
+						compEnv[k] = v
+					end
+					compEnv["apiUtils"] = nil
+					compEnv["KDriversImpl"] = nil
+					compEnv["xnarcos"] = nil
+					compEnv["_G"] = nil
+					compEnv["write"] = Out.write
+					compEnv["print"] = Out.print
+					compEnv.tasking = require("tasking")
+					compEnv.arcos = require("arcos")
+					compEnv.devices = require("devices")
+					compEnv.sleep = compEnv.arcos.sleep
+
+					setmetatable(compEnv, {
+						__index = function(t, k)
+							if k == "_G" then
+								return compEnv
+							end
+						end,
+					})
+					local f, e = KDriversImpl.files.open(path, "r")
+					if not f then print(e) return end
+					local compFunc, err = load(f.readAll(), path, nil, compEnv)
+					f.close()
+					if compFunc == nil then
+						error(err)
+					else
+						setfenv(compFunc, compEnv)
+						local ok, err = pcall(compFunc)
+						print(err)
+					end;
+      return _hx_pcall_default
     end)
-    apiUtils.kernelPanic("Init Died: " .. err, "system/krnl.lua", 1653)
-end, 1, "root", term, { workDir = "/user/root" })
-xnarcos.startTimer(0.2)
-local function resumeTask(index, value, sus)
-    if __LEGACY.os and __LEGACY.os.queueEvent then
-        __LEGACY.os.queueEvent("fakeEvent") 
-        local f = true
-        while f do
-            local x = { xnarcos.rev() }
-            if x[1] == "fakeEvent" then
-                f = false
-                break
-            else
-                for _, v in ipairs(tasks) do
-                    table.insert(v.tQueue, x)
-                end
-            end
-        end
-    end
-    currentTask = value
-    cPid = index
-    local event = sus or table.remove(value.tQueue, 1)
-    _G.environ = value["env"]
-    local sca = table.pack(coroutine.resume(value["crt"], table.unpack(event)))
-    local sc = { table.unpack(sca, 2, #sca) }
-    if not sca[1] then
-        table.remove(tasks, index)
-    end
-    if sc[1] == "syscall" then
-        if __LEGACY.os and __LEGACY.os.queueEvent then
-            __LEGACY.os.queueEvent("fakeEvent")
-            xnarcos.rev("fakeEvent")
-        end
-        resumeTask(index, value, table.pack(syscallxe({ table.unpack(sc, 2, #sc) })))
-    end
-    value["env"] = _G.environ
+    if not _hx_status and _hx_result == "_hx_pcall_break" then
+    elseif not _hx_status then 
+      local _g = _hx_result;
+      local e = __haxe_Exception.caught(_g);
+      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=463,className="Kernel",methodName="run"}));
+    elseif _hx_result ~= _hx_pcall_default then
+      return _hx_result
+    end;
+  end)].pInfo.out = KDriversImpl.terminal;
+  
+			_G.write = Out.write
+			_G.print = Out.print
+			;
+  while (self.running) do _hx_do_first_1 = false;
+    
+    self.scheduler:tick();
+  end;
+  while (true) do _hx_do_first_1 = false;
+    
+    _G.coroutine.yield();
+  end;
 end
-while kpError == nil do
-    local f = 0
-    for index, value in ipairs(tasks) do
-        if not value.paused then
-            f = f + #value.tQueue
-        end
-    end
-    if f > 0 then
-        for index, value in ipairs(tasks) do
-            if not value.paused then
-                if #value.tQueue > 0 then
-                    resumeTask(index, value)
-                    if kpError then break end
-                end
-            else
-            end
-        end
+
+Kernel.prototype.__class__ =  Kernel
+
+Lambda.new = {}
+Lambda.__name__ = true
+Lambda.has = function(it,elt) 
+  local x = it:iterator();
+  while (x:hasNext()) do _hx_do_first_1 = false;
+    
+    local x = x:next();
+    if (x == elt) then 
+      do return true end;
+    end;
+  end;
+  do return false end;
+end
+
+Logger.new = {}
+Logger.__name__ = true
+Logger.log = function(message,level,useDebug,showPos,posInfos) 
+  if (showPos == nil) then 
+    showPos = true;
+  end;
+  if (useDebug == nil) then 
+    useDebug = false;
+  end;
+  local posstr = "";
+  if (showPos) then 
+    if ((posInfos ~= nil) and not useDebug) then 
+      posstr = Std.string(Std.string(Std.string(Std.string("") .. Std.string(posInfos.fileName)) .. Std.string(":")) .. Std.string(posInfos.lineNumber)) .. Std.string(" ");
     else
-        local ev = table.pack(coroutine.yield())
-        if ev[1] == "key" and ev[2] == require("keys").scrollLock then
-            local ks = require("keys")
-            local _, cmd = xnarcos.rev("key")
-            if cmd == ks.k then
-                xnarcos.log("Killing all tasks because of sysrq sequence", 1)
-                tasks = {}
-            elseif cmd == ks.s then
-                xnarcos.log("Starting emergency shell because of sysrq sequence", 1)
-                tasking.createTask("Emergency shell", function()
-                    write("Enter root password: ")
-                    local pw = read()
-                    if not xnarcos.validateUser("root", pw) then
-                        write("Invalid password")
-                    else
-                        xnarcos.r({}, "/apps/shell.lua")
-                    end
-                end, 1, "root", term, { workDir = "/" })
-            elseif cmd == ks.h then
-                xnarcos.log("-- SYSRQ Help --", 2)
-                xnarcos.log("S: Run emergency shell", 2)
-                xnarcos.log("H: Show this help", 2)
-            else
-                xnarcos.log("Invalid sysrq command", 1)
-            end
-        elseif ev[1] == "terminate" then
-            syscall { "shutdown" }
-        elseif ev[1] == "peripheral" then
-            local ap = __LEGACY.peripheral.wrap(ev[2])
-            ap.name = ev[2]
-            ap.types = table.pack(__LEGACY.peripheral.getType(ev[2]))
-            ap.onActivate = function()
-            end
-            ap.onDeactivate = function()
-            end
-            ap.onEvent = function()
-            end
-            ap.sendData = function(data)
-            end
-            ap.recvData = function()
-                return "NODATA"
-            end
-            devices.add(ap)
-        elseif ev[1] == "peripheral_detach" then
-            devices.remove(ev[2])
+      if (debug ~= nil) then 
+        local dInfo = debug.getinfo(2);
+        posstr = Std.string(Std.string(Std.string(Std.string("") .. Std.string(dInfo.source)) .. Std.string(":")) .. Std.string(dInfo.currentline)) .. Std.string(": ");
+      end;
+    end;
+  end;
+  local ut = KDriversImpl.computer.uptime();
+  local logStr = Std.string(Std.string(Std.string(Std.string("[") .. Std.string(StringTools.rpad(Std.string(Std.string(ut) .. Std.string("")) .. Std.string(((function() 
+    local _hx_1
+    if (_G.math.floor(ut) == ut) then 
+    _hx_1 = ".0"; else 
+    _hx_1 = ""; end
+    return _hx_1
+  end )())), "0", 4 + #(Std.string("") .. Std.string(_G.math.floor(ut)))))) .. Std.string("] ")) .. Std.string(message)) .. Std.string("\n");
+  local tmp = Logger;
+  tmp.kLog = Std.string(tmp.kLog) .. Std.string(logStr);
+  if (level >= KernelConfig.logLevel) then 
+    Out.write(logStr);
+  end;
+end
+
+Main.new = {}
+Main.__name__ = true
+Main.main = function() 
+  local k = Kernel.new();
+  local _hx_status, _hx_result = pcall(function() 
+  
+      k:run();
+    return _hx_pcall_default
+  end)
+  if not _hx_status and _hx_result == "_hx_pcall_break" then
+  elseif not _hx_status then 
+    local _g = _hx_result;
+    local e = __haxe_Exception.caught(_g);
+    k:panic(Std.string("Kernel error: ") .. Std.string(e:toString()), "Kernel", 0, e:get_stack(), _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Main.hx",lineNumber=9,className="Main",methodName="main"}));
+  elseif _hx_result ~= _hx_pcall_default then
+    return _hx_result
+  end;
+end
+
+Math.new = {}
+Math.__name__ = true
+Math.isNaN = function(f) 
+  do return f ~= f end;
+end
+Math.isFinite = function(f) 
+  if (f > -_G.math.huge) then 
+    do return f < _G.math.huge end;
+  else
+    do return false end;
+  end;
+end
+Math.min = function(a,b) 
+  if (Math.isNaN(a) or Math.isNaN(b)) then 
+    do return (0/0) end;
+  else
+    do return _G.math.min(a, b) end;
+  end;
+end
+
+Reflect.new = {}
+Reflect.__name__ = true
+Reflect.field = function(o,field) 
+  if (_G.type(o) == "string") then 
+    if (field == "length") then 
+      do return _hx_wrap_if_string_field(o,'length') end;
+    else
+      do return String.prototype[field] end;
+    end;
+  else
+    local _hx_status, _hx_result = pcall(function() 
+    
+        do return o[field] end;
+      return _hx_pcall_default
+    end)
+    if not _hx_status and _hx_result == "_hx_pcall_break" then
+    elseif not _hx_status then 
+      local _g = _hx_result;
+      do return nil end;
+    elseif _hx_result ~= _hx_pcall_default then
+      return _hx_result
+    end;
+  end;
+end
+Reflect.getProperty = function(o,field) 
+  if (o == nil) then 
+    do return nil end;
+  else
+    if ((o.__properties__ ~= nil) and (Reflect.field(o, Std.string("get_") .. Std.string(field)) ~= nil)) then 
+      do return Reflect.callMethod(o,Reflect.field(o, Std.string("get_") .. Std.string(field)),_hx_tab_array({}, 0)) end;
+    else
+      do return Reflect.field(o, field) end;
+    end;
+  end;
+end
+Reflect.setProperty = function(o,field,value) 
+  if ((o.__properties__ ~= nil) and o.__properties__[Std.string("set_") .. Std.string(field)]) then 
+    local tmp = o.__properties__[Std.string("set_") .. Std.string(field)];
+    Reflect.callMethod(o,Reflect.field(o, tmp),_hx_tab_array({[0]=value}, 1));
+  else
+    o[field] = value;
+  end;
+end
+Reflect.callMethod = function(o,func,args) 
+  if ((args == nil) or (args.length == 0)) then 
+    do return func(o) end;
+  else
+    local self_arg = false;
+    if ((o ~= nil) and (o.__name__ == nil)) then 
+      self_arg = true;
+    end;
+    if (self_arg) then 
+      do return func(o, _hx_table.unpack(args, 0, args.length - 1)) end;
+    else
+      do return func(_hx_table.unpack(args, 0, args.length - 1)) end;
+    end;
+  end;
+end
+Reflect.fields = function(o) 
+  if (_G.type(o) == "string") then 
+    do return Reflect.fields(String.prototype) end;
+  else
+    do return _hx_field_arr(o) end;
+  end;
+end
+Reflect.isFunction = function(f) 
+  if (_G.type(f) == "function") then 
+    do return not ((function() 
+      local _hx_1
+      if (_G.type(f) ~= "table") then 
+      _hx_1 = false; else 
+      _hx_1 = f.__name__; end
+      return _hx_1
+    end )() or (function() 
+      local _hx_2
+      if (_G.type(f) ~= "table") then 
+      _hx_2 = false; else 
+      _hx_2 = f.__ename__; end
+      return _hx_2
+    end )()) end;
+  else
+    do return false end;
+  end;
+end
+
+String.new = function(string) 
+  local self = _hx_new(String.prototype)
+  String.super(self,string)
+  self = string
+  return self
+end
+String.super = function(self,string) 
+end
+String.__name__ = true
+String.__index = function(s,k) 
+  if (k == "length") then 
+    do return _G.string.len(s) end;
+  else
+    local o = String.prototype;
+    local field = k;
+    if ((function() 
+      local _hx_1
+      if ((_G.type(o) == "function") and not ((function() 
+        local _hx_2
+        if (_G.type(o) ~= "table") then 
+        _hx_2 = false; else 
+        _hx_2 = o.__name__; end
+        return _hx_2
+      end )() or (function() 
+        local _hx_3
+        if (_G.type(o) ~= "table") then 
+        _hx_3 = false; else 
+        _hx_3 = o.__ename__; end
+        return _hx_3
+      end )())) then 
+      _hx_1 = false; elseif ((_G.type(o) == "string") and ((String.prototype[field] ~= nil) or (field == "length"))) then 
+      _hx_1 = true; elseif (o.__fields__ ~= nil) then 
+      _hx_1 = o.__fields__[field] ~= nil; else 
+      _hx_1 = o[field] ~= nil; end
+      return _hx_1
+    end )()) then 
+      do return String.prototype[k] end;
+    else
+      if (String.__oldindex ~= nil) then 
+        if (_G.type(String.__oldindex) == "function") then 
+          do return String.__oldindex(s, k) end;
         else
-            for index, value in ipairs(tasks) do
-                table.insert(value.tQueue, ev)
-            end
+          if (_G.type(String.__oldindex) == "table") then 
+            do return String.__oldindex[k] end;
+          end;
+        end;
+        do return nil end;
+      else
+        do return nil end;
+      end;
+    end;
+  end;
+end
+String.indexOfEmpty = function(s,startIndex) 
+  local length = _G.string.len(s);
+  if (startIndex < 0) then 
+    startIndex = length + startIndex;
+    if (startIndex < 0) then 
+      startIndex = 0;
+    end;
+  end;
+  if (startIndex > length) then 
+    do return length end;
+  else
+    do return startIndex end;
+  end;
+end
+String.fromCharCode = function(code) 
+  do return _G.string.char(code) end;
+end
+String.prototype = _hx_e();
+String.prototype.length= nil;
+String.prototype.toUpperCase = function(self) 
+  do return _G.string.upper(self) end
+end
+String.prototype.toLowerCase = function(self) 
+  do return _G.string.lower(self) end
+end
+String.prototype.indexOf = function(self,str,startIndex) 
+  if (startIndex == nil) then 
+    startIndex = 1;
+  else
+    startIndex = startIndex + 1;
+  end;
+  if (str == "") then 
+    do return String.indexOfEmpty(self, startIndex - 1) end;
+  end;
+  local r = _G.string.find(self, str, startIndex, true);
+  if ((r ~= nil) and (r > 0)) then 
+    do return r - 1 end;
+  else
+    do return -1 end;
+  end;
+end
+String.prototype.lastIndexOf = function(self,str,startIndex) 
+  local ret = -1;
+  if (startIndex == nil) then 
+    startIndex = #self;
+  end;
+  while (true) do _hx_do_first_1 = false;
+    
+    local p = String.prototype.indexOf(self, str, ret + 1);
+    if (((p == -1) or (p > startIndex)) or (p == ret)) then 
+      break;
+    end;
+    ret = p;
+  end;
+  do return ret end
+end
+String.prototype.split = function(self,delimiter) 
+  local idx = 1;
+  local ret = _hx_tab_array({}, 0);
+  while (idx ~= nil) do _hx_do_first_1 = false;
+    
+    local newidx = 0;
+    if (#delimiter > 0) then 
+      newidx = _G.string.find(self, delimiter, idx, true);
+    else
+      if (idx >= #self) then 
+        newidx = nil;
+      else
+        newidx = idx + 1;
+      end;
+    end;
+    if (newidx ~= nil) then 
+      local match = _G.string.sub(self, idx, newidx - 1);
+      ret:push(match);
+      idx = newidx + #delimiter;
+    else
+      ret:push(_G.string.sub(self, idx, #self));
+      idx = nil;
+    end;
+  end;
+  do return ret end
+end
+String.prototype.toString = function(self) 
+  do return self end
+end
+String.prototype.substring = function(self,startIndex,endIndex) 
+  if (endIndex == nil) then 
+    endIndex = #self;
+  end;
+  if (endIndex < 0) then 
+    endIndex = 0;
+  end;
+  if (startIndex < 0) then 
+    startIndex = 0;
+  end;
+  if (endIndex < startIndex) then 
+    do return _G.string.sub(self, endIndex + 1, startIndex) end;
+  else
+    do return _G.string.sub(self, startIndex + 1, endIndex) end;
+  end;
+end
+String.prototype.charAt = function(self,index) 
+  do return _G.string.sub(self, index + 1, index + 1) end
+end
+String.prototype.charCodeAt = function(self,index) 
+  do return _G.string.byte(self, index + 1) end
+end
+String.prototype.substr = function(self,pos,len) 
+  if ((len == nil) or (len > (pos + #self))) then 
+    len = #self;
+  else
+    if (len < 0) then 
+      len = #self + len;
+    end;
+  end;
+  if (pos < 0) then 
+    pos = #self + pos;
+  end;
+  if (pos < 0) then 
+    pos = 0;
+  end;
+  do return _G.string.sub(self, pos + 1, pos + len) end
+end
+
+String.prototype.__class__ =  String
+
+Std.new = {}
+Std.__name__ = true
+Std.string = function(s) 
+  do return _hx_tostring(s, 0) end;
+end
+Std.int = function(x) 
+  if (not Math.isFinite(x) or Math.isNaN(x)) then 
+    do return 0 end;
+  else
+    do return _hx_bit_clamp(x) end;
+  end;
+end
+Std.parseInt = function(x) 
+  if (x == nil) then 
+    do return nil end;
+  end;
+  local sign, numString = _G.string.match(x, "^%s*([%-+]?)0[xX]([%da-fA-F]*)");
+  if (numString ~= nil) then 
+    if (sign == "-") then 
+      do return -_G.tonumber(numString, 16) end;
+    else
+      do return _G.tonumber(numString, 16) end;
+    end;
+  end;
+  local intMatch = _G.string.match(x, "^%s*[%-+]?%d*");
+  if (intMatch == nil) then 
+    do return nil end;
+  end;
+  do return _G.tonumber(intMatch) end;
+end
+Std.parseFloat = function(x) 
+  if ((x == nil) or (x == "")) then 
+    do return (0/0) end;
+  end;
+  local digitMatch = _G.string.match(x, "^%s*[%.%-+]?[0-9]%d*");
+  if (digitMatch == nil) then 
+    do return (0/0) end;
+  end;
+  x = String.prototype.substr(x, #digitMatch);
+  local decimalMatch = _G.string.match(x, "^%.%d*");
+  if (decimalMatch == nil) then 
+    decimalMatch = "";
+  end;
+  x = String.prototype.substr(x, #decimalMatch);
+  local eMatch = _G.string.match(x, "^[eE][+%-]?%d+");
+  if (eMatch == nil) then 
+    eMatch = "";
+  end;
+  local result = _G.tonumber(Std.string(Std.string(digitMatch) .. Std.string(decimalMatch)) .. Std.string(eMatch));
+  if (result ~= nil) then 
+    do return result end;
+  else
+    do return (0/0) end;
+  end;
+end
+
+StringBuf.new = function() 
+  local self = _hx_new(StringBuf.prototype)
+  StringBuf.super(self)
+  return self
+end
+StringBuf.super = function(self) 
+  self.b = ({});
+  self.length = 0;
+end
+StringBuf.__name__ = true
+StringBuf.prototype = _hx_e();
+StringBuf.prototype.b= nil;
+StringBuf.prototype.length= nil;
+
+StringBuf.prototype.__class__ =  StringBuf
+
+StringTools.new = {}
+StringTools.__name__ = true
+StringTools.lpad = function(s,c,l) 
+  if (#c <= 0) then 
+    do return s end;
+  end;
+  local buf_b = ({});
+  local buf_length = 0;
+  l = l - #s;
+  while (buf_length < l) do _hx_do_first_1 = false;
+    
+    local str = Std.string(c);
+    _G.table.insert(buf_b, str);
+    buf_length = buf_length + #str;
+  end;
+  local str = Std.string(s);
+  _G.table.insert(buf_b, str);
+  buf_length = buf_length + #str;
+  do return _G.table.concat(buf_b) end;
+end
+StringTools.rpad = function(s,c,l) 
+  if (#c <= 0) then 
+    do return s end;
+  end;
+  local buf_b = ({});
+  local buf_length = 0;
+  local str = Std.string(s);
+  _G.table.insert(buf_b, str);
+  buf_length = buf_length + #str;
+  while (buf_length < l) do _hx_do_first_1 = false;
+    
+    local str = Std.string(c);
+    _G.table.insert(buf_b, str);
+    buf_length = buf_length + #str;
+  end;
+  do return _G.table.concat(buf_b) end;
+end
+StringTools.replace = function(s,sub,by) 
+  do return String.prototype.split(s, sub):join(by) end;
+end
+StringTools.hex = function(n,digits) 
+  local s = "";
+  local hexChars = "0123456789ABCDEF";
+  local _hx_do_first_1 = true;
+  while (n > 0) or _hx_do_first_1 do 
+    _hx_do_first_1 = false;
+    
+    local index = _hx_bit.band(n,15);
+    s = Std.string(_G.string.sub(hexChars, index + 1, index + 1)) .. Std.string(s);
+    n = _hx_bit.rshift(n,4);
+  end;
+  if (digits ~= nil) then 
+    while (#s < digits) do _hx_do_first_1 = false;
+      
+      s = Std.string("0") .. Std.string(s);
+    end;
+  end;
+  do return s end;
+end
+_hxClasses["ValueType"] = { __ename__ = true, __constructs__ = _hx_tab_array({[0]="TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"},9)}
+ValueType = _hxClasses["ValueType"];
+ValueType.TNull = _hx_tab_array({[0]="TNull",0,__enum__ = ValueType},2)
+
+ValueType.TInt = _hx_tab_array({[0]="TInt",1,__enum__ = ValueType},2)
+
+ValueType.TFloat = _hx_tab_array({[0]="TFloat",2,__enum__ = ValueType},2)
+
+ValueType.TBool = _hx_tab_array({[0]="TBool",3,__enum__ = ValueType},2)
+
+ValueType.TObject = _hx_tab_array({[0]="TObject",4,__enum__ = ValueType},2)
+
+ValueType.TFunction = _hx_tab_array({[0]="TFunction",5,__enum__ = ValueType},2)
+
+ValueType.TClass = function(c) local _x = _hx_tab_array({[0]="TClass",6,c,__enum__=ValueType}, 3); return _x; end 
+ValueType.TEnum = function(e) local _x = _hx_tab_array({[0]="TEnum",7,e,__enum__=ValueType}, 3); return _x; end 
+ValueType.TUnknown = _hx_tab_array({[0]="TUnknown",8,__enum__ = ValueType},2)
+
+
+Type.new = {}
+Type.__name__ = true
+Type.getClass = function(o) 
+  if (o == nil) then 
+    do return nil end;
+  end;
+  local o = o;
+  if (__lua_Boot.__instanceof(o, Array)) then 
+    do return Array end;
+  else
+    if (__lua_Boot.__instanceof(o, String)) then 
+      do return String end;
+    else
+      local cl = o.__class__;
+      if (cl ~= nil) then 
+        do return cl end;
+      else
+        do return nil end;
+      end;
+    end;
+  end;
+end
+Type.getInstanceFields = function(c) 
+  local p = c.prototype;
+  local a = _hx_tab_array({}, 0);
+  while (p ~= nil) do _hx_do_first_1 = false;
+    
+    local _g = 0;
+    local _g1 = Reflect.fields(p);
+    while (_g < _g1.length) do _hx_do_first_2 = false;
+      
+      local f = _g1[_g];
+      _g = _g + 1;
+      if (not Lambda.has(a, f)) then 
+        a:push(f);
+      end;
+    end;
+    local mt = _G.getmetatable(p);
+    if ((mt ~= nil) and (mt.__index ~= nil)) then 
+      p = mt.__index;
+    else
+      p = nil;
+    end;
+  end;
+  do return a end;
+end
+Type.typeof = function(v) 
+  local _g = _G.type(v);
+  if (_g) == "boolean" then 
+    do return ValueType.TBool end;
+  elseif (_g) == "function" then 
+    if ((function() 
+      local _hx_1
+      if (_G.type(v) ~= "table") then 
+      _hx_1 = false; else 
+      _hx_1 = v.__name__; end
+      return _hx_1
+    end )() or (function() 
+      local _hx_2
+      if (_G.type(v) ~= "table") then 
+      _hx_2 = false; else 
+      _hx_2 = v.__ename__; end
+      return _hx_2
+    end )()) then 
+      do return ValueType.TObject end;
+    end;
+    do return ValueType.TFunction end;
+  elseif (_g) == "nil" then 
+    do return ValueType.TNull end;
+  elseif (_g) == "number" then 
+    if (_G.math.ceil(v) == (_G.math.fmod(v, 2147483648.0))) then 
+      do return ValueType.TInt end;
+    end;
+    do return ValueType.TFloat end;
+  elseif (_g) == "string" then 
+    do return ValueType.TClass(String) end;
+  elseif (_g) == "table" then 
+    local e = v.__enum__;
+    if (e ~= nil) then 
+      do return ValueType.TEnum(e) end;
+    end;
+    local c;
+    if (__lua_Boot.__instanceof(v, Array)) then 
+      c = Array;
+    else
+      if (__lua_Boot.__instanceof(v, String)) then 
+        c = String;
+      else
+        local cl = v.__class__;
+        c = (function() 
+          local _hx_3
+          if (cl ~= nil) then 
+          _hx_3 = cl; else 
+          _hx_3 = nil; end
+          return _hx_3
+        end )();
+      end;
+    end;
+    if (c ~= nil) then 
+      do return ValueType.TClass(c) end;
+    end;
+    do return ValueType.TObject end;else
+  do return ValueType.TUnknown end; end;
+end
+
+User.new = function(name,pass) 
+  local self = _hx_new(User.prototype)
+  User.super(self,name,pass)
+  return self
+end
+User.super = function(self,name,pass) 
+  self.password = "";
+  self.name = "";
+  self.name = name;
+  self.password = pass;
+end
+User.__name__ = true
+User.prototype = _hx_e();
+User.prototype.name= nil;
+User.prototype.password= nil;
+
+User.prototype.__class__ =  User
+
+UserManager.new = function(k) 
+  local self = _hx_new(UserManager.prototype)
+  UserManager.super(self,k)
+  return self
+end
+UserManager.super = function(self,k) 
+  self.path = "/config/passwd";
+  self.users = _hx_tab_array({}, 0);
+  self.kernel = k;
+end
+UserManager.__name__ = true
+UserManager.prototype = _hx_e();
+UserManager.prototype.users= nil;
+UserManager.prototype.kernel= nil;
+UserManager.prototype.path= nil;
+UserManager.prototype.load = function(self,path) 
+  if (path == nil) then 
+    path = "/config/passwd";
+  end;
+  local fH = self.kernel.rootFs:open(path, "r");
+  self.path = path;
+  self.users = __haxe_Json.parse(fH:read());
+  fH:close();
+end
+UserManager.prototype.save = function(self,path) 
+  local tmp = path;
+  local p = (function() 
+    local _hx_1
+    if (tmp ~= nil) then 
+    _hx_1 = tmp; else 
+    _hx_1 = self.path; end
+    return _hx_1
+  end )();
+  local fH = self.kernel.rootFs:open(p, "w");
+  fH:write(__haxe_Json.stringify(self.users, nil, " "));
+  fH:close();
+end
+UserManager.prototype.add = function(self,name,pass) 
+  self.users:push(User.new(name, pass));
+  self:save();
+end
+UserManager.prototype.remove = function(self,name) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = self.users;
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if (i.name ~= name) then 
+      _g:push(i);
+    end;
+  end;
+  self.users = _g;
+  self:save();
+end
+UserManager.prototype.validateUser = function(self,name,pass) 
+  local hashedPassword = __haxe_crypto_Sha256.encode(pass);
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = self.users;
+  while (_g1 < _g2.length) do _hx_do_first_1 = false;
+    
+    local i = _g2[_g1];
+    _g1 = _g1 + 1;
+    if ((i.name == name) and (i.password == hashedPassword)) then 
+      _g:push(i);
+    end;
+  end;
+  do return _g.length > 0 end
+end
+
+UserManager.prototype.__class__ =  UserManager
+
+__filesystem_FileHandle.new = function() 
+  local self = _hx_new(__filesystem_FileHandle.prototype)
+  __filesystem_FileHandle.super(self)
+  return self
+end
+__filesystem_FileHandle.super = function(self) 
+end
+__filesystem_FileHandle.__name__ = true
+__filesystem_FileHandle.prototype = _hx_e();
+__filesystem_FileHandle.prototype.close = function(self) 
+end
+__filesystem_FileHandle.prototype.seek = function(self,whence,offset) 
+end
+__filesystem_FileHandle.prototype.read = function(self) 
+  do return "" end
+end
+__filesystem_FileHandle.prototype.readBytes = function(self,count) 
+  do return "" end
+end
+__filesystem_FileHandle.prototype.readLine = function(self) 
+  do return "" end
+end
+__filesystem_FileHandle.prototype.write = function(self,data) 
+end
+__filesystem_FileHandle.prototype.writeLine = function(self,data) 
+end
+__filesystem_FileHandle.prototype.flush = function(self) 
+end
+__filesystem_FileHandle.prototype.getIfOpen = function(self) 
+  do return false end
+end
+
+__filesystem_FileHandle.prototype.__class__ =  __filesystem_FileHandle
+_hxClasses["haxe.StackItem"] = { __ename__ = true, __constructs__ = _hx_tab_array({[0]="CFunction","Module","FilePos","Method","LocalFunction"},5)}
+__haxe_StackItem = _hxClasses["haxe.StackItem"];
+__haxe_StackItem.CFunction = _hx_tab_array({[0]="CFunction",0,__enum__ = __haxe_StackItem},2)
+
+__haxe_StackItem.Module = function(m) local _x = _hx_tab_array({[0]="Module",1,m,__enum__=__haxe_StackItem}, 3); return _x; end 
+__haxe_StackItem.FilePos = function(s,file,line,column) local _x = _hx_tab_array({[0]="FilePos",2,s,file,line,column,__enum__=__haxe_StackItem}, 6); return _x; end 
+__haxe_StackItem.Method = function(classname,method) local _x = _hx_tab_array({[0]="Method",3,classname,method,__enum__=__haxe_StackItem}, 4); return _x; end 
+__haxe_StackItem.LocalFunction = function(v) local _x = _hx_tab_array({[0]="LocalFunction",4,v,__enum__=__haxe_StackItem}, 3); return _x; end 
+
+__haxe__CallStack_CallStack_Impl_.new = {}
+__haxe__CallStack_CallStack_Impl_.__name__ = true
+__haxe__CallStack_CallStack_Impl_.toString = function(stack) 
+  local b = StringBuf.new();
+  local _g = 0;
+  local _g1 = stack;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local s = _g1[_g];
+    _g = _g + 1;
+    local str = "\nCalled from ";
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    __haxe__CallStack_CallStack_Impl_.itemToString(b, s);
+  end;
+  do return _G.table.concat(b.b) end;
+end
+__haxe__CallStack_CallStack_Impl_.itemToString = function(b,s) 
+  local tmp = s[1];
+  if (tmp) == 0 then 
+    local str = "a C function";
+    _G.table.insert(b.b, str);
+    local b = b;
+    b.length = b.length + #str;
+  elseif (tmp) == 1 then 
+    local m = s[2];
+    local str = "module ";
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    local str = Std.string(m);
+    _G.table.insert(b.b, str);
+    local b = b;
+    b.length = b.length + #str;
+  elseif (tmp) == 2 then 
+    local s1 = s[2];
+    local file = s[3];
+    local line = s[4];
+    local col = s[5];
+    if (s1 ~= nil) then 
+      __haxe__CallStack_CallStack_Impl_.itemToString(b, s1);
+      local str = " (";
+      _G.table.insert(b.b, str);
+      local b = b;
+      b.length = b.length + #str;
+    end;
+    local str = Std.string(file);
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    local str = " line ";
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    local str = Std.string(line);
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    if (col ~= nil) then 
+      local str = " column ";
+      _G.table.insert(b.b, str);
+      local b1 = b;
+      b1.length = b1.length + #str;
+      local str = Std.string(col);
+      _G.table.insert(b.b, str);
+      local b = b;
+      b.length = b.length + #str;
+    end;
+    if (s1 ~= nil) then 
+      local str = ")";
+      _G.table.insert(b.b, str);
+      local b = b;
+      b.length = b.length + #str;
+    end;
+  elseif (tmp) == 3 then 
+    local cname = s[2];
+    local meth = s[3];
+    local str = Std.string((function() 
+      local _hx_1
+      if (cname == nil) then 
+      _hx_1 = "<unknown>"; else 
+      _hx_1 = cname; end
+      return _hx_1
+    end )());
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    local str = ".";
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    local str = Std.string(meth);
+    _G.table.insert(b.b, str);
+    local b = b;
+    b.length = b.length + #str;
+  elseif (tmp) == 4 then 
+    local n = s[2];
+    local str = "local function #";
+    _G.table.insert(b.b, str);
+    local b1 = b;
+    b1.length = b1.length + #str;
+    local str = Std.string(n);
+    _G.table.insert(b.b, str);
+    local b = b;
+    b.length = b.length + #str; end;
+end
+
+__haxe_IMap.new = {}
+__haxe_IMap.__name__ = true
+__haxe_IMap.prototype = _hx_e();
+__haxe_IMap.prototype.get= nil;
+__haxe_IMap.prototype.keys= nil;
+
+__haxe_IMap.prototype.__class__ =  __haxe_IMap
+
+__haxe_Exception.new = function(message,previous,native) 
+  local self = _hx_new(__haxe_Exception.prototype)
+  __haxe_Exception.super(self,message,previous,native)
+  return self
+end
+__haxe_Exception.super = function(self,message,previous,native) 
+  self.__skipStack = 0;
+  self.__exceptionMessage = message;
+  self.__previousException = previous;
+  if (native ~= nil) then 
+    self.__nativeException = native;
+    self.__nativeStack = __haxe_NativeStackTrace.exceptionStack();
+  else
+    self.__nativeException = self;
+    self.__nativeStack = __haxe_NativeStackTrace.callStack();
+    self.__skipStack = 1;
+  end;
+end
+__haxe_Exception.__name__ = true
+__haxe_Exception.caught = function(value) 
+  if (__lua_Boot.__instanceof(value, __haxe_Exception)) then 
+    do return value end;
+  else
+    do return __haxe_ValueException.new(value, nil, value) end;
+  end;
+end
+__haxe_Exception.thrown = function(value) 
+  if (__lua_Boot.__instanceof(value, __haxe_Exception)) then 
+    do return value:get_native() end;
+  else
+    local e = __haxe_ValueException.new(value);
+    e.__skipStack = e.__skipStack + 1;
+    do return e end;
+  end;
+end
+__haxe_Exception.prototype = _hx_e();
+__haxe_Exception.prototype.__exceptionMessage= nil;
+__haxe_Exception.prototype.__exceptionStack= nil;
+__haxe_Exception.prototype.__nativeStack= nil;
+__haxe_Exception.prototype.__skipStack= nil;
+__haxe_Exception.prototype.__nativeException= nil;
+__haxe_Exception.prototype.__previousException= nil;
+__haxe_Exception.prototype.unwrap = function(self) 
+  do return self.__nativeException end
+end
+__haxe_Exception.prototype.toString = function(self) 
+  do return self:get_message() end
+end
+__haxe_Exception.prototype.__shiftStack = function(self) 
+  self.__skipStack = self.__skipStack + 1;
+end
+__haxe_Exception.prototype.get_message = function(self) 
+  do return self.__exceptionMessage end
+end
+__haxe_Exception.prototype.get_native = function(self) 
+  do return self.__nativeException end
+end
+__haxe_Exception.prototype.get_stack = function(self) 
+  local _g = self.__exceptionStack;
+  if (_g == nil) then 
+    self.__exceptionStack = __haxe_NativeStackTrace.toHaxe(self.__nativeStack, self.__skipStack) do return self.__exceptionStack end;
+  else
+    local s = _g;
+    do return s end;
+  end;
+end
+
+__haxe_Exception.prototype.__class__ =  __haxe_Exception
+
+__haxe_Exception.prototype.__properties__ =  {get_native="get_native",get_stack="get_stack",get_message="get_message"}
+
+__haxe_Json.new = {}
+__haxe_Json.__name__ = true
+__haxe_Json.parse = function(text) 
+  do return __haxe_format_JsonParser.new(text):doParse() end;
+end
+__haxe_Json.stringify = function(value,replacer,space) 
+  do return __haxe_format_JsonPrinter.print(value, replacer, space) end;
+end
+
+__haxe_Log.new = {}
+__haxe_Log.__name__ = true
+__haxe_Log.formatOutput = function(v,infos) 
+  local str = Std.string(v);
+  if (infos == nil) then 
+    do return str end;
+  end;
+  local pstr = Std.string(Std.string(infos.fileName) .. Std.string(":")) .. Std.string(infos.lineNumber);
+  if (infos.customParams ~= nil) then 
+    local _g = 0;
+    local _g1 = infos.customParams;
+    while (_g < _g1.length) do _hx_do_first_1 = false;
+      
+      local v = _g1[_g];
+      _g = _g + 1;
+      str = Std.string(str) .. Std.string((Std.string(", ") .. Std.string(Std.string(v))));
+    end;
+  end;
+  do return Std.string(Std.string(pstr) .. Std.string(": ")) .. Std.string(str) end;
+end
+__haxe_Log.trace = function(v,infos) 
+  local str = __haxe_Log.formatOutput(v, infos);
+  _hx_print(str);
+end
+
+__haxe_NativeStackTrace.new = {}
+__haxe_NativeStackTrace.__name__ = true
+__haxe_NativeStackTrace.saveStack = function(exception) 
+end
+__haxe_NativeStackTrace.callStack = function() 
+  local _g = debug.traceback();
+  if (_g == nil) then 
+    do return _hx_tab_array({}, 0) end;
+  else
+    local s = _g;
+    do return String.prototype.split(s, "\n"):slice(3) end;
+  end;
+end
+__haxe_NativeStackTrace.exceptionStack = function() 
+  do return _hx_tab_array({}, 0) end;
+end
+__haxe_NativeStackTrace.toHaxe = function(native,skip) 
+  if (skip == nil) then 
+    skip = 0;
+  end;
+  local stack = _hx_tab_array({}, 0);
+  local cnt = -1;
+  local _g = 0;
+  local _hx_continue_1 = false;
+  while (_g < native.length) do _hx_do_first_1 = false;
+    repeat 
+    local item = native[_g];
+    _g = _g + 1;
+    local parts = String.prototype.split(String.prototype.substr(item, 1), ":");
+    local file = parts[0];
+    if (file == "[C]") then 
+      break;
+    end;
+    cnt = cnt + 1;
+    if (skip > cnt) then 
+      break;
+    end;
+    local line = parts[1];
+    local method;
+    if (parts.length <= 2) then 
+      method = nil;
+    else
+      local methodPos = String.prototype.indexOf(parts[2], "'");
+      method = (function() 
+        local _hx_1
+        if (methodPos < 0) then 
+        _hx_1 = nil; else 
+        _hx_1 = __haxe_StackItem.Method(nil, String.prototype.substring(parts[2], methodPos + 1, #parts[2] - 1)); end
+        return _hx_1
+      end )();
+    end;
+    stack:push(__haxe_StackItem.FilePos(method, file, Std.parseInt(line)));until true
+    if _hx_continue_1 then 
+    _hx_continue_1 = false;
+    break;
+    end;
+    
+  end;
+  do return stack end;
+end
+
+__haxe__Rest_Rest_Impl_.new = {}
+__haxe__Rest_Rest_Impl_.__name__ = true
+__haxe__Rest_Rest_Impl_.of = function(array) 
+  local ret = ({});
+  local _g = 0;
+  local _g1 = array.length;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local idx = _g - 1;
+    ret[idx + 1] = array[idx];
+  end;
+  do return ret end;
+end
+__haxe__Rest_Rest_Impl_.toArray = function(this1) 
+  local length = nil;
+  local tab = __lua_PairTools.copy(this1);
+  local length = length;
+  if (length == nil) then 
+    length = _hx_table.maxn(tab);
+    if (length > 0) then 
+      local head = tab[1];
+      _G.table.remove(tab, 1);
+      tab[0] = head;
+      do return _hx_tab_array(tab, length) end;
+    else
+      do return _hx_tab_array({}, 0) end;
+    end;
+  else
+    do return _hx_tab_array(tab, length) end;
+  end;
+end
+
+__haxe_ValueException.new = function(value,previous,native) 
+  local self = _hx_new(__haxe_ValueException.prototype)
+  __haxe_ValueException.super(self,value,previous,native)
+  return self
+end
+__haxe_ValueException.super = function(self,value,previous,native) 
+  __haxe_Exception.super(self,(function() 
+    local _hx_1
+    if (value == nil) then 
+    _hx_1 = "null"; else 
+    _hx_1 = Std.string(value); end
+    return _hx_1
+  end )(),previous,native);
+  self.value = value;
+  self.__skipStack = self.__skipStack + 1;
+end
+__haxe_ValueException.__name__ = true
+__haxe_ValueException.prototype = _hx_e();
+__haxe_ValueException.prototype.value= nil;
+__haxe_ValueException.prototype.unwrap = function(self) 
+  do return self.value end
+end
+
+__haxe_ValueException.prototype.__class__ =  __haxe_ValueException
+__haxe_ValueException.__super__ = __haxe_Exception
+setmetatable(__haxe_ValueException.prototype,{__index=__haxe_Exception.prototype})
+setmetatable(__haxe_ValueException.prototype.__properties__,{__index=__haxe_Exception.prototype.__properties__})
+
+__haxe_crypto_Sha256.new = function() 
+  local self = _hx_new(__haxe_crypto_Sha256.prototype)
+  __haxe_crypto_Sha256.super(self)
+  return self
+end
+__haxe_crypto_Sha256.super = function(self) 
+end
+__haxe_crypto_Sha256.__name__ = true
+__haxe_crypto_Sha256.encode = function(s) 
+  local sh = __haxe_crypto_Sha256.new();
+  local h = sh:doEncode(__haxe_crypto_Sha256.str2blks(s), #s * 8);
+  do return sh:hex(h) end;
+end
+__haxe_crypto_Sha256.str2blks = function(s) 
+  local s = __haxe_io_Bytes.ofString(s);
+  local nblk = (_hx_bit.arshift(s.length + 8,6)) + 1;
+  local blks = Array.new();
+  local _g = 0;
+  local _g1 = nblk * 16;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    blks[i] = 0;
+  end;
+  local _g = 0;
+  local _g1 = s.length;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    local p = _hx_bit.arshift(i,2);
+    local blks = blks;
+    local p = p;
+    blks[p] = _hx_bit.bor(blks[p],_hx_bit.lshift(s.b[i],24 - (_hx_bit.lshift((_hx_bit.band(i,3)),3))));
+  end;
+  local i = s.length;
+  local p = _hx_bit.arshift(i,2);
+  local blks1 = blks;
+  local p = p;
+  blks1[p] = _hx_bit.bor(blks1[p],_hx_bit.lshift(128,24 - (_hx_bit.lshift((_hx_bit.band(i,3)),3))));
+  blks[(nblk * 16) - 1] = s.length * 8;
+  do return blks end;
+end
+__haxe_crypto_Sha256.prototype = _hx_e();
+__haxe_crypto_Sha256.prototype.doEncode = function(self,m,l) 
+  local K = _hx_tab_array({[0]=1116352408, 1899447441, -1245643825, -373957723, 961987163, 1508970993, -1841331548, -1424204075, -670586216, 310598401, 607225278, 1426881987, 1925078388, -2132889090, -1680079193, -1046744716, -459576895, -272742522, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, -1740746414, -1473132947, -1341970488, -1084653625, -958395405, -710438585, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, -2117940946, -1838011259, -1564481375, -1474664885, -1035236496, -949202525, -778901479, -694614492, -200395387, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, -2067236844, -1933114872, -1866530822, -1538233109, -1090935817, -965641998}, 64);
+  local HASH = _hx_tab_array({[0]=1779033703, -1150833019, 1013904242, -1521486534, 1359893119, -1694144372, 528734635, 1541459225}, 8);
+  local W = Array.new();
+  W[64] = 0;
+  local a;
+  local b;
+  local c;
+  local d;
+  local e;
+  local f;
+  local g;
+  local h;
+  local T1;
+  local T2;
+  local m1 = m;
+  local index = _hx_bit.arshift(l,5);
+  m1[index] = _hx_bit.bor(m1[index],_hx_bit.lshift(128,24 - (_G.math.fmod(l, 32))));
+  m[(_hx_bit.lshift(_hx_bit.arshift(l + 64,9),4)) + 15] = l;
+  local i = 0;
+  while (i < m.length) do _hx_do_first_1 = false;
+    
+    a = HASH[0];
+    b = HASH[1];
+    c = HASH[2];
+    d = HASH[3];
+    e = HASH[4];
+    f = HASH[5];
+    g = HASH[6];
+    h = HASH[7];
+    local _g = 0;
+    while (_g < 64) do _hx_do_first_2 = false;
+      
+      _g = _g + 1;
+      local j = _g - 1;
+      if (j < 16) then 
+        W[j] = m[j + i];
+      else
+        local x = W[j - 2];
+        local x = _hx_bit.bxor(_hx_bit.bxor((_hx_bit.bor(_hx_bit.rshift(x,17),_hx_bit.lshift(x,15))),(_hx_bit.bor(_hx_bit.rshift(x,19),_hx_bit.lshift(x,13)))),_hx_bit.rshift(x,10));
+        local y = W[j - 7];
+        local lsw = (_hx_bit.band(x,65535)) + (_hx_bit.band(y,65535));
+        local msw = ((_hx_bit.arshift(x,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+        local x = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+        local x1 = W[j - 15];
+        local y = _hx_bit.bxor(_hx_bit.bxor((_hx_bit.bor(_hx_bit.rshift(x1,7),_hx_bit.lshift(x1,25))),(_hx_bit.bor(_hx_bit.rshift(x1,18),_hx_bit.lshift(x1,14)))),_hx_bit.rshift(x1,3));
+        local lsw = (_hx_bit.band(x,65535)) + (_hx_bit.band(y,65535));
+        local msw = ((_hx_bit.arshift(x,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+        local x = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+        local y = W[j - 16];
+        local lsw = (_hx_bit.band(x,65535)) + (_hx_bit.band(y,65535));
+        local msw = ((_hx_bit.arshift(x,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+        W[j] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+      end;
+      local y = _hx_bit.bxor(_hx_bit.bxor((_hx_bit.bor(_hx_bit.rshift(e,6),_hx_bit.lshift(e,26))),(_hx_bit.bor(_hx_bit.rshift(e,11),_hx_bit.lshift(e,21)))),(_hx_bit.bor(_hx_bit.rshift(e,25),_hx_bit.lshift(e,7))));
+      local lsw = (_hx_bit.band(h,65535)) + (_hx_bit.band(y,65535));
+      local msw = ((_hx_bit.arshift(h,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+      local x = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+      local y = _hx_bit.bxor(_hx_bit.band(e,f),_hx_bit.band(_hx_bit.bnot(e),g));
+      local lsw = (_hx_bit.band(x,65535)) + (_hx_bit.band(y,65535));
+      local msw = ((_hx_bit.arshift(x,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+      local x = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+      local y = K[j];
+      local lsw = (_hx_bit.band(x,65535)) + (_hx_bit.band(y,65535));
+      local msw = ((_hx_bit.arshift(x,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+      local x = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+      local y = W[j];
+      local lsw = (_hx_bit.band(x,65535)) + (_hx_bit.band(y,65535));
+      local msw = ((_hx_bit.arshift(x,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+      T1 = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+      local x = _hx_bit.bxor(_hx_bit.bxor((_hx_bit.bor(_hx_bit.rshift(a,2),_hx_bit.lshift(a,30))),(_hx_bit.bor(_hx_bit.rshift(a,13),_hx_bit.lshift(a,19)))),(_hx_bit.bor(_hx_bit.rshift(a,22),_hx_bit.lshift(a,10))));
+      local y = _hx_bit.bxor(_hx_bit.bxor(_hx_bit.band(a,b),_hx_bit.band(a,c)),_hx_bit.band(b,c));
+      local lsw = (_hx_bit.band(x,65535)) + (_hx_bit.band(y,65535));
+      local msw = ((_hx_bit.arshift(x,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+      T2 = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+      h = g;
+      g = f;
+      f = e;
+      local lsw = (_hx_bit.band(d,65535)) + (_hx_bit.band(T1,65535));
+      local msw = ((_hx_bit.arshift(d,16)) + (_hx_bit.arshift(T1,16))) + (_hx_bit.arshift(lsw,16));
+      e = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+      d = c;
+      c = b;
+      b = a;
+      local lsw = (_hx_bit.band(T1,65535)) + (_hx_bit.band(T2,65535));
+      local msw = ((_hx_bit.arshift(T1,16)) + (_hx_bit.arshift(T2,16))) + (_hx_bit.arshift(lsw,16));
+      a = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    end;
+    local y = HASH[0];
+    local lsw = (_hx_bit.band(a,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(a,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[0] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    local y = HASH[1];
+    local lsw = (_hx_bit.band(b,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(b,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[1] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    local y = HASH[2];
+    local lsw = (_hx_bit.band(c,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(c,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[2] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    local y = HASH[3];
+    local lsw = (_hx_bit.band(d,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(d,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[3] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    local y = HASH[4];
+    local lsw = (_hx_bit.band(e,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(e,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[4] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    local y = HASH[5];
+    local lsw = (_hx_bit.band(f,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(f,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[5] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    local y = HASH[6];
+    local lsw = (_hx_bit.band(g,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(g,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[6] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    local y = HASH[7];
+    local lsw = (_hx_bit.band(h,65535)) + (_hx_bit.band(y,65535));
+    local msw = ((_hx_bit.arshift(h,16)) + (_hx_bit.arshift(y,16))) + (_hx_bit.arshift(lsw,16));
+    HASH[7] = _hx_bit.bor(_hx_bit.lshift(msw,16),_hx_bit.band(lsw,65535));
+    i = i + 16;
+  end;
+  do return HASH end
+end
+__haxe_crypto_Sha256.prototype.hex = function(self,a) 
+  local str = "";
+  local _g = 0;
+  while (_g < a.length) do _hx_do_first_1 = false;
+    
+    local num = a[_g];
+    _g = _g + 1;
+    str = Std.string(str) .. Std.string(StringTools.hex(num, 8));
+  end;
+  do return _G.string.lower(str) end
+end
+
+__haxe_crypto_Sha256.prototype.__class__ =  __haxe_crypto_Sha256
+
+__haxe_ds_IntMap.new = function() 
+  local self = _hx_new(__haxe_ds_IntMap.prototype)
+  __haxe_ds_IntMap.super(self)
+  return self
+end
+__haxe_ds_IntMap.super = function(self) 
+  self.h = ({});
+end
+__haxe_ds_IntMap.__name__ = true
+__haxe_ds_IntMap.__interfaces__ = {__haxe_IMap}
+__haxe_ds_IntMap.prototype = _hx_e();
+__haxe_ds_IntMap.prototype.h= nil;
+__haxe_ds_IntMap.prototype.get = function(self,key) 
+  local ret = self.h[key];
+  if (ret == __haxe_ds_IntMap.tnull) then 
+    ret = nil;
+  end;
+  do return ret end
+end
+__haxe_ds_IntMap.prototype.keys = function(self) 
+  local _gthis = self;
+  local next = _G.next;
+  local cur = next(self.h, nil);
+  do return _hx_o({__fields__={next=true,hasNext=true},next=function(self) 
+    local ret = cur;
+    cur = next(_gthis.h, cur);
+    do return ret end;
+  end,hasNext=function(self) 
+    do return cur ~= nil end;
+  end}) end
+end
+
+__haxe_ds_IntMap.prototype.__class__ =  __haxe_ds_IntMap
+
+__haxe_ds_ObjectMap.new = function() 
+  local self = _hx_new(__haxe_ds_ObjectMap.prototype)
+  __haxe_ds_ObjectMap.super(self)
+  return self
+end
+__haxe_ds_ObjectMap.super = function(self) 
+  self.h = ({});
+  self.k = ({});
+end
+__haxe_ds_ObjectMap.__name__ = true
+__haxe_ds_ObjectMap.__interfaces__ = {__haxe_IMap}
+__haxe_ds_ObjectMap.prototype = _hx_e();
+__haxe_ds_ObjectMap.prototype.h= nil;
+__haxe_ds_ObjectMap.prototype.k= nil;
+__haxe_ds_ObjectMap.prototype.get = function(self,key) 
+  do return self.h[key] end
+end
+__haxe_ds_ObjectMap.prototype.keys = function(self) 
+  local _gthis = self;
+  local cur = next(self.h, nil);
+  do return _hx_o({__fields__={next=true,hasNext=true},next=function(self) 
+    local ret = cur;
+    cur = next(_gthis.k, cur);
+    do return ret end;
+  end,hasNext=function(self) 
+    do return cur ~= nil end;
+  end}) end
+end
+
+__haxe_ds_ObjectMap.prototype.__class__ =  __haxe_ds_ObjectMap
+
+__haxe_ds_StringMap.new = function() 
+  local self = _hx_new(__haxe_ds_StringMap.prototype)
+  __haxe_ds_StringMap.super(self)
+  return self
+end
+__haxe_ds_StringMap.super = function(self) 
+  self.h = ({});
+end
+__haxe_ds_StringMap.__name__ = true
+__haxe_ds_StringMap.__interfaces__ = {__haxe_IMap}
+__haxe_ds_StringMap.prototype = _hx_e();
+__haxe_ds_StringMap.prototype.h= nil;
+__haxe_ds_StringMap.prototype.get = function(self,key) 
+  local ret = self.h[key];
+  if (ret == __haxe_ds_StringMap.tnull) then 
+    do return nil end;
+  end;
+  do return ret end
+end
+__haxe_ds_StringMap.prototype.keys = function(self) 
+  local _gthis = self;
+  local next = _G.next;
+  local cur = next(self.h, nil);
+  do return _hx_o({__fields__={next=true,hasNext=true},next=function(self) 
+    local ret = cur;
+    cur = next(_gthis.h, cur);
+    do return ret end;
+  end,hasNext=function(self) 
+    do return cur ~= nil end;
+  end}) end
+end
+
+__haxe_ds_StringMap.prototype.__class__ =  __haxe_ds_StringMap
+
+__haxe_exceptions_PosException.new = function(message,previous,pos) 
+  local self = _hx_new(__haxe_exceptions_PosException.prototype)
+  __haxe_exceptions_PosException.super(self,message,previous,pos)
+  return self
+end
+__haxe_exceptions_PosException.super = function(self,message,previous,pos) 
+  __haxe_Exception.super(self,message,previous);
+  if (pos == nil) then 
+    self.posInfos = _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="(unknown)",lineNumber=0,className="(unknown)",methodName="(unknown)"});
+  else
+    self.posInfos = pos;
+  end;
+  self.__skipStack = self.__skipStack + 1;
+end
+__haxe_exceptions_PosException.__name__ = true
+__haxe_exceptions_PosException.prototype = _hx_e();
+__haxe_exceptions_PosException.prototype.posInfos= nil;
+__haxe_exceptions_PosException.prototype.toString = function(self) 
+  do return Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string("") .. Std.string(__haxe_Exception.prototype.toString(self))) .. Std.string(" in ")) .. Std.string(self.posInfos.className)) .. Std.string(".")) .. Std.string(self.posInfos.methodName)) .. Std.string(" at ")) .. Std.string(self.posInfos.fileName)) .. Std.string(":")) .. Std.string(self.posInfos.lineNumber) end
+end
+
+__haxe_exceptions_PosException.prototype.__class__ =  __haxe_exceptions_PosException
+__haxe_exceptions_PosException.__super__ = __haxe_Exception
+setmetatable(__haxe_exceptions_PosException.prototype,{__index=__haxe_Exception.prototype})
+setmetatable(__haxe_exceptions_PosException.prototype.__properties__,{__index=__haxe_Exception.prototype.__properties__})
+
+__haxe_exceptions_NotImplementedException.new = function(message,previous,pos) 
+  local self = _hx_new(__haxe_exceptions_NotImplementedException.prototype)
+  __haxe_exceptions_NotImplementedException.super(self,message,previous,pos)
+  return self
+end
+__haxe_exceptions_NotImplementedException.super = function(self,message,previous,pos) 
+  if (message == nil) then 
+    message = "Not implemented";
+  end;
+  __haxe_exceptions_PosException.super(self,message,previous,pos);
+  self.__skipStack = self.__skipStack + 1;
+end
+__haxe_exceptions_NotImplementedException.__name__ = true
+__haxe_exceptions_NotImplementedException.prototype = _hx_e();
+
+__haxe_exceptions_NotImplementedException.prototype.__class__ =  __haxe_exceptions_NotImplementedException
+__haxe_exceptions_NotImplementedException.__super__ = __haxe_exceptions_PosException
+setmetatable(__haxe_exceptions_NotImplementedException.prototype,{__index=__haxe_exceptions_PosException.prototype})
+setmetatable(__haxe_exceptions_NotImplementedException.prototype.__properties__,{__index=__haxe_exceptions_PosException.prototype.__properties__})
+
+__haxe_format_JsonParser.new = function(str) 
+  local self = _hx_new(__haxe_format_JsonParser.prototype)
+  __haxe_format_JsonParser.super(self,str)
+  return self
+end
+__haxe_format_JsonParser.super = function(self,str) 
+  self.str = str;
+  self.pos = 0;
+end
+__haxe_format_JsonParser.__name__ = true
+__haxe_format_JsonParser.prototype = _hx_e();
+__haxe_format_JsonParser.prototype.str= nil;
+__haxe_format_JsonParser.prototype.pos= nil;
+__haxe_format_JsonParser.prototype.doParse = function(self) 
+  local result = self:parseRec();
+  local c;
+  while (true) do _hx_do_first_1 = false;
+    
+    c = self:nextChar();
+    if (not (c ~= nil)) then 
+      break;
+    end;
+    local c = c;
+    if (c) == 9 or (c) == 10 or (c) == 13 or (c) == 32 then else
+    self:invalidChar(); end;
+  end;
+  do return result end
+end
+__haxe_format_JsonParser.prototype.parseRec = function(self) 
+  while (true) do _hx_do_first_1 = false;
+    
+    local c = self:nextChar();
+    local c1 = c;
+    if (c1) == 9 or (c1) == 10 or (c1) == 13 or (c1) == 32 then 
+    elseif (c1) == 34 then 
+      do return self:parseString() end;
+    elseif (c1) == 45 or (c1) == 48 or (c1) == 49 or (c1) == 50 or (c1) == 51 or (c1) == 52 or (c1) == 53 or (c1) == 54 or (c1) == 55 or (c1) == 56 or (c1) == 57 then 
+      local c = c;
+      local start = self.pos - 1;
+      local minus = c == 45;
+      local digit = not minus;
+      local zero = c == 48;
+      local point = false;
+      local e = false;
+      local pm = false;
+      local _end = false;
+      local _hx_do_first_2 = true;
+      while (not _end) or _hx_do_first_2 do 
+        _hx_do_first_2 = false;
+        
+        c = self:nextChar();
+        local c = c;
+        if (c) == 43 or (c) == 45 then 
+          if (not e or pm) then 
+            self:invalidNumber(start);
+          end;
+          digit = false;
+          pm = true;
+        elseif (c) == 46 then 
+          if ((minus or point) or e) then 
+            self:invalidNumber(start);
+          end;
+          digit = false;
+          point = true;
+        elseif (c) == 48 then 
+          if (zero and not point) then 
+            self:invalidNumber(start);
+          end;
+          if (minus) then 
+            minus = false;
+            zero = true;
+          end;
+          digit = true;
+        elseif (c) == 49 or (c) == 50 or (c) == 51 or (c) == 52 or (c) == 53 or (c) == 54 or (c) == 55 or (c) == 56 or (c) == 57 then 
+          if (zero and not point) then 
+            self:invalidNumber(start);
+          end;
+          if (minus) then 
+            minus = false;
+          end;
+          digit = true;
+          zero = false;
+        elseif (c) == 69 or (c) == 101 then 
+          if ((minus or zero) or e) then 
+            self:invalidNumber(start);
+          end;
+          digit = false;
+          e = true;else
+        if (not digit) then 
+          self:invalidNumber(start);
+        end;
+        self.pos = self.pos - 1;
+        _end = true; end;
+      end;
+      local f = Std.parseFloat(String.prototype.substr(self.str, start, self.pos - start));
+      local i = Std.int(f);
+      if (i == f) then 
+        do return i end;
+      else
+        do return f end;
+      end;
+    elseif (c1) == 91 then 
+      local arr = _hx_tab_array({}, 0);
+      local comma = nil;
+      while (true) do _hx_do_first_2 = false;
+        
+        local c = self:nextChar();
+        local c = c;
+        if (c) == 9 or (c) == 10 or (c) == 13 or (c) == 32 then 
+        elseif (c) == 44 then 
+          if (comma) then 
+            comma = false;
+          else
+            self:invalidChar();
+          end;
+        elseif (c) == 93 then 
+          if (comma == false) then 
+            self:invalidChar();
+          end;
+          do return arr end;else
+        if (comma) then 
+          self:invalidChar();
+        end;
+        self.pos = self.pos - 1;
+        arr:push(self:parseRec());
+        comma = true; end;
+      end;
+    elseif (c1) == 102 then 
+      local save = self.pos;
+      if ((((self:nextChar() ~= 97) or (self:nextChar() ~= 108)) or (self:nextChar() ~= 115)) or (self:nextChar() ~= 101)) then 
+        self.pos = save;
+        self:invalidChar();
+      end;
+      do return false end;
+    elseif (c1) == 110 then 
+      local save = self.pos;
+      if (((self:nextChar() ~= 117) or (self:nextChar() ~= 108)) or (self:nextChar() ~= 108)) then 
+        self.pos = save;
+        self:invalidChar();
+      end;
+      do return nil end;
+    elseif (c1) == 116 then 
+      local save = self.pos;
+      if (((self:nextChar() ~= 114) or (self:nextChar() ~= 117)) or (self:nextChar() ~= 101)) then 
+        self.pos = save;
+        self:invalidChar();
+      end;
+      do return true end;
+    elseif (c1) == 123 then 
+      local obj = _hx_e();
+      local field = nil;
+      local comma = nil;
+      while (true) do _hx_do_first_2 = false;
+        
+        local c = self:nextChar();
+        local c = c;
+        if (c) == 9 or (c) == 10 or (c) == 13 or (c) == 32 then 
+        elseif (c) == 34 then 
+          if ((field ~= nil) or comma) then 
+            self:invalidChar();
+          end;
+          field = self:parseString();
+        elseif (c) == 44 then 
+          if (comma) then 
+            comma = false;
+          else
+            self:invalidChar();
+          end;
+        elseif (c) == 58 then 
+          if (field == nil) then 
+            self:invalidChar();
+          end;
+          obj[field] = self:parseRec();
+          field = nil;
+          comma = true;
+        elseif (c) == 125 then 
+          if ((field ~= nil) or (comma == false)) then 
+            self:invalidChar();
+          end;
+          do return obj end;else
+        self:invalidChar(); end;
+      end;else
+    self:invalidChar(); end;
+  end;
+end
+__haxe_format_JsonParser.prototype.parseString = function(self) 
+  local start = self.pos;
+  local buf = nil;
+  local prev = -1;
+  while (true) do _hx_do_first_1 = false;
+    
+    local c = self:nextChar();
+    if (c == 34) then 
+      break;
+    end;
+    if (c == 92) then 
+      if (buf == nil) then 
+        buf = StringBuf.new();
+      end;
+      local s = self.str;
+      local len = (self.pos - start) - 1;
+      local part = (function() 
+        local _hx_1
+        if (len == nil) then 
+        _hx_1 = String.prototype.substr(s, start); else 
+        _hx_1 = String.prototype.substr(s, start, len); end
+        return _hx_1
+      end )();
+      _G.table.insert(buf.b, part);
+      local buf1 = buf;
+      buf1.length = buf1.length + #part;
+      c = self:nextChar();
+      local c1 = c;
+      if (c1) == 34 or (c1) == 47 or (c1) == 92 then 
+        _G.table.insert(buf.b, _G.string.char(c));
+        local buf = buf;
+        buf.length = buf.length + 1;
+      elseif (c1) == 98 then 
+        _G.table.insert(buf.b, _G.string.char(8));
+        local buf = buf;
+        buf.length = buf.length + 1;
+      elseif (c1) == 102 then 
+        _G.table.insert(buf.b, _G.string.char(12));
+        local buf = buf;
+        buf.length = buf.length + 1;
+      elseif (c1) == 110 then 
+        _G.table.insert(buf.b, _G.string.char(10));
+        local buf = buf;
+        buf.length = buf.length + 1;
+      elseif (c1) == 114 then 
+        _G.table.insert(buf.b, _G.string.char(13));
+        local buf = buf;
+        buf.length = buf.length + 1;
+      elseif (c1) == 116 then 
+        _G.table.insert(buf.b, _G.string.char(9));
+        local buf = buf;
+        buf.length = buf.length + 1;
+      elseif (c1) == 117 then 
+        local uc = Std.parseInt(Std.string("0x") .. Std.string(String.prototype.substr(self.str, self.pos, 4)));
+        local tmp = self;
+        tmp.pos = tmp.pos + 4;
+        if (prev ~= -1) then 
+          if ((uc < 56320) or (uc > 57343)) then 
+            _G.table.insert(buf.b, _G.string.char(65533));
+            local buf = buf;
+            buf.length = buf.length + 1;
+            prev = -1;
+          else
+            _G.table.insert(buf.b, _G.string.char(((_hx_bit.lshift(prev - 55296,10)) + (uc - 56320)) + 65536));
+            local buf = buf;
+            buf.length = buf.length + 1;
+            prev = -1;
+          end;
+        else
+          if ((uc >= 55296) and (uc <= 56319)) then 
+            prev = uc;
+          else
+            _G.table.insert(buf.b, _G.string.char(uc));
+            local buf = buf;
+            buf.length = buf.length + 1;
+          end;
+        end;else
+      _G.error(__haxe_Exception.thrown(Std.string(Std.string(Std.string("Invalid escape sequence \\") .. Std.string(_G.string.char(c))) .. Std.string(" at position ")) .. Std.string((self.pos - 1))),0); end;
+      start = self.pos;
+    else
+      if (c >= 128) then 
+        self.pos = self.pos + 1;
+        if (c >= 252) then 
+          local tmp = self;
+          tmp.pos = tmp.pos + 4;
+        else
+          if (c >= 248) then 
+            local tmp = self;
+            tmp.pos = tmp.pos + 3;
+          else
+            if (c >= 240) then 
+              local tmp = self;
+              tmp.pos = tmp.pos + 2;
+            else
+              if (c >= 224) then 
+                self.pos = self.pos + 1;
+              end;
+            end;
+          end;
+        end;
+      else
+        if (c == nil) then 
+          _G.error(__haxe_Exception.thrown("Unclosed string"),0);
+        end;
+      end;
+    end;
+  end;
+  if (buf == nil) then 
+    do return String.prototype.substr(self.str, start, (self.pos - start) - 1) end;
+  else
+    local s = self.str;
+    local len = (self.pos - start) - 1;
+    local part = (function() 
+      local _hx_2
+      if (len == nil) then 
+      _hx_2 = String.prototype.substr(s, start); else 
+      _hx_2 = String.prototype.substr(s, start, len); end
+      return _hx_2
+    end )();
+    _G.table.insert(buf.b, part);
+    local buf1 = buf;
+    buf1.length = buf1.length + #part;
+    do return _G.table.concat(buf.b) end;
+  end;
+end
+__haxe_format_JsonParser.prototype.nextChar = function(self) 
+  self.pos = self.pos + 1;
+  do return _G.string.byte(self.str, self.pos) end
+end
+__haxe_format_JsonParser.prototype.invalidChar = function(self) 
+  self.pos = self.pos - 1;
+  _G.error(__haxe_Exception.thrown(Std.string(Std.string(Std.string("Invalid char ") .. Std.string(_G.string.byte(self.str, self.pos))) .. Std.string(" at position ")) .. Std.string(self.pos)),0);
+end
+__haxe_format_JsonParser.prototype.invalidNumber = function(self,start) 
+  _G.error(__haxe_Exception.thrown(Std.string(Std.string(Std.string("Invalid number at position ") .. Std.string(start)) .. Std.string(": ")) .. Std.string(String.prototype.substr(self.str, start, self.pos - start))),0);
+end
+
+__haxe_format_JsonParser.prototype.__class__ =  __haxe_format_JsonParser
+
+__haxe_format_JsonPrinter.new = function(replacer,space) 
+  local self = _hx_new(__haxe_format_JsonPrinter.prototype)
+  __haxe_format_JsonPrinter.super(self,replacer,space)
+  return self
+end
+__haxe_format_JsonPrinter.super = function(self,replacer,space) 
+  self.replacer = replacer;
+  self.indent = space;
+  self.pretty = space ~= nil;
+  self.nind = 0;
+  self.buf = StringBuf.new();
+end
+__haxe_format_JsonPrinter.__name__ = true
+__haxe_format_JsonPrinter.print = function(o,replacer,space) 
+  local printer = __haxe_format_JsonPrinter.new(replacer, space);
+  printer:write("", o);
+  do return _G.table.concat(printer.buf.b) end;
+end
+__haxe_format_JsonPrinter.prototype = _hx_e();
+__haxe_format_JsonPrinter.prototype.buf= nil;
+__haxe_format_JsonPrinter.prototype.replacer= nil;
+__haxe_format_JsonPrinter.prototype.indent= nil;
+__haxe_format_JsonPrinter.prototype.pretty= nil;
+__haxe_format_JsonPrinter.prototype.nind= nil;
+__haxe_format_JsonPrinter.prototype.write = function(self,k,v) 
+  if (self.replacer ~= nil) then 
+    v = self.replacer(k, v);
+  end;
+  local _g = Type.typeof(v);
+  local tmp = _g[1];
+  if (tmp) == 0 then 
+    local _this = self.buf;
+    local str = "null";
+    _G.table.insert(_this.b, str);
+    local _this = _this;
+    _this.length = _this.length + #str;
+  elseif (tmp) == 1 then 
+    local _this = self.buf;
+    local str = Std.string(v);
+    _G.table.insert(_this.b, str);
+    local _this = _this;
+    _this.length = _this.length + #str;
+  elseif (tmp) == 2 then 
+    local v = (function() 
+      local _hx_1
+      if (Math.isFinite(v)) then 
+      _hx_1 = Std.string(v); else 
+      _hx_1 = "null"; end
+      return _hx_1
+    end )();
+    local _this = self.buf;
+    local str = Std.string(v);
+    _G.table.insert(_this.b, str);
+    local _this = _this;
+    _this.length = _this.length + #str;
+  elseif (tmp) == 3 then 
+    local _this = self.buf;
+    local str = Std.string(v);
+    _G.table.insert(_this.b, str);
+    local _this = _this;
+    _this.length = _this.length + #str;
+  elseif (tmp) == 4 then 
+    self:fieldsString(v, Reflect.fields(v));
+  elseif (tmp) == 5 then 
+    local _this = self.buf;
+    local str = "\"<fun>\"";
+    _G.table.insert(_this.b, str);
+    local _this = _this;
+    _this.length = _this.length + #str;
+  elseif (tmp) == 6 then 
+    local c = _g[2];
+    if (c == String) then 
+      self:quote(v);
+    else
+      if (c == Array) then 
+        local v = v;
+        local _this = self.buf;
+        _G.table.insert(_this.b, _G.string.char(91));
+        local _this = _this;
+        _this.length = _this.length + 1;
+        local len = v.length;
+        local last = len - 1;
+        local _g = 0;
+        local _g1 = len;
+        while (_g < _g1) do _hx_do_first_1 = false;
+          
+          _g = _g + 1;
+          local i = _g - 1;
+          if (i > 0) then 
+            local _this = self.buf;
+            _G.table.insert(_this.b, _G.string.char(44));
+            local _this = _this;
+            _this.length = _this.length + 1;
+          else
+            self.nind = self.nind + 1;
+          end;
+          if (self.pretty) then 
+            local _this = self.buf;
+            _G.table.insert(_this.b, _G.string.char(10));
+            local _this = _this;
+            _this.length = _this.length + 1;
+          end;
+          if (self.pretty) then 
+            local v = StringTools.lpad("", self.indent, self.nind * #self.indent);
+            local _this = self.buf;
+            local str = Std.string(v);
+            _G.table.insert(_this.b, str);
+            local _this = _this;
+            _this.length = _this.length + #str;
+          end;
+          self:write(i, v[i]);
+          if (i == last) then 
+            self.nind = self.nind - 1;
+            if (self.pretty) then 
+              local _this = self.buf;
+              _G.table.insert(_this.b, _G.string.char(10));
+              local _this = _this;
+              _this.length = _this.length + 1;
+            end;
+            if (self.pretty) then 
+              local v = StringTools.lpad("", self.indent, self.nind * #self.indent);
+              local _this = self.buf;
+              local str = Std.string(v);
+              _G.table.insert(_this.b, str);
+              local _this = _this;
+              _this.length = _this.length + #str;
+            end;
+          end;
+        end;
+        local _this = self.buf;
+        _G.table.insert(_this.b, _G.string.char(93));
+        local _this = _this;
+        _this.length = _this.length + 1;
+      else
+        if (c == __haxe_ds_StringMap) then 
+          local v = v;
+          local o = _hx_e();
+          local k = v:keys();
+          while (k:hasNext()) do _hx_do_first_1 = false;
+            
+            local k = k:next();
+            local ret = v.h[k];
+            o[k] = (function() 
+              local _hx_2
+              if (ret == __haxe_ds_StringMap.tnull) then 
+              _hx_2 = nil; else 
+              _hx_2 = ret; end
+              return _hx_2
+            end )();
+          end;
+          local v = o;
+          self:fieldsString(v, Reflect.fields(v));
+        else
+          if (c == Date) then 
+            local v = v;
+            self:quote(__lua_Boot.dateStr(v));
+          else
+            self:classString(v);
+          end;
+        end;
+      end;
+    end;
+  elseif (tmp) == 7 then 
+    local _g = _g[2];
+    local i = v[1];
+    local v = Std.string(i);
+    local _this = self.buf;
+    local str = Std.string(v);
+    _G.table.insert(_this.b, str);
+    local _this = _this;
+    _this.length = _this.length + #str;
+  elseif (tmp) == 8 then 
+    local _this = self.buf;
+    local str = "\"???\"";
+    _G.table.insert(_this.b, str);
+    local _this = _this;
+    _this.length = _this.length + #str; end;
+end
+__haxe_format_JsonPrinter.prototype.classString = function(self,v) 
+  self:fieldsString(v, Type.getInstanceFields(Type.getClass(v)));
+end
+__haxe_format_JsonPrinter.prototype.fieldsString = function(self,v,fields) 
+  local _this = self.buf;
+  _G.table.insert(_this.b, _G.string.char(123));
+  local _this = _this;
+  _this.length = _this.length + 1;
+  local len = fields.length;
+  local empty = true;
+  local _g = 0;
+  local _g1 = len;
+  local _hx_continue_1 = false;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    repeat 
+    _g = _g + 1;
+    local i = _g - 1;
+    local f = fields[i];
+    local value = Reflect.field(v, f);
+    if (Reflect.isFunction(value)) then 
+      break;
+    end;
+    if (empty) then 
+      self.nind = self.nind + 1;
+      empty = false;
+    else
+      local _this = self.buf;
+      _G.table.insert(_this.b, _G.string.char(44));
+      local _this = _this;
+      _this.length = _this.length + 1;
+    end;
+    if (self.pretty) then 
+      local _this = self.buf;
+      _G.table.insert(_this.b, _G.string.char(10));
+      local _this = _this;
+      _this.length = _this.length + 1;
+    end;
+    if (self.pretty) then 
+      local v = StringTools.lpad("", self.indent, self.nind * #self.indent);
+      local _this = self.buf;
+      local str = Std.string(v);
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    end;
+    self:quote(f);
+    local _this = self.buf;
+    _G.table.insert(_this.b, _G.string.char(58));
+    local _this = _this;
+    _this.length = _this.length + 1;
+    if (self.pretty) then 
+      local _this = self.buf;
+      _G.table.insert(_this.b, _G.string.char(32));
+      local _this = _this;
+      _this.length = _this.length + 1;
+    end;
+    self:write(f, value);until true
+    if _hx_continue_1 then 
+    _hx_continue_1 = false;
+    break;
+    end;
+    
+  end;
+  if (not empty) then 
+    self.nind = self.nind - 1;
+    if (self.pretty) then 
+      local _this = self.buf;
+      _G.table.insert(_this.b, _G.string.char(10));
+      local _this = _this;
+      _this.length = _this.length + 1;
+    end;
+    if (self.pretty) then 
+      local v = StringTools.lpad("", self.indent, self.nind * #self.indent);
+      local _this = self.buf;
+      local str = Std.string(v);
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    end;
+  end;
+  local _this = self.buf;
+  _G.table.insert(_this.b, _G.string.char(125));
+  local _this = _this;
+  _this.length = _this.length + 1;
+end
+__haxe_format_JsonPrinter.prototype.quote = function(self,s) 
+  local _this = self.buf;
+  _G.table.insert(_this.b, _G.string.char(34));
+  local _this = _this;
+  _this.length = _this.length + 1;
+  local i = 0;
+  local length = #s;
+  while (i < length) do _hx_do_first_1 = false;
+    
+    i = i + 1;
+    local c = _G.string.byte(s, (i - 1) + 1);
+    local c1 = c;
+    if (c1) == 8 then 
+      local _this = self.buf;
+      local str = "\\b";
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    elseif (c1) == 9 then 
+      local _this = self.buf;
+      local str = "\\t";
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    elseif (c1) == 10 then 
+      local _this = self.buf;
+      local str = "\\n";
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    elseif (c1) == 12 then 
+      local _this = self.buf;
+      local str = "\\f";
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    elseif (c1) == 13 then 
+      local _this = self.buf;
+      local str = "\\r";
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    elseif (c1) == 34 then 
+      local _this = self.buf;
+      local str = "\\\"";
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;
+    elseif (c1) == 92 then 
+      local _this = self.buf;
+      local str = "\\\\";
+      _G.table.insert(_this.b, str);
+      local _this = _this;
+      _this.length = _this.length + #str;else
+    local _this = self.buf;
+    _G.table.insert(_this.b, _G.string.char(c));
+    local _this = _this;
+    _this.length = _this.length + 1; end;
+  end;
+  local _this = self.buf;
+  _G.table.insert(_this.b, _G.string.char(34));
+  local _this = _this;
+  _this.length = _this.length + 1;
+end
+
+__haxe_format_JsonPrinter.prototype.__class__ =  __haxe_format_JsonPrinter
+
+__haxe_io_Bytes.new = function(length,b) 
+  local self = _hx_new(__haxe_io_Bytes.prototype)
+  __haxe_io_Bytes.super(self,length,b)
+  return self
+end
+__haxe_io_Bytes.super = function(self,length,b) 
+  self.length = length;
+  self.b = b;
+end
+__haxe_io_Bytes.__name__ = true
+__haxe_io_Bytes.ofString = function(s,encoding) 
+  local _g = _hx_tab_array({}, 0);
+  local _g1 = 0;
+  local _g2 = _G.string.len(s);
+  while (_g1 < _g2) do _hx_do_first_1 = false;
+    
+    _g1 = _g1 + 1;
+    local i = _g1 - 1;
+    _g:push(_G.string.byte(s, i + 1));
+  end;
+  local bytes = _g;
+  do return __haxe_io_Bytes.new(bytes.length, bytes) end;
+end
+__haxe_io_Bytes.prototype = _hx_e();
+__haxe_io_Bytes.prototype.length= nil;
+__haxe_io_Bytes.prototype.b= nil;
+
+__haxe_io_Bytes.prototype.__class__ =  __haxe_io_Bytes
+_hxClasses["haxe.io.Encoding"] = { __ename__ = true, __constructs__ = _hx_tab_array({[0]="UTF8","RawNative"},2)}
+__haxe_io_Encoding = _hxClasses["haxe.io.Encoding"];
+__haxe_io_Encoding.UTF8 = _hx_tab_array({[0]="UTF8",0,__enum__ = __haxe_io_Encoding},2)
+
+__haxe_io_Encoding.RawNative = _hx_tab_array({[0]="RawNative",1,__enum__ = __haxe_io_Encoding},2)
+
+
+__haxe_iterators_ArrayIterator.new = function(array) 
+  local self = _hx_new(__haxe_iterators_ArrayIterator.prototype)
+  __haxe_iterators_ArrayIterator.super(self,array)
+  return self
+end
+__haxe_iterators_ArrayIterator.super = function(self,array) 
+  self.current = 0;
+  self.array = array;
+end
+__haxe_iterators_ArrayIterator.__name__ = true
+__haxe_iterators_ArrayIterator.prototype = _hx_e();
+__haxe_iterators_ArrayIterator.prototype.array= nil;
+__haxe_iterators_ArrayIterator.prototype.current= nil;
+__haxe_iterators_ArrayIterator.prototype.hasNext = function(self) 
+  do return self.current < self.array.length end
+end
+__haxe_iterators_ArrayIterator.prototype.next = function(self) 
+  do return self.array[(function() 
+  local _hx_obj = self;
+  local _hx_fld = 'current';
+  local _ = _hx_obj[_hx_fld];
+  _hx_obj[_hx_fld] = _hx_obj[_hx_fld]  + 1;
+   return _;
+   end)()] end
+end
+
+__haxe_iterators_ArrayIterator.prototype.__class__ =  __haxe_iterators_ArrayIterator
+
+__haxe_iterators_ArrayKeyValueIterator.new = function(array) 
+  local self = _hx_new(__haxe_iterators_ArrayKeyValueIterator.prototype)
+  __haxe_iterators_ArrayKeyValueIterator.super(self,array)
+  return self
+end
+__haxe_iterators_ArrayKeyValueIterator.super = function(self,array) 
+  self.current = 0;
+  self.array = array;
+end
+__haxe_iterators_ArrayKeyValueIterator.__name__ = true
+__haxe_iterators_ArrayKeyValueIterator.prototype = _hx_e();
+__haxe_iterators_ArrayKeyValueIterator.prototype.current= nil;
+__haxe_iterators_ArrayKeyValueIterator.prototype.array= nil;
+__haxe_iterators_ArrayKeyValueIterator.prototype.hasNext = function(self) 
+  do return self.current < self.array.length end
+end
+__haxe_iterators_ArrayKeyValueIterator.prototype.next = function(self) 
+  do return _hx_o({__fields__={value=true,key=true},value=self.array[self.current],key=(function() 
+  local _hx_obj = self;
+  local _hx_fld = 'current';
+  local _ = _hx_obj[_hx_fld];
+  _hx_obj[_hx_fld] = _hx_obj[_hx_fld]  + 1;
+   return _;
+   end)()}) end
+end
+
+__haxe_iterators_ArrayKeyValueIterator.prototype.__class__ =  __haxe_iterators_ArrayKeyValueIterator
+
+__haxe_macro_Error.new = function(message,pos,previous) 
+  local self = _hx_new(__haxe_macro_Error.prototype)
+  __haxe_macro_Error.super(self,message,pos,previous)
+  return self
+end
+__haxe_macro_Error.super = function(self,message,pos,previous) 
+  __haxe_Exception.super(self,message,previous);
+  self.pos = pos;
+  self.__skipStack = self.__skipStack + 1;
+end
+__haxe_macro_Error.__name__ = true
+__haxe_macro_Error.prototype = _hx_e();
+__haxe_macro_Error.prototype.pos= nil;
+
+__haxe_macro_Error.prototype.__class__ =  __haxe_macro_Error
+__haxe_macro_Error.__super__ = __haxe_Exception
+setmetatable(__haxe_macro_Error.prototype,{__index=__haxe_Exception.prototype})
+setmetatable(__haxe_macro_Error.prototype.__properties__,{__index=__haxe_Exception.prototype.__properties__})
+
+__lua_Boot.new = {}
+__lua_Boot.__name__ = true
+__lua_Boot.__instanceof = function(o,cl) 
+  if (cl == nil) then 
+    do return false end;
+  end;
+  local cl1 = cl;
+  if (cl1) == Array then 
+    do return __lua_Boot.isArray(o) end;
+  elseif (cl1) == Bool then 
+    do return _G.type(o) == "boolean" end;
+  elseif (cl1) == Dynamic then 
+    do return o ~= nil end;
+  elseif (cl1) == Float then 
+    do return _G.type(o) == "number" end;
+  elseif (cl1) == Int then 
+    if (_G.type(o) == "number") then 
+      do return _hx_bit_clamp(o) == o end;
+    else
+      do return false end;
+    end;
+  elseif (cl1) == String then 
+    do return _G.type(o) == "string" end;
+  elseif (cl1) == _G.table then 
+    do return _G.type(o) == "table" end;
+  elseif (cl1) == __lua_Thread then 
+    do return _G.type(o) == "thread" end;
+  elseif (cl1) == __lua_UserData then 
+    do return _G.type(o) == "userdata" end;else
+  if (((o ~= nil) and (_G.type(o) == "table")) and (_G.type(cl) == "table")) then 
+    local tmp;
+    if (__lua_Boot.__instanceof(o, Array)) then 
+      tmp = Array;
+    else
+      if (__lua_Boot.__instanceof(o, String)) then 
+        tmp = String;
+      else
+        local cl = o.__class__;
+        tmp = (function() 
+          local _hx_1
+          if (cl ~= nil) then 
+          _hx_1 = cl; else 
+          _hx_1 = nil; end
+          return _hx_1
+        end )();
+      end;
+    end;
+    if (__lua_Boot.extendsOrImplements(tmp, cl)) then 
+      do return true end;
+    end;
+    if ((function() 
+      local _hx_2
+      if (cl == Class) then 
+      _hx_2 = o.__name__ ~= nil; else 
+      _hx_2 = false; end
+      return _hx_2
+    end )()) then 
+      do return true end;
+    end;
+    if ((function() 
+      local _hx_3
+      if (cl == Enum) then 
+      _hx_3 = o.__ename__ ~= nil; else 
+      _hx_3 = false; end
+      return _hx_3
+    end )()) then 
+      do return true end;
+    end;
+    do return o.__enum__ == cl end;
+  else
+    do return false end;
+  end; end;
+end
+__lua_Boot.isArray = function(o) 
+  if (_G.type(o) == "table") then 
+    if ((o.__enum__ == nil) and (_G.getmetatable(o) ~= nil)) then 
+      do return _G.getmetatable(o).__index == Array.prototype end;
+    else
+      do return false end;
+    end;
+  else
+    do return false end;
+  end;
+end
+__lua_Boot.__cast = function(o,t) 
+  if ((o == nil) or __lua_Boot.__instanceof(o, t)) then 
+    do return o end;
+  else
+    _G.error(__haxe_Exception.thrown(Std.string(Std.string(Std.string("Cannot cast ") .. Std.string(Std.string(o))) .. Std.string(" to ")) .. Std.string(Std.string(t))),0);
+  end;
+end
+__lua_Boot.dateStr = function(date) 
+  local m = date:getMonth() + 1;
+  local d = date:getDate();
+  local h = date:getHours();
+  local mi = date:getMinutes();
+  local s = date:getSeconds();
+  do return Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(Std.string(date:getFullYear()) .. Std.string("-")) .. Std.string(((function() 
+    local _hx_1
+    if (m < 10) then 
+    _hx_1 = Std.string("0") .. Std.string(m); else 
+    _hx_1 = Std.string("") .. Std.string(m); end
+    return _hx_1
+  end )()))) .. Std.string("-")) .. Std.string(((function() 
+    local _hx_2
+    if (d < 10) then 
+    _hx_2 = Std.string("0") .. Std.string(d); else 
+    _hx_2 = Std.string("") .. Std.string(d); end
+    return _hx_2
+  end )()))) .. Std.string(" ")) .. Std.string(((function() 
+    local _hx_3
+    if (h < 10) then 
+    _hx_3 = Std.string("0") .. Std.string(h); else 
+    _hx_3 = Std.string("") .. Std.string(h); end
+    return _hx_3
+  end )()))) .. Std.string(":")) .. Std.string(((function() 
+    local _hx_4
+    if (mi < 10) then 
+    _hx_4 = Std.string("0") .. Std.string(mi); else 
+    _hx_4 = Std.string("") .. Std.string(mi); end
+    return _hx_4
+  end )()))) .. Std.string(":")) .. Std.string(((function() 
+    local _hx_5
+    if (s < 10) then 
+    _hx_5 = Std.string("0") .. Std.string(s); else 
+    _hx_5 = Std.string("") .. Std.string(s); end
+    return _hx_5
+  end )())) end;
+end
+__lua_Boot.extendsOrImplements = function(cl1,cl2) 
+  if ((cl1 == nil) or (cl2 == nil)) then 
+    do return false end;
+  else
+    if (cl1 == cl2) then 
+      do return true end;
+    else
+      if (cl1.__interfaces__ ~= nil) then 
+        local intf = cl1.__interfaces__;
+        local _g = 1;
+        local _g1 = _hx_table.maxn(intf) + 1;
+        while (_g < _g1) do _hx_do_first_1 = false;
+          
+          _g = _g + 1;
+          local i = _g - 1;
+          if (__lua_Boot.extendsOrImplements(intf[i], cl2)) then 
+            do return true end;
+          end;
+        end;
+      end;
+    end;
+  end;
+  do return __lua_Boot.extendsOrImplements(cl1.__super__, cl2) end;
+end
+
+__lua_Thread.new = {}
+__lua_Thread.__name__ = true
+
+__lua_UserData.new = {}
+__lua_UserData.__name__ = true
+
+__lua_PairTools.new = {}
+__lua_PairTools.__name__ = true
+__lua_PairTools.pairsFold = function(table,func,seed) 
+  for k,v in _G.pairs(table) do seed = func(k,v,seed) end;
+  do return seed end;
+end
+__lua_PairTools.copy = function(table1) 
+  local ret = ({});
+  for k,v in _G.pairs(table1) do ret[k] = v end;
+  do return ret end;
+end
+
+__scheduler_TaskInfo.new = function(name,id,env,user,out) 
+  local self = _hx_new(__scheduler_TaskInfo.prototype)
+  __scheduler_TaskInfo.super(self,name,id,env,user,out)
+  return self
+end
+__scheduler_TaskInfo.super = function(self,name,id,env,user,out) 
+  self.name = name;
+  self.id = id;
+  self.env = env;
+  self.user = user;
+  self.paused = false;
+  self.nice = 0;
+  self.out = out;
+end
+__scheduler_TaskInfo.__name__ = true
+__scheduler_TaskInfo.prototype = _hx_e();
+__scheduler_TaskInfo.prototype.name= nil;
+__scheduler_TaskInfo.prototype.id= nil;
+__scheduler_TaskInfo.prototype.env= nil;
+__scheduler_TaskInfo.prototype.user= nil;
+__scheduler_TaskInfo.prototype.paused= nil;
+__scheduler_TaskInfo.prototype.nice= nil;
+__scheduler_TaskInfo.prototype.out= nil;
+__scheduler_TaskInfo.prototype.copy = function(self) 
+  local ti = __scheduler_TaskInfo.new(self.name, self.id, self.env, self.user, self.out);
+  ti.paused = self.paused;
+  ti.nice = self.nice;
+  do return ti end
+end
+
+__scheduler_TaskInfo.prototype.__class__ =  __scheduler_TaskInfo
+
+__scheduler_Task.new = function() 
+  local self = _hx_new(__scheduler_Task.prototype)
+  __scheduler_Task.super(self)
+  return self
+end
+__scheduler_Task.super = function(self) 
+  self.isWaitingForEvent = false;
+end
+__scheduler_Task.__name__ = true
+__scheduler_Task.prototype = _hx_e();
+__scheduler_Task.prototype.coroutine= nil;
+__scheduler_Task.prototype.taskQueue= nil;
+__scheduler_Task.prototype.pInfo= nil;
+__scheduler_Task.prototype.lastPreempt= nil;
+__scheduler_Task.prototype.isWaitingForEvent= nil;
+
+__scheduler_Task.prototype.__class__ =  __scheduler_Task
+
+__scheduler_Scheduler.new = function(usePreemption,kernel) 
+  local self = _hx_new(__scheduler_Scheduler.prototype)
+  __scheduler_Scheduler.super(self,usePreemption,kernel)
+  return self
+end
+__scheduler_Scheduler.super = function(self,usePreemption,kernel) 
+  self.usePreemption = false;
+  self.tasks = _hx_tab_array({}, 0);
+  self.kernel = kernel;
+  self.syscallInterface = __syscall_SyscallInterface.new(kernel);
+  self.syscallInterface:addSyscallInterface(__syscall_extensions_ArcosExtension.new());
+  self.syscallInterface:addSyscallInterface(__syscall_extensions_FilesystemExtension.new());
+  self.syscallInterface:addSyscallInterface(__syscall_extensions_DeviceExtension.new());
+  self.syscallInterface:addSyscallInterface(__syscall_extensions_TaskingExtension.new());
+  self.usePreemption = usePreemption;
+end
+__scheduler_Scheduler.__name__ = true
+__scheduler_Scheduler.prototype = _hx_e();
+__scheduler_Scheduler.prototype.tasks= nil;
+__scheduler_Scheduler.prototype.currentTaskPid= nil;
+__scheduler_Scheduler.prototype.usePreemption= nil;
+__scheduler_Scheduler.prototype.kernel= nil;
+__scheduler_Scheduler.prototype.syscallInterface= nil;
+__scheduler_Scheduler.prototype.getCurrentTask = function(self) 
+  if (self.tasks[self.currentTaskPid] ~= nil) then 
+    do return self.tasks[self.currentTaskPid].pInfo:copy() end;
+  else
+    do return __scheduler_TaskInfo.new("Kernel", -1, __haxe_ds_StringMap.new(), "root", KDriversImpl.terminal) end;
+  end;
+end
+__scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out) 
+  local _gthis = self;
+  if (user == nil) then 
+    user = self:getCurrentTask().user;
+  end;
+  if (out == nil) then 
+    out = self:getCurrentTask().out;
+  end;
+  local pid = self.tasks.length;
+  local env = self:getCurrentTask().env;
+  self.tasks[pid] = __scheduler_Task.new();
+  self.tasks[pid].coroutine = _G.coroutine.create(function() 
+    if (_gthis.usePreemption) then 
+      debug.sethook(function() 
+        if ((KDriversImpl.computer.uptime() - _gthis.tasks[pid].lastPreempt) > 0.01) then 
+          _G.coroutine.yield("preempt");
+          _gthis.tasks[pid].lastPreempt = KDriversImpl.computer.uptime();
+        end;
+      end, "l");
+    end;
+    local _hx_status, _hx_result = pcall(function() 
+    
+        callback();
+      return _hx_pcall_default
+    end)
+    if not _hx_status and _hx_result == "_hx_pcall_break" then
+    elseif not _hx_status then 
+      local _g = _hx_result;
+      local e = __haxe_Exception.caught(_g);
+      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=131,className="scheduler.Scheduler",methodName="addTask"}));
+    elseif _hx_result ~= _hx_pcall_default then
+      return _hx_result
+    end;
+  end);
+  self.tasks[pid].taskQueue = _hx_tab_array({}, 0);
+  self.tasks[pid].pInfo = __scheduler_TaskInfo.new(name, pid, env, user, out);
+  self.tasks[pid].lastPreempt = KDriversImpl.computer.uptime();
+  do return pid end
+end
+__scheduler_Scheduler.prototype.killTask = function(self,pid) 
+  self.tasks:remove(self.tasks[pid]);
+end
+__scheduler_Scheduler.prototype.handleEvent = function(self,ev) 
+  if (ev[0] == "peripheral") then 
+    self.kernel.dm:add(PeripheralDevice.new(ev[1]));
+  end;
+  if (ev[0] == "peripheral_detach") then 
+    self.kernel.dm:remove(ev[1]);
+  end;
+  local _g = 0;
+  local _g1 = self.tasks;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local task = _g1[_g];
+    _g = _g + 1;
+    task.taskQueue:push(ev);
+  end;
+end
+__scheduler_Scheduler.prototype.resumeTask = function(self,task,fev) 
+  local _gthis = self;
+  KDriversImpl.workarounds.preventTooLongWithoutYielding(function(ev) 
+    local _gthis = _gthis;
+    local length = nil;
+    local tab = __lua_PairTools.copy(ev);
+    local length = length;
+    local tmp;
+    if (length == nil) then 
+      length = _hx_table.maxn(tab);
+      if (length > 0) then 
+        local head = tab[1];
+        _G.table.remove(tab, 1);
+        tab[0] = head;
+        tmp = _hx_tab_array(tab, length);
+      else
+        tmp = _hx_tab_array({}, 0);
+      end;
+    else
+      tmp = _hx_tab_array(tab, length);
+    end;
+    _gthis:handleEvent(tmp);
+  end);
+  if (not task.isWaitingForEvent or (fev ~= nil)) then 
+    _G.term = task.pInfo.out;
+    _G.environ = task.pInfo.env;
+    self.currentTaskPid = task.pInfo.id;
+    local tmp = fev;
+    local n = (function() 
+      local _hx_1
+      if (tmp ~= nil) then 
+      _hx_1 = tmp; else 
+      _hx_1 = _hx_tab_array({}, 0); end
+      return _hx_1
+    end )();
+    local length = nil;
+    local tab = __lua_PairTools.copy(_hx_table.pack(_G.coroutine.resume(task.coroutine, _hx_table.unpack(__haxe__Rest_Rest_Impl_.of(n)))));
+    local length = length;
+    local tra;
+    if (length == nil) then 
+      length = _hx_table.maxn(tab);
+      if (length > 0) then 
+        local head = tab[1];
+        _G.table.remove(tab, 1);
+        tab[0] = head;
+        tra = _hx_tab_array(tab, length);
+      else
+        tra = _hx_tab_array({}, 0);
+      end;
+    else
+      tra = _hx_tab_array(tab, length);
+    end;
+    local tr_success = tra[0];
+    local tr_result = tra:slice(1);
+    local n = tr_result;
+    if (n[0] == "syscall") then 
+      local o = self.syscallInterface:executeSyscall(n[1], _hx_table.unpack(__haxe__Rest_Rest_Impl_.of(n:slice(2))));
+      local length = nil;
+      local tab = __lua_PairTools.copy(o);
+      local length = length;
+      local tmp;
+      if (length == nil) then 
+        length = _hx_table.maxn(tab);
+        if (length > 0) then 
+          local head = tab[1];
+          _G.table.remove(tab, 1);
+          tab[0] = head;
+          tmp = _hx_tab_array(tab, length);
+        else
+          tmp = _hx_tab_array({}, 0);
+        end;
+      else
+        tmp = _hx_tab_array(tab, length);
+      end;
+      self:resumeTask(task, _hx_tab_array({[0]="syscall_result"}, 1):concat(tmp));
+    else
+      if ((n[0] == "preempt") and self.usePreemption) then 
+        task.isWaitingForEvent = false;
+      else
+        task.isWaitingForEvent = true;
+      end;
+    end;
+    self.currentTaskPid = -1;
+    do return true end;
+  else
+    if (task.isWaitingForEvent and (task.taskQueue.length > 0)) then 
+      _G.term = task.pInfo.out;
+      _G.environ = task.pInfo.env;
+      self.currentTaskPid = task.pInfo.id;
+      local ev = task.taskQueue:shift();
+      local length = nil;
+      local tab = __lua_PairTools.copy(_hx_table.pack(_G.coroutine.resume(task.coroutine, _hx_table.unpack(__haxe__Rest_Rest_Impl_.of(ev)))));
+      local length = length;
+      local tra;
+      if (length == nil) then 
+        length = _hx_table.maxn(tab);
+        if (length > 0) then 
+          local head = tab[1];
+          _G.table.remove(tab, 1);
+          tab[0] = head;
+          tra = _hx_tab_array(tab, length);
+        else
+          tra = _hx_tab_array({}, 0);
+        end;
+      else
+        tra = _hx_tab_array(tab, length);
+      end;
+      local tr_success = tra[0];
+      local tr_result = tra:slice(1);
+      local n = tr_result;
+      if (n[0] == "syscall") then 
+        local o = self.syscallInterface:executeSyscall(n[1], _hx_table.unpack(__haxe__Rest_Rest_Impl_.of(n:slice(2))));
+        local length = nil;
+        local tab = __lua_PairTools.copy(o);
+        local length = length;
+        local tmp;
+        if (length == nil) then 
+          length = _hx_table.maxn(tab);
+          if (length > 0) then 
+            local head = tab[1];
+            _G.table.remove(tab, 1);
+            tab[0] = head;
+            tmp = _hx_tab_array(tab, length);
+          else
+            tmp = _hx_tab_array({}, 0);
+          end;
+        else
+          tmp = _hx_tab_array(tab, length);
+        end;
+        self:resumeTask(task, _hx_tab_array({[0]="syscall_result"}, 1):concat(tmp));
+      else
+        if ((n[0] == "preempt") and self.usePreemption) then 
+          task.isWaitingForEvent = false;
+        else
+          task.isWaitingForEvent = true;
+        end;
+      end;
+      self.currentTaskPid = -1;
+      do return true end;
+    else
+      do return false end;
+    end;
+  end;
+end
+__scheduler_Scheduler.prototype.tick = function(self) 
+  if (self.tasks.length == 0) then 
+    self.kernel:panic("All tasks died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=217,className="scheduler.Scheduler",methodName="tick"}));
+  end;
+  local n = false;
+  local _g = 0;
+  local _g1 = self.tasks;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local task = _g1[_g];
+    _g = _g + 1;
+    if (self:resumeTask(task)) then 
+      n = true;
+    end;
+  end;
+  if (not n) then 
+    local length = nil;
+    local tab = __lua_PairTools.copy(_hx_table.pack(_G.coroutine.yield()));
+    local length = length;
+    local ev;
+    if (length == nil) then 
+      length = _hx_table.maxn(tab);
+      if (length > 0) then 
+        local head = tab[1];
+        _G.table.remove(tab, 1);
+        tab[0] = head;
+        ev = _hx_tab_array(tab, length);
+      else
+        ev = _hx_tab_array({}, 0);
+      end;
+    else
+      ev = _hx_tab_array(tab, length);
+    end;
+    self:handleEvent(ev);
+  end;
+end
+
+__scheduler_Scheduler.prototype.__class__ =  __scheduler_Scheduler
+
+__syscall_Syscall.new = function(name,callback) 
+  local self = _hx_new(__syscall_Syscall.prototype)
+  __syscall_Syscall.super(self,name,callback)
+  return self
+end
+__syscall_Syscall.super = function(self,name,callback) 
+  self.callback = nil;
+  self.name = "";
+  self.name = name;
+  self.callback = callback;
+end
+__syscall_Syscall.__name__ = true
+__syscall_Syscall.prototype = _hx_e();
+__syscall_Syscall.prototype.name= nil;
+__syscall_Syscall.prototype.callback= nil;
+
+__syscall_Syscall.prototype.__class__ =  __syscall_Syscall
+
+__syscall_SyscallExtension.new = function() 
+  local self = _hx_new(__syscall_SyscallExtension.prototype)
+  __syscall_SyscallExtension.super(self)
+  return self
+end
+__syscall_SyscallExtension.super = function(self) 
+end
+__syscall_SyscallExtension.__name__ = true
+__syscall_SyscallExtension.prototype = _hx_e();
+__syscall_SyscallExtension.prototype.getSyscalls= nil;
+
+__syscall_SyscallExtension.prototype.__class__ =  __syscall_SyscallExtension
+
+__syscall_SyscallInterface.new = function(k) 
+  local self = _hx_new(__syscall_SyscallInterface.prototype)
+  __syscall_SyscallInterface.super(self,k)
+  return self
+end
+__syscall_SyscallInterface.super = function(self,k) 
+  self.syscalls = _hx_tab_array({}, 0);
+  self.kernel = k;
+end
+__syscall_SyscallInterface.__name__ = true
+__syscall_SyscallInterface.prototype = _hx_e();
+__syscall_SyscallInterface.prototype.syscalls= nil;
+__syscall_SyscallInterface.prototype.kernel= nil;
+__syscall_SyscallInterface.prototype.addSyscall = function(self,syscall) 
+  self.syscalls:push(syscall);
+end
+__syscall_SyscallInterface.prototype.addSyscallInterface = function(self,syscallExt) 
+  self.syscalls = self.syscalls:concat(syscallExt:getSyscalls(self.kernel));
+end
+__syscall_SyscallInterface.prototype.executeSyscall = function(self,name,...) 
+  local d = {...}
+  local _g = 0;
+  local _g1 = self.syscalls;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local syscall = _g1[_g];
+    _g = _g + 1;
+    if (syscall.name == name) then 
+      local o;
+      local _hx_status, _hx_result = pcall(function() 
+      
+          o = syscall.callback(_hx_table.unpack(d));
+        return _hx_pcall_default
+      end)
+      if not _hx_status and _hx_result == "_hx_pcall_break" then
+        break
+      elseif not _hx_status then 
+        local _g = _hx_result;
+        local e = __haxe_Exception.caught(_g):unwrap();
+        o = _hx_tab_array({[0]=_hx_o({__fields__={xType=true,xN=true,xValue=true},xType="errorobject",xN=0xfa115afe,xValue=e})}, 1);
+      elseif _hx_result ~= _hx_pcall_default then
+        return _hx_result
+      end;
+      do return __syscall__SyscallInterface_SyscallInterface_Fields_.enluaify(o) end;
+    end;
+  end;
+  do return __syscall__SyscallInterface_SyscallInterface_Fields_.enluaify(_hx_tab_array({[0]=_hx_o({__fields__={xType=true,xN=true,xValue=true},xType="errorobject",xN=0xfa115afe,xValue=Std.string("No such syscall: ") .. Std.string(name)})}, 1)) end
+end
+
+__syscall_SyscallInterface.prototype.__class__ =  __syscall_SyscallInterface
+
+__syscall__SyscallInterface_SyscallInterface_Fields_.new = {}
+__syscall__SyscallInterface_SyscallInterface_Fields_.__name__ = true
+__syscall__SyscallInterface_SyscallInterface_Fields_.enluaify = function(d) 
+  if (__lua_Boot.__instanceof(d, Array)) then 
+    local c = __lua_Boot.__cast(d , Array);
+    local o = _hx_tab_array({}, 0);
+    local _g_current = 0;
+    local _g_array = c;
+    while (_g_current < _g_array.length) do _hx_do_first_1 = false;
+      
+      local _g_value = _g_array[_g_current];
+      _g_current = _g_current + 1;
+      local _g_key = _g_current - 1;
+      local index = _g_key;
+      local value = _g_value;
+      o[index] = __syscall__SyscallInterface_SyscallInterface_Fields_.enluaify(value);
+    end;
+    local ret = ({});
+    local _g = 0;
+    local _g1 = o.length;
+    while (_g < _g1) do _hx_do_first_1 = false;
+      
+      _g = _g + 1;
+      local idx = _g - 1;
+      ret[idx + 1] = o[idx];
+    end;
+    do return ret end;
+  else
+    if (__lua_Boot.__instanceof(d, _G.table)) then 
+      local o = ({});
+      local obj = __haxe_ds_ObjectMap.new();
+      __lua_PairTools.pairsFold(__lua_Boot.__cast(d , _G.table), function(k,v,m) 
+        obj.h[k] = v;
+        obj.k[k] = true;
+        do return obj end;
+      end, obj);
+      local map = obj;
+      local _g_map = map;
+      local _g_keys = map:keys();
+      while (_g_keys:hasNext()) do _hx_do_first_1 = false;
+        
+        local key = _g_keys:next();
+        local _g_value = _g_map:get(key);
+        local _g_key = key;
+        local k = _g_key;
+        local v = _g_value;
+        o[k] = __syscall__SyscallInterface_SyscallInterface_Fields_.enluaify(v);
+      end;
+      do return o end;
+    else
+      do return d end;
+    end;
+  end;
+end
+
+__syscall_extensions_ArcosExtension.new = function() 
+  local self = _hx_new(__syscall_extensions_ArcosExtension.prototype)
+  __syscall_extensions_ArcosExtension.super(self)
+  return self
+end
+__syscall_extensions_ArcosExtension.super = function(self) 
+  __syscall_SyscallExtension.super(self);
+end
+__syscall_extensions_ArcosExtension.__name__ = true
+__syscall_extensions_ArcosExtension.prototype = _hx_e();
+__syscall_extensions_ArcosExtension.prototype.getSyscalls = function(self,kernel) 
+  do return _hx_tab_array({[0]=__syscall_Syscall.new("panic", function(...) 
+    local d = {...}
+    local error = d[1];
+    local file = d[2];
+    local line = d[3];
+    kernel:panic(error, file, line, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/syscall/extensions/ArcosExtension.hx",lineNumber=14,className="syscall.extensions.ArcosExtension",methodName="getSyscalls"}));
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("log", function(...) 
+    local d = {...}
+    local message = d[1];
+    local level = d[2];
+    Logger.log(message, level, true, true, nil);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("version", function(...) 
+    local d = {...}
+    if (not kernel.rootFs:exists("/config/arc/base.meta.json")) then 
+      do return _hx_tab_array({[0]="invalid package metadata"}, 1) end;
+    end;
+    local fH = kernel.rootFs:open("/config/arc/base.meta.json", "r");
+    local meta = __haxe_Json.parse(fH:read());
+    fH:close();
+    if (meta.version == nil) then 
+      do return _hx_tab_array({[0]="invalid package metadata"}, 1) end;
+    else
+      do return _hx_tab_array({[0]=meta.version}, 1) end;
+    end;
+  end), __syscall_Syscall.new("uname", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=Std.string(Std.string(Std.string("Syne") .. Std.string("Helica")) .. Std.string(" built on Haxe ")) .. Std.string("4.306")}, 1) end;
+  end), __syscall_Syscall.new("getName", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.computer.label()}, 1) end;
+  end), __syscall_Syscall.new("setName", function(...) 
+    local d = {...}
+    if (kernel.scheduler:getCurrentTask().user ~= "root") then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    KDriversImpl.computer.setlabel(d[1]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("getCurrentTask", function(...) 
+    local d = {...}
+    local ct = kernel.scheduler:getCurrentTask();
+    do return _hx_tab_array({[0]=_hx_o({__fields__={name=true,pid=true,user=true,nice=true,paused=true,env=true},name=ct.name,pid=ct.id,user=ct.user,nice=ct.nice,paused=ct.paused,env=ct.env})}, 1) end;
+  end), __syscall_Syscall.new("getUsers", function(...) 
+    local d = {...}
+    local _g = _hx_tab_array({}, 0);
+    local _g1 = 0;
+    local _g2 = kernel.userManager.users;
+    while (_g1 < _g2.length) do _hx_do_first_1 = false;
+      
+      local i = _g2[_g1];
+      _g1 = _g1 + 1;
+      _g:push(i.name);
+    end;
+    do return _hx_tab_array({[0]=_g}, 1) end;
+  end), __syscall_Syscall.new("getKernelLogBuffer", function(...) 
+    local d = {...}
+    if (kernel.scheduler:getCurrentTask().user ~= "root") then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    do return _hx_tab_array({[0]=Logger.kLog}, 1) end;
+  end), __syscall_Syscall.new("time", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.computer.time(d[1])}, 1) end;
+  end), __syscall_Syscall.new("day", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.computer.day(d[1])}, 1) end;
+  end), __syscall_Syscall.new("epoch", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.computer.epoch(d[1])}, 1) end;
+  end), __syscall_Syscall.new("date", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.computer.date(d[1])}, 1) end;
+  end), __syscall_Syscall.new("queue", function(...) 
+    local d = {...}
+    if (kernel.scheduler:getCurrentTask().user ~= "root") then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    local _g = 0;
+    local _g1 = kernel.scheduler.tasks;
+    while (_g < _g1.length) do _hx_do_first_1 = false;
+      
+      local task = _g1[_g];
+      _g = _g + 1;
+      task.taskQueue:push(__haxe__Rest_Rest_Impl_.toArray(d));
+    end;
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("clock", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.computer.uptime()}, 1) end;
+  end), __syscall_Syscall.new("startTimer", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.timers.start(d[1])}, 1) end;
+  end), __syscall_Syscall.new("cancelTimer", function(...) 
+    local d = {...}
+    KDriversImpl.timers.cancel(d[1]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("setAlarm", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.timers.setalarm(d[1])}, 1) end;
+  end), __syscall_Syscall.new("cancelAlarm", function(...) 
+    local d = {...}
+    KDriversImpl.timers.cancelalarm(d[1]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("getID", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.computer.id}, 1) end;
+  end), __syscall_Syscall.new("getHome", function(...) 
+    local d = {...}
+    if (not kernel.rootFs:exists(Std.string(Std.string("/user/") .. Std.string(kernel.scheduler:getCurrentTask().user)) .. Std.string("/home"))) then 
+      kernel.rootFs:mkDir(Std.string(Std.string("/user/") .. Std.string(kernel.scheduler:getCurrentTask().user)) .. Std.string("/home"));
+    end;
+    do return _hx_tab_array({[0]=Std.string("/user/") .. Std.string(kernel.scheduler:getCurrentTask().user)}, 1) end;
+  end), __syscall_Syscall.new("validateUser", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=kernel.userManager:validateUser(d[1], d[2])}, 1) end;
+  end), __syscall_Syscall.new("createUser", function(...) 
+    local d = {...}
+    if (kernel.scheduler:getCurrentTask().user ~= "root") then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    kernel.userManager:add(d[1], d[2]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("deleteUser", function(...) 
+    local d = {...}
+    if (kernel.scheduler:getCurrentTask().user ~= "root") then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    kernel.userManager:remove(d[1]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("terminal.getKeymap", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=KDriversImpl.terminal.kMap}, 1) end;
+  end)}, 25) end
+end
+
+__syscall_extensions_ArcosExtension.prototype.__class__ =  __syscall_extensions_ArcosExtension
+__syscall_extensions_ArcosExtension.__super__ = __syscall_SyscallExtension
+setmetatable(__syscall_extensions_ArcosExtension.prototype,{__index=__syscall_SyscallExtension.prototype})
+
+__syscall_extensions_ExampleDevice.new = function() 
+  local self = _hx_new(__syscall_extensions_ExampleDevice.prototype)
+  __syscall_extensions_ExampleDevice.super(self)
+  return self
+end
+__syscall_extensions_ExampleDevice.super = function(self) 
+  self.data = "";
+  Device.super(self);
+  self.name = "exampledevice";
+  self.types = _hx_tab_array({[0]="example", "virtual"}, 2);
+end
+__syscall_extensions_ExampleDevice.__name__ = true
+__syscall_extensions_ExampleDevice.prototype = _hx_e();
+__syscall_extensions_ExampleDevice.prototype.data= nil;
+__syscall_extensions_ExampleDevice.prototype.getHandle = function(self,mode) 
+  local _gthis = self;
+  local fho = true;
+  local pos = 0;
+  do return _hx_o({__fields__={read=true,readAll=true,write=true,seek=true,isOpen=true,close=true},read=function(self,count) 
+    do return String.prototype.substr(_gthis.data, pos, count) end;
+  end,readAll=function(self) 
+    do return _gthis.data end;
+  end,write=function(self,data) 
+    _gthis.data = data;
+  end,seek=function(self,whence,offset) 
+    if (whence == "set") then 
+      pos = offset;
+    else
+      if (whence == "cur") then 
+        pos = pos + offset;
+      else
+        if (whence == "end") then 
+          pos = #_gthis.data - offset;
+        end;
+      end;
+    end;
+  end,isOpen=function(self) 
+    do return fho end;
+  end,close=function(self) 
+    fho = false;
+  end}) end
+end
+
+__syscall_extensions_ExampleDevice.prototype.__class__ =  __syscall_extensions_ExampleDevice
+__syscall_extensions_ExampleDevice.__super__ = Device
+setmetatable(__syscall_extensions_ExampleDevice.prototype,{__index=Device.prototype})
+
+__syscall_extensions_DeviceExtension.new = function() 
+  local self = _hx_new(__syscall_extensions_DeviceExtension.prototype)
+  __syscall_extensions_DeviceExtension.super(self)
+  return self
+end
+__syscall_extensions_DeviceExtension.super = function(self) 
+  __syscall_SyscallExtension.super(self);
+end
+__syscall_extensions_DeviceExtension.__name__ = true
+__syscall_extensions_DeviceExtension.prototype = _hx_e();
+__syscall_extensions_DeviceExtension.prototype.getSyscalls = function(self,kernel) 
+  do return _hx_tab_array({[0]=__syscall_Syscall.new("devices.names", function(...) 
+    local d = {...}
+    local _g = _hx_tab_array({}, 0);
+    local _g1 = 0;
+    local _g2 = kernel.dm.devices;
+    while (_g1 < _g2.length) do _hx_do_first_1 = false;
+      
+      local i = _g2[_g1];
+      _g1 = _g1 + 1;
+      _g:push(i.name);
+    end;
+    do return _g end;
+  end), __syscall_Syscall.new("devices.find", function(...) 
+    local d = {...}
+    local _g = _hx_tab_array({}, 0);
+    local _g1 = 0;
+    local _g2 = kernel.dm.devices;
+    while (_g1 < _g2.length) do _hx_do_first_1 = false;
+      
+      local i = _g2[_g1];
+      _g1 = _g1 + 1;
+      if (i.types:contains(d[1])) then 
+        _g:push(i);
+      end;
+    end;
+    local _g1 = _hx_tab_array({}, 0);
+    local _g2 = 0;
+    local _g = _g;
+    while (_g2 < _g.length) do _hx_do_first_1 = false;
+      
+      local i = _g[_g2];
+      _g2 = _g2 + 1;
+      _g1:push(__syscall_extensions__DeviceExtension_DeviceExtension_Fields_.craftifyDevice(i));
+    end;
+    do return _g1 end;
+  end), __syscall_Syscall.new("devices.get", function(...) 
+    local d = {...}
+    local _g = _hx_tab_array({}, 0);
+    local _g1 = 0;
+    local _g2 = kernel.dm.devices;
+    while (_g1 < _g2.length) do _hx_do_first_1 = false;
+      
+      local i = _g2[_g1];
+      _g1 = _g1 + 1;
+      if (i.name == d[1]) then 
+        _g:push(i);
+      end;
+    end;
+    local _g1 = _hx_tab_array({}, 0);
+    local _g2 = 0;
+    local _g = _g;
+    while (_g2 < _g.length) do _hx_do_first_1 = false;
+      
+      local i = _g[_g2];
+      _g2 = _g2 + 1;
+      _g1:push(__syscall_extensions__DeviceExtension_DeviceExtension_Fields_.craftifyDevice(i));
+    end;
+    do return _g1 end;
+  end)}, 3) end
+end
+
+__syscall_extensions_DeviceExtension.prototype.__class__ =  __syscall_extensions_DeviceExtension
+__syscall_extensions_DeviceExtension.__super__ = __syscall_SyscallExtension
+setmetatable(__syscall_extensions_DeviceExtension.prototype,{__index=__syscall_SyscallExtension.prototype})
+
+__syscall_extensions__DeviceExtension_DeviceExtension_Fields_.new = {}
+__syscall_extensions__DeviceExtension_DeviceExtension_Fields_.__name__ = true
+__syscall_extensions__DeviceExtension_DeviceExtension_Fields_.craftifyDevice = function(d) 
+  local d1 = d.name;
+  local arr = d.types;
+  local ret = ({});
+  local _g = 0;
+  local _g1 = arr.length;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local idx = _g - 1;
+    ret[idx + 1] = arr[idx];
+  end;
+  local n = _hx_o({__fields__={name=true,types=true,sendData=true,recvData=true,onEvent=true,onActivate=true,onDeactivate=true},name=d1,types=ret,sendData=function(self,data) 
+    local h = d:getHandle(FileMode.Write);
+    h:write(data);
+    h:close();
+  end,recvData=function(self) 
+    local h = d:getHandle(FileMode.Read);
+    local data = h:readAll();
+    h:close();
+    do return data end;
+  end,onEvent=function(self) 
+    do return end;
+  end,onActivate=function(self) 
+    do return end;
+  end,onDeactivate=function(self) 
+    do return end;
+  end});
+  local _g = 0;
+  local _g1 = Reflect.fields(d.dinterface);
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local k = _g1[_g];
+    _g = _g + 1;
+    Reflect.setProperty(n, k, Reflect.getProperty(d.dinterface, k));
+  end;
+  do return n end;
+end
+
+__syscall_extensions_FilesystemExtension.new = function() 
+  local self = _hx_new(__syscall_extensions_FilesystemExtension.prototype)
+  __syscall_extensions_FilesystemExtension.super(self)
+  return self
+end
+__syscall_extensions_FilesystemExtension.super = function(self) 
+  self.sigma = 0;
+  self.openFiles = ({});
+  __syscall_SyscallExtension.super(self);
+end
+__syscall_extensions_FilesystemExtension.__name__ = true
+__syscall_extensions_FilesystemExtension.prototype = _hx_e();
+__syscall_extensions_FilesystemExtension.prototype.openFiles= nil;
+__syscall_extensions_FilesystemExtension.prototype.sigma= nil;
+__syscall_extensions_FilesystemExtension.prototype.getSyscalls = function(self,kernel) 
+  local _gthis = self;
+  local checkPipe = function(handle) 
+    if ((_gthis.openFiles[handle] == nil) or not _gthis.openFiles[handle]:getIfOpen()) then 
+      _G.error(__haxe_Exception.thrown("Broken pipe"),0);
+    end;
+  end;
+  do return _hx_tab_array({[0]=__syscall_Syscall.new("fs.getPermissions", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=kernel.rootFs:getPermissions(d[1], d[2])}, 1) end;
+  end), __syscall_Syscall.new("fs.open", function(...) 
+    local d = {...}
+    local file = d[1];
+    local mode = d[2];
+    if (((((mode == "r") or (mode == "a")) or (mode == "r+")) or (mode == "w+")) or (mode == "rb")) then 
+      if (not kernel.rootFs:getPermissions(d[1], d[2]).read) then 
+        _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+      end;
+    end;
+    if (((((mode == "w") or (mode == "w+")) or (mode == "r+")) or (mode == "a")) or (mode == "wb")) then 
+      if (not kernel.rootFs:getPermissions(d[1], d[2]).write) then 
+        _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+      end;
+    end;
+    local handle = kernel.rootFs:open(file, mode);
+    _gthis.sigma = _gthis.sigma + 1;
+    _gthis.openFiles[_gthis.sigma] = handle;
+    do return _hx_tab_array({[0]=_gthis.sigma}, 1) end;
+  end), __syscall_Syscall.new("fs.attributes", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=kernel.rootFs:attributes(d[1])}, 1) end;
+  end), __syscall_Syscall.new("fs.fClose", function(...) 
+    local d = {...}
+    local handle = d[1];
+    checkPipe(handle);
+    _gthis.openFiles[handle]:close();
+    _gthis.openFiles[handle] = nil;
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.fSeek", function(...) 
+    local d = {...}
+    local handle = d[1];
+    local offset = d[2];
+    local whence = d[3];
+    checkPipe(handle);
+    _gthis.openFiles[handle]:seek(offset, whence);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.fRead", function(...) 
+    local d = {...}
+    local handle = d[1];
+    checkPipe(handle);
+    do return _hx_tab_array({[0]=_gthis.openFiles[handle]:read()}, 1) end;
+  end), __syscall_Syscall.new("fs.fReadBytes", function(...) 
+    local d = {...}
+    local handle = d[1];
+    local length = d[2];
+    checkPipe(handle);
+    do return _hx_tab_array({[0]=_gthis.openFiles[handle]:readBytes(length)}, 1) end;
+  end), __syscall_Syscall.new("fs.fWrite", function(...) 
+    local d = {...}
+    local handle = d[1];
+    local data = d[2];
+    checkPipe(handle);
+    _gthis.openFiles[handle]:write(data);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.fWriteLine", function(...) 
+    local d = {...}
+    local handle = d[1];
+    local data = d[2];
+    checkPipe(handle);
+    _gthis.openFiles[handle]:writeLine(data);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.fReadLine", function(...) 
+    local d = {...}
+    local handle = d[1];
+    do return _hx_tab_array({[0]=_gthis.openFiles[handle]:readLine()}, 1) end;
+  end), __syscall_Syscall.new("fs.fSync", function(...) 
+    local d = {...}
+    local handle = d[1];
+    checkPipe(handle);
+    _gthis.openFiles[handle]:flush();
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.list", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=kernel.rootFs:list(d[1])}, 1) end;
+  end), __syscall_Syscall.new("fs.exists", function(...) 
+    local d = {...}
+    if (_gthis.openFiles[d[1]] == nil) then 
+      _G.error(__haxe_Exception.thrown("Broken pipe"),0);
+    end;
+    do return _hx_tab_array({[0]=kernel.rootFs:exists(d[1])}, 1) end;
+  end), __syscall_Syscall.new("fs.mkDir", function(...) 
+    local d = {...}
+    if (not kernel.rootFs:getPermissions(__lua_Boot.__cast(d[1] , String)).write) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    kernel.rootFs:mkDir(d[1]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.remove", function(...) 
+    local d = {...}
+    if (not kernel.rootFs:getPermissions(d[1]).write) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    kernel.rootFs:remove(d[1]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.copy", function(...) 
+    local d = {...}
+    if (not kernel.rootFs:getPermissions(d[1]).read) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    if (not kernel.rootFs:getPermissions(d[2]).write) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    kernel.rootFs:copy(d[1], d[2]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.move", function(...) 
+    local d = {...}
+    if (not kernel.rootFs:getPermissions(d[1]).read) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    if (not kernel.rootFs:getPermissions(d[1]).write) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    if (not kernel.rootFs:getPermissions(d[2]).write) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action"),0);
+    end;
+    kernel.rootFs:move(d[1], d[2]);
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("fs.getMountRoot", function(...) 
+    local d = {...}
+    do return _hx_tab_array({[0]=kernel.rootFs:getMountRoot(d[1])}, 1) end;
+  end)}, 18) end
+end
+
+__syscall_extensions_FilesystemExtension.prototype.__class__ =  __syscall_extensions_FilesystemExtension
+__syscall_extensions_FilesystemExtension.__super__ = __syscall_SyscallExtension
+setmetatable(__syscall_extensions_FilesystemExtension.prototype,{__index=__syscall_SyscallExtension.prototype})
+
+__syscall_extensions_TaskingExtension.new = function() 
+  local self = _hx_new(__syscall_extensions_TaskingExtension.prototype)
+  __syscall_extensions_TaskingExtension.super(self)
+  return self
+end
+__syscall_extensions_TaskingExtension.super = function(self) 
+  __syscall_SyscallExtension.super(self);
+end
+__syscall_extensions_TaskingExtension.__name__ = true
+__syscall_extensions_TaskingExtension.prototype = _hx_e();
+__syscall_extensions_TaskingExtension.prototype.getSyscalls = function(self,kernel) 
+  do return _hx_tab_array({[0]=__syscall_Syscall.new("tasking.createTask", function(...) 
+    local d = {...}
+    local name = d[1];
+    local callback = d[2];
+    local tmp = d[3];
+    local nice = (function() 
+      local _hx_1
+      if (tmp ~= nil) then 
+      _hx_1 = tmp; else 
+      _hx_1 = 0; end
+      return _hx_1
+    end )();
+    local tmp = d[4];
+    local user = (function() 
+      local _hx_2
+      if (tmp ~= nil) then 
+      _hx_2 = tmp; else 
+      _hx_2 = kernel.scheduler:getCurrentTask().user; end
+      return _hx_2
+    end )();
+    local tmp = d[5];
+    local out = (function() 
+      local _hx_3
+      if (tmp ~= nil) then 
+      _hx_3 = tmp; else 
+      _hx_3 = term; end
+      return _hx_3
+    end )();
+    local tmp = d[6];
+    local env = (function() 
+      local _hx_4
+      if (tmp ~= nil) then 
+      _hx_4 = tmp; else 
+      _hx_4 = environ; end
+      return _hx_4
+    end )();
+    if (not __lua_Boot.__instanceof(name, String)) then 
+      _G.error(__haxe_Exception.thrown("Name must be string"),0);
+    end;
+    if (not __lua_Boot.__instanceof(nice, Int)) then 
+      _G.error(__haxe_Exception.thrown("Nice must be integer"),0);
+    end;
+    if (not __lua_Boot.__instanceof(user, String)) then 
+      _G.error(__haxe_Exception.thrown("User must be string"),0);
+    end;
+    if ((env ~= nil) and not __lua_Boot.__instanceof(env, _G.table)) then 
+      _G.error(__haxe_Exception.thrown("Env must be table"),0);
+    end;
+    if ((kernel.scheduler:getCurrentTask().user ~= "root") and (user ~= kernel.scheduler:getCurrentTask().user)) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action (note: you can use tasking.changeuser to change the current user)"),0);
+    end;
+    local v = kernel.scheduler:addTask(name, callback, user, out);
+    kernel.scheduler.tasks[v].pInfo.nice = nice;
+    kernel.scheduler.tasks[v].pInfo.out = out;
+    do return _hx_tab_array({[0]=v}, 1) end;
+  end), __syscall_Syscall.new("tasking.getTasks", function(...) 
+    local _ = {...}
+    local _g = _hx_tab_array({}, 0);
+    local _g1 = 0;
+    local _g2 = kernel.scheduler.tasks;
+    while (_g1 < _g2.length) do _hx_do_first_1 = false;
+      
+      local i = _g2[_g1];
+      _g1 = _g1 + 1;
+      _g:push(_hx_o({__fields__={name=true,pid=true,user=true,nice=true,paused=true,env=true},name=i.pInfo.name,pid=i.pInfo.id,user=i.pInfo.user,nice=i.pInfo.nice,paused=i.pInfo.paused,env=i.pInfo.env}));
+    end;
+    do return _hx_tab_array({[0]=_g}, 1) end;
+  end), __syscall_Syscall.new("tasking.setTaskPaused", function(...) 
+    local d = {...}
+    local pid = d[1];
+    local paused = d[2];
+    if (not __lua_Boot.__instanceof(pid, Int)) then 
+      _G.error(__haxe_Exception.thrown("Pid must be integer"),0);
+    end;
+    if (not __lua_Boot.__instanceof(paused, Bool)) then 
+      _G.error(__haxe_Exception.thrown("Paused must be boolean"),0);
+    end;
+    if ((kernel.scheduler:getCurrentTask().user ~= "root") and (kernel.scheduler.tasks[pid].pInfo.user ~= kernel.scheduler:getCurrentTask().user)) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action (note: you can use tasking.changeuser to change the current user)"),0);
+    end;
+    kernel.scheduler.tasks[pid].pInfo.paused = paused;
+    do return _hx_tab_array({}, 0) end;
+  end), __syscall_Syscall.new("tasking.changeUser", function(...) 
+    local d = {...}
+    local user = d[1];
+    local password = d[2];
+    if (not __lua_Boot.__instanceof(user, String)) then 
+      _G.error(__haxe_Exception.thrown("User must be string"),0);
+    end;
+    if ((kernel.scheduler:getCurrentTask().user ~= "root") and not __lua_Boot.__instanceof(password, String)) then 
+      _G.error(__haxe_Exception.thrown("Password must be string"),0);
+    end;
+    if ((kernel.scheduler:getCurrentTask().user == "root") or kernel.userManager:validateUser(user, password)) then 
+      kernel.scheduler:getCurrentTask().user = user;
+      do return _hx_tab_array({[0]=true}, 1) end;
+    else
+      do return _hx_tab_array({[0]=false}, 1) end;
+    end;
+  end)}, 4) end
+end
+
+__syscall_extensions_TaskingExtension.prototype.__class__ =  __syscall_extensions_TaskingExtension
+__syscall_extensions_TaskingExtension.__super__ = __syscall_SyscallExtension
+setmetatable(__syscall_extensions_TaskingExtension.prototype,{__index=__syscall_SyscallExtension.prototype})
+local hasBit32, bit32 = pcall(require, 'bit32')
+if hasBit32 then --if we are on Lua 5.1, bit32 will be the default.
+  _hx_bit_raw = bit32
+  _hx_bit = setmetatable({}, { __index = _hx_bit_raw })
+  -- lua 5.2 weirdness
+  _hx_bit.bnot = function(...) return _hx_bit_clamp(_hx_bit_raw.bnot(...)) end
+  _hx_bit.bxor = function(...) return _hx_bit_clamp(_hx_bit_raw.bxor(...)) end
+else
+  --If we do not have bit32, fallback to 'bit'
+  local hasBit, bit = pcall(require, 'bit')
+  if not hasBit then
+    error("Failed to load bit or bit32")
+  end
+  _hx_bit_raw = bit
+  _hx_bit = setmetatable({}, { __index = _hx_bit_raw })
+end
+
+-- see https://github.com/HaxeFoundation/haxe/issues/8849
+_hx_bit.bor = function(...) return _hx_bit_clamp(_hx_bit_raw.bor(...)) end
+_hx_bit.band = function(...) return _hx_bit_clamp(_hx_bit_raw.band(...)) end
+_hx_bit.arshift = function(...) return _hx_bit_clamp(_hx_bit_raw.arshift(...)) end
+
+if _hx_bit_raw then
+    _hx_bit_clamp = function(v)
+    if v <= 2147483647 and v >= -2147483648 then
+        if v > 0 then return _G.math.floor(v)
+        else return _G.math.ceil(v)
         end
     end
+    if v > 2251798999999999 then v = v*2 end;
+    if (v ~= v or math.abs(v) == _G.math.huge) then return nil end
+    return _hx_bit_raw.band(v, 2147483647 ) - math.abs(_hx_bit_raw.band(v, 2147483648))
+    end
+else
+    _hx_bit_clamp = function(v)
+        if v < -2147483648 then
+            return -2147483648
+        elseif v > 2147483647 then
+            return 2147483647
+        elseif v > 0 then
+            return _G.math.floor(v)
+        else
+            return _G.math.ceil(v)
+        end
+    end
+end;
+
+
+
+_hx_array_mt.__index = Array.prototype
+
+if package.loaded.luv then
+  _hx_luv = _G.require("luv");
+else
+  _hx_luv = {
+    run=function(mode) return false end,
+    loop_alive=function() return false end
+  }
 end
-do
-    term.setBackgroundColor(0x4000)
-    term.setTextColor(0x8000)
-    term.setCursorPos(1, 1)
-    term.clear()
-    print("arcos has forcefully shut off, due to an error.")
-    print("If this is the first time you've seen these errors, try restarting your computer.")
-    print("If this problem continues:")
-    print(
-        "- If this started happening after an update, open an issue at github.com/mirkokral/ccarcos, and wait for an update")
-    print("- Try removing or disconnecting any newly installed hardware or software.")
-    print(
-        "- If using a multiboot/bios solution, check if your multiboot/bios solution supports TLCO and open an issue there")
-    print("- On boot, try pressing the scroll lock key and s. That should put you into an emergency shell.")
-    print()
-    print(kpError)
-    print()
-    print("If needed, contact @mirko56 on discord for further assistance.")
+local _hx_static_init = function()
+  
+  String.__name__ = true;
+  Array.__name__ = true;KernelConfig.logLevel = 0;
+  
+  Logger.kLog = "";
+  
+  __haxe_ds_IntMap.tnull = ({});
+  
+  __haxe_ds_StringMap.tnull = ({});
+  
+  
 end
-while true do
-    coroutine.yield()
+
+_hx_print = print or (function() end)
+
+_hx_table = {}
+_hx_table.pack = _G.table.pack or function(...)
+    return {...}
 end
+_hx_table.unpack = _G.table.unpack or _G.unpack
+_hx_table.maxn = _G.table.maxn or function(t)
+  local maxn=0;
+  for i in pairs(t) do
+    maxn=type(i)=='number'and i>maxn and i or maxn
+  end
+  return maxn
+end;
+
+_hx_wrap_if_string_field = function(o, fld)
+  if _G.type(o) == 'string' then
+    if fld == 'length' then
+      return _G.string.len(o)
+    else
+      return String.prototype[fld]
+    end
+  else
+    return o[fld]
+  end
+end
+
+function _hx_handle_error(obj)
+  local message = tostring(obj)
+  if _G.debug and _G.debug.traceback then
+    -- level 2 to skip _hx_handle_error
+    message = _G.debug.traceback(message, 2)
+  end
+  return setmetatable({}, { __tostring = function() return message end })
+end
+
+_hx_static_init();
+local success, err = _G.xpcall(function() 
+  Main.main();
+  _hx_luv.run();
+end, _hx_handle_error)
+if not success then _G.error(err) end
 local files = require("files")
 local tutils = require("tutils")
+local arcos = require("arcos")
+local devices = require("devices")
 local methods = {
     GET = true,
     POST = true,
@@ -1896,72 +6124,23 @@ local function getChosenRepo(rootdir)
     rf.close()
     return fx
 end
-local function split(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    if t == {} then
-        t = { inputstr }
-    end
-    return t
-end
-local function check_key(options, key, ty, opt)
-    local value = options[key]
-    local valueTy = type(value)
-    if (value ~= nil or not opt) and valueTy ~= ty then
-        error(("bad field '%s' (%s expected, got %s"):format(key, ty, valueTy), 4)
-    end
-end
-local function check_request_options(options, body)
-    check_key(options, "url", "string")
-    if body == false then
-        check_key(options, "body", "nil")
-    else
-        check_key(options, "body", "string", not body)
-    end
-    check_key(options, "headers", "table", true)
-    check_key(options, "method", "string", true)
-    check_key(options, "redirect", "boolean", true)
-    check_key(options, "timeout", "number", true)
-    if options.method and not methods[options.method] then
-        error("Unsupported HTTP method", 3)
-    end
-end
-local function wrap_request(_url, ...)
-    local ok, err = __LEGACY.http.request(...)
-    if ok then
-        while true do
-            local event, param1, param2, param3 = arcos.ev()
-            if event == "http_success" and param1 == _url then
-                return param2
-            elseif event == "http_failure" and param1 == _url then
-                return nil, param2, param3
-            end
-        end
-    end
-    return nil, err
-end
-local function get(_url, _headers, _binary)
-    if type(_url) == "table" then
-        check_request_options(_url, false)
-        return wrap_request(_url.url, _url)
-    end
-    assert(type(_url) == "string")
-    assert(type(_headers) == "table" or type(_headers) == "nil")
-    assert(type(_binary) == "boolean" or type(_binary) == "nil")
-    return wrap_request(_url, _url, nil, _headers, _binary)
+local function get(url, headers) 
+    local d = devices.find("network_adapter")
+    if not d then error("No network adapter found") end
+    local s = {d.sendRequest("GET", url, headers)}
+    if not s[1] then return table.unpack(s) end
+    return {
+        read = s[1].readAll,
+        close = s[1].close
+    }
 end
 local function getLatestCommit(rootdir)
     if not rootdir then rootdir = "/" end
-    local f, e = __LEGACY.files.open(rootdir .. "config/arc/latestCommit.hash", "r")
+    local f, e = require("files").open(rootdir .. "config/arc/latestCommit.hash", "r")
     if not f then 
         return ""
     else 
-        local rp = f.readAll()
+        local rp = f.read()
         f.close()
         return rp
     end
@@ -1971,11 +6150,11 @@ local function checkForCD(rootdir)
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
-    if not __LEGACY.files.exists(rootdir .. "config") then
-        __LEGACY.files.makeDir(rootdir .. "/config")
+    if not require("files").exists(rootdir .. "config") then
+        require("files").makeDir(rootdir .. "/config")
     end
-    if not __LEGACY.files.exists(rootdir .. "config/arc") then
-        __LEGACY.files.makeDir(rootdir .. "/config/arc")
+    if not require("files").exists(rootdir .. "config/arc") then
+        require("files").makeDir(rootdir .. "/config/arc")
     end
 end
 local function fetch(rootdir)
@@ -1984,7 +6163,10 @@ local function fetch(rootdir)
         error("This operation requires the user to be root.")
     end
     checkForCD()
-    local f2 = __LEGACY.files.open(rootdir .. "/config/arc/latestCommit.hash", "w")    
+    local f2, e = require("files").open(rootdir .. "/config/arc/latestCommit.hash", "w")    
+    if not f2 then
+        error(e)
+    end
     local fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
         ["Authorization"] = "Bearer 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"
     })
@@ -1992,10 +6174,10 @@ local function fetch(rootdir)
         fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
         })
         if not fr then
-            return false
+            error(e)
         end
     end
-    local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
+    local rp = json.decode(fr.read())["sha"]
     f2.write(rp)
     fr.close()
     f2.close()
@@ -2004,33 +6186,36 @@ local function fetch(rootdir)
     if not f then
         return false
     end
-    local fa = __LEGACY.files.open(rootdir .. "/config/arc/repo.json", "w")
-    fa.write(f.readAll())
+    local fa, e = require("files").open(rootdir .. "/config/arc/repo.json", "w")
+    if not fa then
+        error(e)
+    end
+    fa.write(f.read())
     fa.close()
     f.close()
 end
 local function isInstalled(package, rootdir)
     if not rootdir then rootdir = "/" end
-    return __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex")
+    return require("files").exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex")
 end
 local function getIdata(package, rootdir)
     if not rootdir then rootdir = "/" end
-    if not __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
+    if not require("files").exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
         return nil
     end
-    local f, e = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
+    local f, e = require("files").open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
     if not f then
         return nil
     end
-    return __LEGACY.textutils.unserializeJSON(f.readAll())
+    return json.decode(f.read())
 end
 local function getRepo(rootdir)
     if not rootdir then rootdir = "/" end
-    local f = __LEGACY.files.open(rootdir .. "/config/arc/repo.json", "r")
+    local f = require("files").open(rootdir .. "/config/arc/repo.json", "r")
     if not f then
         return {}
     end
-    local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
+    local uj = json.decode(f.read())
     f.close()
     return uj
 end
@@ -2039,13 +6224,14 @@ local function uninstall(package, rootdir)
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
-    if not __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex") then
+    if not require("files").exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
     local toDelete = { }
     toDelete[rootdir .. "/config/arc/" .. package .. ".uninstallIndex"] = ""
     toDelete[rootdir .. "/config/arc/" .. package .. ".meta.json"] = ""
-    local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "r")
+    local f, e = require("files").open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "r")
+    if not f then error(e) end
     for value in f.readLine do
         if value == nil then break end
         if tutils.split(value:sub(3), "/")[1] == "config" then goto continue end
@@ -2057,16 +6243,16 @@ local function uninstall(package, rootdir)
         ::continue::
     end
     for value, hash in pairs(toDelete) do
-        __LEGACY.files.delete(value)
+        require("files").delete(value)
     end
     for value, hash in pairs(toDelete) do
         if hash == "DIRECTORY" then
-            if __LEGACY.files.isDir(value) then
-                if #__LEGACY.files.list(value) > 0 then
+            if require("files").isDir(value) then
+                if #require("files").list(value) > 0 then
                     goto continue
                 end
             end
-            __LEGACY.files.delete(value)
+            require("files").delete(value)
         end
         ::continue::
     end
@@ -2118,20 +6304,21 @@ local function install(package, rootdir)
     if not repo[package] then
         error("Package not found!")
     end
-    if __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
-        local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
-        local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
+    if require("files").exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
+        local f, e = require("files").open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
+        if not f then error(e) end
+        local ver = json.decode(f.read())["vId"]
         if ver < repo[package]["vId"] then
             local updateFile, e = get("https://raw.githubusercontent.com/" ..
             getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/upd" .. repo[package]["vId"] .. ".lua")
             if updateFile then
-                local r = updateFile.readAll()
-                local f, e = load(r, "Update Module", "t", setmetatable({}, { __index = _G }))
-                if f then
-                    local ok, err = pcall(f);
+                local r = updateFile.read()
+                local fac, eac = load(r, "Update Module", "t", setmetatable({}, { __index = _G }))
+                if fac then
+                    local ok, err = pcall(fac);
                     if not ok then error(err) end
                 else
-                    error(e)
+                    error(eac)
                 end
             end
             uninstall(package, rootdir)
@@ -2144,11 +6331,11 @@ local function install(package, rootdir)
     if not indexFile then
         error(err)
     end
-    local ifx = arkivelib.unarchive(indexFile.readAll())
+    local ifx = arkivelib.unarchive(indexFile.read())
     for index, value in ipairs(ifx) do
         if value[2] == nil then
-            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
-                __LEGACY.files.makeDir(rootdir .. "/" .. value[1])
+            if not require("files").exists(rootdir .. "/" .. value[1]) then
+                require("files").makeDir(rootdir .. "/" .. value[1])
                 buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
         else
@@ -2156,14 +6343,14 @@ local function install(package, rootdir)
     end
     for index, value in ipairs(ifx) do
         if value[2] == nil then
-            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
-                __LEGACY.files.makeDir(rootdir .. "/" .. value[1])
+            if not require("files").exists(rootdir .. "/" .. value[1]) then
+                require("files").makeDir(rootdir .. "/" .. value[1])
                 buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
         else
-            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
+            if not require("files").exists(rootdir .. "/" .. value[1]) then
                 local file = value[2]
-                local tfh, e = __LEGACY.files.open(rootdir .. "/" .. value[1], "w")
+                local tfh, e = require("files").open(rootdir .. "/" .. value[1], "w")
                 if not tfh then error(e) end
                 tfh.write(file)
                 tfh.close()
@@ -2178,19 +6365,22 @@ local function install(package, rootdir)
             if not file then
                 return;
             end
-            local fd = file.readAll()
+            local fd = file.read()
             file.close()
-            local tf = __LEGACY.files.open(rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
+            local tf, espanol = require("files").open(rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua", "r")
+            if not tf then error(espanol) end
             tf.write(fd)
             tf.close()
             arcos.r({}, rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
         end
     end
     indexFile.close()
-    local insf = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "w")
-    insf.write(__LEGACY.textutils.serializeJSON(pkg))
+    local insf = require("files").open(rootdir .. "/config/arc/" .. package .. ".meta.json", "w")
+    if not insf then error("I") end
+    insf.write(json.encode(pkg))
     insf.close()
-    local uinsf = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "w")
+    local uinsf = require("files").open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "w")
+    if not uinsf then error("I") end
     uinsf.write(buildedpl)
     uinsf.close()
     return function()
@@ -2202,9 +6392,10 @@ local function getUpdatable(rootdir)
     for index, value in ipairs(files.ls(rootdir .. "/config/arc/")) do
         if value:sub(#value - 14) == ".uninstallIndex" then
             local pk = value:sub(0, #value - 15)
-            local pf = __LEGACY.files.open(rootdir .. "/config/arc/" .. pk .. ".meta.json", "r")
-            local at = pf.readAll()
-            local af = __LEGACY.textutils.unserializeJSON(at)
+            local pf, e = require("files").open(rootdir .. "/config/arc/" .. pk .. ".meta.json", "r")
+            if not pf then print(e) return {} end
+            local at = pf.read()
+            local af = json.decode(at)
             pf.close()
             if af["vId"] < getRepo(rootdir)[pk]["vId"] then
                 table.insert(updatable, pk)
@@ -2384,42 +6575,18 @@ return {
     field = field
 }local col = require("col")
 local tutils = require("tutils")
+local syscall = require("syscall")
+local arcos = require("arcos")
 local function combine(...)
-    return __LEGACY.files.combine(...)
+    local out = {}
+    for index, value in ipairs({ ... }) do
+        out = {table.unpack(out), table.unpack(tutils.split(value, "/"))}
+    end
+    return table.concat(out, "/")
 end
 local function getPermissions(file, user) 
-    local read = true
-    local write = true
-    local listed = true
-    if user == nil then user = arcos.getCurrentTask().user end
-    if __LEGACY.files.isReadOnly(file) then
-        write = false
-    end
-    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "$" then -- Metadata files
-        return {
-            read = false,
-            write = false,
-            listed = false
-        }
-    end
-    local disallowedfiles = {"startup.lua", "startup"}
-    for index, value in ipairs(disallowedfiles) do
-        if tutils.split(file, "/")[1] == value then -- Metadata files
-            return {
-                read = false,
-                write = false,
-                listed = false,
-            }
-        end
-    end
-    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "." then
-        listed = false
-    end
-    return {
-        read = read,
-        write = write,
-        listed = listed,
-    }
+    if not user then user = arcos.getCurrentTask().user end
+    return syscall.fs.getPermissions(file, user)
 end
 local function getPermissionsForAll(file)
     local u = {}
@@ -2435,113 +6602,68 @@ local function can(on, what)
     return getPermissions(on)[what]
 end
 local function par(path)
-    return __LEGACY.files.getDir(path)
+    return table.concat({ table.unpack(tutils.split(path, "/"), 1, #tutils.split(path, "/") - 1) }, "/")
 end
-local function size(path)
+local function attributes(path)
     if cant(path, "read") then
         error("No permission for this action")
     end
-    return __LEGACY.files.getSize(path)
-end
-local function drive(path)
-    return __LEGACY.files.getDrive(path)
-end
-local function freeSpace(path)
-    return __LEGACY.files.getFreeSpace(path)
+    local attr = syscall.fs.attributes(path)
+    attr.permissions = getPermissionsForAll(path)
+    return attr
 end
 local function readonly(path)
     return not getPermissions(path).write
 end
-local function split(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    if t == {} then
-        t = { inputstr }
-    end
-    return t
-end
 local function open(path, mode)
-    local validModes = {"w", "r", "w+", "r+", "a", "wb", "rb"}
-    if cant(path, "read") and (mode == "r" or mode == "r+" or mode == "a" or mode == "w+" or mode == "rb") then
-        return nil, "No permission for this action"
-    end
-    if cant(path, "write") and (mode == "w" or mode == "w+" or mode == "a" or mode == "r+" or mode == "wb") then
-        return nil, "No permission for this action"
-    end
-    local cmodevalid = false
-    for _, v in ipairs(validModes) do
-        if mode == v then cmodevalid = true break end
-    end
-    if not cmodevalid then error("Mode not valid: " .. mode) end
-    local err
-    local file = {}
-    file._f, err = __LEGACY.files.open(path, mode)
-    if not file._f then
-        return nil, err
-    end
-    file.open = true
-    file.close = function() file._f.close() file.open = false end
-    file.seekBytes = function(whence, offset)
-        return file._f.seek(whence, offset)
-    end
-    if mode == "w" or mode == "w+" or mode == "r+" or mode == "a" then
-        file.write = function(towrite)
-            file._f.write(towrite)
-        end
-        file.writeLine = function(towrite)
-            file._f.writeLine(towrite)
-        end
-        file.flush = function(towrite)
-            file._f.write(towrite)
-        end
-    end
-    if mode == "r" or mode == "w+" or mode == "r+" then
-        local fd = file._f.readAll()
-        local li = 0
-        file.readBytes = function(b)
-            return file._f.read(b)
-        end
-        file.read = function()
-            return fd
-        end
-        file.readLine = function(withTrailing)
-            li = li + 1
-            if withTrailing then
-                return split(fd, "\n")[li] .. "\n"
-            else
-                return split(fd, "\n")[li]
-            end
-        end
-    end
-    return file, nil
+    local ok, h = pcall(syscall.fs.open, path, mode)
+    if not ok then return nil, h end
+    local isopen = true
+    return {
+        read = function(n)
+            return syscall.fs.fRead(h, n)
+        end,
+        readLine = function()
+            return syscall.fs.fReadLine(h)
+        end,
+        readBytes = function(amount)
+            return syscall.fs.fReadBytes(h, amount)
+        end,
+        write = function(towrite)
+            return syscall.fs.fWrite(h, towrite)
+        end,
+        writeLine = function(line)
+            return syscall.fs.fWriteLine(h, line)
+        end,
+        flush = function()
+            return syscall.fs.fSync(h)
+        end,
+        close = function()
+            isopen = false
+            return syscall.fs.fClose(h)
+        end,
+        seek = function(whence, offset)
+            return syscall.fs.fSeek(h, whence, offset)
+        end,
+        open = isopen
+    }
 end
 local function ls(dir)
-    local listed =  __LEGACY.files.list(dir)
-    local out = {}
-    for index, value in ipairs(listed) do
-        if can(dir .. '/' .. value, "listed") then
-            table.insert(out, value)
-        end
-    end
-    return out
+    local f = syscall.fs.list(dir)
+    return f
 end
 local function rm(f)
     if cant(f, "write") then
         error("No permission for this action")
     end
-    return __LEGACY.files.delete(f)
+    return syscall.fs.remove(f)
 end
 local function exists(f)
     if f == "" or f == "/" then return true end
     if tutils.split(f, "/")[#tutils.split(f, "/")]:sub(1,1) == "$" then
         return false
     end
-    return __LEGACY.files.exists(f)
+    return syscall.fs.exists(f)
 end
 local function mkDir(d) 
     local fv = {}
@@ -2554,7 +6676,7 @@ local function mkDir(d)
     if cant(table.concat(fv, "/"), "write") then
         error("No permission for this action");
     end
-    return __LEGACY.files.makeDir(d)
+    return syscall.fs.mkDir(d)
 end
 local function resolve(f, keepNonExistent)
     local p = f:sub(1, 1) == "/" and "/" or (arcos.getCurrentTask().env.workDir or "/")
@@ -2590,19 +6712,19 @@ local function resolve(f, keepNonExistent)
 end
 local function dir(d) 
     if f == "" or f == "/" then return true end
-    return __LEGACY.files.isDir(d)
+    return attributes(d).isDir
 end
 local function m(t, d) 
     if cant(t, "read") or cant(t, "write") or cant(d, "write") then
         error("No permission for this action")
     end
-    return __LEGACY.files.move(t, d)
+    return syscall.fs.move(t, d)
 end
 local function c(t, d)
     if cant(t, "read") or cant(d, "write") then
         error("No permission for this action")
     end
-    return __LEGACY.files.copy(t, d)
+    return syscall.fs.copy(t, d)
 end
 local expect = col.expect
 local field = col.field
@@ -2686,7 +6808,7 @@ local function find_aux(path, parts, i, out)
         local files = ls(path)
         for j = 1, #files do
             local file = files[j]
-            if file:find(part.contents) then find_aux(__LEGACY.files.combine(path, file), parts, i + 1, out) end
+            if file:find(part.contents) then find_aux(combine(path, file), parts, i + 1, out) end
         end
     end
 end
@@ -2720,20 +6842,24 @@ local function find(pattern)
     find_aux("", parts, 1, out)
     return out
 end
+local function name(path)
+    return tutils.split(path, "/")[#tutils.split(path, "/")]
+end
+local function size(path)
+    return attributes(path).size
+end
+local function drive(path)
+    return syscall.fs.getMountRoot(path)
+end
+local function freeSpace(path)
+    return attributes(path).capacity - attributes(path).size
+end
 local function driveRoot(sPath)
     expect(1, sPath, "string")
     return par(sPath) == ".." or drive(sPath) ~= drive(par(sPath))
 end
-local function name(path)
-    return __LEGACY.files.getName(path)
-end
 local function capacity(path)
-    return __LEGACY.files.getCapacity(path)
-end
-local function attributes(path)
-    local attr = __LEGACY.files.attributes(path)
-    attr.permissions = getPermissionsForAll(path)
-    return attr
+    return attributes(path).capacity
 end
 local function read(path) 
     local file, error = open(path, "r")
@@ -2932,32 +7058,33 @@ local function sha256(msg)
 end
 return {
 	sha256 = sha256
-}local function setO(sd, val)
+}local syscall = require("syscall")
+local function setO(sd, val)
     assert(type(val) == "number" or type(val) == "boolean", "Invalid argument: value")
     assert(type(sd) == "string", "Invalid argument: side")
     if type(val) == "number" then
-        __LEGACY.redstone.setAnalogOutput(sd, val)
+        syscall.rs.set(sd, val)
     elseif type(val) == "boolean" then
-        __LEGACY.redstone.setOutput(sd, val)
+        syscall.rs.set(sd, val and 15 or 0)
     end
 end
 local function getO(side)
-    return __LEGACY.redstone.getAnalogOutput(side)
+    return syscall.rs.getO(side)
 end
 local function getI(side)
-    return __LEGACY.redstone.getAnalogInput(side)
+    return syscall.rs.getI(side)
 end
 local function setBO(sd, bitmask)
-    return __LEGACY.redstone.setBundledOutput(sd, bitmask)
+    return syscall.rs.setBO(sd, bitmask)
 end
 local function getBO(sd)
-    return __LEGACY.redstone.getBundledOutput(sd)
+    return syscall.rs.getBO(sd)
 end
 local function getBI(sd)
-    return __LEGACY.redstone.getBundledInput(sd)
+    return syscall.rs.getBI(sd)
 end
 local function testBI(sd, test)
-    return __LEGACY.redstone.testtBundledInput(sd, test)
+    return syscall.rs.testBI(sd, test)
 end
 return {
     setO = setO,
@@ -2968,17 +7095,64 @@ return {
     getBI = getBI,
     testBI = testBI,
 }
+local expect = require("col").expect
+local function getArgs(fun)
+    local args = {}
+    local hook = debug.gethook()
+    local argHook = function(...)
+        local info = debug.getinfo(3)
+        if 'pcall' ~= info.name then return end
+        for i = 1, math.huge do
+            local name, value = debug.getlocal(2, i)
+            if '(*temporary)' == name then
+                debug.sethook(hook)
+                error('')
+                return
+            end
+            table.insert(args, name)
+        end
+    end
+    debug.sethook(argHook, "c")
+    pcall(fun)
+    return args
+end
+local function serializeTable(val, name, skipnewlines, depth, doColors)
+    skipnewlines = skipnewlines or false
+    depth = depth or 0
+    local tmp = string.rep(" ", depth)
+    if name then tmp = tmp .. (doColors and "\011f7" or "") .. "[" .. (doColors and "\011fd" or "") .. serializeTable(name, nil, true, 0, false) .. (doColors and "\011f7" or "") .. "]" .. (doColors and "\011f8" or "") .. " = " end
+    if type(val) == "table" then
+        tmp = tmp .. (doColors and "\011f8" or "") .. "{" .. (not skipnewlines and "\n" or "")
+        for k, v in pairs(val) do
+            tmp = tmp .. serializeTable(v, k, skipnewlines, depth + 1, doColors) .. (doColors and "\011f7" or "") .. "," .. (not skipnewlines and "\n" or "")
+        end
+        tmp = tmp .. string.rep(" ", depth) .. (doColors and "\011f8" or "") .. "}"
+    elseif type(val) == "number" then
+        tmp = tmp .. (doColors and "\011f9" or "") .. tostring(val)
+    elseif type(val) == "string" then
+        tmp = tmp .. (doColors and "\011f4" or "") .. string.format("%q", val)
+    elseif type(val) == "boolean" then
+        tmp = tmp .. (doColors and "\011f2" or "") .. (val and "true" or "false")
+    elseif type(val) == "nil" then
+        tmp = tmp .. (doColors and "\011fe" or "") .. "nil"
+    elseif type(val) == "function" then
+        tmp = tmp .. (doColors and "\011fb" or "") .. "function(" .. table.concat(getArgs(val), ", ") .. ") end"
+    else
+        tmp = tmp .. "\"[inserializeable datatype:" .. type(val) .. "]\""
+    end
+    return tmp
+end
 local function sJSON(obj)
-    return __LEGACY.textutils.serializeJSON(obj)
+    return json.encode(obj)
 end
 local function dJSON(obj)
-    return __LEGACY.textutils.unserialiseJSON(obj)
+    return json.decode(obj)
 end
-local function s(obj)
-    return __LEGACY.textutils.serialize(obj)
+local function s(obj, dc)
+    return serializeTable(obj, nil, false, 0, dc)
 end
 local function d(obj)
-    return __LEGACY.textutils.unserialize(obj)
+    return load("return " .. d)()
 end
 local function split(inputstr, sep)
     if sep == nil then
@@ -3002,15 +7176,34 @@ local function split(inputstr, sep)
     end
     return nt
 end
-local function join(tab, sep )
+local function join(tab, sep)
     local out = ""
     for _, i in ipairs(tab) do
         out = out .. tostring(i) .. sep
     end
-    return out:sub(1, #out-1)
+    return out:sub(1, #out - 1)
 end
 local function formatTime(t, tfhour)
-    return __LEGACY.textutils.formatTime(t, tfhour)
+    expect(1, t, "number")
+    expect(2, tfhour, "boolean", "nil")
+    local sTOD = nil
+    if not tfhour then
+        if t >= 12 then
+            sTOD = "PM"
+        else
+            sTOD = "AM"
+        end
+        if t >= 13 then
+            t = t - 12
+        end
+    end
+    local nHour = math.floor(t)
+    local nMinute = math.floor((t - nHour) * 60)
+    if sTOD then
+        return string.format("%d:%02d %s", nHour == 0 and 12 or nHour, nMinute, sTOD)
+    else
+        return string.format("%d:%02d", nHour, nMinute)
+    end
 end
 return {
     dJSON = dJSON,
@@ -3023,6 +7216,10 @@ return {
 }
 local col = require("col")
 local tutils = require("tutils")
+local keys = require("keys")
+local arcos = require("arcos")
+local devices = require("devices")
+local sleep = arcos.sleep
 local UItheme = {
     bg = col.black,
     fg = col.white,
@@ -3041,7 +7238,7 @@ UIthemedefs[col.yellow] = { 235, 203, 139 }
 UIthemedefs[col.lime] = { 163, 190, 140 }
 UIthemedefs[col.pink] = { 0, 0, 0 }
 UIthemedefs[col.gray] = { 76, 86, 106 }
-UIthemedefs[col.lightGray] = { 216, 222, 233 }
+UIthemedefs[col.lightGray] = { 146, 154, 168 }
 UIthemedefs[col.cyan] = { 136, 192, 208 }
 UIthemedefs[col.purple] = { 0, 0, 0 }
 UIthemedefs[col.blue] = { 129, 161, 193 }
@@ -3049,9 +7246,6 @@ UIthemedefs[col.brown] = { 0, 0, 0 }
 UIthemedefs[col.green] = { 163, 190, 140 }
 UIthemedefs[col.red] = { 191, 97, 106 }
 UIthemedefs[col.black] = { 59, 66, 82 }
-for index, value in pairs(UIthemedefs) do
-    term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
-end
 W, H = term.getSize()
 local function InitBuffer(mon)
     for index, value in pairs(UIthemedefs) do
@@ -3345,19 +7539,19 @@ local function TextInput(b)
             return true
         end
         if e[1] == "key" and config.focus then
-            if e[2] == __LEGACY.keys.enter then
+            if e[2] == keys.enter then
                 config.focus = false
             end
-            if e[2] == __LEGACY.keys.backspace then
+            if e[2] == keys.backspace then
                 if cursorPos > 0 then
                     config.text = config.text:sub(0, cursorPos - 1) .. config.text:sub(cursorPos + 1)
                     cursorPos = cursorPos - 1
                 end
             end
-            if e[2] == __LEGACY.keys.left then
+            if e[2] == keys.left then
                 cursorPos = math.max(cursorPos - 1, 0)
             end
-            if e[2] == __LEGACY.keys.right then
+            if e[2] == keys.right then
                 cursorPos = math.min(cursorPos + 1, #config.text)
             end
             return true
@@ -3375,7 +7569,7 @@ local function TextInput(b)
             end
             lout = lout:sub(0, #lout - 1)
             config.label = lout
-            config.col = col.lightGray
+            config.col = col.white
             config.textCol = col.black
         else
             config.label = #config.text > 0 and config.text or " "
@@ -3577,7 +7771,7 @@ local function RenderLoop(toRender, outTerm, f)
     if f then reRender() end
     local ev = { arcos.ev() }
     local red = false
-    local isMonitor, monSide = pcall(__LEGACY.peripheral.getName, outTerm)
+    local isMonitor, monSide = pcall(devices.name, outTerm)
     if not isMonitor then
         if ev[1] == "mouse_click" then
             for i, v in ipairs(toRender) do
@@ -4040,7 +8234,228 @@ local function create(parent, nX, nY, nWidth, nHeight, bStartVisible)
     end
     return window
 end
-return {create = create}return __LEGACY.keys-- Generated by Haxe 4.3.6
+return {create = create}return require("syscall").terminal.getKeymap()local syscall = require("syscall")
+local arcos = {}
+arcos = {
+    kernelPanic = function(err, file, line)
+        syscall.panic(err, file, line)
+    end,
+    reboot = function()
+        syscall.run("reboot")
+    end,
+    shutdown = function()
+        syscall.run("shutdown")
+    end,
+    log = function(txt, level)
+        syscall.run("log", txt, level)
+    end,
+    version = function()
+        return syscall.run("version")
+    end,
+    getName = function()
+        return syscall.run("getName")
+    end,
+    setName = function(new)
+        syscall.run("setName", new)
+    end,
+    getCurrentTask = function()
+        return syscall.run("getCurrentTask")
+    end,
+    getUsers = function()
+        return syscall.run("getUsers")
+    end,
+    getKernelLogBuffer = function()
+        return syscall.run("getKernelLogBuffer")
+    end,
+    ev = function(filter)
+        r = table.pack(coroutine.yield())
+        if r[1] == "terminate" then
+            error("Terminated")
+        end
+        if not filter or r[1] == filter then
+            return table.unpack(r)
+        else
+            return arcos.ev(filter)
+        end
+    end,
+    rev = function(filter)
+        r = table.pack(coroutine.yield())
+        if not filter or r[1] == filter then
+            return table.unpack(r)
+        else
+            return arcos.rev(filter)
+        end
+    end,
+    time = function(t)
+        return syscall.run("time", t)
+    end,
+    day = function(t)
+        return syscall.run("day", t)
+    end,
+    epoch = function(t)
+        return syscall.run("epoch", t)
+    end,
+    date = function(format, time)
+        return syscall.run("date", format, time)
+    end,
+    r = function(env, path, ...)
+        assert(type(env) == "table", "Invalid argument: env")
+        assert(type(path) == "string", "Invalid argument: path")
+        local compEnv = {}
+        for k, v in pairs(_G) do
+            compEnv[k] = v
+        end
+        for k, v in pairs(env) do
+            compEnv[k] = v
+        end
+        compEnv["apiUtils"] = nil
+        compEnv["xnarcos"] = nil
+        compEnv["KDriversImpl"] = nil
+        compEnv["_G"] = nil
+        setmetatable(compEnv, {
+            __index = function(t, k)
+                if k == "_G" then
+                    return compEnv
+                end
+            end,
+        })
+        local f, e = require("files").open(path, "r")
+        if not f then return false, e end
+        local compFunc, err = load(f.read(), path, nil, compEnv)
+        f.close()
+        if compFunc == nil then
+            return false, "Failed to load function: " .. err
+        else
+            setfenv(compFunc, compEnv)
+            local ok, err = pcall(compFunc, ...)
+            return ok, err
+        end
+    end,
+    queue = function(ev, ...)
+        syscall.run("queue", ev, ...)
+    end,
+    clock = function()
+        return syscall.run("clock")
+    end,
+    loadAPI = function(api)
+        error("Use require instead of loadAPI.")
+    end,
+    startTimer = function(d)
+        return syscall.run("startTimer", d)
+    end,
+    cancelTimer = function(d)
+        return syscall.run("cancelTimer", d)
+    end,
+    setAlarm = function(d)
+        return syscall.run("setAlarm", d)
+    end,
+    cancelAlarm = function(d)
+        return syscall.run("cancelAlarm", d)
+    end,
+    id = syscall.run("getID"),
+    getHome = function()
+        return syscall.run("getHome")
+    end,
+    validateUser = function(user, pass)
+        return syscall.run("validateUser", user, pass)
+    end,
+    createUser = function(user, pass)
+        return syscall.run("createUser", user, pass)
+    end,
+    deleteUser = function(user)
+        return syscall.run("deleteUser", user)
+    end,
+    sleep = function(d)
+        local tId = arcos.startTimer(d)
+        local rt = -1
+        repeat _, rt = arcos.ev("timer")
+        until rt == tId
+        return
+    end
+}
+return arcoslocal syscall = {
+    run = function(syscall, ...)
+        local f = { table.unpack(table.pack(coroutine.yield("syscall", syscall, ...)), 2) }
+        if f[1] and type(f[1]) == "table" and f[1]["xType"] == "errorobject" and f[1]["xN"] == 0xfa115afe then
+            error(debug.traceback(f[1]["xValue"]))
+        else
+            return table.unpack(f)
+        end
+    end
+}
+local function syscallmetatable(x, root)
+    return setmetatable(x, {
+        __index = function(t, k)
+            return syscallmetatable({}, (#root > 0 and (root .. ".") or "") .. k)
+        end,
+        __call = function(t, ...)
+            return syscall.run(root, ...)
+        end
+    })
+end
+syscall = syscallmetatable(syscall, "")
+return syscalllocal syscall = require("syscall")
+local devices = {}
+devices = {
+    present = function(name)
+        local names = devices.names()
+        for _, v in ipairs(names) do
+            if v == name then
+                return true
+            end
+        end
+        return false
+    end,
+    type = function(dev)
+        return table.unpack(dev.types)
+    end,
+    hasType = function(dev, type)
+        for _, v in ipairs(dev.types) do
+            if v == type then
+                return true
+            end
+        end
+        return false
+    end,
+    methods = function(name)
+    end,
+    name = function(peripheral)
+        return peripheral.name
+    end,
+    call = function(name, method, ...)
+        return devices.get(name)[method](...)
+    end,
+    get = function(what)
+        return syscall.run("devices.get", what)
+    end,
+    find = function(what)
+        return syscall.run("devices.find", what)
+    end,
+    names = function()
+        return syscall.run("devices.names")
+    end,
+}
+return deviceslocal devices = require("devices")
+return setmetatable({}, {
+    __index = function(t, k)
+        return devices.find(k)
+    end
+})local syscall = require("syscall")
+return {
+    createTask = function(name, callback, nice, user, out, env)
+        return syscall.tasking.createTask(name, callback, nice, user, out, env)
+    end,
+    getTasks = function()
+        return syscall.tasking.getTasks()
+    end,
+    setTaskPaused = function(pid, paused)
+        return syscall.tasking.setTaskPaused(pid, paused)
+    end,
+    changeUser = function(user, password)
+        return syscall.tasking.changeUser(user, password)
+    end
+}
+-- Generated by Haxe 4.3.6
 local _hx_hidden = {__id__=true, hx__closures=true, super=true, prototype=true, __fields__=true, __ifields__=true, __class__=true, __properties__=true, __fields__=true, __name__=true}
 
 _hx_array_mt = {
@@ -4247,6 +8662,7 @@ local ScrollContainer = _hx_e()
 local Values = _hx_e()
 local Date = _hx_e()
 local CCOS = _hx_e()
+Keys = _G.require("keys")
 local Lambda = _hx_e()
 local Main = _hx_e()
 local Reflect = _hx_e()
@@ -6233,18 +10649,18 @@ TextArea.prototype.onCustom = function(self,c)
   end;
   cursorPosAsInt = cursorPosAsInt + Std.int(self.cursorPos.x);
   if (c[0] == "key_up") then 
-    if (c[1] == keys.control) then 
+    if (c[1] == Keys.control) then 
       self.ctrlPressed = false;
     end;
   end;
   if (c[0] == "key") then 
-    if (c[1] == keys.control) then 
+    if (c[1] == Keys.control) then 
       self.ctrlPressed = true;
     end;
-    if ((self.ctrlPressed and (c[1] == keys.u)) and self.focused) then 
+    if ((self.ctrlPressed and (c[1] == Keys.u)) and self.focused) then 
       self.value = "";
     end;
-    if ((c[1] == keys.backspace) and not ((self.cursorPos.y < 1) and (self.cursorPos.x < 1))) then 
+    if ((c[1] == Keys.backspace) and not ((self.cursorPos.y < 1) and (self.cursorPos.x < 1))) then 
       self.value = Std.string(String.prototype.substring(self.value, 0, cursorPosAsInt - 1)) .. Std.string(String.prototype.substring(self.value, cursorPosAsInt));
       self.cursorPos.x = self.cursorPos.x - 1;
       if (self.cursorPos.x < 0) then 
@@ -6254,18 +10670,18 @@ TextArea.prototype.onCustom = function(self,c)
         self.cursorPos.x = #tmp[tmp1];
       end;
     end;
-    if (c[1] == keys.home) then 
+    if (c[1] == Keys.home) then 
       self.cursorPos.x = 0;
     end;
-    if (c[1] == keys["end"]) then 
+    if (c[1] == Keys["end"]) then 
       local tmp = String.prototype.split(self.value, "\n");
       local tmp1 = Std.int(self.cursorPos.y);
       self.cursorPos.x = #tmp[tmp1];
     end;
-    if (c[1] == keys.delete) then 
+    if (c[1] == Keys.delete) then 
       self.value = Std.string(String.prototype.substring(self.value, 0, cursorPosAsInt)) .. Std.string(String.prototype.substring(self.value, cursorPosAsInt + 1));
     end;
-    if (c[1] == keys.left) then 
+    if (c[1] == Keys.left) then 
       self.cursorPos.x = self.cursorPos.x - 1;
       if (self.cursorPos.x < 0) then 
         if (self.cursorPos.y > 0) then 
@@ -6284,7 +10700,7 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp1 = #String.prototype.split(self.value, "\n")[Std.int(self.cursorPos.y)] - 1;
       self.cursorPos.x = Math.min(tmp, tmp1);
     end;
-    if (c[1] == keys.right) then 
+    if (c[1] == Keys.right) then 
       self.cursorPos.x = self.cursorPos.x + 1;
       if (self.cursorPos.x > #String.prototype.split(self.value, "\n")[Std.int(self.cursorPos.y)]) then 
         self.cursorPos.x = self.cursorPos.x - 1;
@@ -6301,7 +10717,7 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp2 = Std.int(self.cursorPos.y);
       self.cursorPos.x = Math.min(tmp, #tmp1[tmp2]);
     end;
-    if (c[1] == keys.up) then 
+    if (c[1] == Keys.up) then 
       self.cursorPos.y = self.cursorPos.y - 1;
       local tmp = self.cursorPos.y;
       local tmp1 = String.prototype.split(self.value, "\n").length - 1;
@@ -6311,7 +10727,7 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp2 = Std.int(self.cursorPos.y);
       self.cursorPos.x = Math.min(tmp, #tmp1[tmp2]);
     end;
-    if (c[1] == keys.down) then 
+    if (c[1] == Keys.down) then 
       self.cursorPos.y = self.cursorPos.y + 1;
       local tmp = self.cursorPos.y;
       local tmp1 = String.prototype.split(self.value, "\n").length - 1;
@@ -6321,12 +10737,12 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp2 = Std.int(self.cursorPos.y);
       self.cursorPos.x = Math.min(tmp, #tmp1[tmp2]);
     end;
-    if ((c[1] == keys.enter) and (self.height > 1)) then 
+    if ((c[1] == Keys.enter) and (self.height > 1)) then 
       self.value = Std.string(Std.string(String.prototype.substring(self.value, 0, cursorPosAsInt)) .. Std.string("\n")) .. Std.string(String.prototype.substring(self.value, cursorPosAsInt));
       self.cursorPos.y = self.cursorPos.y + 1;
       self.cursorPos.x = 0;
     else
-      if ((c[1] == keys.enter) and (self.height <= 1)) then 
+      if ((c[1] == Keys.enter) and (self.height <= 1)) then 
         self.onSubmit:execute(self, self.lsw, self.lsh);
       end;
     end;
@@ -6488,7 +10904,7 @@ CCOS.new = {}
 CCOS.__name__ = true
 CCOS.pullEvent = function() 
   
-        if arcos then return arcos.ev() else return os.pullEvent() end
+        if package.isarcos then return require("arcos").ev() else return os.pullEvent() end
         ;
   do return nil end;
 end
@@ -8743,13 +13159,21 @@ local success, err = _G.xpcall(function()
 end, _hx_handle_error)
 if not success then _G.error(err) end
 return _hx_exports
+local arcos = require("arcos")
 if arcos.getCurrentTask().user ~= "root" then
     error("Not root! We are " .. require("tutils").sJSON(arcos.getCurrentTask()))
 end
 ackFinish()
 local modem
 local selectedFloor = -1
-local col = require("col")
+local col
+local arcos
+local devices
+if package.isarcos then
+    col = require("col")
+    arcos = require("arcos")
+    devices = require("devices")
+end
 if arcos then
     modem = devices.find("modem")
 else
@@ -8847,7 +13271,12 @@ while true do
             reDraw()
         end
     end
-endlocal currentFloor = -1
+endlocal dev = require("dev")
+local devices = require("devices")
+local arcos = require("arcos")
+local tasking = require("tasking")
+local sleep = arcos.sleep
+local currentFloor = -1
 local doorWaitFloor = 8
 local queue = {}
 local enderModem = dev.wmodem[1]
@@ -8939,10 +13368,12 @@ while true do
         print(channel)
     end
 end
+local arcos = require('arcos')
 local arc = require("arc")
 local ui = require("ui")
 local col = require("col")
 local files = require("files")
+local arcos = require("arcos")
 arc.fetch()
 local w, h = term.getSize()
 local pages = {}
@@ -8954,12 +13385,14 @@ local init = "shell.lua"
 pages[1] = {
     ui.Label({
         label = "An error happened during setup!",
-        x = 2, y = 2,
+        x = 2,
+        y = 2,
         textCol = col.red
     }),
     ui.Label({
         label = "<insert error>",
-        x = 2, y = 4,
+        x = 2,
+        y = 4,
         textCol = col.magenta
     })
 }
@@ -8989,7 +13422,7 @@ table.insert(pages[2],
 )
 table.insert(pages[2],
     ui.Label({
-        label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
+        label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w - 2),
         x = 2,
         y = 4,
         textCol = ui.UItheme.lightBg
@@ -8997,14 +13430,14 @@ table.insert(pages[2],
 )
 table.insert(pages[2],
     ui.Button({
-        callBack = function ()
+        callBack = function()
             ui.PageTransition(pages[2], pages[3], false, 1, true, term)
             page = 3
             return true
         end,
         label = " Next ",
-        x = w-1-6,
-        y = h-1
+        x = w - 1 - 6,
+        y = h - 1
     })
 )
 pages[3] = {}
@@ -9014,19 +13447,19 @@ table.insert(pages[3], ui.Label({
     y = 2
 }))
 table.insert(pages[3], ui.Label({
-    label = ui.Wrap("A login screen is the program you see right after the init system.", w-2),
+    label = ui.Wrap("A login screen is the program you see right after the init system.", w - 2),
     x = 2,
     y = 3,
     textCol = ui.UItheme.lightBg
 }))
 table.insert(pages[3], ui.ScrollPane({
     x = 2,
-    y = 4+pages[3][2].getWH()[2],
+    y = 4 + pages[3][2].getWH()[2],
     col = ui.UItheme.lighterBg,
     children = {
-        ui.Button{
+        ui.Button {
             label = "audm",
-            callBack = function ()
+            callBack = function()
                 table.insert(tobeinstalled, "audm")
                 init = "audm.lua"
                 ui.PageTransition(pages[3], pages[4], false, 1, true, term)
@@ -9036,9 +13469,9 @@ table.insert(pages[3], ui.ScrollPane({
             x = 1,
             y = 1
         },
-        ui.Button{
+        ui.Button {
             label = "Shell",
-            callBack = function ()
+            callBack = function()
                 init = "shell.lua"
                 ui.PageTransition(pages[3], pages[4], false, 1, true, term)
                 page = 4
@@ -9048,12 +13481,12 @@ table.insert(pages[3], ui.ScrollPane({
             y = 1
         }
     },
-    height = h - 4-pages[3][2].getWH()[2],
+    height = h - 4 - pages[3][2].getWH()[2],
     width = w - 2,
     showScrollBtns = false
 }))
 local repo = arc.getRepo()
-local function has_value (tab, val)
+local function has_value(tab, val)
     for index, value in ipairs(tab) do
         if value == val then
             return true
@@ -9072,26 +13505,26 @@ local function pushPackageWithDependencies(pkg)
     end
 end
 pages[4] = {
-    ui.Label{
+    ui.Label {
         label = "Set computer label",
         x = 2,
         y = 2
     },
-    ui.Label{
-        label = ui.Wrap("A computer label sets the computer's name in the inventory, and with mods like Jade also shows on the blockinfo.", w-2),
+    ui.Label {
+        label = ui.Wrap("A computer label sets the computer's name in the inventory, and with mods like Jade also shows on the blockinfo.", w - 2),
         x = 2,
         y = 3,
         textCol = ui.UItheme.lightBg
     },
-    ui.TextInput{
+    ui.TextInput {
         label = "arcos",
         x = 2,
         y = 3,
-        width = w-2
+        width = w - 2
     },
-    ui.Button{
+    ui.Button {
         label = "Done",
-        callBack = function ()
+        callBack = function()
             if pages[4][3].text ~= "" then
                 arcos.setName(pages[4][3].text)
             end
@@ -9099,7 +13532,7 @@ pages[4] = {
                 pushPackageWithDependencies(value)
             end
             for index, value in ipairs(atobeinstalled) do
-                table.insert(ipchildren, ui.Label{
+                table.insert(ipchildren, ui.Label {
                     label = value,
                     x = 1,
                     y = 1
@@ -9109,18 +13542,18 @@ pages[4] = {
             page = 5
             return true
         end,
-        x = w-4,
-        y = h-1
+        x = w - 4,
+        y = h - 1
     }
 }
 pages[4][3].y = 4 + pages[4][2].getWH()[2]
 pages[5] = {
-    ui.Label{
+    ui.Label {
         label = "Install packages",
         x = 2,
         y = 2
     },
-    ui.ScrollPane{
+    ui.ScrollPane {
         height = h - 6,
         width = w - 2,
         x = 2,
@@ -9128,12 +13561,12 @@ pages[5] = {
         children = ipchildren,
         col = col.gray
     },
-    ui.Button{
+    ui.Button {
         label = " Install ",
-        x = w-9,
-        y = h-1,
-        callBack = function ()
-            term.setCursorPos(w-10, h-1)
+        x = w - 9,
+        y = h - 1,
+        callBack = function()
+            term.setCursorPos(w - 10, h - 1)
             term.setBackgroundColor(col.gray)
             term.setTextColor(col.white)
             term.write("Installing")
@@ -9160,28 +13593,33 @@ pages[5] = {
     }
 }
 pages[6] = {
-    ui.Label{
+    ui.Label {
         label = "All finished!",
         textCol = col.green,
         x = 2,
         y = 2
     },
-    ui.Button{
-        callBack = function ()
+    ui.Button {
+        callBack = function()
             arcos.reboot()
             return true
         end,
         label = " Reboot ",
-        x = w-1-8,
-        y = h-1
+        x = w - 1 - 8,
+        y = h - 1
     }
 }
 local ls = true
 while true do
     ls = ui.RenderLoop(pages[page], term, ls)
-endlocal ui = require("ui")
+end
+local arcos = require('arcos')
+local sleep = arcos.sleep
+local ui = require("ui")
 local files = require("files")
 local tutils = require("tutils")
+local devices = require("devices")
+local dev = require("dev")
 local currentPowerUsage = 0
 local f, e = files.open("/config/pmst", "r")
 local titemcount = 0
@@ -9332,7 +13770,8 @@ while rd do
         ls = true
         tid = arcos.startTimer(0.5)
     end
-endarcos.r({}, "/apps/shell.lua")l|arcfix.lua
+endlocal arcos = require("arcos")
+arcos.r({}, "/apps/shell.lua")l|arcfix.lua
 o oobe.luaBy using arcos, you automatically agree to these
 terms. Agreement to this file is also required By
 the stock arcos installer.
@@ -9380,7 +13819,9 @@ find the "telemetry" field and disable it{
         "name": "root",
         "password": "ce5ca673d13b36118d54a7cf13aeb0ca012383bf771e713421b4d1fd841f539a"
     }
-]if arcos.getCurrentTask().user ~= "root" then
+]local arcos = require("arcos")
+local tasking = require("tasking")
+if arcos.getCurrentTask().user ~= "root" then
     write("[escalation] Enter root password: ")
     local pass = read("*")
     local f = tasking.changeUser("root", pass)
@@ -9390,10 +13831,10 @@ find the "telemetry" field and disable it{
 end
 local args = { ... }
 local username = args[1]
-local password = "notset"
+local password = ""
 if #args == 1 then
     write("New Password: ")
-    password = read("*")
+    password = read("*") or ""
 elseif #args == 2 then
     password = args[2]
 else
@@ -9402,6 +13843,7 @@ end
 arcos.createUser(username, password)local arc = require("arc")
 local files = require("files")
 local col = require("col")
+local arcos = require("arcos")
 local args = { ... }
 local cmd = table.remove(args, 1)
 local repo = arc.getRepo()
@@ -9536,14 +13978,16 @@ if not s and t then
     print("Usage: cp [src] [target]")
     error()
 end
-files.c(v, n)local files = require("files")
-local col = require("col")
+files.c(v, n)local tasking = require("tasking")
+local files = require("files")
+local arcos = require("arcos")
+local sleep = arcos.sleep
+local col = require("col")  
 write("\011f8Welcome to \011f2arcos\011f8!\n")
 for index, value in ipairs(files.ls("/services/enabled")) do
     local servFile, err = files.open("/services/enabled/"..value, "r")
     if not servFile then
-        printError(err)
-        error()
+        error(err)
     end
     write("\011f2Group \011f0" .. value .. "\n")
     for i in servFile.readLine do
@@ -9608,8 +14052,10 @@ for index, value in ipairs(files.ls("/services/enabled")) do
     end
 end
 tasking.setTaskPaused(arcos.getCurrentTask()["pid"], true)
-coroutine.yield()
-local klb = arcos.getKernelLogBuffer()
+while true do
+    local ev = {coroutine.yield()}
+end
+local klb = require("arcos").getKernelLogBuffer()
 print(klb)local files = require("files")
 local col = require("col")
 local path = ... or environ.workDir
@@ -9654,7 +14100,9 @@ local f = ...
 if not f then error("No file specified!") end
 local fr = files.resolve(f)[1]
 if not fr then error("File does not exist") end
-files.rm(fr)if arcos.getCurrentTask().user ~= "root" then
+files.rm(fr)local arcos = require("arcos")
+local tasking = require("tasking")
+if arcos.getCurrentTask().user ~= "root" then
     write("[escalation] Enter root password: ")
     local pass = read("*")
     local f = tasking.changeUser("root", pass)
@@ -9673,23 +14121,9 @@ endlocal col = require("col")
 local files = require("files")
 local tutils = require("tutils")
 local arc = require("arc")
+local arcos = require("arcos")
 term.setTextColor(col.blue)
 print(arcos.version())
-term.setTextColor(col.lightGray)
-if arcos.getCurrentTask().user == "root" then
-    arc.fetch()
-end
-pcall(function ()
-    if #arc.getUpdatable() > 0 then
-        local f = #arc.getUpdatable() > 0
-        print()
-        write(#arc.getUpdatable() .. " " .. f == 1 and "update is" or "updates are" .. " availabe. Use ")
-        term.setTextColor(col.magenta)
-        write("arc update")
-        term.setTextColor(col.lightGray)    
-        print(" to update.")
-    end
-end)
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
     table.insert(secRisks, "The root account password has not yet been changed.")
@@ -9767,7 +14201,7 @@ local function run(a1, ...)
         if not ok then
             printError(err)
         else
-            print(tutils.s(err))
+            print(tutils.s(err, true))
         end
         return ok
     end
@@ -9806,7 +14240,7 @@ do
     write(" ")
     write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
     term.setTextColor(col.white)
-    local cmd = read(nil, history)
+    local cmd = read(nil, history) or ""
     table.insert(history, cmd)
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
     if not r then
@@ -9814,6 +14248,7 @@ do
     end
 endlocal ui = require("ui")
 local col = require("col")
+local dev = require("dev")
 if term then
     local monitors = dev.monitor
     local selecting = true
@@ -10023,7 +14458,7 @@ if term then
     end
 end
 term.clear()
-term.setCursorPos(1, 1)arcos.shutdown()arcos.reboot()local x = require("cellui")
+term.setCursorPos(1, 1)require("arcos").shutdown()require("arcos").reboot()local x = require("cellui")
 local runner = x["Runner"].new(x["typedefs"].CCTerminal.new(term),x["ScrollContainer"].new({}),nil)
 local tests = {
 }
@@ -10034,4 +14469,11 @@ end
 if type(side) ~= "string" or type(ptype) ~= "string" then
     error("Invalid arguments. Usage: attach <side> <ptype>")
 end
-periphemu.create(side, ptype)
+periphemu.create(side, ptype)local side = ...
+if not periphemu then
+    error("Not running inside of a compatible emulator.")
+end
+if type(side) ~= "string" then
+    error("Invalid arguments. Usage: detach <side>")
+end
+periphemu.remove(side)

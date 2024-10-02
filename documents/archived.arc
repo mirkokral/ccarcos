@@ -386,14 +386,14 @@ local function strsplit(inputstr, sep)
 end
 _G.apiUtils = {
     kernelPanic = function(err, file, line)
-        __LEGACY.term.setBackgroundColor(__LEGACY.colors.red)
-        __LEGACY.term.setTextColor(__LEGACY.colors.black)
-	__LEGACY.term.clear()
+        term.setBackgroundColor(__LEGACY.colors.red)
+        term.setTextColor(__LEGACY.colors.black)
+	term.clear()
 	print("arcos has forcefully shut off, due to a system issue.")
 	print("The suspected file: " .. file .. ", suspected line: " .. tostring(line) .. "." )
 	print("It is safe to force restart this computer at this state. Any unsaved data has already been lost.")
 	tasks = {}
-	tasking.createTask("n", function() while true do coroutine.yield() end end, 1, "root", __LEGACY.term, environ)
+	tasking.createTask("n", function() while true do coroutine.yield() end end, 1, "root", term, environ)
         while true do
             coroutine.yield()
         end
@@ -410,7 +410,7 @@ _G.arcos = {
     log = function(txt)
         kernelLogBuffer = kernelLogBuffer .. "[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n"
         if config["printLogToConsole"] then
-            __LEGACY.term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
+            term.write("[" .. __LEGACY.os.clock() .. "] " .. debug.getinfo(2).source:sub(2) .. ": " .. txt .. "\n")
         end
     end,
     version = function ()
@@ -814,14 +814,14 @@ tasking.createTask("Init", function()
         end
     end)
     apiUtils.kernelPanic("Init Died: " .. err, "Kernel", "424")
-end, 1, "root", __LEGACY.term, {workDir = "/user/root"})
+end, 1, "root", term, {workDir = "/user/root"})
 arcos.startTimer(0.2)
 while true do
     if #tasks > 0 then
         ev = { os.pullEventRaw() }
         for d, i in ipairs(tasks) do
             for _ = 1, i["nice"], 1 do
-                _G.term = i["out"] or __LEGACY.term
+                _G.term = i["out"] or term
                 if not i["paused"] then
                     currentTask = i
                     cPid = d
@@ -842,7 +842,7 @@ while true do
             term.setTextColor(col.white)
             print("Kernel Emergency Shell System - No tasks.")
             arcos.r({}, "/apps/shell.lua")
-        end, 1, "root", __LEGACY.term, {workDir = "/"})
+        end, 1, "root", term, {workDir = "/"})
     end
 end
 term.setPaletteColor(colors.white, 236/255, 239/255, 244/255)
@@ -1146,10 +1146,10 @@ function main()
     local cf = __LEGACY.files.open("/config/aboot", "r")
     local config = __LEGACY.textutils.unserialiseJSON(cf.readAll())
     cf.close()
-    __LEGACY.term.setTextColor(__LEGACY.colors[config["theme"]["fg"]])
-    __LEGACY.term.setBackgroundColor(__LEGACY.colors[config["theme"]["bg"]])
-    __LEGACY.term.clear()
-    __LEGACY.term.setCursorPos(1, 1)
+    term.setTextColor(__LEGACY.colors[config["theme"]["fg"]])
+    term.setBackgroundColor(__LEGACY.colors[config["theme"]["bg"]])
+    term.clear()
+    term.setCursorPos(1, 1)
     local args = config["defargs"] or ""
     if not config["skipPrompt"] then
         write("krnl: ")

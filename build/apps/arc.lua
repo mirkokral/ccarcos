@@ -1,6 +1,7 @@
 local arc = require("arc")
 local files = require("files")
 local col = require("col")
+local arcos = require("arcos")
 local args = { ... }
 local cmd = table.remove(args, 1)
 local repo = arc.getRepo()

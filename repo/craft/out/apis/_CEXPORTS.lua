@@ -5,6 +5,4 @@ return {
     settings = __LEGACY.settings,
     textutils = __LEGACY.textutils,
     help = __LEGACY.help,
-    require = __LEGACY.require,
-    package = __LEGACY.package
 }

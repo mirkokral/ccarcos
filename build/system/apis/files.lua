@@ -1,41 +1,17 @@
 local col = require("col")
 local tutils = require("tutils")
+local syscall = require("syscall")
+local arcos = require("arcos")
 local function combine(...)
-    return __LEGACY.files.combine(...)
+    local out = {}
+    for index, value in ipairs({ ... }) do
+        out = {table.unpack(out), table.unpack(tutils.split(value, "/"))}
+    end
+    return table.concat(out, "/")
 end
 local function getPermissions(file, user) 
-    local read = true
-    local write = true
-    local listed = true
-    if user == nil then user = arcos.getCurrentTask().user end
-    if __LEGACY.files.isReadOnly(file) then
-        write = false
-    end
-    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "$" then -- Metadata files
-        return {
-            read = false,
-            write = false,
-            listed = false
-        }
-    end
-    local disallowedfiles = {"startup.lua", "startup"}
-    for index, value in ipairs(disallowedfiles) do
-        if tutils.split(file, "/")[1] == value then -- Metadata files
-            return {
-                read = false,
-                write = false,
-                listed = false,
-            }
-        end
-    end
-    if tutils.split(file, "/")[#tutils.split(file, "/")]:sub(1,1) == "." then
-        listed = false
-    end
-    return {
-        read = read,
-        write = write,
-        listed = listed,
-    }
+    if not user then user = arcos.getCurrentTask().user end
+    return syscall.fs.getPermissions(file, user)
 end
 local function getPermissionsForAll(file)
     local u = {}
@@ -51,113 +27,68 @@ local function can(on, what)
     return getPermissions(on)[what]
 end
 local function par(path)
-    return __LEGACY.files.getDir(path)
+    return table.concat({ table.unpack(tutils.split(path, "/"), 1, #tutils.split(path, "/") - 1) }, "/")
 end
-local function size(path)
+local function attributes(path)
     if cant(path, "read") then
         error("No permission for this action")
     end
-    return __LEGACY.files.getSize(path)
-end
-local function drive(path)
-    return __LEGACY.files.getDrive(path)
-end
-local function freeSpace(path)
-    return __LEGACY.files.getFreeSpace(path)
+    local attr = syscall.fs.attributes(path)
+    attr.permissions = getPermissionsForAll(path)
+    return attr
 end
 local function readonly(path)
     return not getPermissions(path).write
 end
-local function split(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    if t == {} then
-        t = { inputstr }
-    end
-    return t
-end
 local function open(path, mode)
-    local validModes = {"w", "r", "w+", "r+", "a", "wb", "rb"}
-    if cant(path, "read") and (mode == "r" or mode == "r+" or mode == "a" or mode == "w+" or mode == "rb") then
-        return nil, "No permission for this action"
-    end
-    if cant(path, "write") and (mode == "w" or mode == "w+" or mode == "a" or mode == "r+" or mode == "wb") then
-        return nil, "No permission for this action"
-    end
-    local cmodevalid = false
-    for _, v in ipairs(validModes) do
-        if mode == v then cmodevalid = true break end
-    end
-    if not cmodevalid then error("Mode not valid: " .. mode) end
-    local err
-    local file = {}
-    file._f, err = __LEGACY.files.open(path, mode)
-    if not file._f then
-        return nil, err
-    end
-    file.open = true
-    file.close = function() file._f.close() file.open = false end
-    file.seekBytes = function(whence, offset)
-        return file._f.seek(whence, offset)
-    end
-    if mode == "w" or mode == "w+" or mode == "r+" or mode == "a" then
-        file.write = function(towrite)
-            file._f.write(towrite)
-        end
-        file.writeLine = function(towrite)
-            file._f.writeLine(towrite)
-        end
-        file.flush = function(towrite)
-            file._f.write(towrite)
-        end
-    end
-    if mode == "r" or mode == "w+" or mode == "r+" then
-        local fd = file._f.readAll()
-        local li = 0
-        file.readBytes = function(b)
-            return file._f.read(b)
-        end
-        file.read = function()
-            return fd
-        end
-        file.readLine = function(withTrailing)
-            li = li + 1
-            if withTrailing then
-                return split(fd, "\n")[li] .. "\n"
-            else
-                return split(fd, "\n")[li]
-            end
-        end
-    end
-    return file, nil
+    local ok, h = pcall(syscall.fs.open, path, mode)
+    if not ok then return nil, h end
+    local isopen = true
+    return {
+        read = function(n)
+            return syscall.fs.fRead(h, n)
+        end,
+        readLine = function()
+            return syscall.fs.fReadLine(h)
+        end,
+        readBytes = function(amount)
+            return syscall.fs.fReadBytes(h, amount)
+        end,
+        write = function(towrite)
+            return syscall.fs.fWrite(h, towrite)
+        end,
+        writeLine = function(line)
+            return syscall.fs.fWriteLine(h, line)
+        end,
+        flush = function()
+            return syscall.fs.fSync(h)
+        end,
+        close = function()
+            isopen = false
+            return syscall.fs.fClose(h)
+        end,
+        seek = function(whence, offset)
+            return syscall.fs.fSeek(h, whence, offset)
+        end,
+        open = isopen
+    }
 end
 local function ls(dir)
-    local listed =  __LEGACY.files.list(dir)
-    local out = {}
-    for index, value in ipairs(listed) do
-        if can(dir .. '/' .. value, "listed") then
-            table.insert(out, value)
-        end
-    end
-    return out
+    local f = syscall.fs.list(dir)
+    return f
 end
 local function rm(f)
     if cant(f, "write") then
         error("No permission for this action")
     end
-    return __LEGACY.files.delete(f)
+    return syscall.fs.remove(f)
 end
 local function exists(f)
     if f == "" or f == "/" then return true end
     if tutils.split(f, "/")[#tutils.split(f, "/")]:sub(1,1) == "$" then
         return false
     end
-    return __LEGACY.files.exists(f)
+    return syscall.fs.exists(f)
 end
 local function mkDir(d) 
     local fv = {}
@@ -170,7 +101,7 @@ local function mkDir(d)
     if cant(table.concat(fv, "/"), "write") then
         error("No permission for this action");
     end
-    return __LEGACY.files.makeDir(d)
+    return syscall.fs.mkDir(d)
 end
 local function resolve(f, keepNonExistent)
     local p = f:sub(1, 1) == "/" and "/" or (arcos.getCurrentTask().env.workDir or "/")
@@ -206,19 +137,19 @@ local function resolve(f, keepNonExistent)
 end
 local function dir(d) 
     if f == "" or f == "/" then return true end
-    return __LEGACY.files.isDir(d)
+    return attributes(d).isDir
 end
 local function m(t, d) 
     if cant(t, "read") or cant(t, "write") or cant(d, "write") then
         error("No permission for this action")
     end
-    return __LEGACY.files.move(t, d)
+    return syscall.fs.move(t, d)
 end
 local function c(t, d)
     if cant(t, "read") or cant(d, "write") then
         error("No permission for this action")
     end
-    return __LEGACY.files.copy(t, d)
+    return syscall.fs.copy(t, d)
 end
 local expect = col.expect
 local field = col.field
@@ -302,7 +233,7 @@ local function find_aux(path, parts, i, out)
         local files = ls(path)
         for j = 1, #files do
             local file = files[j]
-            if file:find(part.contents) then find_aux(__LEGACY.files.combine(path, file), parts, i + 1, out) end
+            if file:find(part.contents) then find_aux(combine(path, file), parts, i + 1, out) end
         end
     end
 end
@@ -336,20 +267,24 @@ local function find(pattern)
     find_aux("", parts, 1, out)
     return out
 end
+local function name(path)
+    return tutils.split(path, "/")[#tutils.split(path, "/")]
+end
+local function size(path)
+    return attributes(path).size
+end
+local function drive(path)
+    return syscall.fs.getMountRoot(path)
+end
+local function freeSpace(path)
+    return attributes(path).capacity - attributes(path).size
+end
 local function driveRoot(sPath)
     expect(1, sPath, "string")
     return par(sPath) == ".." or drive(sPath) ~= drive(par(sPath))
 end
-local function name(path)
-    return __LEGACY.files.getName(path)
-end
 local function capacity(path)
-    return __LEGACY.files.getCapacity(path)
-end
-local function attributes(path)
-    local attr = __LEGACY.files.attributes(path)
-    attr.permissions = getPermissionsForAll(path)
-    return attr
+    return attributes(path).capacity
 end
 local function read(path) 
     local file, error = open(path, "r")

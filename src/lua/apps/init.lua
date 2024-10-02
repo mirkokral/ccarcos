@@ -1,12 +1,13 @@
+local tasking = require("tasking")
 local files = require("files")
-local col = require("col")
+local arcos = require("arcos")
+local sleep = arcos.sleep
+local col = require("col")  
 write("\011f8Welcome to \011f2arcos\011f8!\n")
 for index, value in ipairs(files.ls("/services/enabled")) do
-    
     local servFile, err = files.open("/services/enabled/"..value, "r")
     if not servFile then
-        printError(err)
-        error()
+        error(err)
     end
     write("\011f2Group \011f0" .. value .. "\n")
     for i in servFile.readLine do
@@ -77,4 +78,6 @@ for index, value in ipairs(files.ls("/services/enabled")) do
     end
 end
 tasking.setTaskPaused(arcos.getCurrentTask()["pid"], true)
-coroutine.yield()
+while true do
+    local ev = {coroutine.yield()}
+end

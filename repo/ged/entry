@@ -2,8 +2,8 @@
     "friendlyName": "Editor",
     "description": "A simple WIP editor.",
     "owner": "TNC™ Development and Management Team",
-    "version": "24.08.6",
-    "vId": 6,
+    "version": "24.08.7",
+    "vId": 7,
     "dependencies": [],
     "isIndependable": true
 }

@@ -101,7 +101,8 @@ configScreens = {
             callBack = function ()
                 blc["defargs"] = configScreens.bl[4].text
                 local f = files.open("/config/aboot", "w")
-                    .write(tutils.sJSON(blc))
+                if not f then error("Broken system") end
+                f.write(tutils.sJSON(blc))
                 f.close()
                 changeScreens("main", false)
                 return true

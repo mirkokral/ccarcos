@@ -12,7 +12,6 @@ d>config/apps
 f>startup.lua
 f>system/bootloader.lua
 f>system/rel
-f>system/krnl.lua
 f>system/apis/arc.lua
 f>system/apis/col.lua
 f>system/apis/files.lua
@@ -22,6 +21,11 @@ f>system/apis/tutils.lua
 f>system/apis/ui.lua
 f>system/apis/window.lua
 f>system/apis/keys.lua
+f>system/apis/arcos.lua
+f>system/apis/syscall.lua
+f>system/apis/devices.lua
+f>system/apis/dev.lua
+f>system/apis/tasking.lua
 f>services/arcfix.lua
 f>services/elevator.lua
 f>services/elevatorSrv.lua

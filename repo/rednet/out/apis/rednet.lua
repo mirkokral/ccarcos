@@ -1,3 +1,7 @@
+local arcos = require("arcos")
+local devices = require("devices")
+
+
 CHANNEL_BROADCAST = 65535
 CHANNEL_REPEAT = 65535
 MAX_ID_CHANNELS= 65530

@@ -1,1 +1,1 @@
-arcos.reboot()
+require("arcos").reboot()

@@ -1,7 +1,9 @@
+local arcos = require('arcos')
 local arc = require("arc")
 local ui = require("ui")
 local col = require("col")
 local files = require("files")
+local arcos = require("arcos")
 arc.fetch()
 local w, h = term.getSize()
 local pages = {}
@@ -13,12 +15,14 @@ local init = "shell.lua"
 pages[1] = {
     ui.Label({
         label = "An error happened during setup!",
-        x = 2, y = 2,
+        x = 2,
+        y = 2,
         textCol = col.red
     }),
     ui.Label({
         label = "<insert error>",
-        x = 2, y = 4,
+        x = 2,
+        y = 4,
         textCol = col.magenta
     })
 }
@@ -48,7 +52,7 @@ table.insert(pages[2],
 )
 table.insert(pages[2],
     ui.Label({
-        label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w-2),
+        label = ui.Wrap("This wizard will guide you through the basic setup steps of arcos.", w - 2),
         x = 2,
         y = 4,
         textCol = ui.UItheme.lightBg
@@ -56,14 +60,14 @@ table.insert(pages[2],
 )
 table.insert(pages[2],
     ui.Button({
-        callBack = function ()
+        callBack = function()
             ui.PageTransition(pages[2], pages[3], false, 1, true, term)
             page = 3
             return true
         end,
         label = " Next ",
-        x = w-1-6,
-        y = h-1
+        x = w - 1 - 6,
+        y = h - 1
     })
 )
 pages[3] = {}
@@ -73,19 +77,19 @@ table.insert(pages[3], ui.Label({
     y = 2
 }))
 table.insert(pages[3], ui.Label({
-    label = ui.Wrap("A login screen is the program you see right after the init system.", w-2),
+    label = ui.Wrap("A login screen is the program you see right after the init system.", w - 2),
     x = 2,
     y = 3,
     textCol = ui.UItheme.lightBg
 }))
 table.insert(pages[3], ui.ScrollPane({
     x = 2,
-    y = 4+pages[3][2].getWH()[2],
+    y = 4 + pages[3][2].getWH()[2],
     col = ui.UItheme.lighterBg,
     children = {
-        ui.Button{
+        ui.Button {
             label = "audm",
-            callBack = function ()
+            callBack = function()
                 table.insert(tobeinstalled, "audm")
                 init = "audm.lua"
                 ui.PageTransition(pages[3], pages[4], false, 1, true, term)
@@ -95,9 +99,9 @@ table.insert(pages[3], ui.ScrollPane({
             x = 1,
             y = 1
         },
-        ui.Button{
+        ui.Button {
             label = "Shell",
-            callBack = function ()
+            callBack = function()
                 init = "shell.lua"
                 ui.PageTransition(pages[3], pages[4], false, 1, true, term)
                 page = 4
@@ -107,12 +111,12 @@ table.insert(pages[3], ui.ScrollPane({
             y = 1
         }
     },
-    height = h - 4-pages[3][2].getWH()[2],
+    height = h - 4 - pages[3][2].getWH()[2],
     width = w - 2,
     showScrollBtns = false
 }))
 local repo = arc.getRepo()
-local function has_value (tab, val)
+local function has_value(tab, val)
     for index, value in ipairs(tab) do
         if value == val then
             return true
@@ -131,26 +135,26 @@ local function pushPackageWithDependencies(pkg)
     end
 end
 pages[4] = {
-    ui.Label{
+    ui.Label {
         label = "Set computer label",
         x = 2,
         y = 2
     },
-    ui.Label{
-        label = ui.Wrap("A computer label sets the computer's name in the inventory, and with mods like Jade also shows on the blockinfo.", w-2),
+    ui.Label {
+        label = ui.Wrap("A computer label sets the computer's name in the inventory, and with mods like Jade also shows on the blockinfo.", w - 2),
         x = 2,
         y = 3,
         textCol = ui.UItheme.lightBg
     },
-    ui.TextInput{
+    ui.TextInput {
         label = "arcos",
         x = 2,
         y = 3,
-        width = w-2
+        width = w - 2
     },
-    ui.Button{
+    ui.Button {
         label = "Done",
-        callBack = function ()
+        callBack = function()
             if pages[4][3].text ~= "" then
                 arcos.setName(pages[4][3].text)
             end
@@ -158,7 +162,7 @@ pages[4] = {
                 pushPackageWithDependencies(value)
             end
             for index, value in ipairs(atobeinstalled) do
-                table.insert(ipchildren, ui.Label{
+                table.insert(ipchildren, ui.Label {
                     label = value,
                     x = 1,
                     y = 1
@@ -168,18 +172,18 @@ pages[4] = {
             page = 5
             return true
         end,
-        x = w-4,
-        y = h-1
+        x = w - 4,
+        y = h - 1
     }
 }
 pages[4][3].y = 4 + pages[4][2].getWH()[2]
 pages[5] = {
-    ui.Label{
+    ui.Label {
         label = "Install packages",
         x = 2,
         y = 2
     },
-    ui.ScrollPane{
+    ui.ScrollPane {
         height = h - 6,
         width = w - 2,
         x = 2,
@@ -187,12 +191,12 @@ pages[5] = {
         children = ipchildren,
         col = col.gray
     },
-    ui.Button{
+    ui.Button {
         label = " Install ",
-        x = w-9,
-        y = h-1,
-        callBack = function ()
-            term.setCursorPos(w-10, h-1)
+        x = w - 9,
+        y = h - 1,
+        callBack = function()
+            term.setCursorPos(w - 10, h - 1)
             term.setBackgroundColor(col.gray)
             term.setTextColor(col.white)
             term.write("Installing")
@@ -219,20 +223,20 @@ pages[5] = {
     }
 }
 pages[6] = {
-    ui.Label{
+    ui.Label {
         label = "All finished!",
         textCol = col.green,
         x = 2,
         y = 2
     },
-    ui.Button{
-        callBack = function ()
+    ui.Button {
+        callBack = function()
             arcos.reboot()
             return true
         end,
         label = " Reboot ",
-        x = w-1-8,
-        y = h-1
+        x = w - 1 - 8,
+        y = h - 1
     }
 }
 local ls = true

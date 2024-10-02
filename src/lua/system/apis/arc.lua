@@ -1,5 +1,7 @@
 local files = require("files")
 local tutils = require("tutils")
+local arcos = require("arcos")
+local devices = require("devices")
 
 local methods = {
     GET = true,
@@ -23,69 +25,15 @@ local function getChosenRepo(rootdir)
     return fx
 end
 
-local function split(inputstr, sep)
-    if sep == nil then
-        sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
-        table.insert(t, str)
-    end
-    if t == {} then
-        t = { inputstr }
-    end
-    return t
-end
-local function check_key(options, key, ty, opt)
-    local value = options[key]
-    local valueTy = type(value)
-
-    if (value ~= nil or not opt) and valueTy ~= ty then
-        error(("bad field '%s' (%s expected, got %s"):format(key, ty, valueTy), 4)
-    end
-end
-
-local function check_request_options(options, body)
-    check_key(options, "url", "string")
-    if body == false then
-        check_key(options, "body", "nil")
-    else
-        check_key(options, "body", "string", not body)
-    end
-    check_key(options, "headers", "table", true)
-    check_key(options, "method", "string", true)
-    check_key(options, "redirect", "boolean", true)
-    check_key(options, "timeout", "number", true)
-
-    if options.method and not methods[options.method] then
-        error("Unsupported HTTP method", 3)
-    end
-end
-
-local function wrap_request(_url, ...)
-    local ok, err = __LEGACY.http.request(...)
-    if ok then
-        while true do
-            local event, param1, param2, param3 = arcos.ev()
-            if event == "http_success" and param1 == _url then
-                return param2
-            elseif event == "http_failure" and param1 == _url then
-                return nil, param2, param3
-            end
-        end
-    end
-    return nil, err
-end
-local function get(_url, _headers, _binary)
-    if type(_url) == "table" then
-        check_request_options(_url, false)
-        return wrap_request(_url.url, _url)
-    end
-
-    assert(type(_url) == "string")
-    assert(type(_headers) == "table" or type(_headers) == "nil")
-    assert(type(_binary) == "boolean" or type(_binary) == "nil")
-    return wrap_request(_url, _url, nil, _headers, _binary)
+local function get(url, headers) 
+    local d = devices.find("network_adapter")
+    if not d then error("No network adapter found") end
+    local s = {d.sendRequest("GET", url, headers)}
+    if not s[1] then return table.unpack(s) end
+    return {
+        read = s[1].readAll,
+        close = s[1].close
+    }
 end
 
 ---Gets the latest commit
@@ -93,11 +41,11 @@ end
 ---@return string
 local function getLatestCommit(rootdir)
     if not rootdir then rootdir = "/" end
-    local f, e = __LEGACY.files.open(rootdir .. "config/arc/latestCommit.hash", "r")
+    local f, e = require("files").open(rootdir .. "config/arc/latestCommit.hash", "r")
     if not f then 
         return ""
     else 
-        local rp = f.readAll()
+        local rp = f.read()
         f.close()
         return rp
     end
@@ -109,11 +57,11 @@ local function checkForCD(rootdir)
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
-    if not __LEGACY.files.exists(rootdir .. "config") then
-        __LEGACY.files.makeDir(rootdir .. "/config")
+    if not require("files").exists(rootdir .. "config") then
+        require("files").makeDir(rootdir .. "/config")
     end
-    if not __LEGACY.files.exists(rootdir .. "config/arc") then
-        __LEGACY.files.makeDir(rootdir .. "/config/arc")
+    if not require("files").exists(rootdir .. "config/arc") then
+        require("files").makeDir(rootdir .. "/config/arc")
     end
 end
 ---Fetches arc repos
@@ -124,8 +72,10 @@ local function fetch(rootdir)
         error("This operation requires the user to be root.")
     end
     checkForCD()
-    local f2 = __LEGACY.files.open(rootdir .. "/config/arc/latestCommit.hash", "w")    
-
+    local f2, e = require("files").open(rootdir .. "/config/arc/latestCommit.hash", "w")    
+    if not f2 then
+        error(e)
+    end
     local fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
         ["Authorization"] = "Bearer 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"
     })
@@ -133,10 +83,10 @@ local function fetch(rootdir)
         fr, e = get("https://api.github.com/repos/" .. getChosenRepo() .. "/commits/main", {
         })
         if not fr then
-            return false
+            error(e)
         end
     end
-    local rp = __LEGACY.textutils.unserializeJSON(fr.readAll())["sha"]
+    local rp = json.decode(fr.read())["sha"]
     f2.write(rp)
     fr.close()
     f2.close()
@@ -145,8 +95,11 @@ local function fetch(rootdir)
     if not f then
         return false
     end
-    local fa = __LEGACY.files.open(rootdir .. "/config/arc/repo.json", "w")
-    fa.write(f.readAll())
+    local fa, e = require("files").open(rootdir .. "/config/arc/repo.json", "w")
+    if not fa then
+        error(e)
+    end
+    fa.write(f.read())
     fa.close()
     f.close()
 end
@@ -157,7 +110,7 @@ end
 ---@return boolean
 local function isInstalled(package, rootdir)
     if not rootdir then rootdir = "/" end
-    return __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex")
+    return require("files").exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex")
 end
 
 ---Get installation data
@@ -166,14 +119,14 @@ end
 ---@return table?
 local function getIdata(package, rootdir)
     if not rootdir then rootdir = "/" end
-    if not __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
+    if not require("files").exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
         return nil
     end
-    local f, e = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
+    local f, e = require("files").open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
     if not f then
         return nil
     end
-    return __LEGACY.textutils.unserializeJSON(f.readAll())
+    return json.decode(f.read())
 end
 
 ---Gets the repo data
@@ -181,11 +134,11 @@ end
 ---@return table
 local function getRepo(rootdir)
     if not rootdir then rootdir = "/" end
-    local f = __LEGACY.files.open(rootdir .. "/config/arc/repo.json", "r")
+    local f = require("files").open(rootdir .. "/config/arc/repo.json", "r")
     if not f then
         return {}
     end
-    local uj = __LEGACY.textutils.unserializeJSON(f.readAll())
+    local uj = json.decode(f.read())
     f.close()
     return uj
 end
@@ -198,13 +151,14 @@ local function uninstall(package, rootdir)
     if arcos.getCurrentTask().user ~= "root" then
         error("This operation requires the user to be root.")
     end
-    if not __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex") then
+    if not require("files").exists(rootdir .. "/config/arc/" .. package .. ".uninstallIndex") then
         error("Package not installed.")
     end
     local toDelete = { }
     toDelete[rootdir .. "/config/arc/" .. package .. ".uninstallIndex"] = ""
     toDelete[rootdir .. "/config/arc/" .. package .. ".meta.json"] = ""
-    local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "r")
+    local f, e = require("files").open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "r")
+    if not f then error(e) end
     for value in f.readLine do
         if value == nil then break end
         if tutils.split(value:sub(3), "/")[1] == "config" then goto continue end
@@ -218,17 +172,17 @@ local function uninstall(package, rootdir)
     end
     for value, hash in pairs(toDelete) do
         
-        __LEGACY.files.delete(value)
+        require("files").delete(value)
         
     end
     for value, hash in pairs(toDelete) do
         if hash == "DIRECTORY" then
-            if __LEGACY.files.isDir(value) then
-                if #__LEGACY.files.list(value) > 0 then
+            if require("files").isDir(value) then
+                if #require("files").list(value) > 0 then
                     goto continue
                 end
             end
-            __LEGACY.files.delete(value)
+            require("files").delete(value)
         end
         ::continue::
     end
@@ -290,20 +244,21 @@ local function install(package, rootdir)
     if not repo[package] then
         error("Package not found!")
     end
-    if __LEGACY.files.exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
-        local f = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
-        local ver = __LEGACY.textutils.unserializeJSON(f.readAll())["vId"]
+    if require("files").exists(rootdir .. "/config/arc/" .. package .. ".meta.json") then
+        local f, e = require("files").open(rootdir .. "/config/arc/" .. package .. ".meta.json", "r")
+        if not f then error(e) end
+        local ver = json.decode(f.read())["vId"]
         if ver < repo[package]["vId"] then
             local updateFile, e = get("https://raw.githubusercontent.com/" ..
             getChosenRepo() .. "/" .. latestCommit .. "/repo/" .. package .. "/upd" .. repo[package]["vId"] .. ".lua")
             if updateFile then
-                local r = updateFile.readAll()
-                local f, e = load(r, "Update Module", "t", setmetatable({}, { __index = _G }))
-                if f then
-                    local ok, err = pcall(f);
+                local r = updateFile.read()
+                local fac, eac = load(r, "Update Module", "t", setmetatable({}, { __index = _G }))
+                if fac then
+                    local ok, err = pcall(fac);
                     if not ok then error(err) end
                 else
-                    error(e)
+                    error(eac)
                 end
             end
             uninstall(package, rootdir)
@@ -316,11 +271,11 @@ local function install(package, rootdir)
     if not indexFile then
         error(err)
     end
-    local ifx = arkivelib.unarchive(indexFile.readAll())
+    local ifx = arkivelib.unarchive(indexFile.read())
     for index, value in ipairs(ifx) do
         if value[2] == nil then
-            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
-                __LEGACY.files.makeDir(rootdir .. "/" .. value[1])
+            if not require("files").exists(rootdir .. "/" .. value[1]) then
+                require("files").makeDir(rootdir .. "/" .. value[1])
                 buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
         else
@@ -328,14 +283,14 @@ local function install(package, rootdir)
     end
     for index, value in ipairs(ifx) do
         if value[2] == nil then
-            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
-                __LEGACY.files.makeDir(rootdir .. "/" .. value[1])
+            if not require("files").exists(rootdir .. "/" .. value[1]) then
+                require("files").makeDir(rootdir .. "/" .. value[1])
                 buildedpl = buildedpl .. "d " .. value[1] .. "\n"
             end
         else
-            if not __LEGACY.files.exists(rootdir .. "/" .. value[1]) then
+            if not require("files").exists(rootdir .. "/" .. value[1]) then
                 local file = value[2]
-                local tfh, e = __LEGACY.files.open(rootdir .. "/" .. value[1], "w")
+                local tfh, e = require("files").open(rootdir .. "/" .. value[1], "w")
                 if not tfh then error(e) end
                 -- print(value[1])
                 tfh.write(file)
@@ -351,19 +306,22 @@ local function install(package, rootdir)
             if not file then
                 return;
             end
-            local fd = file.readAll()
+            local fd = file.read()
             file.close()
-            local tf = __LEGACY.files.open(rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
+            local tf, espanol = require("files").open(rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua", "r")
+            if not tf then error(espanol) end
             tf.write(fd)
             tf.close()
             arcos.r({}, rootdir .. "/temporary/arc." .. package .. "." .. latestCommit .. ".postInst.lua")
         end
     end
     indexFile.close()
-    local insf = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".meta.json", "w")
-    insf.write(__LEGACY.textutils.serializeJSON(pkg))
+    local insf = require("files").open(rootdir .. "/config/arc/" .. package .. ".meta.json", "w")
+    if not insf then error("I") end
+    insf.write(json.encode(pkg))
     insf.close()
-    local uinsf = __LEGACY.files.open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "w")
+    local uinsf = require("files").open(rootdir .. "/config/arc/" .. package .. ".uninstallIndex", "w")
+    if not uinsf then error("I") end
     uinsf.write(buildedpl)
     uinsf.close()
     return function()
@@ -380,10 +338,11 @@ local function getUpdatable(rootdir)
         if value:sub(#value - 14) == ".uninstallIndex" then
             local pk = value:sub(0, #value - 15)
             -- print(pk)
-            local pf = __LEGACY.files.open(rootdir .. "/config/arc/" .. pk .. ".meta.json", "r")
-            local at = pf.readAll()
+            local pf, e = require("files").open(rootdir .. "/config/arc/" .. pk .. ".meta.json", "r")
+            if not pf then print(e) return {} end
+            local at = pf.read()
             -- print(at)
-            local af = __LEGACY.textutils.unserializeJSON(at)
+            local af = json.decode(at)
             pf.close()
             if af["vId"] < getRepo(rootdir)[pk]["vId"] then
                 table.insert(updatable, pk)

@@ -1,5 +1,9 @@
 local col = require("col")
 local tutils = require("tutils")
+local keys = require("keys")
+local arcos = require("arcos")
+local devices = require("devices")
+local sleep = arcos.sleep
 local UItheme = {
     bg = col.black,
     fg = col.white,
@@ -18,7 +22,7 @@ UIthemedefs[col.yellow] = { 235, 203, 139 }
 UIthemedefs[col.lime] = { 163, 190, 140 }
 UIthemedefs[col.pink] = { 0, 0, 0 }
 UIthemedefs[col.gray] = { 76, 86, 106 }
-UIthemedefs[col.lightGray] = { 216, 222, 233 }
+UIthemedefs[col.lightGray] = { 146, 154, 168 }
 UIthemedefs[col.cyan] = { 136, 192, 208 }
 UIthemedefs[col.purple] = { 0, 0, 0 }
 UIthemedefs[col.blue] = { 129, 161, 193 }
@@ -26,9 +30,6 @@ UIthemedefs[col.brown] = { 0, 0, 0 }
 UIthemedefs[col.green] = { 163, 190, 140 }
 UIthemedefs[col.red] = { 191, 97, 106 }
 UIthemedefs[col.black] = { 59, 66, 82 }
-for index, value in pairs(UIthemedefs) do
-    term.setPaletteColor(index, value[1] / 255, value[2] / 255, value[3] / 255)
-end
 W, H = term.getSize()
 local function InitBuffer(mon)
     for index, value in pairs(UIthemedefs) do
@@ -322,19 +323,19 @@ local function TextInput(b)
             return true
         end
         if e[1] == "key" and config.focus then
-            if e[2] == __LEGACY.keys.enter then
+            if e[2] == keys.enter then
                 config.focus = false
             end
-            if e[2] == __LEGACY.keys.backspace then
+            if e[2] == keys.backspace then
                 if cursorPos > 0 then
                     config.text = config.text:sub(0, cursorPos - 1) .. config.text:sub(cursorPos + 1)
                     cursorPos = cursorPos - 1
                 end
             end
-            if e[2] == __LEGACY.keys.left then
+            if e[2] == keys.left then
                 cursorPos = math.max(cursorPos - 1, 0)
             end
-            if e[2] == __LEGACY.keys.right then
+            if e[2] == keys.right then
                 cursorPos = math.min(cursorPos + 1, #config.text)
             end
             return true
@@ -352,7 +353,7 @@ local function TextInput(b)
             end
             lout = lout:sub(0, #lout - 1)
             config.label = lout
-            config.col = col.lightGray
+            config.col = col.white
             config.textCol = col.black
         else
             config.label = #config.text > 0 and config.text or " "
@@ -554,7 +555,7 @@ local function RenderLoop(toRender, outTerm, f)
     if f then reRender() end
     local ev = { arcos.ev() }
     local red = false
-    local isMonitor, monSide = pcall(__LEGACY.peripheral.getName, outTerm)
+    local isMonitor, monSide = pcall(devices.name, outTerm)
     if not isMonitor then
         if ev[1] == "mouse_click" then
             for i, v in ipairs(toRender) do

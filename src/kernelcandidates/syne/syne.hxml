@@ -1,0 +1,6 @@
+--lua out/krnl.lua
+--main Main
+--class-path ./src/
+-D lua-vanilla
+-D lua-ver=5.1
+-D syneversion=Helica

@@ -5,22 +5,22 @@
 |data/bmosfs/bin|-1|
 |/index|0|
 |apps/bmos.lua|506|
-|data/bmos/bmos.lua|559|
-|data/bmosfs/bin/cat.lua|5165|
-|data/bmosfs/bin/cd.lua|5431|
-|data/bmosfs/bin/clear.lua|5619|
-|data/bmosfs/bin/copy.lua|5654|
-|data/bmosfs/bin/echo.lua|5905|
-|data/bmosfs/bin/login.lua|5942|
-|data/bmosfs/bin/ls.lua|6391|
-|data/bmosfs/bin/mkdir.lua|6779|
-|data/bmosfs/bin/move.lua|7160|
-|data/bmosfs/bin/package.lua|7411|
-|data/bmosfs/bin/reboot.lua|13251|
-|data/bmosfs/bin/rm.lua|13262|
-|data/bmosfs/bin/sh.lua|13433|
-|data/bmosfs/bin/shutdown.lua|18195|
-|data/bmosfs/bin/useradd.lua|18284|
+|data/bmos/bmos.lua|570|
+|data/bmosfs/bin/cat.lua|5176|
+|data/bmosfs/bin/cd.lua|5442|
+|data/bmosfs/bin/clear.lua|5630|
+|data/bmosfs/bin/copy.lua|5665|
+|data/bmosfs/bin/echo.lua|5916|
+|data/bmosfs/bin/login.lua|5953|
+|data/bmosfs/bin/ls.lua|6402|
+|data/bmosfs/bin/mkdir.lua|6790|
+|data/bmosfs/bin/move.lua|7171|
+|data/bmosfs/bin/package.lua|7422|
+|data/bmosfs/bin/reboot.lua|13262|
+|data/bmosfs/bin/rm.lua|13273|
+|data/bmosfs/bin/sh.lua|13444|
+|data/bmosfs/bin/shutdown.lua|18206|
+|data/bmosfs/bin/useradd.lua|18295|
 --ENDTABLE
 d>apps
 f>apps/bmos.lua
@@ -44,7 +44,7 @@ f>data/bmosfs/bin/rm.lua
 f>data/bmosfs/bin/sh.lua
 f>data/bmosfs/bin/shutdown.lua
 f>data/bmosfs/bin/useradd.lua
-arcos.r({}, "/apps/craft.lua", "/data/bmos/bmos.lua")local bmos_compat_env = {}
+require("arcos").r({}, "/apps/craft.lua", "/data/bmos/bmos.lua")local bmos_compat_env = {}
 for key, value in pairs(_G) do
     bmos_compat_env[key] = value
 end

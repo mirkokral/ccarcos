@@ -205,6 +205,7 @@ local ScrollContainer = _hx_e()
 local Values = _hx_e()
 local Date = _hx_e()
 local CCOS = _hx_e()
+Keys = _G.require("keys")
 local Lambda = _hx_e()
 local Main = _hx_e()
 local Reflect = _hx_e()
@@ -2191,18 +2192,18 @@ TextArea.prototype.onCustom = function(self,c)
   end;
   cursorPosAsInt = cursorPosAsInt + Std.int(self.cursorPos.x);
   if (c[0] == "key_up") then 
-    if (c[1] == keys.control) then 
+    if (c[1] == Keys.control) then 
       self.ctrlPressed = false;
     end;
   end;
   if (c[0] == "key") then 
-    if (c[1] == keys.control) then 
+    if (c[1] == Keys.control) then 
       self.ctrlPressed = true;
     end;
-    if ((self.ctrlPressed and (c[1] == keys.u)) and self.focused) then 
+    if ((self.ctrlPressed and (c[1] == Keys.u)) and self.focused) then 
       self.value = "";
     end;
-    if ((c[1] == keys.backspace) and not ((self.cursorPos.y < 1) and (self.cursorPos.x < 1))) then 
+    if ((c[1] == Keys.backspace) and not ((self.cursorPos.y < 1) and (self.cursorPos.x < 1))) then 
       self.value = Std.string(String.prototype.substring(self.value, 0, cursorPosAsInt - 1)) .. Std.string(String.prototype.substring(self.value, cursorPosAsInt));
       self.cursorPos.x = self.cursorPos.x - 1;
       if (self.cursorPos.x < 0) then 
@@ -2212,18 +2213,18 @@ TextArea.prototype.onCustom = function(self,c)
         self.cursorPos.x = #tmp[tmp1];
       end;
     end;
-    if (c[1] == keys.home) then 
+    if (c[1] == Keys.home) then 
       self.cursorPos.x = 0;
     end;
-    if (c[1] == keys["end"]) then 
+    if (c[1] == Keys["end"]) then 
       local tmp = String.prototype.split(self.value, "\n");
       local tmp1 = Std.int(self.cursorPos.y);
       self.cursorPos.x = #tmp[tmp1];
     end;
-    if (c[1] == keys.delete) then 
+    if (c[1] == Keys.delete) then 
       self.value = Std.string(String.prototype.substring(self.value, 0, cursorPosAsInt)) .. Std.string(String.prototype.substring(self.value, cursorPosAsInt + 1));
     end;
-    if (c[1] == keys.left) then 
+    if (c[1] == Keys.left) then 
       self.cursorPos.x = self.cursorPos.x - 1;
       if (self.cursorPos.x < 0) then 
         if (self.cursorPos.y > 0) then 
@@ -2242,7 +2243,7 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp1 = #String.prototype.split(self.value, "\n")[Std.int(self.cursorPos.y)] - 1;
       self.cursorPos.x = Math.min(tmp, tmp1);
     end;
-    if (c[1] == keys.right) then 
+    if (c[1] == Keys.right) then 
       self.cursorPos.x = self.cursorPos.x + 1;
       if (self.cursorPos.x > #String.prototype.split(self.value, "\n")[Std.int(self.cursorPos.y)]) then 
         self.cursorPos.x = self.cursorPos.x - 1;
@@ -2259,7 +2260,7 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp2 = Std.int(self.cursorPos.y);
       self.cursorPos.x = Math.min(tmp, #tmp1[tmp2]);
     end;
-    if (c[1] == keys.up) then 
+    if (c[1] == Keys.up) then 
       self.cursorPos.y = self.cursorPos.y - 1;
       local tmp = self.cursorPos.y;
       local tmp1 = String.prototype.split(self.value, "\n").length - 1;
@@ -2269,7 +2270,7 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp2 = Std.int(self.cursorPos.y);
       self.cursorPos.x = Math.min(tmp, #tmp1[tmp2]);
     end;
-    if (c[1] == keys.down) then 
+    if (c[1] == Keys.down) then 
       self.cursorPos.y = self.cursorPos.y + 1;
       local tmp = self.cursorPos.y;
       local tmp1 = String.prototype.split(self.value, "\n").length - 1;
@@ -2279,12 +2280,12 @@ TextArea.prototype.onCustom = function(self,c)
       local tmp2 = Std.int(self.cursorPos.y);
       self.cursorPos.x = Math.min(tmp, #tmp1[tmp2]);
     end;
-    if ((c[1] == keys.enter) and (self.height > 1)) then 
+    if ((c[1] == Keys.enter) and (self.height > 1)) then 
       self.value = Std.string(Std.string(String.prototype.substring(self.value, 0, cursorPosAsInt)) .. Std.string("\n")) .. Std.string(String.prototype.substring(self.value, cursorPosAsInt));
       self.cursorPos.y = self.cursorPos.y + 1;
       self.cursorPos.x = 0;
     else
-      if ((c[1] == keys.enter) and (self.height <= 1)) then 
+      if ((c[1] == Keys.enter) and (self.height <= 1)) then 
         self.onSubmit:execute(self, self.lsw, self.lsh);
       end;
     end;
@@ -2446,7 +2447,7 @@ CCOS.new = {}
 CCOS.__name__ = true
 CCOS.pullEvent = function() 
   
-        if arcos then return arcos.ev() else return os.pullEvent() end
+        if package.isarcos then return require("arcos").ev() else return os.pullEvent() end
         ;
   do return nil end;
 end

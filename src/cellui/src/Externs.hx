@@ -23,13 +23,13 @@ package;
 class CCOS {
     public static function pullEvent(): Dynamic {
         untyped __lua__("
-        if arcos then return arcos.ev() else return os.pullEvent() end
+        if package.isarcos then return require(\"arcos\").ev() else return os.pullEvent() end
         ");
         return null;
     };
 }
 
-@:native("keys") extern class Keys {
+@:luaRequire("keys") extern class Keys {
 	public static var enter: Int;
 	public static var backspace: Int;
 	public static var left: Int;

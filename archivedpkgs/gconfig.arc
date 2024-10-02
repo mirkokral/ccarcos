@@ -3,7 +3,7 @@
 |config/apps|-1|
 |/index|0|
 |apps/gconfig.lua|76|
-|config/apps/gconfig.json|3195|
+|config/apps/gconfig.json|3249|
 --ENDTABLE
 d>apps
 f>apps/gconfig.lua
@@ -113,7 +113,8 @@ configScreens = {
             callBack = function ()
                 blc["defargs"] = configScreens.bl[4].text
                 local f = files.open("/config/aboot", "w")
-                    .write(tutils.sJSON(blc))
+                if not f then error("Broken system") end
+                f.write(tutils.sJSON(blc))
                 f.close()
                 changeScreens("main", false)
                 return true

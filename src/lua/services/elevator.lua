@@ -1,10 +1,19 @@
 local modem
 local selectedFloor = -1
-local col = require("col")
+local col
+local arcos
+local devices
+if package.isarcos then
+    col = require("col")
+    arcos = require("arcos")
+    devices = require("devices")
+    
+end
 
 if arcos then
     modem = devices.find("modem")
 else
+---@diagnostic disable-next-line: undefined-global
     modem = peripheral.find("modem")
 end
 local theme
@@ -17,9 +26,13 @@ if arcos then
     }
 else
     theme = {
+---@diagnostic disable-next-line: undefined-global
         bg = colors.black,
+---@diagnostic disable-next-line: undefined-global
         elFloor = colors.brown,
+---@diagnostic disable-next-line: undefined-global
         elFloorSel = colors.yellow,
+---@diagnostic disable-next-line: undefined-global
         buttonColor = colors.white
     }
 end

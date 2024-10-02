@@ -1,2 +1,2 @@
-local klb = arcos.getKernelLogBuffer()
+local klb = require("arcos").getKernelLogBuffer()
 print(klb)

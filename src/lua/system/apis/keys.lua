@@ -1,1 +1,1 @@
-return __LEGACY.keys
+return require("syscall").terminal.getKeymap()

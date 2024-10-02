@@ -1,1 +1,1 @@
-arcos.shutdown()
+require("arcos").shutdown()

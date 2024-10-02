@@ -1,3 +1,5 @@
+local arcos = require("arcos")
+local tasking = require("tasking")
 if arcos.getCurrentTask().user ~= "root" then
     write("[escalation] Enter root password: ")
     local pass = read("*")
