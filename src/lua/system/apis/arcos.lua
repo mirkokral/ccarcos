@@ -7,6 +7,7 @@
 ---@field public env table The environment of the process, exposed as environ
 
 local syscall = require("syscall")
+            local files   = require("files")
 local arcos = {}
 arcos = {
     ---Executes a kernel panic
@@ -130,9 +131,14 @@ arcos = {
             compEnv[k] = v
         end
         compEnv["apiUtils"] = nil
-        compEnv["xnarcos"] = nil
         compEnv["KDriversImpl"] = nil
+        compEnv["xnarcos"] = nil
         compEnv["_G"] = nil
+        compEnv.tasking = require("tasking")
+        compEnv.arcos = require("arcos")
+        compEnv.devices = require("devices")
+        compEnv.sleep = compEnv.arcos.sleep
+
         setmetatable(compEnv, {
             __index = function(t, k)
                 if k == "_G" then
@@ -140,16 +146,16 @@ arcos = {
                 end
             end,
         })
-        local f, e = require("files").open(path, "r")
-        if not f then return false, e end
+        local f, e = files.open(path, "r")
+        if not f then return false,e end
         local compFunc, err = load(f.read(), path, nil, compEnv)
         f.close()
         if compFunc == nil then
-            return false, "Failed to load function: " .. err
+            return false,err
         else
-            setfenv(compFunc, compEnv)
+            if debug and debug.setfenv then debug.setfenv(compFunc, compEnv) end
             local ok, err = pcall(compFunc, ...)
-            return ok, err
+            return ok,err
         end
     end,
     ---Queues an event

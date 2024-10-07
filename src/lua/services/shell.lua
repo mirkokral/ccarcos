@@ -1,3 +1,3 @@
 local arcos = require("arcos")
--- print("Shell Service")
-arcos.r({}, "/apps/shell.lua")
+local ok, err = arcos.r({}, "/apps/shell.lua")
+if not ok then print(err) end

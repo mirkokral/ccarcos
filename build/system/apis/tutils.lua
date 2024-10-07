@@ -1,14 +1,14 @@
 local expect = require("col").expect
 local function getArgs(fun)
     local args = {}
-    local hook = debug.gethook()
+    local hook, mask, count = debug.gethook()
     local argHook = function(...)
         local info = debug.getinfo(3)
         if 'pcall' ~= info.name then return end
         for i = 1, math.huge do
             local name, value = debug.getlocal(2, i)
             if '(*temporary)' == name then
-                debug.sethook(hook)
+                debug.sethook(hook, mask, count)
                 error('')
                 return
             end

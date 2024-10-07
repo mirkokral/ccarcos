@@ -6,13 +6,15 @@ local f = files.resolve(path)
 for _, fp in ipairs(f) do
     if files.exists(fp) then
         if files.dir(fp) then
-            for _, i in ipairs(files.ls(fp)) do
+            local er = files.ls(fp)
+            local output = ""
+            for n, i in ipairs(er) do
                 if files.dir(fp) then
                     term.setTextColor(col.green)
                 else
                     term.setTextColor(col.white)
                 end
-                write(i .. " ")
+                write(i .. (n == #er and "" or " "))
             end
             write("\n")
         else

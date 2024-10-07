@@ -22,14 +22,14 @@ class ArcosExtension extends SyscallExtension {
 			}),
 			new Syscall("version", function(...d:Dynamic) {
 				if (!kernel.rootFs.exists("/config/arc/base.meta.json")) {
-					return ["invalid package metadata"];
+					return [""];
 				}
 				var fH = kernel.rootFs.open("/config/arc/base.meta.json", "r");
 				
 				var meta = Json.parse(fH.read());
 				fH.close();
 				if (meta.version == null) {
-					return ["invalid package metadata"];
+					return [""];
 				} else {
 					return [meta.version];
 				}

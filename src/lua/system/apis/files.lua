@@ -1,7 +1,6 @@
 local col = require("col")
 local tutils = require("tutils")
 local syscall = require("syscall")
-local arcos = require("arcos")
 
 ---Combine paths
 ---@param ... string
@@ -18,7 +17,7 @@ end
 ---@param user string? User
 ---@return {read: boolean, write: boolean, listed: boolean} perm Permission
 local function getPermissions(file, user) 
-    if not user then user = arcos.getCurrentTask().user end
+    if not user then user = require("arcos").getCurrentTask().user end
     return syscall.fs.getPermissions(file, user)
 end
 
@@ -27,7 +26,7 @@ end
 ---@return table<string, {read: boolean, write: boolean, listed: boolean}>
 local function getPermissionsForAll(file)
     local u = {}
-    for index, value in ipairs(arcos.getUsers()) do
+    for index, value in ipairs(require("arcos").getUsers()) do
         u[value] = getPermissions(file, value)
     end
     return u
@@ -189,7 +188,7 @@ end
 ---@param keepNonExistent boolean? Keep non existent files 
 ---@return string[]
 local function resolve(f, keepNonExistent)
-    local p = f:sub(1, 1) == "/" and "/" or (arcos.getCurrentTask().env.workDir or "/")
+    local p = f:sub(1, 1) == "/" and "/" or (require("arcos").getCurrentTask().env.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
     

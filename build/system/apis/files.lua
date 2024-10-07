@@ -1,7 +1,6 @@
 local col = require("col")
 local tutils = require("tutils")
 local syscall = require("syscall")
-local arcos = require("arcos")
 local function combine(...)
     local out = {}
     for index, value in ipairs({ ... }) do
@@ -10,12 +9,12 @@ local function combine(...)
     return table.concat(out, "/")
 end
 local function getPermissions(file, user) 
-    if not user then user = arcos.getCurrentTask().user end
+    if not user then user = require("arcos").getCurrentTask().user end
     return syscall.fs.getPermissions(file, user)
 end
 local function getPermissionsForAll(file)
     local u = {}
-    for index, value in ipairs(arcos.getUsers()) do
+    for index, value in ipairs(require("arcos").getUsers()) do
         u[value] = getPermissions(file, value)
     end
     return u
@@ -104,7 +103,7 @@ local function mkDir(d)
     return syscall.fs.mkDir(d)
 end
 local function resolve(f, keepNonExistent)
-    local p = f:sub(1, 1) == "/" and "/" or (arcos.getCurrentTask().env.workDir or "/")
+    local p = f:sub(1, 1) == "/" and "/" or (require("arcos").getCurrentTask().env.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
     local out = {}

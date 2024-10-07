@@ -6,10 +6,12 @@ d>data
 d>config
 d>apps
 d>apis
+d>sys
 d>system/apis
 d>services/enabled
 d>config/apps
 f>startup.lua
+f>init.lua
 f>system/bootloader.lua
 f>system/rel
 f>system/apis/arc.lua
@@ -26,13 +28,12 @@ f>system/apis/syscall.lua
 f>system/apis/devices.lua
 f>system/apis/dev.lua
 f>system/apis/tasking.lua
-f>services/arcfix.lua
+f>system/apis/bit.lua
 f>services/elevator.lua
 f>services/elevatorSrv.lua
 f>services/oobe.lua
 f>services/pms.lua
 f>services/shell.lua
-f>services/enabled/9 arcfix
 f>services/enabled/login
 f>data/PRIVACY.txt
 f>config/aboot
@@ -60,6 +61,9 @@ f>apps/reboot.lua
 f>apps/celluitest.lua
 f>apps/attach.lua
 f>apps/detach.lua
+f>apps/lua.lua
+f>apps/colors.lua
+f>sys/vendor.bmp
 r>services/enabled/login
 r>config/passwd
 r>config/aboot

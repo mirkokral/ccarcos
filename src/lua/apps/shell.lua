@@ -1,12 +1,10 @@
-
 local col = require("col")
 local files = require("files")
 local tutils = require("tutils")
 local arc = require("arc")
 local arcos = require("arcos")
-
 term.setTextColor(col.blue)
-print(arcos.version())
+print("arcos " .. arcos.version())
 
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
@@ -34,20 +32,20 @@ end
 local luaGlobal = setmetatable({}, {__index = _G})
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...) 
-    local cmd = nil
+    local cmdr = nil
     if not a1 or a1 == "" then
         return true
     end
     if a1:sub(1, 1) == "/" then
         if files.exists(a1) then
-            cmd = a1
+            cmdr = a1
         else
             printError("File not found")
             return false
         end
     elseif a1:sub(1, 2) == "./" then
         if files.resolve(a1, false)[1] then
-            cmd = files.resolve(a1, false)[1]
+            cmdr = files.resolve(a1, false)[1]
         else
             printError("File not found")
             return false
@@ -60,39 +58,26 @@ local function run(a1, ...)
                     t = t:sub(1, #t-4)
                 end
                 if t == a1 then
-                    cmd = v .. "/" .. s
+                    cmdr = v .. "/" .. s
                 end
             end
 
         end
     end
-    if cmd == nil then
-        local cq = tutils.join({ a1, ... }, " ")
-        local chunkl, err = load(cq, "eval", nil, luaGlobal)
-        local chunklb, errb = load("return " .. cq, "eval", nil, luaGlobal)
-        if chunklb then
-            chunkl = chunklb
-            err = errb
-        else
-            -- print(errb)
-        end
-        if(err and err:sub(20, 36) == "syntax error near") then
-            err = "Command not found."
-        end
-        if not chunkl then
-            printError(err)
-            return false
-        end
-        local ok, err = pcall(chunkl)
-        if not ok then
-            printError(err)
-        else
-            print(tutils.s(err, true))
-        end
-        return ok
+    if cmdr == nil then
+        printError("Command not found!")
+        return false, "Command not found!"
     end
-    local ok, err = arcos.r({}, cmd, ...)
-    if not ok then
+    local args, ok, err = {...}, nil, nil
+    local aok, aerr = pcall(function() 
+        ok, err = arcos.r({}, cmdr, table.unpack(args))
+        if not ok then
+            print("Not ok")
+            printError(err)
+        end
+    end)
+    if not aok then
+        print("Not aok")
         printError(err)
     end
     return ok, err
@@ -115,6 +100,8 @@ do
         if not pcall(write, tostring(err)) then
             write("(none)")
         end
+    else
+        write("@bogus")
     end
     write(" ")
     if environ.envType then
@@ -130,6 +117,7 @@ do
     table.insert(history, cmd)
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
     if not r then
+        print("Not ok")
         pcall(printError, k)
     end
 end

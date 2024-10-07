@@ -1,6 +1,7 @@
-buildCount: 916
+buildCount: 1043
 compileFiles:
 - startup.lua
+- init.lua
 - system/bootloader.lua
 - system/rel
 - system/apis/arc.lua
@@ -17,13 +18,12 @@ compileFiles:
 - system/apis/devices.lua
 - system/apis/dev.lua
 - system/apis/tasking.lua
-- services/arcfix.lua
+- system/apis/bit.lua
 - services/elevator.lua
 - services/elevatorSrv.lua
 - services/oobe.lua
 - services/pms.lua
 - services/shell.lua
-- services/enabled/9 arcfix
 - services/enabled/login
 - data/PRIVACY.txt
 - config/aboot
@@ -51,6 +51,9 @@ compileFiles:
 - apps/celluitest.lua
 - apps/attach.lua
 - apps/detach.lua
+- apps/lua.lua
+- apps/colors.lua
+- sys/vendor.bmp
 mkDirs:
 - system
 - user
@@ -60,6 +63,7 @@ mkDirs:
 - config
 - apps
 - apis
+- sys
 - system/apis
 - services/enabled
 - config/apps

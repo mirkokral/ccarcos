@@ -91,9 +91,6 @@ class FilesystemExtension extends SyscallExtension {
 				return [kernel.rootFs.list(d[0])];
 			}),
 			new Syscall("fs.exists", function(...d:Dynamic) {
-				if (openFiles[d[0]] == null) {
-					throw "Broken pipe";
-				}
 				return [kernel.rootFs.exists(d[0])];
 			}),
 

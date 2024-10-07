@@ -5,8 +5,6 @@ _G.package = {
         string = string,
         table = table,
         package = package,
-        bit32 = bit32,
-        bit = bit,
         coroutine = coroutine,
         utf8 = utf8,
 
@@ -53,11 +51,11 @@ _G.package = {
                         for k, v in pairs(_G) do
                             compEnv[k] = v
                         end
-                        if path ~= "/apis" and path ~= "/system/apis" then
-                            compEnv["apiUtils"] = nil
-                            compEnv["xnarcos"] = nil
-                            compEnv["KDriversImpl"] = nil
-                        end
+                        compEnv["apiUtils"] = nil
+                        compEnv["KDriversImpl"] = nil
+                        compEnv["xnarcos"] = nil
+                        compEnv["_G"] = nil
+                        
 
                         compEnv["_G"] = nil
                         setmetatable(compEnv, {
@@ -99,4 +97,3 @@ _G.require = function(modname)
     end
     error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
-

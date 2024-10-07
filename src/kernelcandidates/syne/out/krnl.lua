@@ -189,8 +189,6 @@ _G.package = {
         string = string,
         table = table,
         package = package,
-        bit32 = bit32,
-        bit = bit,
         coroutine = coroutine,
         utf8 = utf8,
 
@@ -237,11 +235,11 @@ _G.package = {
                         for k, v in pairs(_G) do
                             compEnv[k] = v
                         end
-                        if path ~= "/apis" and path ~= "/system/apis" then
-                            compEnv["apiUtils"] = nil
-                            compEnv["xnarcos"] = nil
-                            compEnv["KDriversImpl"] = nil
-                        end
+                        compEnv["apiUtils"] = nil
+                        compEnv["KDriversImpl"] = nil
+                        compEnv["xnarcos"] = nil
+                        compEnv["_G"] = nil
+                        
 
                         compEnv["_G"] = nil
                         setmetatable(compEnv, {
@@ -284,7 +282,6 @@ _G.require = function(modname)
     error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
 
-
 local Array = _hx_e()
 local Date = _hx_e()
 local FileMode = _hx_e()
@@ -301,6 +298,7 @@ local FSElem = _hx_e()
 local KFSDriver = _hx_e()
 local HalFSDriver = _hx_e()
 local Kernel = _hx_e()
+___Kernel_Kernel_Fields_ = _hx_e()
 local Lambda = _hx_e()
 local Logger = _hx_e()
 local Main = _hx_e()
@@ -920,7 +918,7 @@ Out.new = {}
 Out.__name__ = true
 Out.write = function(...) 
   local s = {...}
-  local words = String.prototype.split(__haxe__Rest_Rest_Impl_.toArray(s):join(" "), " ");
+  local words = String.prototype.split(___Kernel_Kernel_Fields_.stripRight(__haxe__Rest_Rest_Impl_.toArray(s):join(" ")), " ");
   local comp = "";
   local tmp = term;
   local terminal = (function() 
@@ -1603,16 +1601,16 @@ Kernel.prototype.rootFs= nil;
 Kernel.prototype.running= nil;
 Kernel.prototype.dm= nil;
 Kernel.prototype.panic = function(self,err,file,line,stack,pi) 
-  Logger.log("... Kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=362,className="Kernel",methodName="panic"}));
-  Logger.log(Std.string("Error: ") .. Std.string(err), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=363,className="Kernel",methodName="panic"}));
+  Logger.log("... Kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=378,className="Kernel",methodName="panic"}));
+  Logger.log(Std.string("Error: ") .. Std.string(err), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=379,className="Kernel",methodName="panic"}));
   if (pi ~= nil) then 
-    Logger.log("This happened inside the kernel.", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=365,className="Kernel",methodName="panic"}));
-    Logger.log(Std.string("File: ") .. Std.string(pi.fileName), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=366,className="Kernel",methodName="panic"}));
-    Logger.log(Std.string("Line: ") .. Std.string(pi.lineNumber), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=367,className="Kernel",methodName="panic"}));
+    Logger.log("This happened inside the kernel.", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=381,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("File: ") .. Std.string(pi.fileName), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=382,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("Line: ") .. Std.string(pi.lineNumber), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=383,className="Kernel",methodName="panic"}));
   else
-    Logger.log(Std.string("File: ") .. Std.string(file), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=369,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("File: ") .. Std.string(file), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=385,className="Kernel",methodName="panic"}));
     if (stack ~= nil) then 
-      Logger.log("Stack:", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=371,className="Kernel",methodName="panic"}));
+      Logger.log("Stack:", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=387,className="Kernel",methodName="panic"}));
       local _g = 0;
       local _g1 = String.prototype.split(_hx_wrap_if_string_field(__haxe__CallStack_CallStack_Impl_,'toString')(stack), "\n");
       while (_g < _g1.length) do _hx_do_first_1 = false;
@@ -1620,41 +1618,42 @@ Kernel.prototype.panic = function(self,err,file,line,stack,pi)
         local item = _g1[_g];
         _g = _g + 1;
         if (StringTools.replace(item, " ", "") ~= "") then 
-          Logger.log(item, 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=374,className="Kernel",methodName="panic"}));
+          Logger.log(item, 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=390,className="Kernel",methodName="panic"}));
         end;
       end;
     else
-      Logger.log(Std.string("Line: ") .. Std.string(line), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=378,className="Kernel",methodName="panic"}));
+      Logger.log(Std.string("Line: ") .. Std.string(line), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=394,className="Kernel",methodName="panic"}));
     end;
   end;
-  Logger.log("", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=381,className="Kernel",methodName="panic"}));
-  Logger.log("... End kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=382,className="Kernel",methodName="panic"}));
+  Logger.log("", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=397,className="Kernel",methodName="panic"}));
+  Logger.log("... End kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=398,className="Kernel",methodName="panic"}));
   if (self.scheduler ~= nil) then 
     self.scheduler.tasks = _hx_tab_array({}, 0);
   end;
   self.running = false;
 end
 Kernel.prototype.run = function(self) 
+  local _gthis = self;
   local usePreemption = true;
   KDriversImpl.terminal.clear();
   KDriversImpl.terminal.setCursorPos(1, 1);
-  Logger.log(Std.string("Syne ") .. Std.string("Helica"), 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=395,className="Kernel",methodName="run"}));
-  if ((debug == nil) or (debug.sethook == nil)) then 
-    Logger.log("Platform doesn't support pre-emption, disabing.", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=397,className="Kernel",methodName="run"}));
+  Logger.log(Std.string("Syne ") .. Std.string("Helica"), 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=411,className="Kernel",methodName="run"}));
+  if (((debug == nil) or (debug.sethook == nil)) or (KDriversImpl.platform == "Capy64")) then 
+    Logger.log("Platform doesn't support pre-emption, disabing.", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=413,className="Kernel",methodName="run"}));
     usePreemption = false;
   else
-    Logger.log("Using preemption", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=400,className="Kernel",methodName="run"}));
+    Logger.log("Using preemption", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=416,className="Kernel",methodName="run"}));
     usePreemption = true;
   end;
-  Logger.log("Creating filesystem", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=403,className="Kernel",methodName="run"}));
+  Logger.log("Creating filesystem", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=419,className="Kernel",methodName="run"}));
   self.rootFs = KFSDriver.new();
   self.rootFs.mounts:push(FSElem.new("", HalFSDriver.new()));
-  Logger.log("Loading users", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=406,className="Kernel",methodName="run"}));
+  Logger.log("Loading users", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=422,className="Kernel",methodName="run"}));
   self.userManager = UserManager.new(self);
   self.userManager:load();
-  Logger.log("Creating scheduler", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=409,className="Kernel",methodName="run"}));
+  Logger.log("Creating scheduler", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=425,className="Kernel",methodName="run"}));
   self.scheduler = __scheduler_Scheduler.new(usePreemption, self);
-  Logger.log("Managing devices", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=416,className="Kernel",methodName="run"}));
+  Logger.log("Managing devices", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=432,className="Kernel",methodName="run"}));
   self.dm = Devices.new(self);
   local _g = 0;
   local length = nil;
@@ -1683,6 +1682,7 @@ Kernel.prototype.run = function(self)
   self.scheduler.tasks[self.scheduler:addTask("B", function() 
     local _hx_status, _hx_result = pcall(function() 
     
+        Logger.log("Starting init.lua", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=439,className="Kernel",methodName="run"}));
         
 					local env = {}
 					local path = "/apps/init.lua"
@@ -1693,6 +1693,7 @@ Kernel.prototype.run = function(self)
 					for k, v in pairs(env) do
 						compEnv[k] = v
 					end
+
 					compEnv["apiUtils"] = nil
 					compEnv["KDriversImpl"] = nil
 					compEnv["xnarcos"] = nil
@@ -1700,10 +1701,16 @@ Kernel.prototype.run = function(self)
 					compEnv["write"] = Out.write
 					compEnv["print"] = Out.print
 					compEnv.tasking = require("tasking")
-					compEnv.arcos = require("arcos")
 					compEnv.devices = require("devices")
+					compEnv.arcos = require("arcos")
 					compEnv.sleep = compEnv.arcos.sleep
-
+					_G.tasking = require("tasking")
+					_G.arcos = require("arcos")
+					_G.devices = require("devices")
+					_G.sleep = compEnv.arcos.sleep
+					_G["write"] = Out.write
+					_G["print"] = Out.print
+					compEnv.Out = Out
 					setmetatable(compEnv, {
 						__index = function(t, k)
 							if k == "_G" then
@@ -1712,15 +1719,15 @@ Kernel.prototype.run = function(self)
 						end,
 					})
 					local f, e = KDriversImpl.files.open(path, "r")
-					if not f then print(e) return end
+					if not f then error(e) return end
 					local compFunc, err = load(f.readAll(), path, nil, compEnv)
 					f.close()
 					if compFunc == nil then
 						error(err)
 					else
-						setfenv(compFunc, compEnv)
+						if debug and debug.setfenv then debug.setfenv(compFunc, compEnv) end
 						local ok, err = pcall(compFunc)
-						print(err)
+						error(err)
 					end;
       return _hx_pcall_default
     end)
@@ -1728,7 +1735,7 @@ Kernel.prototype.run = function(self)
     elseif not _hx_status then 
       local _g = _hx_result;
       local e = __haxe_Exception.caught(_g);
-      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=463,className="Kernel",methodName="run"}));
+      _gthis:panic(e:get_message(), "Kernel", 0, e:get_stack(), _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=487,className="Kernel",methodName="run"}));
     elseif _hx_result ~= _hx_pcall_default then
       return _hx_result
     end;
@@ -1737,6 +1744,23 @@ Kernel.prototype.run = function(self)
 			_G.write = Out.write
 			_G.print = Out.print
 			;
+  local gb = function() 
+    if (not _gthis.rootFs:exists("/config/arc/base.meta.json")) then 
+      do return "invalid package metadata" end;
+    end;
+    local fH = _gthis.rootFs:open("/config/arc/base.meta.json", "r");
+    local meta = __haxe_Json.parse(fH:read());
+    fH:close();
+    if (meta.version == nil) then 
+      do return "arcos" end;
+    else
+      do return meta.version end;
+    end;
+  end;
+  if (KDriversImpl.branding ~= nil) then 
+    local tmp = gb();
+    KDriversImpl.branding(tmp);
+  end;
   while (self.running) do _hx_do_first_1 = false;
     
     self.scheduler:tick();
@@ -1748,6 +1772,45 @@ Kernel.prototype.run = function(self)
 end
 
 Kernel.prototype.__class__ =  Kernel
+
+___Kernel_Kernel_Fields_.new = {}
+___Kernel_Kernel_Fields_.__name__ = true
+___Kernel_Kernel_Fields_.stripRight = function(str) 
+  local outstr = _hx_tab_array({}, 0);
+  local als = false;
+  local _g = 0;
+  local _g1 = #str + 1;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    local char = #str - i;
+    if (_G.string.sub(str, char + 1, char + 1) ~= " ") then 
+      als = true;
+    end;
+    if (als) then 
+      local pos = 0;
+      local x = _G.string.sub(str, char + 1, char + 1);
+      if (pos > outstr.length) then 
+        pos = outstr.length;
+      end;
+      if (pos < 0) then 
+        pos = outstr.length + pos;
+        if (pos < 0) then 
+          pos = 0;
+        end;
+      end;
+      local cur_len = outstr.length;
+      while (cur_len > pos) do _hx_do_first_2 = false;
+        
+        outstr[cur_len] = outstr[cur_len - 1];
+        cur_len = cur_len - 1;
+      end;
+      outstr[pos] = x;
+    end;
+  end;
+  do return outstr:join("") end;
+end
 
 Lambda.new = {}
 Lambda.__name__ = true
@@ -4207,6 +4270,30 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
       local _g = _hx_result;
       local e = __haxe_Exception.caught(_g);
       __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=131,className="scheduler.Scheduler",methodName="addTask"}));
+      local id = KDriversImpl.timers.start(5);
+      while (true) do _hx_do_first_1 = false;
+        
+        local length = nil;
+        local tab = __lua_PairTools.copy(_hx_table.pack(_G.coroutine.yield()));
+        local length = length;
+        local ev;
+        if (length == nil) then 
+          length = _hx_table.maxn(tab);
+          if (length > 0) then 
+            local head = tab[1];
+            _G.table.remove(tab, 1);
+            tab[0] = head;
+            ev = _hx_tab_array(tab, length);
+          else
+            ev = _hx_tab_array({}, 0);
+          end;
+        else
+          ev = _hx_tab_array(tab, length);
+        end;
+        if ((ev[0] == "timer") and (ev[1] == id)) then 
+          break;
+        end;
+      end;
     elseif _hx_result ~= _hx_pcall_default then
       return _hx_result
     end;
@@ -4381,7 +4468,7 @@ __scheduler_Scheduler.prototype.resumeTask = function(self,task,fev)
 end
 __scheduler_Scheduler.prototype.tick = function(self) 
   if (self.tasks.length == 0) then 
-    self.kernel:panic("All tasks died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=217,className="scheduler.Scheduler",methodName="tick"}));
+    self.kernel:panic("All tasks died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=225,className="scheduler.Scheduler",methodName="tick"}));
   end;
   local n = false;
   local _g = 0;
@@ -4393,6 +4480,24 @@ __scheduler_Scheduler.prototype.tick = function(self)
     if (self:resumeTask(task)) then 
       n = true;
     end;
+  end;
+  local tasksToDelete = _hx_tab_array({}, 0);
+  local _g = 0;
+  local _g1 = self.tasks;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local task = _g1[_g];
+    _g = _g + 1;
+    if (_G.coroutine.status(task.coroutine) == "dead") then 
+      tasksToDelete:push(task.pInfo.id);
+    end;
+  end;
+  local _g = 0;
+  while (_g < tasksToDelete.length) do _hx_do_first_1 = false;
+    
+    local id = tasksToDelete[_g];
+    _g = _g + 1;
+    self.tasks:remove(self.tasks[id]);
   end;
   if (not n) then 
     local length = nil;
@@ -4582,13 +4687,13 @@ __syscall_extensions_ArcosExtension.prototype.getSyscalls = function(self,kernel
   end), __syscall_Syscall.new("version", function(...) 
     local d = {...}
     if (not kernel.rootFs:exists("/config/arc/base.meta.json")) then 
-      do return _hx_tab_array({[0]="invalid package metadata"}, 1) end;
+      do return _hx_tab_array({[0]=""}, 1) end;
     end;
     local fH = kernel.rootFs:open("/config/arc/base.meta.json", "r");
     local meta = __haxe_Json.parse(fH:read());
     fH:close();
     if (meta.version == nil) then 
-      do return _hx_tab_array({[0]="invalid package metadata"}, 1) end;
+      do return _hx_tab_array({[0]=""}, 1) end;
     else
       do return _hx_tab_array({[0]=meta.version}, 1) end;
     end;
@@ -4970,9 +5075,6 @@ __syscall_extensions_FilesystemExtension.prototype.getSyscalls = function(self,k
     do return _hx_tab_array({[0]=kernel.rootFs:list(d[1])}, 1) end;
   end), __syscall_Syscall.new("fs.exists", function(...) 
     local d = {...}
-    if (_gthis.openFiles[d[1]] == nil) then 
-      _G.error(__haxe_Exception.thrown("Broken pipe"),0);
-    end;
     do return _hx_tab_array({[0]=kernel.rootFs:exists(d[1])}, 1) end;
   end), __syscall_Syscall.new("fs.mkDir", function(...) 
     local d = {...}

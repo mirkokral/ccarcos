@@ -185,6 +185,7 @@ class ColorMap {
 @:native("KDriversImpl")
 @:luaDotMethod
 extern class Hal {
+	public static var platform: String;
 	public static var files:FileSystem;
 	public static var terminal:Terminal;
 	public static var computer:ComputerInterface;
@@ -192,6 +193,7 @@ extern class Hal {
 	public static var workarounds:WorkaroundInterface;
 	public static var devc:DeviceInterface;
 	public static var pullEvent:Void->Dynamic;
+	public static var branding:(version: String)->Void;
 }
 
 @:native("_G.coroutine")

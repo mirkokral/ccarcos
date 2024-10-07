@@ -6,62 +6,66 @@
 |/config|-1|
 |/apps|-1|
 |/apis|-1|
+|/sys|-1|
 |system/apis|-1|
 |services/enabled|-1|
 |config/apps|-1|
 |/startup.lua|0|
-|system/bootloader.lua|25210|
-|system/rel|26146|
-|system/krnl.lua|26152|
-|system/apis/arc.lua|198459|
-|system/apis/col.lua|209804|
-|system/apis/files.lua|213928|
-|system/apis/hashing.lua|223609|
-|system/apis/rd.lua|228244|
-|system/apis/tutils.lua|229157|
-|system/apis/ui.lua|232847|
-|system/apis/window.lua|254022|
-|system/apis/keys.lua|269111|
-|system/apis/arcos.lua|269157|
-|system/apis/syscall.lua|273025|
-|system/apis/devices.lua|273751|
-|system/apis/dev.lua|274763|
-|system/apis/tasking.lua|274894|
-|system/apis/cellui.lua|275387|
-|services/arcfix.lua|419308|
-|services/elevator.lua|419483|
-|services/elevatorSrv.lua|421925|
-|services/oobe.lua|425135|
-|services/pms.lua|431198|
-|services/shell.lua|435068|
-|services/enabled/9 arcfix|435129|
-|services/enabled/login|435142|
-|data/PRIVACY.txt|435152|
-|config/aboot|436041|
-|config/arcrepo|436201|
-|config/arcshell|436218|
-|config/hostname|436270|
-|config/passwd|436275|
-|apps/adduser.lua|436525|
-|apps/arc.lua|437105|
-|apps/cat.lua|440182|
-|apps/cd.lua|440458|
-|apps/cp.lua|440787|
-|apps/init.lua|441056|
-|apps/kmsg.lua|444242|
-|apps/ls.lua|444302|
-|apps/mkdir.lua|444975|
-|apps/mv.lua|445121|
-|apps/rm.lua|445390|
-|apps/rmuser.lua|445572|
-|apps/shell.lua|446042|
-|apps/uitest.lua|449640|
-|apps/clear.lua|455040|
-|apps/shutdown.lua|455076|
-|apps/reboot.lua|455103|
-|apps/celluitest.lua|455128|
-|apps/attach.lua|455286|
-|apps/detach.lua|455546|
+|/init.lua|25210|
+|system/bootloader.lua|57834|
+|system/rel|58770|
+|system/krnl.lua|58776|
+|system/apis/arc.lua|234233|
+|system/apis/col.lua|245578|
+|system/apis/files.lua|249702|
+|system/apis/hashing.lua|259385|
+|system/apis/rd.lua|264020|
+|system/apis/tutils.lua|264933|
+|system/apis/ui.lua|268649|
+|system/apis/window.lua|289824|
+|system/apis/keys.lua|304913|
+|system/apis/arcos.lua|304959|
+|system/apis/syscall.lua|309044|
+|system/apis/devices.lua|309770|
+|system/apis/dev.lua|310782|
+|system/apis/tasking.lua|310913|
+|system/apis/bit.lua|311406|
+|system/apis/cellui.lua|318049|
+|services/elevator.lua|461970|
+|services/elevatorSrv.lua|464412|
+|services/oobe.lua|467622|
+|services/pms.lua|473685|
+|services/shell.lua|477555|
+|services/enabled/login|477662|
+|data/PRIVACY.txt|477672|
+|config/aboot|478561|
+|config/arcrepo|478721|
+|config/arcshell|478738|
+|config/hostname|478790|
+|config/passwd|478795|
+|apps/adduser.lua|479045|
+|apps/arc.lua|479625|
+|apps/cat.lua|482702|
+|apps/cd.lua|482978|
+|apps/cp.lua|483307|
+|apps/init.lua|483576|
+|apps/kmsg.lua|486896|
+|apps/ls.lua|486956|
+|apps/mkdir.lua|487706|
+|apps/mv.lua|487852|
+|apps/rm.lua|488121|
+|apps/rmuser.lua|488303|
+|apps/shell.lua|488773|
+|apps/uitest.lua|492086|
+|apps/clear.lua|497486|
+|apps/shutdown.lua|497522|
+|apps/reboot.lua|497549|
+|apps/celluitest.lua|497574|
+|apps/attach.lua|497732|
+|apps/detach.lua|497992|
+|apps/lua.lua|498203|
+|apps/colors.lua|499224|
+|sys/vendor.bmp|499464|
 --ENDTABLE
 if arcos or xnarcos then return end
 local function strsplit(inputstr, sep)
@@ -817,6 +821,1026 @@ while true do
     coroutine.yield()
 end
 coroutine.yield()
+_G.bit32 = package.preload.bi32
+_G.bit = package.preload.bit
+local term = require("term")
+local fs = require("fs")
+local mach = require("machine")
+local timer = require("timer")
+local http = require("http")
+local event = require("event")
+term.clear()
+term.setPos(1, 1)
+term.write("Hi")
+if arcos or xnarcos then return end
+local function strsplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    if inputstr == nil then
+        return { "" }
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
+    end
+    if t == {} then
+        t = { inputstr }
+    end
+    local nt = {}
+    for i, v in ipairs(t) do
+        if v ~= "" then
+            table.insert(nt, v)
+        end
+    end
+    if nt == {} then
+        nt = { "" }
+    end
+    return nt
+end
+local __LEGACY = {}
+for k, v in pairs(_G) do
+    __LEGACY[k] = v
+end
+__LEGACY["_G"] = __LEGACY
+_G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
+    term.setCursorBlink(true)
+    local sLine
+    if type(_sDefault) == "string" then
+        sLine = _sDefault
+    else
+        sLine = ""
+    end
+    local nHistoryPos
+    local nPos, nScroll = #sLine, 0
+    if _sReplaceChar then
+        _sReplaceChar = string.sub(_sReplaceChar, 1, 1)
+    end
+    local tCompletions
+    local nCompletion
+    local function recomplete()
+        if _fnComplete and nPos == #sLine then
+            tCompletions = _fnComplete(sLine)
+            if tCompletions and #tCompletions > 0 then
+                nCompletion = 1
+            else
+                nCompletion = nil
+            end
+        else
+            tCompletions = nil
+            nCompletion = nil
+        end
+    end
+    local function uncomplete()
+        tCompletions = nil
+        nCompletion = nil
+    end
+    local w = term.getSize()
+    local sx = term.getCursorPos()
+    local function redraw(_bClear)
+        local cursor_pos = nPos - nScroll
+        if sx + cursor_pos >= w then
+            nScroll = sx + nPos - w
+        elseif cursor_pos < 0 then
+            nScroll = nPos
+        end
+        local _, cy = term.getCursorPos()
+        term.setCursorPos(sx, cy)
+        local sReplace = _bClear and " " or _sReplaceChar
+        if sReplace then
+            term.write(string.rep(sReplace, math.max(#sLine - nScroll, 0)))
+        else
+            term.write(string.sub(sLine, nScroll + 1))
+        end
+        if nCompletion then
+            local sCompletion = tCompletions[nCompletion]
+            local oldText, oldBg
+            if not _bClear then
+                oldText = term.getTextColor()
+                oldBg = term.getBackgroundColor()
+                term.setTextColor(__LEGACY.colors.white)
+                term.setBackgroundColor(__LEGACY.colors.gray)
+            end
+            if sReplace then
+                term.write(string.rep(sReplace, #sCompletion))
+            else
+                term.write(sCompletion)
+            end
+            if not _bClear then
+                term.setTextColor(oldText)
+                term.setBackgroundColor(oldBg)
+            end
+        end
+        term.setCursorPos(sx + nPos - nScroll, cy)
+    end
+    local function clear()
+        redraw(true)
+    end
+    recomplete()
+    redraw()
+    local function acceptCompletion()
+        if nCompletion then
+            clear()
+            local sCompletion = tCompletions[nCompletion]
+            sLine = sLine .. sCompletion
+            nPos = #sLine
+            recomplete()
+            redraw()
+        end
+    end
+    while true do
+        local sEvent, param, param1, param2 = coroutine.yield()
+        if sEvent == "char" then
+            clear()
+            sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
+            nPos = nPos + 1
+            recomplete()
+            redraw()
+        elseif sEvent == "paste" then
+            clear()
+            sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
+            nPos = nPos + #param
+            recomplete()
+            redraw()
+        elseif sEvent == "key" then
+            if param == __LEGACY.keys.enter or param == __LEGACY.keys.numPadEnter then
+                if nCompletion then
+                    clear()
+                    uncomplete()
+                    redraw()
+                end
+                break
+            elseif param == __LEGACY.keys.left then
+                if nPos > 0 then
+                    clear()
+                    nPos = nPos - 1
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.right then
+                if nPos < #sLine then
+                    clear()
+                    nPos = nPos + 1
+                    recomplete()
+                    redraw()
+                else
+                    acceptCompletion()
+                end
+            elseif param == __LEGACY.keys.up or param == __LEGACY.keys.down then
+                if nCompletion then
+                    clear()
+                    if param == __LEGACY.keys.up then
+                        nCompletion = nCompletion - 1
+                        if nCompletion < 1 then
+                            nCompletion = #tCompletions
+                        end
+                    elseif param == __LEGACY.keys.down then
+                        nCompletion = nCompletion + 1
+                        if nCompletion > #tCompletions then
+                            nCompletion = 1
+                        end
+                    end
+                    redraw()
+                elseif _tHistory then
+                    clear()
+                    if param == __LEGACY.keys.up then
+                        if nHistoryPos == nil then
+                            if #_tHistory > 0 then
+                                nHistoryPos = #_tHistory
+                            end
+                        elseif nHistoryPos > 1 then
+                            nHistoryPos = nHistoryPos - 1
+                        end
+                    else
+                        if nHistoryPos == #_tHistory then
+                            nHistoryPos = nil
+                        elseif nHistoryPos ~= nil then
+                            nHistoryPos = nHistoryPos + 1
+                        end
+                    end
+                    if nHistoryPos then
+                        sLine = _tHistory[nHistoryPos]
+                        nPos, nScroll = #sLine, 0
+                    else
+                        sLine = ""
+                        nPos, nScroll = 0, 0
+                    end
+                    uncomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.backspace then
+                if nPos > 0 then
+                    clear()
+                    sLine = string.sub(sLine, 1, nPos - 1) .. string.sub(sLine, nPos + 1)
+                    nPos = nPos - 1
+                    if nScroll > 0 then nScroll = nScroll - 1 end
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.home then
+                if nPos > 0 then
+                    clear()
+                    nPos = 0
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.delete then
+                if nPos < #sLine then
+                    clear()
+                    sLine = string.sub(sLine, 1, nPos) .. string.sub(sLine, nPos + 2)
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys["end"] then
+                if nPos < #sLine then
+                    clear()
+                    nPos = #sLine
+                    recomplete()
+                    redraw()
+                end
+            elseif param == __LEGACY.keys.tab then
+                acceptCompletion()
+            end
+        elseif sEvent == "mouse_click" or sEvent == "mouse_drag" and param == 1 then
+            local _, cy = term.getCursorPos()
+            if param1 >= sx and param1 <= w and param2 == cy then
+                nPos = math.min(math.max(nScroll + param1 - sx, 0), #sLine)
+                redraw()
+            end
+        elseif sEvent == "term_resize" then
+            w = term.getSize()
+            redraw()
+        end
+    end
+    local _, cy = term.getCursorPos()
+    term.setCursorBlink(false)
+    term.setCursorPos(0, cy)
+    write("\n")
+    return sLine
+end
+_G.json = (function()
+    local json = { _version = "0.1.2" }
+    local encode
+    local escape_char_map = {
+        ["\\"] = "\\",
+        ["\""] = "\"",
+        ["\b"] = "b",
+        ["\f"] = "f",
+        ["\n"] = "n",
+        ["\r"] = "r",
+        ["\t"] = "t",
+    }
+    local escape_char_map_inv = { ["/"] = "/" }
+    for k, v in pairs(escape_char_map) do
+        escape_char_map_inv[v] = k
+    end
+    local function escape_char(c)
+        return "\\" .. (escape_char_map[c] or string.format("u%04x", c:byte()))
+    end
+    local function encode_nil(val)
+        return "null"
+    end
+    local function encode_table(val, stack)
+        local res = {}
+        stack = stack or {}
+        if stack[val] then error("circular reference") end
+        stack[val] = true
+        if rawget(val, 1) ~= nil or next(val) == nil then
+            local n = 0
+            for k in pairs(val) do
+                if type(k) ~= "number" then
+                    error("invalid table: mixed or invalid key types")
+                end
+                n = n + 1
+            end
+            if n ~= #val then
+                error("invalid table: sparse array")
+            end
+            for i, v in ipairs(val) do
+                table.insert(res, encode(v, stack))
+            end
+            stack[val] = nil
+            return "[" .. table.concat(res, ",") .. "]"
+        else
+            for k, v in pairs(val) do
+                if type(k) ~= "string" then
+                    error("invalid table: mixed or invalid key types")
+                end
+                table.insert(res, encode(k, stack) .. ":" .. encode(v, stack))
+            end
+            stack[val] = nil
+            return "{" .. table.concat(res, ",") .. "}"
+        end
+    end
+    local function encode_string(val)
+        return '"' .. val:gsub('[%z\1-\31\\"]', escape_char) .. '"'
+    end
+    local function encode_number(val)
+        if val ~= val or val <= -math.huge or val >= math.huge then
+            error("unexpected number value '" .. tostring(val) .. "'")
+        end
+        return string.format("%.14g", val)
+    end
+    local type_func_map = {
+        ["nil"] = encode_nil,
+        ["table"] = encode_table,
+        ["string"] = encode_string,
+        ["number"] = encode_number,
+        ["boolean"] = tostring,
+    }
+    encode = function(val, stack)
+        local t = type(val)
+        local f = type_func_map[t]
+        if f then
+            return f(val, stack)
+        end
+        error("unexpected type '" .. t .. "'")
+    end
+    function json.encode(val)
+        return (encode(val))
+    end
+    local parse
+    local function create_set(...)
+        local res = {}
+        for i = 1, select("#", ...) do
+            res[select(i, ...)] = true
+        end
+        return res
+    end
+    local space_chars  = create_set(" ", "\t", "\r", "\n")
+    local delim_chars  = create_set(" ", "\t", "\r", "\n", "]", "}", ",")
+    local escape_chars = create_set("\\", "/", '"', "b", "f", "n", "r", "t", "u")
+    local literals     = create_set("true", "false", "null")
+    local literal_map  = {
+        ["true"] = true,
+        ["false"] = false,
+        ["null"] = nil,
+    }
+    local function next_char(str, idx, set, negate)
+        for i = idx, #str do
+            if set[str:sub(i, i)] ~= negate then
+                return i
+            end
+        end
+        return #str + 1
+    end
+    local function decode_error(str, idx, msg)
+        local line_count = 1
+        local col_count = 1
+        for i = 1, idx - 1 do
+            col_count = col_count + 1
+            if str:sub(i, i) == "\n" then
+                line_count = line_count + 1
+                col_count = 1
+            end
+        end
+        error(string.format("%s at line %d col %d", msg, line_count, col_count))
+    end
+    local function codepoint_to_utf8(n)
+        local f = math.floor
+        if n <= 0x7f then
+            return string.char(n)
+        elseif n <= 0x7ff then
+            return string.char(f(n / 64) + 192, n % 64 + 128)
+        elseif n <= 0xffff then
+            return string.char(f(n / 4096) + 224, f(n % 4096 / 64) + 128, n % 64 + 128)
+        elseif n <= 0x10ffff then
+            return string.char(f(n / 262144) + 240, f(n % 262144 / 4096) + 128,
+                f(n % 4096 / 64) + 128, n % 64 + 128)
+        end
+        error(string.format("invalid unicode codepoint '%x'", n))
+    end
+    local function parse_unicode_escape(s)
+        local n1 = tonumber(s:sub(1, 4), 16)
+        local n2 = tonumber(s:sub(7, 10), 16)
+        if n2 then
+            return codepoint_to_utf8((n1 - 0xd800) * 0x400 + (n2 - 0xdc00) + 0x10000)
+        else
+            return codepoint_to_utf8(n1)
+        end
+    end
+    local function parse_string(str, i)
+        local res = ""
+        local j = i + 1
+        local k = j
+        while j <= #str do
+            local x = str:byte(j)
+            if x < 32 then
+                decode_error(str, j, "control character in string")
+            elseif x == 92 then -- `\`: Escape
+                res = res .. str:sub(k, j - 1)
+                j = j + 1
+                local c = str:sub(j, j)
+                if c == "u" then
+                    local hex = str:match("^[dD][89aAbB]%x%x\\u%x%x%x%x", j + 1)
+                        or str:match("^%x%x%x%x", j + 1)
+                        or decode_error(str, j - 1, "invalid unicode escape in string")
+                    res = res .. parse_unicode_escape(hex)
+                    j = j + #hex
+                else
+                    if not escape_chars[c] then
+                        decode_error(str, j - 1, "invalid escape char '" .. c .. "' in string")
+                    end
+                    res = res .. escape_char_map_inv[c]
+                end
+                k = j + 1
+            elseif x == 34 then -- `"`: End of string
+                res = res .. str:sub(k, j - 1)
+                return res, j + 1
+            end
+            j = j + 1
+        end
+        decode_error(str, i, "expected closing quote for string")
+    end
+    local function parse_number(str, i)
+        local x = next_char(str, i, delim_chars)
+        local s = str:sub(i, x - 1)
+        local n = tonumber(s)
+        if not n then
+            decode_error(str, i, "invalid number '" .. s .. "'")
+        end
+        return n, x
+    end
+    local function parse_literal(str, i)
+        local x = next_char(str, i, delim_chars)
+        local word = str:sub(i, x - 1)
+        if not literals[word] then
+            decode_error(str, i, "invalid literal '" .. word .. "'")
+        end
+        return literal_map[word], x
+    end
+    local function parse_array(str, i)
+        local res = {}
+        local n = 1
+        i = i + 1
+        while 1 do
+            local x
+            i = next_char(str, i, space_chars, true)
+            if str:sub(i, i) == "]" then
+                i = i + 1
+                break
+            end
+            x, i = parse(str, i)
+            res[n] = x
+            n = n + 1
+            i = next_char(str, i, space_chars, true)
+            local chr = str:sub(i, i)
+            i = i + 1
+            if chr == "]" then break end
+            if chr ~= "," then decode_error(str, i, "expected ']' or ','") end
+        end
+        return res, i
+    end
+    local function parse_object(str, i)
+        local res = {}
+        i = i + 1
+        while 1 do
+            local key, val
+            i = next_char(str, i, space_chars, true)
+            if str:sub(i, i) == "}" then
+                i = i + 1
+                break
+            end
+            if str:sub(i, i) ~= '"' then
+                decode_error(str, i, "expected string for key")
+            end
+            key, i = parse(str, i)
+            i = next_char(str, i, space_chars, true)
+            if str:sub(i, i) ~= ":" then
+                decode_error(str, i, "expected ':' after key")
+            end
+            i = next_char(str, i + 1, space_chars, true)
+            val, i = parse(str, i)
+            res[key] = val
+            i = next_char(str, i, space_chars, true)
+            local chr = str:sub(i, i)
+            i = i + 1
+            if chr == "}" then break end
+            if chr ~= "," then decode_error(str, i, "expected '}' or ','") end
+        end
+        return res, i
+    end
+    local char_func_map = {
+        ['"'] = parse_string,
+        ["0"] = parse_number,
+        ["1"] = parse_number,
+        ["2"] = parse_number,
+        ["3"] = parse_number,
+        ["4"] = parse_number,
+        ["5"] = parse_number,
+        ["6"] = parse_number,
+        ["7"] = parse_number,
+        ["8"] = parse_number,
+        ["9"] = parse_number,
+        ["-"] = parse_number,
+        ["t"] = parse_literal,
+        ["f"] = parse_literal,
+        ["n"] = parse_literal,
+        ["["] = parse_array,
+        ["{"] = parse_object,
+    }
+    parse = function(str, idx)
+        local chr = str:sub(idx, idx)
+        local f = char_func_map[chr]
+        if f then
+            return f(str, idx)
+        end
+        decode_error(str, idx, "unexpected character '" .. chr .. "'")
+    end
+    function json.decode(str)
+        if type(str) ~= "string" then
+            error("expected argument of type string, got " .. type(str))
+        end
+        local res, idx = parse(str, next_char(str, 1, space_chars, true))
+        idx = next_char(str, idx, space_chars, true)
+        if idx <= #str then
+            decode_error(str, idx, "trailing garbage")
+        end
+        return res
+    end
+    return json
+end)()
+local tPallete = {
+    0xF0F0F0,
+    0xF2B233,
+    0xE57FD8,
+    0x99B2F2,
+    0xDEDE6C,
+    0x7FCC19,
+    0xF2B2CC,
+    0x4C4C4C,
+    0x999999,
+    0x4C99B2,
+    0xB266E5,
+    0x3366CC,
+    0x7F664C,
+    0x57A64E,
+    0xCC4C4C,
+    0x111111,
+}
+_G.KDriversImpl = {
+    platform = "Capy64",
+    files = {
+        open = function(path, mode)
+            local link = fs.open(path, mode)
+            return {
+                close = function() link:close() end,
+                write = function(w)
+                    link:write(w)
+                end,
+                read = function(count)
+                    return link:read(count)
+                end,
+                readAll = function()
+                    return link:read("*all")
+                end,
+                readLine = function()
+                    return link:read("*l")
+                end,
+                seek = function(whence, offset)
+                    link:seek(whence, offset)
+                end,
+                flush = function()
+                    link:flush()
+                end
+            }
+        end,
+        list = function(path)
+            return fs.list(path)
+        end,
+        type = function(path)
+            return fs.isDir(path) and "directory" or "file"
+        end,
+        exists = function(path)
+            return fs.exists(path)
+        end,
+        copy = function(src, dest)
+            return fs.copy(src, dest)
+        end,
+        unlink = function(path)
+            return fs.delete(path)
+        end,
+        mkDir = function(path)
+            return fs.makeDir(path)
+        end,
+        attributes = function(path)
+            local attr = fs.attributes(path)
+            attr.capacity = 1024 * 1024 * 1024 -- 1 GB
+            attr.driveRoot = false
+            return attr
+        end,
+        getPermissions = function(file, user)
+            if strsplit(file, "/") == { file } then
+                return {
+                    read = true,
+                    write = true,
+                    listed = true
+                }
+            end
+            local read = true
+            local write = true
+            local listed = true
+            if fs.isReadOnly(file) then
+                write = false
+            end
+            local fpn = strsplit(file, "/")
+            if #fpn == 0 then fpn = { "" } end
+            if fpn[#fpn]:sub(1, 1) == "$" then -- Metadata files
+                return {
+                    read = false,
+                    write = false,
+                    listed = false
+                }
+            end
+            local disallowedfiles = { "startup.lua", "startup" }
+            for index, value in ipairs(disallowedfiles) do
+                if fpn[1] == value then -- Metadata files
+                    return {
+                        read = user == "root",
+                        write = user == "root",
+                        listed = false,
+                    }
+                end
+            end
+            if fpn[#fpn]:sub(1, 1) == "." then
+                listed = false
+            end
+            return {
+                read = read,
+                write = write,
+                listed = listed,
+            }
+        end
+    },
+    terminal = {
+        write = function(str)
+            term.write(str)
+        end,
+        clear = function()
+            term.clear()
+        end,
+        getCursorPos = function()
+            return term.getPos()
+        end,
+        setCursorPos = function(x, y)
+            term.setPos(x, y)
+        end,
+        getCursorBlink = function()
+            return term.getBlink()
+        end,
+        setCursorBlink = function(blink)
+            term.setBlink(blink)
+        end,
+        isColor = function()
+            return true
+        end,
+        getSize = function()
+            return term.getSize()
+        end,
+        setTextColor = function(color)
+            print(math.log(color,2)+1);
+            print(color);
+            term.setForeground(tPallete[math.log(color,2)+1])
+        end,
+        getTextColor = function()
+            return term.getForeground()
+        end,
+        setBackgroundColor = function(color)
+            print(math.log(color,2)+1);
+            print(color);
+            term.setBackground(tPallete[math.log(color,2)+1])
+        end,
+        getBackgroundColor = function()
+            return term.getBackground()
+        end,
+        setPaletteColor = function(color, r, g, b)
+            local ra = string.format("%x", r)
+            local ga = string.format("%x", g)
+            local ba = string.format("%x", b)
+            if #ra == 1 then ra = "0" .. ra end
+            if #ga == 1 then ga = "0" .. ga end
+            if #ba == 1 then ba = "0" .. ba end
+            tPallete[math.log(color,2)+1] = tonumber(ra .. ga .. ba, 16)
+        end,
+        setPaletteColour = function(color, r, g, b)
+            local ra = string.format("%x", r)
+            local ga = string.format("%x", g)
+            local ba = string.format("%x", b)
+            if #ra == 1 then ra = "0" .. ra end
+            if #ga == 1 then ga = "0" .. ga end
+            if #ba == 1 then ba = "0" .. ba end
+            tPallete[math.log(color,2)+1] = tonumber(ra .. ga .. ba, 16)
+        end,
+        getPaletteColor = function(color)
+            return tPallete[math.log(color,2)+1]
+        end,
+        getPaletteColour = function(color)
+            return tPallete[math.log(color,2)+1]
+        end,
+        scroll = function(n)
+            term.scroll(n)
+        end,
+        clearLine = function()
+            term.clearLine()
+        end,
+        blit = function(c, v, s)
+            term.blit(c, v, s)
+        end,
+        pMap = {
+            white = 0x1,
+            orange = 0x2,
+            magenta = 0x4,
+            lightBlue = 0x8,
+            yellow = 0x10,
+            lime = 0x20,
+            pink = 0x40,
+            gray = 0x80,
+            lightGray = 0x100,
+            cyan = 0x200,
+            purple = 0x400,
+            blue = 0x800,
+            brown = 0x1000,
+            green = 0x2000,
+            red = 0x4000,
+            black = 0x8000,
+        },
+        kMap = { -- Copied directly from capyos !
+            none = 0,
+            back = 8,
+            tab = 9,
+            enter = 13,
+            pause = 19,
+            caps_lock = 20,
+            kana = 21,
+            kanji = 25,
+            escape = 27,
+            ime_convert = 28,
+            ime_no_convert = 29,
+            space = 32,
+            page_up = 33,
+            page_down = 34,
+            ["end"] = 35,
+            home = 36,
+            left = 37,
+            up = 38,
+            right = 39,
+            down = 40,
+            select = 41,
+            print = 42,
+            execute = 43,
+            print_screen = 44,
+            insert = 45,
+            delete = 46,
+            help = 47,
+            zero = 48,
+            one = 49,
+            two = 50,
+            three = 51,
+            four = 52,
+            five = 53,
+            six = 54,
+            seven = 55,
+            eight = 56,
+            nine = 57,
+            a = 65,
+            b = 66,
+            c = 67,
+            d = 68,
+            e = 69,
+            f = 70,
+            g = 71,
+            h = 72,
+            i = 73,
+            j = 74,
+            k = 75,
+            l = 76,
+            m = 77,
+            n = 78,
+            o = 79,
+            p = 80,
+            q = 81,
+            r = 82,
+            s = 83,
+            t = 84,
+            u = 85,
+            v = 86,
+            w = 87,
+            x = 88,
+            y = 89,
+            z = 90,
+            left_windows = 91,
+            right_windows = 92,
+            apps = 93,
+            sleep = 95,
+            num_pad0 = 96,
+            num_pad1 = 97,
+            num_pad2 = 98,
+            num_pad3 = 99,
+            num_pad4 = 100,
+            num_pad5 = 101,
+            num_pad6 = 102,
+            num_pad7 = 103,
+            num_pad8 = 104,
+            num_pad9 = 105,
+            multiply = 106,
+            add = 107,
+            separator = 108,
+            subtract = 109,
+            decimal = 110,
+            divide = 111,
+            f1 = 112,
+            f2 = 113,
+            f3 = 114,
+            f4 = 115,
+            f5 = 116,
+            f6 = 117,
+            f7 = 118,
+            f8 = 119,
+            f9 = 120,
+            f10 = 121,
+            f11 = 122,
+            f12 = 123,
+            f13 = 124,
+            f14 = 125,
+            f15 = 126,
+            f16 = 127,
+            f17 = 128,
+            f18 = 129,
+            f19 = 130,
+            f20 = 131,
+            f21 = 132,
+            f22 = 133,
+            f23 = 134,
+            f24 = 135,
+            num_lock = 144,
+            scroll = 145,
+            left_shift = 160,
+            right_shift = 161,
+            left_control = 162,
+            right_control = 163,
+            left_alt = 164,
+            right_alt = 165,
+            browser_back = 166,
+            browser_forward = 167,
+            browser_refresh = 168,
+            browser_stop = 169,
+            browser_search = 170,
+            browser_favorites = 171,
+            browser_home = 172,
+            volume_mute = 173,
+            volume_down = 174,
+            volume_up = 175,
+            media_next_track = 176,
+            media_previous_track = 177,
+            media_stop = 178,
+            media_play_pause = 179,
+            launch_mail = 180,
+            select_media = 181,
+            launch_application1 = 182,
+            launch_application2 = 183,
+            semicolon = 186,
+            plus = 187,
+            comma = 188,
+            minus = 189,
+            period = 190,
+            question = 191,
+            tilde = 192,
+            chat_pad_green = 202,
+            chat_pad_orange = 203,
+            open_brackets = 219,
+            pipe = 220,
+            close_brackets = 221,
+            quotes = 222,
+            oem8 = 223,
+            backslash = 226,
+            process_key = 229,
+            copy = 242,
+            auto = 243,
+            enl_w = 244,
+            attn = 246,
+            crsel = 247,
+            exsel = 248,
+            erase_eof = 249,
+            play = 250,
+            zoom = 251,
+            pa1 = 253,
+            clear = 254,
+        }
+    },
+    computer = {
+        id = 0,
+        uptime = os.clock,
+        label = function()
+            local l, e = KDriversImpl.files.open("/$ComputerLabel", "r")
+            if not l then return "Capy64 Computer" end
+            local label = l.readAll()
+            l.close()
+            return label
+        end,
+        setlabel = function(new)
+            local l, e = KDriversImpl.files.open("/$ComputerLabel", "w")
+            if not l then return end
+            l.write(new)
+            l.close()
+        end,
+        time = function(tz) return os.time() end,
+        day = function(tz) return os.date("*t").day end,
+        epoch = function() return os.time() / 1000 end,
+        date = os.date,
+        power = {
+            shutdown = mach.shutdown,
+            reboot = mach.reboot
+        }
+    },
+    timers = {
+        start = timer.start,
+        cancel = function() end,
+        setalarm = function(a) return -1 end,
+        cancelalarm = function(a) end
+    },
+    workarounds = {
+        preventTooLongWithoutYielding = function(handleEvent)
+            event.push("fakeEvent")
+            local f = true
+            while f do
+                local x = { coroutine.yield() }
+                if x[1] == "fakeEvent" then
+                    f = false
+                    break
+                else
+                    handleEvent(x)
+                end
+            end
+        end
+    },
+    devc = {
+        get = function(w)
+            if w == "net" and http then
+                return {
+                    sendRequest = function(reqType, url, headers, body)
+                        local req = http.request {
+                            url = url,
+                            method = reqType,
+                            headers = headers,
+                            body = body
+                        }
+                        while true do
+                            local event, param1, param2, param3 = KDriversImpl.pullEvent()
+                            if event == "http_success" and param1 == url then
+                                return param2
+                            elseif event == "http_failure" and param1 == url then
+                                return nil, param2, param3
+                            end
+                        end
+                    end
+                }
+            end
+            return nil
+        end,
+        type = function(n)
+            if n == "net" and http then
+                return "network_adapter"
+            end
+            return nil
+        end,
+        list = function()
+            local c = {}
+            if http then table.insert(c, "net") end
+            return c
+        end
+    },
+    branding = function(version)
+        mach.setRPC("Running " .. version, "on Capy64")
+    end,
+    pullEvent = function()
+        local co = { coroutine.yield() }
+        if co[1] == "interrupt" then co[1] = "terminate" end
+        if co[1] == "screen_resize" then co[1] = "term_resize" end
+        if co[1] == "key_down" then co[1] = "key" end
+        if co[1] == "audio_end" then co = { "speaker_audio_empty", "beeper" } end
+        return co
+    end,
+}
+local oldug = {}
+local oldug2 = {}
+for k, v in pairs(_G) do
+    oldug2[k] = v
+end
+for k, v in pairs(_G) do
+    oldug[k] = v
+end
+local keptAPIs = { utd = true, printError = true, KDriversImpl = true, json = true, require = true, print = true, write = true, read = true, bit32 = true, periphemu = true, bit = true, coroutine = true, debug = true, utf8 = true, _HOST = true, _CC_DEFAULT_SETTINGS = true, _CC_DISABLE_LUA51_FEATURES = true, _VERSION = true, assert = true, collectgarbage = true, error = true, gcinfo = true, getfenv = true, getmetatable = true, ipairs = true, __inext = true, load = true, loadstring = true, math = true, newproxy = true, next = true, pairs = true, pcall = true, rawequal = true, rawget = true, rawlen = true, rawset = true, select = true, setfenv = true, setmetatable = true, string = true, table = true, tonumber = true, tostring = true, type = true, unpack = true, xpcall = true, turtle = true, pocket = true, commands = true, _G = true }
+local t = {}
+for k in pairs(oldug) do if not keptAPIs[k] then table.insert(t, k) end end
+for _, k in ipairs(t) do oldug[k] = nil end
+oldug["_G"] = oldug
+local f = KDriversImpl.files.open("/system/bootloader.lua", "r")
+local ok, err = pcall(load(f.readAll(), "Bootloader", nil, oldug))
+print(err)
+while true do
+    coroutine.yield()
+end
+coroutine.yield()
 local term = KDriversImpl.terminal
 function mysplit(inputstr, sep)
     if sep == nil then
@@ -1038,8 +2062,6 @@ _G.package = {
         string = string,
         table = table,
         package = package,
-        bit32 = bit32,
-        bit = bit,
         coroutine = coroutine,
         utf8 = utf8,
 
@@ -1086,11 +2108,11 @@ _G.package = {
                         for k, v in pairs(_G) do
                             compEnv[k] = v
                         end
-                        if path ~= "/apis" and path ~= "/system/apis" then
-                            compEnv["apiUtils"] = nil
-                            compEnv["xnarcos"] = nil
-                            compEnv["KDriversImpl"] = nil
-                        end
+                        compEnv["apiUtils"] = nil
+                        compEnv["KDriversImpl"] = nil
+                        compEnv["xnarcos"] = nil
+                        compEnv["_G"] = nil
+                        
 
                         compEnv["_G"] = nil
                         setmetatable(compEnv, {
@@ -1133,7 +2155,6 @@ _G.require = function(modname)
     error("module '" .. modname .. "' not found:\n  " .. table.concat(errors, "\n  "))
 end
 
-
 local Array = _hx_e()
 local Date = _hx_e()
 local FileMode = _hx_e()
@@ -1150,6 +2171,7 @@ local FSElem = _hx_e()
 local KFSDriver = _hx_e()
 local HalFSDriver = _hx_e()
 local Kernel = _hx_e()
+___Kernel_Kernel_Fields_ = _hx_e()
 local Lambda = _hx_e()
 local Logger = _hx_e()
 local Main = _hx_e()
@@ -1769,7 +2791,7 @@ Out.new = {}
 Out.__name__ = true
 Out.write = function(...) 
   local s = {...}
-  local words = String.prototype.split(__haxe__Rest_Rest_Impl_.toArray(s):join(" "), " ");
+  local words = String.prototype.split(___Kernel_Kernel_Fields_.stripRight(__haxe__Rest_Rest_Impl_.toArray(s):join(" ")), " ");
   local comp = "";
   local tmp = term;
   local terminal = (function() 
@@ -2452,16 +3474,16 @@ Kernel.prototype.rootFs= nil;
 Kernel.prototype.running= nil;
 Kernel.prototype.dm= nil;
 Kernel.prototype.panic = function(self,err,file,line,stack,pi) 
-  Logger.log("... Kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=362,className="Kernel",methodName="panic"}));
-  Logger.log(Std.string("Error: ") .. Std.string(err), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=363,className="Kernel",methodName="panic"}));
+  Logger.log("... Kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=378,className="Kernel",methodName="panic"}));
+  Logger.log(Std.string("Error: ") .. Std.string(err), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=379,className="Kernel",methodName="panic"}));
   if (pi ~= nil) then 
-    Logger.log("This happened inside the kernel.", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=365,className="Kernel",methodName="panic"}));
-    Logger.log(Std.string("File: ") .. Std.string(pi.fileName), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=366,className="Kernel",methodName="panic"}));
-    Logger.log(Std.string("Line: ") .. Std.string(pi.lineNumber), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=367,className="Kernel",methodName="panic"}));
+    Logger.log("This happened inside the kernel.", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=381,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("File: ") .. Std.string(pi.fileName), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=382,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("Line: ") .. Std.string(pi.lineNumber), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=383,className="Kernel",methodName="panic"}));
   else
-    Logger.log(Std.string("File: ") .. Std.string(file), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=369,className="Kernel",methodName="panic"}));
+    Logger.log(Std.string("File: ") .. Std.string(file), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=385,className="Kernel",methodName="panic"}));
     if (stack ~= nil) then 
-      Logger.log("Stack:", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=371,className="Kernel",methodName="panic"}));
+      Logger.log("Stack:", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=387,className="Kernel",methodName="panic"}));
       local _g = 0;
       local _g1 = String.prototype.split(_hx_wrap_if_string_field(__haxe__CallStack_CallStack_Impl_,'toString')(stack), "\n");
       while (_g < _g1.length) do _hx_do_first_1 = false;
@@ -2469,41 +3491,42 @@ Kernel.prototype.panic = function(self,err,file,line,stack,pi)
         local item = _g1[_g];
         _g = _g + 1;
         if (StringTools.replace(item, " ", "") ~= "") then 
-          Logger.log(item, 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=374,className="Kernel",methodName="panic"}));
+          Logger.log(item, 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=390,className="Kernel",methodName="panic"}));
         end;
       end;
     else
-      Logger.log(Std.string("Line: ") .. Std.string(line), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=378,className="Kernel",methodName="panic"}));
+      Logger.log(Std.string("Line: ") .. Std.string(line), 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=394,className="Kernel",methodName="panic"}));
     end;
   end;
-  Logger.log("", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=381,className="Kernel",methodName="panic"}));
-  Logger.log("... End kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=382,className="Kernel",methodName="panic"}));
+  Logger.log("", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=397,className="Kernel",methodName="panic"}));
+  Logger.log("... End kernel panic ...", 0, false, false, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=398,className="Kernel",methodName="panic"}));
   if (self.scheduler ~= nil) then 
     self.scheduler.tasks = _hx_tab_array({}, 0);
   end;
   self.running = false;
 end
 Kernel.prototype.run = function(self) 
+  local _gthis = self;
   local usePreemption = true;
   KDriversImpl.terminal.clear();
   KDriversImpl.terminal.setCursorPos(1, 1);
-  Logger.log(Std.string("Syne ") .. Std.string("Helica"), 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=395,className="Kernel",methodName="run"}));
-  if ((debug == nil) or (debug.sethook == nil)) then 
-    Logger.log("Platform doesn't support pre-emption, disabing.", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=397,className="Kernel",methodName="run"}));
+  Logger.log(Std.string("Syne ") .. Std.string("Helica"), 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=411,className="Kernel",methodName="run"}));
+  if (((debug == nil) or (debug.sethook == nil)) or (KDriversImpl.platform == "Capy64")) then 
+    Logger.log("Platform doesn't support pre-emption, disabing.", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=413,className="Kernel",methodName="run"}));
     usePreemption = false;
   else
-    Logger.log("Using preemption", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=400,className="Kernel",methodName="run"}));
+    Logger.log("Using preemption", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=416,className="Kernel",methodName="run"}));
     usePreemption = true;
   end;
-  Logger.log("Creating filesystem", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=403,className="Kernel",methodName="run"}));
+  Logger.log("Creating filesystem", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=419,className="Kernel",methodName="run"}));
   self.rootFs = KFSDriver.new();
   self.rootFs.mounts:push(FSElem.new("", HalFSDriver.new()));
-  Logger.log("Loading users", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=406,className="Kernel",methodName="run"}));
+  Logger.log("Loading users", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=422,className="Kernel",methodName="run"}));
   self.userManager = UserManager.new(self);
   self.userManager:load();
-  Logger.log("Creating scheduler", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=409,className="Kernel",methodName="run"}));
+  Logger.log("Creating scheduler", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=425,className="Kernel",methodName="run"}));
   self.scheduler = __scheduler_Scheduler.new(usePreemption, self);
-  Logger.log("Managing devices", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=416,className="Kernel",methodName="run"}));
+  Logger.log("Managing devices", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=432,className="Kernel",methodName="run"}));
   self.dm = Devices.new(self);
   local _g = 0;
   local length = nil;
@@ -2532,6 +3555,7 @@ Kernel.prototype.run = function(self)
   self.scheduler.tasks[self.scheduler:addTask("B", function() 
     local _hx_status, _hx_result = pcall(function() 
     
+        Logger.log("Starting init.lua", 1, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=439,className="Kernel",methodName="run"}));
         
 					local env = {}
 					local path = "/apps/init.lua"
@@ -2542,6 +3566,7 @@ Kernel.prototype.run = function(self)
 					for k, v in pairs(env) do
 						compEnv[k] = v
 					end
+
 					compEnv["apiUtils"] = nil
 					compEnv["KDriversImpl"] = nil
 					compEnv["xnarcos"] = nil
@@ -2549,10 +3574,16 @@ Kernel.prototype.run = function(self)
 					compEnv["write"] = Out.write
 					compEnv["print"] = Out.print
 					compEnv.tasking = require("tasking")
-					compEnv.arcos = require("arcos")
 					compEnv.devices = require("devices")
+					compEnv.arcos = require("arcos")
 					compEnv.sleep = compEnv.arcos.sleep
-
+					_G.tasking = require("tasking")
+					_G.arcos = require("arcos")
+					_G.devices = require("devices")
+					_G.sleep = compEnv.arcos.sleep
+					_G["write"] = Out.write
+					_G["print"] = Out.print
+					compEnv.Out = Out
 					setmetatable(compEnv, {
 						__index = function(t, k)
 							if k == "_G" then
@@ -2561,15 +3592,15 @@ Kernel.prototype.run = function(self)
 						end,
 					})
 					local f, e = KDriversImpl.files.open(path, "r")
-					if not f then print(e) return end
+					if not f then error(e) return end
 					local compFunc, err = load(f.readAll(), path, nil, compEnv)
 					f.close()
 					if compFunc == nil then
 						error(err)
 					else
-						setfenv(compFunc, compEnv)
+						if debug and debug.setfenv then debug.setfenv(compFunc, compEnv) end
 						local ok, err = pcall(compFunc)
-						print(err)
+						error(err)
 					end;
       return _hx_pcall_default
     end)
@@ -2577,7 +3608,7 @@ Kernel.prototype.run = function(self)
     elseif not _hx_status then 
       local _g = _hx_result;
       local e = __haxe_Exception.caught(_g);
-      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=463,className="Kernel",methodName="run"}));
+      _gthis:panic(e:get_message(), "Kernel", 0, e:get_stack(), _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/Kernel.hx",lineNumber=487,className="Kernel",methodName="run"}));
     elseif _hx_result ~= _hx_pcall_default then
       return _hx_result
     end;
@@ -2586,6 +3617,23 @@ Kernel.prototype.run = function(self)
 			_G.write = Out.write
 			_G.print = Out.print
 			;
+  local gb = function() 
+    if (not _gthis.rootFs:exists("/config/arc/base.meta.json")) then 
+      do return "invalid package metadata" end;
+    end;
+    local fH = _gthis.rootFs:open("/config/arc/base.meta.json", "r");
+    local meta = __haxe_Json.parse(fH:read());
+    fH:close();
+    if (meta.version == nil) then 
+      do return "arcos" end;
+    else
+      do return meta.version end;
+    end;
+  end;
+  if (KDriversImpl.branding ~= nil) then 
+    local tmp = gb();
+    KDriversImpl.branding(tmp);
+  end;
   while (self.running) do _hx_do_first_1 = false;
     
     self.scheduler:tick();
@@ -2597,6 +3645,45 @@ Kernel.prototype.run = function(self)
 end
 
 Kernel.prototype.__class__ =  Kernel
+
+___Kernel_Kernel_Fields_.new = {}
+___Kernel_Kernel_Fields_.__name__ = true
+___Kernel_Kernel_Fields_.stripRight = function(str) 
+  local outstr = _hx_tab_array({}, 0);
+  local als = false;
+  local _g = 0;
+  local _g1 = #str + 1;
+  while (_g < _g1) do _hx_do_first_1 = false;
+    
+    _g = _g + 1;
+    local i = _g - 1;
+    local char = #str - i;
+    if (_G.string.sub(str, char + 1, char + 1) ~= " ") then 
+      als = true;
+    end;
+    if (als) then 
+      local pos = 0;
+      local x = _G.string.sub(str, char + 1, char + 1);
+      if (pos > outstr.length) then 
+        pos = outstr.length;
+      end;
+      if (pos < 0) then 
+        pos = outstr.length + pos;
+        if (pos < 0) then 
+          pos = 0;
+        end;
+      end;
+      local cur_len = outstr.length;
+      while (cur_len > pos) do _hx_do_first_2 = false;
+        
+        outstr[cur_len] = outstr[cur_len - 1];
+        cur_len = cur_len - 1;
+      end;
+      outstr[pos] = x;
+    end;
+  end;
+  do return outstr:join("") end;
+end
 
 Lambda.new = {}
 Lambda.__name__ = true
@@ -5056,6 +6143,30 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
       local _g = _hx_result;
       local e = __haxe_Exception.caught(_g);
       __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=131,className="scheduler.Scheduler",methodName="addTask"}));
+      local id = KDriversImpl.timers.start(5);
+      while (true) do _hx_do_first_1 = false;
+        
+        local length = nil;
+        local tab = __lua_PairTools.copy(_hx_table.pack(_G.coroutine.yield()));
+        local length = length;
+        local ev;
+        if (length == nil) then 
+          length = _hx_table.maxn(tab);
+          if (length > 0) then 
+            local head = tab[1];
+            _G.table.remove(tab, 1);
+            tab[0] = head;
+            ev = _hx_tab_array(tab, length);
+          else
+            ev = _hx_tab_array({}, 0);
+          end;
+        else
+          ev = _hx_tab_array(tab, length);
+        end;
+        if ((ev[0] == "timer") and (ev[1] == id)) then 
+          break;
+        end;
+      end;
     elseif _hx_result ~= _hx_pcall_default then
       return _hx_result
     end;
@@ -5230,7 +6341,7 @@ __scheduler_Scheduler.prototype.resumeTask = function(self,task,fev)
 end
 __scheduler_Scheduler.prototype.tick = function(self) 
   if (self.tasks.length == 0) then 
-    self.kernel:panic("All tasks died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=217,className="scheduler.Scheduler",methodName="tick"}));
+    self.kernel:panic("All tasks died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=225,className="scheduler.Scheduler",methodName="tick"}));
   end;
   local n = false;
   local _g = 0;
@@ -5242,6 +6353,24 @@ __scheduler_Scheduler.prototype.tick = function(self)
     if (self:resumeTask(task)) then 
       n = true;
     end;
+  end;
+  local tasksToDelete = _hx_tab_array({}, 0);
+  local _g = 0;
+  local _g1 = self.tasks;
+  while (_g < _g1.length) do _hx_do_first_1 = false;
+    
+    local task = _g1[_g];
+    _g = _g + 1;
+    if (_G.coroutine.status(task.coroutine) == "dead") then 
+      tasksToDelete:push(task.pInfo.id);
+    end;
+  end;
+  local _g = 0;
+  while (_g < tasksToDelete.length) do _hx_do_first_1 = false;
+    
+    local id = tasksToDelete[_g];
+    _g = _g + 1;
+    self.tasks:remove(self.tasks[id]);
   end;
   if (not n) then 
     local length = nil;
@@ -5431,13 +6560,13 @@ __syscall_extensions_ArcosExtension.prototype.getSyscalls = function(self,kernel
   end), __syscall_Syscall.new("version", function(...) 
     local d = {...}
     if (not kernel.rootFs:exists("/config/arc/base.meta.json")) then 
-      do return _hx_tab_array({[0]="invalid package metadata"}, 1) end;
+      do return _hx_tab_array({[0]=""}, 1) end;
     end;
     local fH = kernel.rootFs:open("/config/arc/base.meta.json", "r");
     local meta = __haxe_Json.parse(fH:read());
     fH:close();
     if (meta.version == nil) then 
-      do return _hx_tab_array({[0]="invalid package metadata"}, 1) end;
+      do return _hx_tab_array({[0]=""}, 1) end;
     else
       do return _hx_tab_array({[0]=meta.version}, 1) end;
     end;
@@ -5819,9 +6948,6 @@ __syscall_extensions_FilesystemExtension.prototype.getSyscalls = function(self,k
     do return _hx_tab_array({[0]=kernel.rootFs:list(d[1])}, 1) end;
   end), __syscall_Syscall.new("fs.exists", function(...) 
     local d = {...}
-    if (_gthis.openFiles[d[1]] == nil) then 
-      _G.error(__haxe_Exception.thrown("Broken pipe"),0);
-    end;
     do return _hx_tab_array({[0]=kernel.rootFs:exists(d[1])}, 1) end;
   end), __syscall_Syscall.new("fs.mkDir", function(...) 
     local d = {...}
@@ -6580,7 +7706,6 @@ return {
 }local col = require("col")
 local tutils = require("tutils")
 local syscall = require("syscall")
-local arcos = require("arcos")
 local function combine(...)
     local out = {}
     for index, value in ipairs({ ... }) do
@@ -6589,12 +7714,12 @@ local function combine(...)
     return table.concat(out, "/")
 end
 local function getPermissions(file, user) 
-    if not user then user = arcos.getCurrentTask().user end
+    if not user then user = require("arcos").getCurrentTask().user end
     return syscall.fs.getPermissions(file, user)
 end
 local function getPermissionsForAll(file)
     local u = {}
-    for index, value in ipairs(arcos.getUsers()) do
+    for index, value in ipairs(require("arcos").getUsers()) do
         u[value] = getPermissions(file, value)
     end
     return u
@@ -6683,7 +7808,7 @@ local function mkDir(d)
     return syscall.fs.mkDir(d)
 end
 local function resolve(f, keepNonExistent)
-    local p = f:sub(1, 1) == "/" and "/" or (arcos.getCurrentTask().env.workDir or "/")
+    local p = f:sub(1, 1) == "/" and "/" or (require("arcos").getCurrentTask().env.workDir or "/")
     local pa = tutils.split(p, "/")
     local fla = tutils.split(f, "/")
     local out = {}
@@ -7102,14 +8227,14 @@ return {
 local expect = require("col").expect
 local function getArgs(fun)
     local args = {}
-    local hook = debug.gethook()
+    local hook, mask, count = debug.gethook()
     local argHook = function(...)
         local info = debug.getinfo(3)
         if 'pcall' ~= info.name then return end
         for i = 1, math.huge do
             local name, value = debug.getlocal(2, i)
             if '(*temporary)' == name then
-                debug.sethook(hook)
+                debug.sethook(hook, mask, count)
                 error('')
                 return
             end
@@ -8239,6 +9364,7 @@ local function create(parent, nX, nY, nWidth, nHeight, bStartVisible)
     return window
 end
 return {create = create}return require("syscall").terminal.getKeymap()local syscall = require("syscall")
+            local files   = require("files")
 local arcos = {}
 arcos = {
     kernelPanic = function(err, file, line)
@@ -8313,9 +9439,13 @@ arcos = {
             compEnv[k] = v
         end
         compEnv["apiUtils"] = nil
-        compEnv["xnarcos"] = nil
         compEnv["KDriversImpl"] = nil
+        compEnv["xnarcos"] = nil
         compEnv["_G"] = nil
+        compEnv.tasking = require("tasking")
+        compEnv.arcos = require("arcos")
+        compEnv.devices = require("devices")
+        compEnv.sleep = compEnv.arcos.sleep
         setmetatable(compEnv, {
             __index = function(t, k)
                 if k == "_G" then
@@ -8323,16 +9453,16 @@ arcos = {
                 end
             end,
         })
-        local f, e = require("files").open(path, "r")
-        if not f then return false, e end
+        local f, e = files.open(path, "r")
+        if not f then return false,e end
         local compFunc, err = load(f.read(), path, nil, compEnv)
         f.close()
         if compFunc == nil then
-            return false, "Failed to load function: " .. err
+            return false,err
         else
-            setfenv(compFunc, compEnv)
+            if debug and debug.setfenv then debug.setfenv(compFunc, compEnv) end
             local ok, err = pcall(compFunc, ...)
-            return ok, err
+            return ok,err
         end
     end,
     queue = function(ev, ...)
@@ -8459,7 +9589,284 @@ return {
         return syscall.tasking.changeUser(user, password)
     end
 }
--- Generated by Haxe 4.3.6
+if bit32 then return bit32 end
+if bit then return bit end
+local M = {_TYPE='module', _NAME='bitop.funcs', _VERSION='1.0-0'}
+local floor = math.floor
+local MOD = 2^32
+local MODM = MOD-1
+local function memoize(f)
+  local mt = {}
+  local t = setmetatable({}, mt)
+  function mt:__index(k)
+    local v = f(k)
+    t[k] = v
+    return v
+  end
+  return t
+end
+local function make_bitop_uncached(t, m)
+  local function bitop(a, b)
+    local res,p = 0,1
+    while a ~= 0 and b ~= 0 do
+      local am, bm = a%m, b%m
+      res = res + t[am][bm]*p
+      a = (a - am) / m
+      b = (b - bm) / m
+      p = p*m
+    end
+    res = res + (a+b) * p
+    return res
+  end
+  return bitop
+end
+local function make_bitop(t)
+  local op1 = make_bitop_uncached(t, 2^1)
+  local op2 = memoize(function(a)
+    return memoize(function(b)
+      return op1(a, b)
+    end)
+  end)
+  return make_bitop_uncached(op2, 2^(t.n or 1))
+end
+function M.tobit(x)
+  return x % 2^32
+end
+M.bxor = make_bitop {[0]={[0]=0,[1]=1},[1]={[0]=1,[1]=0}, n=4}
+local bxor = M.bxor
+function M.bnot(a)   return MODM - a end
+local bnot = M.bnot
+function M.band(a,b) return ((a+b) - bxor(a,b))/2 end
+local band = M.band
+function M.bor(a,b)  return MODM - band(MODM - a, MODM - b) end
+local bor = M.bor
+local lshift, rshift -- forward declare
+function M.rshift(a,disp) -- Lua5.2 insipred
+  if disp < 0 then return lshift(a,-disp) end
+  return floor(a % 2^32 / 2^disp)
+end
+rshift = M.rshift
+function M.lshift(a,disp) -- Lua5.2 inspired
+  if disp < 0 then return rshift(a,-disp) end
+  return (a * 2^disp) % 2^32
+end
+lshift = M.lshift
+function M.tohex(x, n) -- BitOp style
+  n = n or 8
+  local up
+  if n <= 0 then
+    if n == 0 then return '' end
+    up = true
+    n = - n
+  end
+  x = band(x, 16^n-1)
+  return ('%0'..n..(up and 'X' or 'x')):format(x)
+end
+local tohex = M.tohex
+function M.extract(n, field, width) -- Lua5.2 inspired
+  width = width or 1
+  return band(rshift(n, field), 2^width-1)
+end
+local extract = M.extract
+function M.replace(n, v, field, width) -- Lua5.2 inspired
+  width = width or 1
+  local mask1 = 2^width-1
+  v = band(v, mask1) -- required by spec?
+  local mask = bnot(lshift(mask1, field))
+  return band(n, mask) + lshift(v, field)
+end
+local replace = M.replace
+function M.bswap(x)  -- BitOp style
+  local a = band(x, 0xff); x = rshift(x, 8)
+  local b = band(x, 0xff); x = rshift(x, 8)
+  local c = band(x, 0xff); x = rshift(x, 8)
+  local d = band(x, 0xff)
+  return lshift(lshift(lshift(a, 8) + b, 8) + c, 8) + d
+end
+local bswap = M.bswap
+function M.rrotate(x, disp)  -- Lua5.2 inspired
+  disp = disp % 32
+  local low = band(x, 2^disp-1)
+  return rshift(x, disp) + lshift(low, 32-disp)
+end
+local rrotate = M.rrotate
+function M.lrotate(x, disp)  -- Lua5.2 inspired
+  return rrotate(x, -disp)
+end
+local lrotate = M.lrotate
+M.rol = M.lrotate  -- LuaOp inspired
+M.ror = M.rrotate  -- LuaOp insipred
+function M.arshift(x, disp) -- Lua5.2 inspired
+  local z = rshift(x, disp)
+  if x >= 0x80000000 then z = z + lshift(2^disp-1, 32-disp) end
+  return z
+end
+local arshift = M.arshift
+function M.btest(x, y) -- Lua5.2 inspired
+  return band(x, y) ~= 0
+end
+M.bit32 = {} -- Lua 5.2 'bit32' compatibility
+local function bit32_bnot(x)
+  return (-1 - x) % MOD
+end
+M.bit32.bnot = bit32_bnot
+local function bit32_bxor(a, b, c, ...)
+  local z
+  if b then
+    a = a % MOD
+    b = b % MOD
+    z = bxor(a, b)
+    if c then
+      z = bit32_bxor(z, c, ...)
+    end
+    return z
+  elseif a then
+    return a % MOD
+  else
+    return 0
+  end
+end
+M.bit32.bxor = bit32_bxor
+local function bit32_band(a, b, c, ...)
+  local z
+  if b then
+    a = a % MOD
+    b = b % MOD
+    z = ((a+b) - bxor(a,b)) / 2
+    if c then
+      z = bit32_band(z, c, ...)
+    end
+    return z
+  elseif a then
+    return a % MOD
+  else
+    return MODM
+  end
+end
+M.bit32.band = bit32_band
+local function bit32_bor(a, b, c, ...)
+  local z
+  if b then
+    a = a % MOD
+    b = b % MOD
+    z = MODM - band(MODM - a, MODM - b)
+    if c then
+      z = bit32_bor(z, c, ...)
+    end
+    return z
+  elseif a then
+    return a % MOD
+  else
+    return 0
+  end
+end
+M.bit32.bor = bit32_bor
+function M.bit32.btest(...)
+  return bit32_band(...) ~= 0
+end
+function M.bit32.lrotate(x, disp)
+  return lrotate(x % MOD, disp)
+end
+function M.bit32.rrotate(x, disp)
+  return rrotate(x % MOD, disp)
+end
+function M.bit32.lshift(x,disp)
+  if disp > 31 or disp < -31 then return 0 end
+  return lshift(x % MOD, disp)
+end
+function M.bit32.rshift(x,disp)
+  if disp > 31 or disp < -31 then return 0 end
+  return rshift(x % MOD, disp)
+end
+function M.bit32.arshift(x,disp)
+  x = x % MOD
+  if disp >= 0 then
+    if disp > 31 then
+      return (x >= 0x80000000) and MODM or 0
+    else
+      local z = rshift(x, disp)
+      if x >= 0x80000000 then z = z + lshift(2^disp-1, 32-disp) end
+      return z
+    end
+  else
+    return lshift(x, -disp)
+  end
+end
+function M.bit32.extract(x, field, ...)
+  local width = ... or 1
+  if field < 0 or field > 31 or width < 0 or field+width > 32 then error 'out of range' end
+  x = x % MOD
+  return extract(x, field, ...)
+end
+function M.bit32.replace(x, v, field, ...)
+  local width = ... or 1
+  if field < 0 or field > 31 or width < 0 or field+width > 32 then error 'out of range' end
+  x = x % MOD
+  v = v % MOD
+  return replace(x, v, field, ...)
+end
+M.bit = {} -- LuaBitOp "bit" compatibility
+function M.bit.tobit(x)
+  x = x % MOD
+  if x >= 0x80000000 then x = x - MOD end
+  return x
+end
+local bit_tobit = M.bit.tobit
+function M.bit.tohex(x, ...)
+  return tohex(x % MOD, ...)
+end
+function M.bit.bnot(x)
+  return bit_tobit(bnot(x % MOD))
+end
+local function bit_bor(a, b, c, ...)
+  if c then
+    return bit_bor(bit_bor(a, b), c, ...)
+  elseif b then
+    return bit_tobit(bor(a % MOD, b % MOD))
+  else
+    return bit_tobit(a)
+  end
+end
+M.bit.bor = bit_bor
+local function bit_band(a, b, c, ...)
+  if c then
+    return bit_band(bit_band(a, b), c, ...)
+  elseif b then
+    return bit_tobit(band(a % MOD, b % MOD))
+  else
+    return bit_tobit(a)
+  end
+end
+M.bit.band = bit_band
+local function bit_bxor(a, b, c, ...)
+  if c then
+    return bit_bxor(bit_bxor(a, b), c, ...)
+  elseif b then
+    return bit_tobit(bxor(a % MOD, b % MOD))
+  else
+    return bit_tobit(a)
+  end
+end
+M.bit.bxor = bit_bxor
+function M.bit.lshift(x, n)
+  return bit_tobit(lshift(x % MOD, n % 32))
+end
+function M.bit.rshift(x, n)
+  return bit_tobit(rshift(x % MOD, n % 32))
+end
+function M.bit.arshift(x, n)
+  return bit_tobit(arshift(x % MOD, n % 32))
+end
+function M.bit.rol(x, n)
+  return bit_tobit(lrotate(x % MOD, n % 32))
+end
+function M.bit.ror(x, n)
+  return bit_tobit(rrotate(x % MOD, n % 32))
+end
+function M.bit.bswap(x)
+  return bit_tobit(bswap(x % MOD))
+end
+return M.bit-- Generated by Haxe 4.3.6
 local _hx_hidden = {__id__=true, hx__closures=true, super=true, prototype=true, __fields__=true, __ifields__=true, __class__=true, __properties__=true, __fields__=true, __name__=true}
 
 _hx_array_mt = {
@@ -13163,11 +14570,6 @@ local success, err = _G.xpcall(function()
 end, _hx_handle_error)
 if not success then _G.error(err) end
 return _hx_exports
-local arcos = require("arcos")
-if arcos.getCurrentTask().user ~= "root" then
-    error("Not root! We are " .. require("tutils").sJSON(arcos.getCurrentTask()))
-end
-ackFinish()
 local modem
 local selectedFloor = -1
 local col
@@ -13775,8 +15177,8 @@ while rd do
         tid = arcos.startTimer(0.5)
     end
 endlocal arcos = require("arcos")
-arcos.r({}, "/apps/shell.lua")l|arcfix.lua
-o oobe.luaBy using arcos, you automatically agree to these
+local ok, err = arcos.r({}, "/apps/shell.lua")
+if not ok then print(err) endo oobe.luaBy using arcos, you automatically agree to these
 terms. Agreement to this file is also required By
 the stock arcos installer.
 We (the arcos development team) may:
@@ -14040,7 +15442,9 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                         currentServiceDone = true
                     end
                 }, "/services/" .. i:sub(3))
+                currentServiceDone = true
                 if ok then
+                    write("\011f8| \011f7[\011f8 Ended \011f7] \011f0" .. i:sub(3) .. "\n")
                 else
                     write("\011f8| \011f7[\011fe Failed \011f7] \011f0" .. require("tutils").split(i:sub(3), "/")[1] .. "\n")
                     write("\011f8| \011f0" .. err)
@@ -14067,13 +15471,15 @@ local f = files.resolve(path)
 for _, fp in ipairs(f) do
     if files.exists(fp) then
         if files.dir(fp) then
-            for _, i in ipairs(files.ls(fp)) do
+            local er = files.ls(fp)
+            local output = ""
+            for n, i in ipairs(er) do
                 if files.dir(fp) then
                     term.setTextColor(col.green)
                 else
                     term.setTextColor(col.white)
                 end
-                write(i .. " ")
+                write(i .. (n == #er and "" or " "))
             end
             write("\n")
         else
@@ -14127,7 +15533,7 @@ local tutils = require("tutils")
 local arc = require("arc")
 local arcos = require("arcos")
 term.setTextColor(col.blue)
-print(arcos.version())
+print("arcos " .. arcos.version())
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
     table.insert(secRisks, "The root account password has not yet been changed.")
@@ -14154,20 +15560,20 @@ end
 local luaGlobal = setmetatable({}, {__index = _G})
 if not environ.workDir then environ.workDir = "/" end
 local function run(a1, ...) 
-    local cmd = nil
+    local cmdr = nil
     if not a1 or a1 == "" then
         return true
     end
     if a1:sub(1, 1) == "/" then
         if files.exists(a1) then
-            cmd = a1
+            cmdr = a1
         else
             printError("File not found")
             return false
         end
     elseif a1:sub(1, 2) == "./" then
         if files.resolve(a1, false)[1] then
-            cmd = files.resolve(a1, false)[1]
+            cmdr = files.resolve(a1, false)[1]
         else
             printError("File not found")
             return false
@@ -14180,37 +15586,25 @@ local function run(a1, ...)
                     t = t:sub(1, #t-4)
                 end
                 if t == a1 then
-                    cmd = v .. "/" .. s
+                    cmdr = v .. "/" .. s
                 end
             end
         end
     end
-    if cmd == nil then
-        local cq = tutils.join({ a1, ... }, " ")
-        local chunkl, err = load(cq, "eval", nil, luaGlobal)
-        local chunklb, errb = load("return " .. cq, "eval", nil, luaGlobal)
-        if chunklb then
-            chunkl = chunklb
-            err = errb
-        else
-        end
-        if(err and err:sub(20, 36) == "syntax error near") then
-            err = "Command not found."
-        end
-        if not chunkl then
-            printError(err)
-            return false
-        end
-        local ok, err = pcall(chunkl)
-        if not ok then
-            printError(err)
-        else
-            print(tutils.s(err, true))
-        end
-        return ok
+    if cmdr == nil then
+        printError("Command not found!")
+        return false, "Command not found!"
     end
-    local ok, err = arcos.r({}, cmd, ...)
-    if not ok then
+    local args, ok, err = {...}, nil, nil
+    local aok, aerr = pcall(function() 
+        ok, err = arcos.r({}, cmdr, table.unpack(args))
+        if not ok then
+            print("Not ok")
+            printError(err)
+        end
+    end)
+    if not aok then
+        print("Not aok")
         printError(err)
     end
     return ok, err
@@ -14233,6 +15627,8 @@ do
         if not pcall(write, tostring(err)) then
             write("(none)")
         end
+    else
+        write("@bogus")
     end
     write(" ")
     if environ.envType then
@@ -14248,6 +15644,7 @@ do
     table.insert(history, cmd)
     local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
     if not r then
+        print("Not ok")
         pcall(printError, k)
     end
 endlocal ui = require("ui")
@@ -14480,4 +15877,60 @@ end
 if type(side) ~= "string" then
     error("Invalid arguments. Usage: detach <side>")
 end
-periphemu.remove(side)
+periphemu.remove(side)local arcos = require "arcos"
+local tutils = require "tutils"
+print("\011f0" .. _VERSION .. "\011f8 repl on \011fb" .. arcos.version())
+print("\011f8Use .exit to exit.")
+print("\011f7Already loaded apis: arcos, files, tasking. Use require() to load more")
+local luaGlobal = {}
+for i, v in pairs(_G) do
+    luaGlobal[i] = v
+end
+luaGlobal.arcos = require("arcos")
+luaGlobal.tasking = require("tasking")
+luaGlobal.files = require("files")
+while true do
+    write("\011f8> \011f0")
+    local cq = read()
+    if cq == ".exit" then
+        break
+    end
+    if not cq then goto continue end
+    local chunkl, err = load(cq, "eval", nil, luaGlobal)
+    local chunklb, errb = load("return " .. cq, "eval", nil, luaGlobal)
+    if chunklb then
+        chunkl = chunklb
+        err = errb
+    else
+    end
+    if not chunkl then
+        printError(err)
+        goto continue
+    end
+    local ok, err = pcall(chunkl)
+    if not ok then
+        printError(err)
+    else
+        print(tutils.s(err, true))
+    end
+    ::continue::
+endfor _, color in ipairs({
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f"
+}) do
+    print(color .. " is " .. "\011f" .. color .. "this\011f0")
+endBMภ         |   €   €          ภ                ÿ  ÿ  ÿ       BGRs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                        วรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                        วรยวรยวรยวรยวรยวรยวรยวรย                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                        ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ่๑ÿ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                        OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_OW_6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ6Rซ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

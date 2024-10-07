@@ -129,6 +129,13 @@ class Scheduler {
 				callback();
 			} catch(e) {
 				trace(e);
+				var id = Hal.timers.start(5);
+				while(true) {
+					var ev: Array<Dynamic> = Table.toArray(TableTools.pack(Coroutine.yield()));
+					if(ev[0] == "timer" && ev[1] == id) {
+						break;
+					}
+				}
 			}
 		});
 		tasks[pid].taskQueue = [];
@@ -192,6 +199,7 @@ class Scheduler {
 				success: tra[0],
 				result: tra.slice(1)
 			}
+
 			if (false) {
 				tasks.remove(task);
 			} else {
@@ -221,7 +229,19 @@ class Scheduler {
 			if (resumeTask(task)) {
 				n = true;
 			}
-		}			
+		}		
+		var tasksToDelete: Array<Int> = [];
+		
+		for (task in tasks) {
+			if(Coroutine.status(task.coroutine) == CoroutineState.Dead) {
+				tasksToDelete.push(task.pInfo.id);
+			}
+		}
+
+		for (id in tasksToDelete) {
+			tasks.remove(tasks[id]);
+		}
+		
 		if (!n) {
 			var ev = Table.toArray(TableTools.pack(Coroutine.yield()));
 			this.handleEvent(ev);

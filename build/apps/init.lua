@@ -56,7 +56,9 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                         currentServiceDone = true
                     end
                 }, "/services/" .. i:sub(3))
+                currentServiceDone = true
                 if ok then
+                    write("\011f8| \011f7[\011f8 Ended \011f7] \011f0" .. i:sub(3) .. "\n")
                 else
                     write("\011f8| \011f7[\011fe Failed \011f7] \011f0" .. require("tutils").split(i:sub(3), "/")[1] .. "\n")
                     write("\011f8| \011f0" .. err)

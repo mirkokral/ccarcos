@@ -1,5 +1,6 @@
 from io import TextIOWrapper
 import pathlib
+import shutil
 import sys
 import yaml
 import os
@@ -92,6 +93,8 @@ match sys.argv[1]:
             except Exception as e:
                 print("An error happened while parsing file: " + i)
                 print(e)
+                print("Copying instead.")
+                shutil.copy("src/lua/" + i, "build/" + i)
             objectListLines.append("f>" + i)
             packageListLines.append("f>" + i)
         for ind, i in enumerate(config["nrFiles"]):

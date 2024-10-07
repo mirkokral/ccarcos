@@ -1,3 +1,4 @@
+import haxe.Json;
 import Devices.PeripheralDevice;
 import lua.Lua;
 import haxe.PosInfos;
@@ -17,9 +18,24 @@ class KernelConfig {
 	public static var logLevel:Int = 0;
 }
 
+function stripRight(str: String) {
+	var outstr: Array<String> = [];
+	var als = false;
+	for (i in 0...str.length+1) {
+		var char = str.length - i;
+		if(str.charAt(char) != " ") {
+			als = true;
+		}
+		if(als) {
+			outstr.insert(0, str.charAt(char));
+		}
+	}
+	return outstr.join("");
+}
+
 class Out {
 	public static function write(...s:String) {
-		var words = s.toArray().join(" ").split(" ");
+		var words = stripRight(s.toArray().join(" ")).split(" ");
 		var comp = "";
 		var terminal = (untyped __lua__("term")) ?? Hal.terminal;
 		var cpos = {
@@ -393,7 +409,7 @@ class Kernel {
 		Hal.terminal.clear();
 		Hal.terminal.setCursorPos(1, 1);
 		Logger.log("Syne " + Compiler.getDefine("syneversion"), 1);
-		if (Debug == null || Debug.sethook == null || false) {
+		if (Debug == null || Debug.sethook == null || Hal.platform == "Capy64") {
 			Logger.log("Platform doesn't support pre-emption, disabing.", 1);
 			usePreemption = false;
 		} else {
@@ -420,6 +436,7 @@ class Kernel {
 		}
 		scheduler.tasks[scheduler.addTask("B", function() {
 			try {
+				Logger.log("Starting init.lua", 1);
 				untyped __lua__('
 					local env = {}
 					local path = "/apps/init.lua"
@@ -430,6 +447,7 @@ class Kernel {
 					for k, v in pairs(env) do
 						compEnv[k] = v
 					end
+
 					compEnv["apiUtils"] = nil
 					compEnv["KDriversImpl"] = nil
 					compEnv["xnarcos"] = nil
@@ -437,10 +455,16 @@ class Kernel {
 					compEnv["write"] = Out.write
 					compEnv["print"] = Out.print
 					compEnv.tasking = require("tasking")
-					compEnv.arcos = require("arcos")
 					compEnv.devices = require("devices")
+					compEnv.arcos = require("arcos")
 					compEnv.sleep = compEnv.arcos.sleep
-
+					_G.tasking = require("tasking")
+					_G.arcos = require("arcos")
+					_G.devices = require("devices")
+					_G.sleep = compEnv.arcos.sleep
+					_G["write"] = Out.write
+					_G["print"] = Out.print
+					compEnv.Out = Out
 					setmetatable(compEnv, {
 						__index = function(t, k)
 							if k == "_G" then
@@ -449,18 +473,18 @@ class Kernel {
 						end,
 					})
 					local f, e = KDriversImpl.files.open(path, "r")
-					if not f then print(e) return end
+					if not f then error(e) return end
 					local compFunc, err = load(f.readAll(), path, nil, compEnv)
 					f.close()
 					if compFunc == nil then
 						error(err)
 					else
-						setfenv(compFunc, compEnv)
+						if debug and debug.setfenv then debug.setfenv(compFunc, compEnv) end
 						local ok, err = pcall(compFunc)
-						print(err)
+						error(err)
 					end');
 			} catch (e) {
-				trace(e);
+				this.panic(e.message, "Kernel", 0, e.stack);
 			}
 		})].pInfo.out = Hal.terminal;
 		untyped __lua__(
@@ -469,6 +493,24 @@ class Kernel {
 			_G.print = Out.print
 			"
 		);
+		function gb() {
+
+			if (!this.rootFs.exists("/config/arc/base.meta.json")) {
+				return "invalid package metadata";
+			}
+			var fH = this.rootFs.open("/config/arc/base.meta.json", "r");
+			
+			var meta = Json.parse(fH.read());
+			fH.close();
+			if (meta.version == null) {
+				return "arcos";
+			} else {
+				return meta.version;
+			}
+		}
+		if(Hal.branding != null) {
+			Hal.branding(gb());
+		}
 		while (running) {
 			scheduler.tick();
 		}
