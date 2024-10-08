@@ -3,8 +3,10 @@ local files = require("files")
 local tutils = require("tutils")
 local arc = require("arc")
 local arcos = require("arcos")
+arcos.sleep(0.5) -- Avoid text race condition.
 term.setTextColor(col.blue)
 print("arcos " .. arcos.version())
+print("\011f7" .. require("syscall").run("uname"))
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
     table.insert(secRisks, "The root account password has not yet been changed.")
@@ -19,6 +21,8 @@ if #secRisks > 0 then
     term.setTextColor(col.lightGray)
     print("- " .. table.concat(secRisks, "\n- "))
 end
+print()
+print("\011f7This software comes with NO warranty, to the extent of the applicable law.")
 print()
 local confile = files.open("/config/arcshell", "r")
 local conf = {}
@@ -70,12 +74,10 @@ local function run(a1, ...)
     local aok, aerr = pcall(function() 
         ok, err = arcos.r({}, cmdr, table.unpack(args))
         if not ok then
-            print("Not ok")
             printError(err)
         end
     end)
     if not aok then
-        print("Not aok")
         printError(err)
     end
     return ok, err
@@ -98,12 +100,10 @@ do
         if not pcall(write, tostring(err)) then
             write("(none)")
         end
-    else
-        write("@bogus")
     end
     write(" ")
     if environ.envType then
-        term.setTextColor(col.yellow)
+        term.setTextColor(col.yellow)   
         write("(" .. tostring(environ.envType) .. ") ")
     end
     term.setTextColor(col.gray) 
@@ -111,11 +111,13 @@ do
     write(" ")
     write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
     term.setTextColor(col.white)
-    local cmd = read(nil, history) or ""
-    table.insert(history, cmd)
-    local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
-    if not r then
-        print("Not ok")
-        pcall(printError, k)
-    end
+    local ok, err = pcall(function (...)
+        local cmd = read(nil, history) or ""
+        if cmd ~= "" then table.insert(history, cmd) end
+        local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
+        if not r then
+            pcall(printError, k)
+        end
+    end)
+    if not ok then write("\n") end
 end

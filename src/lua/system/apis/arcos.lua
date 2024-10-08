@@ -69,8 +69,8 @@ arcos = {
     ev = function(filter)
         r = table.pack(coroutine.yield())
         -- print(require("tutils").s(r));
-        if r[1] == "terminate" then
-            error("Terminated")
+        if r[1] == "terminate" and (not r[2] or r[2] == "terminate") then
+            error("")
         end
         if not filter or r[1] == filter then
             return table.unpack(r)

@@ -11,61 +11,61 @@
 |services/enabled|-1|
 |config/apps|-1|
 |/startup.lua|0|
-|/init.lua|25210|
-|system/bootloader.lua|57834|
-|system/rel|58770|
-|system/krnl.lua|58776|
-|system/apis/arc.lua|234233|
-|system/apis/col.lua|245578|
-|system/apis/files.lua|249702|
-|system/apis/hashing.lua|259385|
-|system/apis/rd.lua|264020|
-|system/apis/tutils.lua|264933|
-|system/apis/ui.lua|268649|
-|system/apis/window.lua|289824|
-|system/apis/keys.lua|304913|
-|system/apis/arcos.lua|304959|
-|system/apis/syscall.lua|309044|
-|system/apis/devices.lua|309770|
-|system/apis/dev.lua|310782|
-|system/apis/tasking.lua|310913|
-|system/apis/bit.lua|311406|
-|system/apis/cellui.lua|318049|
-|services/elevator.lua|461970|
-|services/elevatorSrv.lua|464412|
-|services/oobe.lua|467622|
-|services/pms.lua|473685|
-|services/shell.lua|477555|
-|services/enabled/login|477662|
-|data/PRIVACY.txt|477672|
-|config/aboot|478561|
-|config/arcrepo|478721|
-|config/arcshell|478738|
-|config/hostname|478790|
-|config/passwd|478795|
-|apps/adduser.lua|479045|
-|apps/arc.lua|479625|
-|apps/cat.lua|482702|
-|apps/cd.lua|482978|
-|apps/cp.lua|483307|
-|apps/init.lua|483576|
-|apps/kmsg.lua|486896|
-|apps/ls.lua|486956|
-|apps/mkdir.lua|487706|
-|apps/mv.lua|487852|
-|apps/rm.lua|488121|
-|apps/rmuser.lua|488303|
-|apps/shell.lua|488773|
-|apps/uitest.lua|492086|
-|apps/clear.lua|497486|
-|apps/shutdown.lua|497522|
-|apps/reboot.lua|497549|
-|apps/celluitest.lua|497574|
-|apps/attach.lua|497732|
-|apps/detach.lua|497992|
-|apps/lua.lua|498203|
-|apps/colors.lua|499224|
-|sys/vendor.bmp|499464|
+|/init.lua|25207|
+|system/bootloader.lua|57831|
+|system/rel|58767|
+|system/krnl.lua|58773|
+|system/apis/arc.lua|238616|
+|system/apis/col.lua|249961|
+|system/apis/files.lua|254085|
+|system/apis/hashing.lua|263768|
+|system/apis/rd.lua|268403|
+|system/apis/tutils.lua|269316|
+|system/apis/ui.lua|272504|
+|system/apis/window.lua|293679|
+|system/apis/keys.lua|308768|
+|system/apis/arcos.lua|308814|
+|system/apis/syscall.lua|312927|
+|system/apis/devices.lua|313653|
+|system/apis/dev.lua|314665|
+|system/apis/tasking.lua|314796|
+|system/apis/bit.lua|315396|
+|system/apis/cellui.lua|322039|
+|services/elevator.lua|465960|
+|services/elevatorSrv.lua|468402|
+|services/oobe.lua|471612|
+|services/pms.lua|477675|
+|services/shell.lua|481545|
+|services/enabled/login|481652|
+|data/PRIVACY.txt|481662|
+|config/aboot|482551|
+|config/arcrepo|482711|
+|config/arcshell|482728|
+|config/hostname|482780|
+|config/passwd|482785|
+|apps/adduser.lua|483035|
+|apps/arc.lua|483615|
+|apps/cat.lua|486692|
+|apps/cd.lua|486968|
+|apps/cp.lua|487297|
+|apps/init.lua|487566|
+|apps/kmsg.lua|491202|
+|apps/ls.lua|491262|
+|apps/mkdir.lua|492012|
+|apps/mv.lua|492158|
+|apps/rm.lua|492427|
+|apps/rmuser.lua|492609|
+|apps/shell.lua|493079|
+|apps/uitest.lua|496612|
+|apps/clear.lua|502012|
+|apps/shutdown.lua|502048|
+|apps/reboot.lua|502075|
+|apps/celluitest.lua|502100|
+|apps/attach.lua|502258|
+|apps/detach.lua|502518|
+|apps/lua.lua|502729|
+|apps/colors.lua|503829|
+|sys/vendor.bmp|504069|
 --ENDTABLE
 if arcos or xnarcos then return end
 local function strsplit(inputstr, sep)
@@ -184,7 +184,7 @@ _G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
         end
     end
     while true do
-        local sEvent, param, param1, param2 = coroutine.yield()
+        local sEvent, param, param1, param2 = os.pullEvent()
         if sEvent == "char" then
             clear()
             sLine = string.sub(sLine, 1, nPos) .. param .. string.sub(sLine, nPos + 1)
@@ -2791,7 +2791,7 @@ Out.new = {}
 Out.__name__ = true
 Out.write = function(...) 
   local s = {...}
-  local words = String.prototype.split(___Kernel_Kernel_Fields_.stripRight(__haxe__Rest_Rest_Impl_.toArray(s):join(" ")), " ");
+  local words = String.prototype.split(__haxe__Rest_Rest_Impl_.toArray(s):join(" "), " ");
   local comp = "";
   local tmp = term;
   local terminal = (function() 
@@ -2812,7 +2812,7 @@ Out.write = function(...)
     local _g_key = _g_current - 1;
     local index = _g_key;
     local word = _g_value;
-    if ((cpos_x + #word) > terminal.getSize()) then 
+    if ((cpos_x + #word) > (terminal.getSize() + 1)) then 
       comp = Std.string(comp) .. Std.string("\n");
       cpos_x = 1;
       cpos_y = cpos_y + 1;
@@ -6033,12 +6033,13 @@ __lua_PairTools.copy = function(table1)
   do return ret end;
 end
 
-__scheduler_TaskInfo.new = function(name,id,env,user,out) 
+__scheduler_TaskInfo.new = function(name,id,env,user,out,parents) 
   local self = _hx_new(__scheduler_TaskInfo.prototype)
-  __scheduler_TaskInfo.super(self,name,id,env,user,out)
+  __scheduler_TaskInfo.super(self,name,id,env,user,out,parents)
   return self
 end
-__scheduler_TaskInfo.super = function(self,name,id,env,user,out) 
+__scheduler_TaskInfo.super = function(self,name,id,env,user,out,parents) 
+  self.parents = _hx_tab_array({}, 0);
   self.name = name;
   self.id = id;
   self.env = env;
@@ -6046,6 +6047,7 @@ __scheduler_TaskInfo.super = function(self,name,id,env,user,out)
   self.paused = false;
   self.nice = 0;
   self.out = out;
+  self.parents = parents;
 end
 __scheduler_TaskInfo.__name__ = true
 __scheduler_TaskInfo.prototype = _hx_e();
@@ -6056,8 +6058,9 @@ __scheduler_TaskInfo.prototype.user= nil;
 __scheduler_TaskInfo.prototype.paused= nil;
 __scheduler_TaskInfo.prototype.nice= nil;
 __scheduler_TaskInfo.prototype.out= nil;
+__scheduler_TaskInfo.prototype.parents= nil;
 __scheduler_TaskInfo.prototype.copy = function(self) 
-  local ti = __scheduler_TaskInfo.new(self.name, self.id, self.env, self.user, self.out);
+  local ti = __scheduler_TaskInfo.new(self.name, self.id, self.env, self.user, self.out, self.parents);
   ti.paused = self.paused;
   ti.nice = self.nice;
   do return ti end
@@ -6089,6 +6092,7 @@ __scheduler_Scheduler.new = function(usePreemption,kernel)
   return self
 end
 __scheduler_Scheduler.super = function(self,usePreemption,kernel) 
+  self.ctrlPressed = false;
   self.usePreemption = false;
   self.tasks = _hx_tab_array({}, 0);
   self.kernel = kernel;
@@ -6110,7 +6114,7 @@ __scheduler_Scheduler.prototype.getCurrentTask = function(self)
   if (self.tasks[self.currentTaskPid] ~= nil) then 
     do return self.tasks[self.currentTaskPid].pInfo:copy() end;
   else
-    do return __scheduler_TaskInfo.new("Kernel", -1, __haxe_ds_StringMap.new(), "root", KDriversImpl.terminal) end;
+    do return __scheduler_TaskInfo.new("Kernel", -1, __haxe_ds_StringMap.new(), "root", KDriversImpl.terminal, _hx_tab_array({}, 0)) end;
   end;
 end
 __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out) 
@@ -6127,7 +6131,7 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
   self.tasks[pid].coroutine = _G.coroutine.create(function() 
     if (_gthis.usePreemption) then 
       debug.sethook(function() 
-        if ((KDriversImpl.computer.uptime() - _gthis.tasks[pid].lastPreempt) > 0.01) then 
+        if ((KDriversImpl.computer.uptime() - _gthis.tasks[pid].lastPreempt) > 0.1) then 
           _G.coroutine.yield("preempt");
           _gthis.tasks[pid].lastPreempt = KDriversImpl.computer.uptime();
         end;
@@ -6142,7 +6146,7 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
     elseif not _hx_status then 
       local _g = _hx_result;
       local e = __haxe_Exception.caught(_g);
-      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=131,className="scheduler.Scheduler",methodName="addTask"}));
+      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=140,className="scheduler.Scheduler",methodName="addTask"}));
       local id = KDriversImpl.timers.start(5);
       while (true) do _hx_do_first_1 = false;
         
@@ -6172,27 +6176,88 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
     end;
   end);
   self.tasks[pid].taskQueue = _hx_tab_array({}, 0);
-  self.tasks[pid].pInfo = __scheduler_TaskInfo.new(name, pid, env, user, out);
+  local pid1 = pid;
+  local tmp = self:getCurrentTask().parents:concat(_hx_tab_array({[0]=self:getCurrentTask().id}, 1));
+  self.tasks[pid].pInfo = __scheduler_TaskInfo.new(name, pid1, env, user, out, tmp);
   self.tasks[pid].lastPreempt = KDriversImpl.computer.uptime();
   do return pid end
 end
 __scheduler_Scheduler.prototype.killTask = function(self,pid) 
   self.tasks:remove(self.tasks[pid]);
 end
+__scheduler_Scheduler.prototype.fixEvent = function(self,ev,termoffsetx,termoffsety,monitor) 
+  if (monitor ~= nil) then 
+    if ((ev[0] == "monitor_touch") and (ev[1] == monitor)) then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_click", 1, ev[2] + termoffsetx, ev[3] + termoffsety}, 4), _hx_tab_array({[0]="mouse_up", 1, ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 2) end;
+    end;
+    if ((ev[0] == "monitor_resize") and (ev[1] == monitor)) then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="term_resize"}, 1)}, 1) end;
+    end;
+    if (_hx_tab_array({[0]="term_resize", "mouse_click", "mouse_up", "mouse_drag", "mouse_scroll"}, 5):contains(ev[0])) then 
+      Logger.log(Std.string("Cancelling event: ") .. Std.string(Std.string(ev[0])), 0, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=184,className="scheduler.Scheduler",methodName="fixEvent"}));
+      do return _hx_tab_array({}, 0) end;
+    end;
+  else
+    if (ev[0] == "mouse_click") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_click", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+    if (ev[0] == "mouse_drag") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_drag", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+    if (ev[0] == "mouse_scroll") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_scroll", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+    if (ev[0] == "mouse_up") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_up", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+  end;
+  do return _hx_tab_array({[0]=ev}, 1) end
+end
+__scheduler_Scheduler.prototype.ctrlPressed= nil;
 __scheduler_Scheduler.prototype.handleEvent = function(self,ev) 
   if (ev[0] == "peripheral") then 
     self.kernel.dm:add(PeripheralDevice.new(ev[1]));
   end;
+  if ((ev[0] == "key") and (ev[1] == KDriversImpl.terminal.kMap.leftCtrl)) then 
+    self.ctrlPressed = true;
+  end;
+  if ((ev[0] == "key") and (ev[1] == KDriversImpl.terminal.kMap.rightCtrl)) then 
+    self.ctrlPressed = true;
+  end;
+  if ((ev[0] == "key_up") and (ev[1] == KDriversImpl.terminal.kMap.leftCtrl)) then 
+    self.ctrlPressed = false;
+  end;
+  if ((ev[0] == "key_up") and (ev[1] == KDriversImpl.terminal.kMap.rightCtrl)) then 
+    self.ctrlPressed = false;
+  end;
   if (ev[0] == "peripheral_detach") then 
     self.kernel.dm:remove(ev[1]);
   end;
-  local _g = 0;
-  local _g1 = self.tasks;
-  while (_g < _g1.length) do _hx_do_first_1 = false;
-    
-    local task = _g1[_g];
-    _g = _g + 1;
-    task.taskQueue:push(ev);
+  if (((self.ctrlPressed and (ev[0] == "key")) and (ev[1] == KDriversImpl.terminal.kMap.c)) or (ev[0] == "terminate")) then 
+    self.tasks[0].taskQueue:push(_hx_tab_array({[0]="terminate", "root"}, 2));
+  else
+    local _g = 0;
+    local _g1 = self.tasks;
+    while (_g < _g1.length) do _hx_do_first_1 = false;
+      
+      local task = _g1[_g];
+      _g = _g + 1;
+      local tmp = task.pInfo.out.offsetx;
+      local tmp1 = task.pInfo.out.offsety;
+      task.taskQueue = task.taskQueue:concat(self:fixEvent(ev, (function() 
+        local _hx_1
+        if (tmp ~= nil) then 
+        _hx_1 = tmp; else 
+        _hx_1 = 0; end
+        return _hx_1
+      end )(), (function() 
+        local _hx_2
+        if (tmp1 ~= nil) then 
+        _hx_2 = tmp1; else 
+        _hx_2 = 0; end
+        return _hx_2
+      end )(), task.pInfo.out.name));
+    end;
   end;
 end
 __scheduler_Scheduler.prototype.resumeTask = function(self,task,fev) 
@@ -6340,8 +6405,8 @@ __scheduler_Scheduler.prototype.resumeTask = function(self,task,fev)
   end;
 end
 __scheduler_Scheduler.prototype.tick = function(self) 
-  if (self.tasks.length == 0) then 
-    self.kernel:panic("All tasks died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=225,className="scheduler.Scheduler",methodName="tick"}));
+  if (self.tasks[0] == nil) then 
+    self.kernel:panic("Init died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=316,className="scheduler.Scheduler",methodName="tick"}));
   end;
   local n = false;
   local _g = 0;
@@ -6549,7 +6614,7 @@ __syscall_extensions_ArcosExtension.prototype.getSyscalls = function(self,kernel
     local error = d[1];
     local file = d[2];
     local line = d[3];
-    kernel:panic(error, file, line, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/syscall/extensions/ArcosExtension.hx",lineNumber=14,className="syscall.extensions.ArcosExtension",methodName="getSyscalls"}));
+    kernel:panic(error, file, line, nil, nil);
     do return _hx_tab_array({}, 0) end;
   end), __syscall_Syscall.new("log", function(...) 
     local d = {...}
@@ -6619,7 +6684,7 @@ __syscall_extensions_ArcosExtension.prototype.getSyscalls = function(self,kernel
     do return _hx_tab_array({[0]=KDriversImpl.computer.date(d[1])}, 1) end;
   end), __syscall_Syscall.new("queue", function(...) 
     local d = {...}
-    if (kernel.scheduler:getCurrentTask().user ~= "root") then 
+    if ((d[1] == "terminate") or (d[1] == "system")) then 
       _G.error(__haxe_Exception.thrown("No permission for this action"),0);
     end;
     local _g = 0;
@@ -7062,6 +7127,32 @@ __syscall_extensions_TaskingExtension.prototype.getSyscalls = function(self,kern
     kernel.scheduler.tasks[v].pInfo.nice = nice;
     kernel.scheduler.tasks[v].pInfo.out = out;
     do return _hx_tab_array({[0]=v}, 1) end;
+  end), __syscall_Syscall.new("tasking.killTask", function(...) 
+    local d = {...}
+    local pid = d[1];
+    local tmp = d[2];
+    local signal = (function() 
+      local _hx_5
+      if (tmp ~= nil) then 
+      _hx_5 = tmp; else 
+      _hx_5 = "terminate"; end
+      return _hx_5
+    end )();
+    if (not __lua_Boot.__instanceof(pid, Int)) then 
+      _G.error(__haxe_Exception.thrown("Pid must be integer"),0);
+    end;
+    if (not __lua_Boot.__instanceof(signal, String)) then 
+      _G.error(__haxe_Exception.thrown("Signal must be string"),0);
+    end;
+    if (((kernel.scheduler:getCurrentTask().user ~= "root") and (kernel.scheduler.tasks[pid].pInfo.user ~= kernel.scheduler:getCurrentTask().user)) and not kernel.scheduler.tasks[pid].pInfo.parents:contains(kernel.scheduler:getCurrentTask().id)) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action (note: you can use tasking.changeuser to change the current user)"),0);
+    end;
+    if (signal == "annihalate") then 
+      kernel.scheduler.tasks:remove(kernel.scheduler.tasks[pid]);
+    else
+      kernel.scheduler.tasks[pid].taskQueue:push(_hx_tab_array({[0]="terminate", signal}, 2));
+    end;
+    do return _hx_tab_array({}, 0) end;
   end), __syscall_Syscall.new("tasking.getTasks", function(...) 
     local _ = {...}
     local _g = _hx_tab_array({}, 0);
@@ -7084,7 +7175,7 @@ __syscall_extensions_TaskingExtension.prototype.getSyscalls = function(self,kern
     if (not __lua_Boot.__instanceof(paused, Bool)) then 
       _G.error(__haxe_Exception.thrown("Paused must be boolean"),0);
     end;
-    if ((kernel.scheduler:getCurrentTask().user ~= "root") and (kernel.scheduler.tasks[pid].pInfo.user ~= kernel.scheduler:getCurrentTask().user)) then 
+    if (((kernel.scheduler:getCurrentTask().user ~= "root") and (kernel.scheduler.tasks[pid].pInfo.user ~= kernel.scheduler:getCurrentTask().user)) and not kernel.scheduler.tasks[pid].pInfo.parents:contains(kernel.scheduler:getCurrentTask().id)) then 
       _G.error(__haxe_Exception.thrown("No permission for this action (note: you can use tasking.changeuser to change the current user)"),0);
     end;
     kernel.scheduler.tasks[pid].pInfo.paused = paused;
@@ -7105,7 +7196,7 @@ __syscall_extensions_TaskingExtension.prototype.getSyscalls = function(self,kern
     else
       do return _hx_tab_array({[0]=false}, 1) end;
     end;
-  end)}, 4) end
+  end)}, 5) end
 end
 
 __syscall_extensions_TaskingExtension.prototype.__class__ =  __syscall_extensions_TaskingExtension
@@ -8225,25 +8316,8 @@ return {
     testBI = testBI,
 }
 local expect = require("col").expect
-local function getArgs(fun)
-    local args = {}
-    local hook, mask, count = debug.gethook()
-    local argHook = function(...)
-        local info = debug.getinfo(3)
-        if 'pcall' ~= info.name then return end
-        for i = 1, math.huge do
-            local name, value = debug.getlocal(2, i)
-            if '(*temporary)' == name then
-                debug.sethook(hook, mask, count)
-                error('')
-                return
-            end
-            table.insert(args, name)
-        end
-    end
-    debug.sethook(argHook, "c")
-    pcall(fun)
-    return args
+local function getArgs(func)
+    return {"..."}
 end
 local function serializeTable(val, name, skipnewlines, depth, doColors)
     skipnewlines = skipnewlines or false
@@ -9399,8 +9473,8 @@ arcos = {
     end,
     ev = function(filter)
         r = table.pack(coroutine.yield())
-        if r[1] == "terminate" then
-            error("Terminated")
+        if r[1] == "terminate" and (not r[2] or r[2] == "terminate") then
+            error("")
         end
         if not filter or r[1] == filter then
             return table.unpack(r)
@@ -9578,6 +9652,9 @@ return setmetatable({}, {
 return {
     createTask = function(name, callback, nice, user, out, env)
         return syscall.tasking.createTask(name, callback, nice, user, out, env)
+    end,
+    killTask = function(pid, signal)
+        syscall.tasking.killTask(pid, signal or "terminate")
     end,
     getTasks = function()
         return syscall.tasking.getTasks()
@@ -15390,6 +15467,7 @@ local arcos = require("arcos")
 local sleep = arcos.sleep
 local col = require("col")  
 write("\011f8Welcome to \011f2arcos\011f8!\n")
+local rt = -1
 for index, value in ipairs(files.ls("/services/enabled")) do
     local servFile, err = files.open("/services/enabled/"..value, "r")
     if not servFile then
@@ -15436,7 +15514,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
             else
                 threadterm = term
             end    
-            tasking.createTask("Service: " .. i:sub(3), function()
+            local pid = tasking.createTask("Service: " .. i:sub(3), function()
                 local ok, err = arcos.r({
                     ackFinish = function()
                         currentServiceDone = true
@@ -15451,6 +15529,9 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                 end
                 sleep(1)
             end, 1, "root", threadterm)
+            if i:sub(1,1) ~= "l" then
+               rt = pid 
+            end
             if i:sub(2,2) == "|" then
                 repeat sleep(0.2)
                 until currentServiceDone
@@ -15459,9 +15540,15 @@ for index, value in ipairs(files.ls("/services/enabled")) do
         end
     end
 end
-tasking.setTaskPaused(arcos.getCurrentTask()["pid"], true)
 while true do
     local ev = {coroutine.yield()}
+    if ev[1] == "terminate" and ev[2] == "root" then
+        if rt == -1 then
+            write("\011f8Init: No root task (last task which outputs to the console), terminate not happening.")
+        else
+            tasking.killTask(rt, "terminate")
+        end
+    end
 end
 local klb = require("arcos").getKernelLogBuffer()
 print(klb)local files = require("files")
@@ -15532,8 +15619,10 @@ local files = require("files")
 local tutils = require("tutils")
 local arc = require("arc")
 local arcos = require("arcos")
+arcos.sleep(0.5) -- Avoid text race condition.
 term.setTextColor(col.blue)
 print("arcos " .. arcos.version())
+print("\011f7" .. require("syscall").run("uname"))
 local secRisks = {}
 if arcos.validateUser("root", "toor") then
     table.insert(secRisks, "The root account password has not yet been changed.")
@@ -15548,6 +15637,8 @@ if #secRisks > 0 then
     term.setTextColor(col.lightGray)
     print("- " .. table.concat(secRisks, "\n- "))
 end
+print()
+print("\011f7This software comes with NO warranty, to the extent of the applicable law.")
 print()
 local confile = files.open("/config/arcshell", "r")
 local conf = {}
@@ -15599,12 +15690,10 @@ local function run(a1, ...)
     local aok, aerr = pcall(function() 
         ok, err = arcos.r({}, cmdr, table.unpack(args))
         if not ok then
-            print("Not ok")
             printError(err)
         end
     end)
     if not aok then
-        print("Not aok")
         printError(err)
     end
     return ok, err
@@ -15627,12 +15716,10 @@ do
         if not pcall(write, tostring(err)) then
             write("(none)")
         end
-    else
-        write("@bogus")
     end
     write(" ")
     if environ.envType then
-        term.setTextColor(col.yellow)
+        term.setTextColor(col.yellow)   
         write("(" .. tostring(environ.envType) .. ") ")
     end
     term.setTextColor(col.gray) 
@@ -15640,13 +15727,15 @@ do
     write(" ")
     write(arcos.getCurrentTask().user == "root" and "# " or "$ ")
     term.setTextColor(col.white)
-    local cmd = read(nil, history) or ""
-    table.insert(history, cmd)
-    local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
-    if not r then
-        print("Not ok")
-        pcall(printError, k)
-    end
+    local ok, err = pcall(function (...)
+        local cmd = read(nil, history) or ""
+        if cmd ~= "" then table.insert(history, cmd) end
+        local r, k = pcall(run, table.unpack(tutils.split(cmd, " ")))
+        if not r then
+            pcall(printError, k)
+        end
+    end)
+    if not ok then write("\n") end
 endlocal ui = require("ui")
 local col = require("col")
 local dev = require("dev")
@@ -15879,7 +15968,7 @@ if type(side) ~= "string" then
 end
 periphemu.remove(side)local arcos = require "arcos"
 local tutils = require "tutils"
-print("\011f0" .. _VERSION .. "\011f8 repl on \011fb" .. arcos.version())
+print("\011fa" .. _VERSION .. "\011f8 repl on \011fbarcos " .. arcos.version())
 print("\011f8Use .exit to exit.")
 print("\011f7Already loaded apis: arcos, files, tasking. Use require() to load more")
 local luaGlobal = {}
@@ -15889,13 +15978,15 @@ end
 luaGlobal.arcos = require("arcos")
 luaGlobal.tasking = require("tasking")
 luaGlobal.files = require("files")
+local history = {}
 while true do
     write("\011f8> \011f0")
-    local cq = read()
+    local cq = read(nil, history)
     if cq == ".exit" then
         break
     end
-    if not cq then goto continue end
+    if not cq or cq == "" then goto continue end
+    table.insert(history, cq)
     local chunkl, err = load(cq, "eval", nil, luaGlobal)
     local chunklb, errb = load("return " .. cq, "eval", nil, luaGlobal)
     if chunklb then

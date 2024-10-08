@@ -28,14 +28,14 @@ function stripRight(str: String) {
 		}
 		if(als) {
 			outstr.insert(0, str.charAt(char));
-		}
+		}	
 	}
 	return outstr.join("");
 }
 
 class Out {
 	public static function write(...s:String) {
-		var words = stripRight(s.toArray().join(" ")).split(" ");
+		var words = s.toArray().join(" ").split(" ");
 		var comp = "";
 		var terminal = (untyped __lua__("term")) ?? Hal.terminal;
 		var cpos = {
@@ -44,7 +44,7 @@ class Out {
 		}
 		// Hal.terminal.write(s.toArray().join(" "));
 		for (index => word in words) {
-			if (cpos.x + word.length > terminal.getSize().x) {
+			if (cpos.x + word.length > terminal.getSize().x+1) {
 				// var cursorPos = Hal.terminal.getCursorPos();
 				// Hal.terminal.setCursorPos(1, cursorPos.y + 1);
 				// if (Hal.terminal.getCursorPos().y > Hal.terminal.getSize().y) {

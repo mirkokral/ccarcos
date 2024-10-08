@@ -18,6 +18,12 @@ return {
     createTask = function(name, callback, nice, user, out, env)
         return syscall.tasking.createTask(name, callback, nice, user, out, env)
     end,
+    ---Kill a task
+    ---@param pid number Task PID
+    ---@param signal string? Additional signal
+    killTask = function(pid, signal)
+        syscall.tasking.killTask(pid, signal or "terminate")
+    end,
     ---Gets all tasks
     ---@return PublicTaskIdentifier[]
     getTasks = function()

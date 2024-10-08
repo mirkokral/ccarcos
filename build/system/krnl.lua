@@ -918,7 +918,7 @@ Out.new = {}
 Out.__name__ = true
 Out.write = function(...) 
   local s = {...}
-  local words = String.prototype.split(___Kernel_Kernel_Fields_.stripRight(__haxe__Rest_Rest_Impl_.toArray(s):join(" ")), " ");
+  local words = String.prototype.split(__haxe__Rest_Rest_Impl_.toArray(s):join(" "), " ");
   local comp = "";
   local tmp = term;
   local terminal = (function() 
@@ -939,7 +939,7 @@ Out.write = function(...)
     local _g_key = _g_current - 1;
     local index = _g_key;
     local word = _g_value;
-    if ((cpos_x + #word) > terminal.getSize()) then 
+    if ((cpos_x + #word) > (terminal.getSize() + 1)) then 
       comp = Std.string(comp) .. Std.string("\n");
       cpos_x = 1;
       cpos_y = cpos_y + 1;
@@ -4160,12 +4160,13 @@ __lua_PairTools.copy = function(table1)
   do return ret end;
 end
 
-__scheduler_TaskInfo.new = function(name,id,env,user,out) 
+__scheduler_TaskInfo.new = function(name,id,env,user,out,parents) 
   local self = _hx_new(__scheduler_TaskInfo.prototype)
-  __scheduler_TaskInfo.super(self,name,id,env,user,out)
+  __scheduler_TaskInfo.super(self,name,id,env,user,out,parents)
   return self
 end
-__scheduler_TaskInfo.super = function(self,name,id,env,user,out) 
+__scheduler_TaskInfo.super = function(self,name,id,env,user,out,parents) 
+  self.parents = _hx_tab_array({}, 0);
   self.name = name;
   self.id = id;
   self.env = env;
@@ -4173,6 +4174,7 @@ __scheduler_TaskInfo.super = function(self,name,id,env,user,out)
   self.paused = false;
   self.nice = 0;
   self.out = out;
+  self.parents = parents;
 end
 __scheduler_TaskInfo.__name__ = true
 __scheduler_TaskInfo.prototype = _hx_e();
@@ -4183,8 +4185,9 @@ __scheduler_TaskInfo.prototype.user= nil;
 __scheduler_TaskInfo.prototype.paused= nil;
 __scheduler_TaskInfo.prototype.nice= nil;
 __scheduler_TaskInfo.prototype.out= nil;
+__scheduler_TaskInfo.prototype.parents= nil;
 __scheduler_TaskInfo.prototype.copy = function(self) 
-  local ti = __scheduler_TaskInfo.new(self.name, self.id, self.env, self.user, self.out);
+  local ti = __scheduler_TaskInfo.new(self.name, self.id, self.env, self.user, self.out, self.parents);
   ti.paused = self.paused;
   ti.nice = self.nice;
   do return ti end
@@ -4216,6 +4219,7 @@ __scheduler_Scheduler.new = function(usePreemption,kernel)
   return self
 end
 __scheduler_Scheduler.super = function(self,usePreemption,kernel) 
+  self.ctrlPressed = false;
   self.usePreemption = false;
   self.tasks = _hx_tab_array({}, 0);
   self.kernel = kernel;
@@ -4237,7 +4241,7 @@ __scheduler_Scheduler.prototype.getCurrentTask = function(self)
   if (self.tasks[self.currentTaskPid] ~= nil) then 
     do return self.tasks[self.currentTaskPid].pInfo:copy() end;
   else
-    do return __scheduler_TaskInfo.new("Kernel", -1, __haxe_ds_StringMap.new(), "root", KDriversImpl.terminal) end;
+    do return __scheduler_TaskInfo.new("Kernel", -1, __haxe_ds_StringMap.new(), "root", KDriversImpl.terminal, _hx_tab_array({}, 0)) end;
   end;
 end
 __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out) 
@@ -4254,7 +4258,7 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
   self.tasks[pid].coroutine = _G.coroutine.create(function() 
     if (_gthis.usePreemption) then 
       debug.sethook(function() 
-        if ((KDriversImpl.computer.uptime() - _gthis.tasks[pid].lastPreempt) > 0.01) then 
+        if ((KDriversImpl.computer.uptime() - _gthis.tasks[pid].lastPreempt) > 0.1) then 
           _G.coroutine.yield("preempt");
           _gthis.tasks[pid].lastPreempt = KDriversImpl.computer.uptime();
         end;
@@ -4269,7 +4273,7 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
     elseif not _hx_status then 
       local _g = _hx_result;
       local e = __haxe_Exception.caught(_g);
-      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=131,className="scheduler.Scheduler",methodName="addTask"}));
+      __haxe_Log.trace(e, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=140,className="scheduler.Scheduler",methodName="addTask"}));
       local id = KDriversImpl.timers.start(5);
       while (true) do _hx_do_first_1 = false;
         
@@ -4299,27 +4303,88 @@ __scheduler_Scheduler.prototype.addTask = function(self,name,callback,user,out)
     end;
   end);
   self.tasks[pid].taskQueue = _hx_tab_array({}, 0);
-  self.tasks[pid].pInfo = __scheduler_TaskInfo.new(name, pid, env, user, out);
+  local pid1 = pid;
+  local tmp = self:getCurrentTask().parents:concat(_hx_tab_array({[0]=self:getCurrentTask().id}, 1));
+  self.tasks[pid].pInfo = __scheduler_TaskInfo.new(name, pid1, env, user, out, tmp);
   self.tasks[pid].lastPreempt = KDriversImpl.computer.uptime();
   do return pid end
 end
 __scheduler_Scheduler.prototype.killTask = function(self,pid) 
   self.tasks:remove(self.tasks[pid]);
 end
+__scheduler_Scheduler.prototype.fixEvent = function(self,ev,termoffsetx,termoffsety,monitor) 
+  if (monitor ~= nil) then 
+    if ((ev[0] == "monitor_touch") and (ev[1] == monitor)) then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_click", 1, ev[2] + termoffsetx, ev[3] + termoffsety}, 4), _hx_tab_array({[0]="mouse_up", 1, ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 2) end;
+    end;
+    if ((ev[0] == "monitor_resize") and (ev[1] == monitor)) then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="term_resize"}, 1)}, 1) end;
+    end;
+    if (_hx_tab_array({[0]="term_resize", "mouse_click", "mouse_up", "mouse_drag", "mouse_scroll"}, 5):contains(ev[0])) then 
+      Logger.log(Std.string("Cancelling event: ") .. Std.string(Std.string(ev[0])), 0, nil, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=184,className="scheduler.Scheduler",methodName="fixEvent"}));
+      do return _hx_tab_array({}, 0) end;
+    end;
+  else
+    if (ev[0] == "mouse_click") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_click", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+    if (ev[0] == "mouse_drag") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_drag", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+    if (ev[0] == "mouse_scroll") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_scroll", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+    if (ev[0] == "mouse_up") then 
+      do return _hx_tab_array({[0]=_hx_tab_array({[0]="mouse_up", ev[1], ev[2] + termoffsetx, ev[3] + termoffsety}, 4)}, 1) end;
+    end;
+  end;
+  do return _hx_tab_array({[0]=ev}, 1) end
+end
+__scheduler_Scheduler.prototype.ctrlPressed= nil;
 __scheduler_Scheduler.prototype.handleEvent = function(self,ev) 
   if (ev[0] == "peripheral") then 
     self.kernel.dm:add(PeripheralDevice.new(ev[1]));
   end;
+  if ((ev[0] == "key") and (ev[1] == KDriversImpl.terminal.kMap.leftCtrl)) then 
+    self.ctrlPressed = true;
+  end;
+  if ((ev[0] == "key") and (ev[1] == KDriversImpl.terminal.kMap.rightCtrl)) then 
+    self.ctrlPressed = true;
+  end;
+  if ((ev[0] == "key_up") and (ev[1] == KDriversImpl.terminal.kMap.leftCtrl)) then 
+    self.ctrlPressed = false;
+  end;
+  if ((ev[0] == "key_up") and (ev[1] == KDriversImpl.terminal.kMap.rightCtrl)) then 
+    self.ctrlPressed = false;
+  end;
   if (ev[0] == "peripheral_detach") then 
     self.kernel.dm:remove(ev[1]);
   end;
-  local _g = 0;
-  local _g1 = self.tasks;
-  while (_g < _g1.length) do _hx_do_first_1 = false;
-    
-    local task = _g1[_g];
-    _g = _g + 1;
-    task.taskQueue:push(ev);
+  if (((self.ctrlPressed and (ev[0] == "key")) and (ev[1] == KDriversImpl.terminal.kMap.c)) or (ev[0] == "terminate")) then 
+    self.tasks[0].taskQueue:push(_hx_tab_array({[0]="terminate", "root"}, 2));
+  else
+    local _g = 0;
+    local _g1 = self.tasks;
+    while (_g < _g1.length) do _hx_do_first_1 = false;
+      
+      local task = _g1[_g];
+      _g = _g + 1;
+      local tmp = task.pInfo.out.offsetx;
+      local tmp1 = task.pInfo.out.offsety;
+      task.taskQueue = task.taskQueue:concat(self:fixEvent(ev, (function() 
+        local _hx_1
+        if (tmp ~= nil) then 
+        _hx_1 = tmp; else 
+        _hx_1 = 0; end
+        return _hx_1
+      end )(), (function() 
+        local _hx_2
+        if (tmp1 ~= nil) then 
+        _hx_2 = tmp1; else 
+        _hx_2 = 0; end
+        return _hx_2
+      end )(), task.pInfo.out.name));
+    end;
   end;
 end
 __scheduler_Scheduler.prototype.resumeTask = function(self,task,fev) 
@@ -4467,8 +4532,8 @@ __scheduler_Scheduler.prototype.resumeTask = function(self,task,fev)
   end;
 end
 __scheduler_Scheduler.prototype.tick = function(self) 
-  if (self.tasks.length == 0) then 
-    self.kernel:panic("All tasks died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=225,className="scheduler.Scheduler",methodName="tick"}));
+  if (self.tasks[0] == nil) then 
+    self.kernel:panic("Init died", "Scheduler", 0, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/scheduler/Scheduler.hx",lineNumber=316,className="scheduler.Scheduler",methodName="tick"}));
   end;
   local n = false;
   local _g = 0;
@@ -4676,7 +4741,7 @@ __syscall_extensions_ArcosExtension.prototype.getSyscalls = function(self,kernel
     local error = d[1];
     local file = d[2];
     local line = d[3];
-    kernel:panic(error, file, line, nil, _hx_o({__fields__={fileName=true,lineNumber=true,className=true,methodName=true},fileName="./src/syscall/extensions/ArcosExtension.hx",lineNumber=14,className="syscall.extensions.ArcosExtension",methodName="getSyscalls"}));
+    kernel:panic(error, file, line, nil, nil);
     do return _hx_tab_array({}, 0) end;
   end), __syscall_Syscall.new("log", function(...) 
     local d = {...}
@@ -4746,7 +4811,7 @@ __syscall_extensions_ArcosExtension.prototype.getSyscalls = function(self,kernel
     do return _hx_tab_array({[0]=KDriversImpl.computer.date(d[1])}, 1) end;
   end), __syscall_Syscall.new("queue", function(...) 
     local d = {...}
-    if (kernel.scheduler:getCurrentTask().user ~= "root") then 
+    if ((d[1] == "terminate") or (d[1] == "system")) then 
       _G.error(__haxe_Exception.thrown("No permission for this action"),0);
     end;
     local _g = 0;
@@ -5189,6 +5254,32 @@ __syscall_extensions_TaskingExtension.prototype.getSyscalls = function(self,kern
     kernel.scheduler.tasks[v].pInfo.nice = nice;
     kernel.scheduler.tasks[v].pInfo.out = out;
     do return _hx_tab_array({[0]=v}, 1) end;
+  end), __syscall_Syscall.new("tasking.killTask", function(...) 
+    local d = {...}
+    local pid = d[1];
+    local tmp = d[2];
+    local signal = (function() 
+      local _hx_5
+      if (tmp ~= nil) then 
+      _hx_5 = tmp; else 
+      _hx_5 = "terminate"; end
+      return _hx_5
+    end )();
+    if (not __lua_Boot.__instanceof(pid, Int)) then 
+      _G.error(__haxe_Exception.thrown("Pid must be integer"),0);
+    end;
+    if (not __lua_Boot.__instanceof(signal, String)) then 
+      _G.error(__haxe_Exception.thrown("Signal must be string"),0);
+    end;
+    if (((kernel.scheduler:getCurrentTask().user ~= "root") and (kernel.scheduler.tasks[pid].pInfo.user ~= kernel.scheduler:getCurrentTask().user)) and not kernel.scheduler.tasks[pid].pInfo.parents:contains(kernel.scheduler:getCurrentTask().id)) then 
+      _G.error(__haxe_Exception.thrown("No permission for this action (note: you can use tasking.changeuser to change the current user)"),0);
+    end;
+    if (signal == "annihalate") then 
+      kernel.scheduler.tasks:remove(kernel.scheduler.tasks[pid]);
+    else
+      kernel.scheduler.tasks[pid].taskQueue:push(_hx_tab_array({[0]="terminate", signal}, 2));
+    end;
+    do return _hx_tab_array({}, 0) end;
   end), __syscall_Syscall.new("tasking.getTasks", function(...) 
     local _ = {...}
     local _g = _hx_tab_array({}, 0);
@@ -5211,7 +5302,7 @@ __syscall_extensions_TaskingExtension.prototype.getSyscalls = function(self,kern
     if (not __lua_Boot.__instanceof(paused, Bool)) then 
       _G.error(__haxe_Exception.thrown("Paused must be boolean"),0);
     end;
-    if ((kernel.scheduler:getCurrentTask().user ~= "root") and (kernel.scheduler.tasks[pid].pInfo.user ~= kernel.scheduler:getCurrentTask().user)) then 
+    if (((kernel.scheduler:getCurrentTask().user ~= "root") and (kernel.scheduler.tasks[pid].pInfo.user ~= kernel.scheduler:getCurrentTask().user)) and not kernel.scheduler.tasks[pid].pInfo.parents:contains(kernel.scheduler:getCurrentTask().id)) then 
       _G.error(__haxe_Exception.thrown("No permission for this action (note: you can use tasking.changeuser to change the current user)"),0);
     end;
     kernel.scheduler.tasks[pid].pInfo.paused = paused;
@@ -5232,7 +5323,7 @@ __syscall_extensions_TaskingExtension.prototype.getSyscalls = function(self,kern
     else
       do return _hx_tab_array({[0]=false}, 1) end;
     end;
-  end)}, 4) end
+  end)}, 5) end
 end
 
 __syscall_extensions_TaskingExtension.prototype.__class__ =  __syscall_extensions_TaskingExtension

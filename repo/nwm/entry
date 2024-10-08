@@ -1,0 +1,9 @@
+{
+    "friendlyName": "Net WM",
+    "description": "A simple window manager for arcos, which is planned to be used in nexde",
+    "owner": "TNC™ Development and Management Team",
+    "version": "0.0.1",
+    "vId": 0,
+    "dependencies": [],
+    "isIndependable": true
+}

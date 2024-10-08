@@ -3,6 +3,9 @@ return {
     createTask = function(name, callback, nice, user, out, env)
         return syscall.tasking.createTask(name, callback, nice, user, out, env)
     end,
+    killTask = function(pid, signal)
+        syscall.tasking.killTask(pid, signal or "terminate")
+    end,
     getTasks = function()
         return syscall.tasking.getTasks()
     end,

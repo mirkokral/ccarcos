@@ -173,7 +173,7 @@ _G.read = function(_sReplaceChar, _tHistory, _fnComplete, _sDefault)
         end
     end
     while true do
-        local sEvent, param, param1, param2 = coroutine.yield()
+        local sEvent, param, param1, param2 = os.pullEvent()
         if sEvent == "char" then
             -- Typed key
             clear()

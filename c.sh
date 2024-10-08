@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-installPackages=("craft" "rednet" "brainfuck" "audm")
+installPackages=("craft" "rednet" "brainfuck" "audm" "nwm")
 
 bash fullbuild.sh
 rm -rf ~/.local/share/craftos-pc/computer/120/

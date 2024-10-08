@@ -30,6 +30,26 @@ class TaskingExtension extends SyscallExtension {
 
 				return [v];
 			}),
+			new Syscall("tasking.killTask", function(...d:Dynamic) {
+				var pid = d[0];
+				var signal = d[1] ?? "terminate";
+				if (!Std.isOfType(pid, Int))
+					throw "Pid must be integer";
+				if (!Std.isOfType(signal, String))
+					throw "Signal must be string";
+
+				if (kernel.scheduler.getCurrentTask().user != "root" && kernel.scheduler.tasks[pid].pInfo.user != kernel.scheduler.getCurrentTask().user && !kernel.scheduler.tasks[pid].pInfo.parents.contains(kernel.scheduler.getCurrentTask().id)) {
+					throw "No permission for this action (note: you can use tasking.changeuser to change the current user)";
+				}
+
+
+				if(signal == "annihalate") {
+					kernel.scheduler.tasks.remove(kernel.scheduler.tasks[pid]);
+				} else {
+					kernel.scheduler.tasks[pid].taskQueue.push(["terminate", signal]);
+				}
+				return [];
+			}),
 			new Syscall("tasking.getTasks", function(..._:Dynamic) {
 				return [kernel.scheduler.tasks.map(e -> {
 					return {
@@ -49,7 +69,7 @@ class TaskingExtension extends SyscallExtension {
                     throw "Pid must be integer";
                 if (!Std.isOfType(paused, Bool))
                     throw "Paused must be boolean";
-                if (kernel.scheduler.getCurrentTask().user != "root" && kernel.scheduler.tasks[pid].pInfo.user != kernel.scheduler.getCurrentTask().user) {
+                if (kernel.scheduler.getCurrentTask().user != "root" && kernel.scheduler.tasks[pid].pInfo.user != kernel.scheduler.getCurrentTask().user && !kernel.scheduler.tasks[pid].pInfo.parents.contains(kernel.scheduler.getCurrentTask().id)) {
                     throw "No permission for this action (note: you can use tasking.changeuser to change the current user)";
                 }
                 kernel.scheduler.tasks[pid].pInfo.paused = paused;

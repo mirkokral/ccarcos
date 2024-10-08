@@ -1,28 +1,12 @@
 local expect = require("col").expect
 
-local function getArgs(fun)
-    local args = {}
-    local hook, mask, count = debug.gethook()
-
-    local argHook = function(...)
-        local info = debug.getinfo(3)
-        if 'pcall' ~= info.name then return end
-
-        for i = 1, math.huge do
-            local name, value = debug.getlocal(2, i)
-            if '(*temporary)' == name then
-                debug.sethook(hook, mask, count)
-                error('')
-                return
-            end
-            table.insert(args, name)
-        end
-    end
-
-    debug.sethook(argHook, "c")
-    pcall(fun)
-
-    return args
+local function getArgs(func)
+    -- local args = {}
+    -- for i = 1, debug.getinfo(func).nparams, 1 do
+    --     table.insert(args, debug.getlocal(func, i));
+    -- end
+    -- return args;
+    return {"..."}
 end
 local function serializeTable(val, name, skipnewlines, depth, doColors)
     skipnewlines = skipnewlines or false

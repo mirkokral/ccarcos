@@ -11,7 +11,7 @@ class ArcosExtension extends SyscallExtension {
 				var error = d[0];
 				var file = d[1];
 				var line = d[2];
-				kernel.panic(error, file, line);
+				kernel.panic(error, file, line, null, null);
 				return [];
 			}),
 			new Syscall("log", function(...d:Dynamic) {
@@ -88,7 +88,7 @@ class ArcosExtension extends SyscallExtension {
 				return [Hal.computer.date(d[0])];
 			}),
 			new Syscall("queue", function(...d: Dynamic) {
-				if (kernel.scheduler.getCurrentTask().user != "root") {
+				if(d[0] == "terminate" || d[0] == "system") {
 					throw "No permission for this action";
 				}
 				for (task in kernel.scheduler.tasks) {

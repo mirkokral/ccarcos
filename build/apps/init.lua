@@ -4,6 +4,7 @@ local arcos = require("arcos")
 local sleep = arcos.sleep
 local col = require("col")  
 write("\011f8Welcome to \011f2arcos\011f8!\n")
+local rt = -1
 for index, value in ipairs(files.ls("/services/enabled")) do
     local servFile, err = files.open("/services/enabled/"..value, "r")
     if not servFile then
@@ -50,7 +51,7 @@ for index, value in ipairs(files.ls("/services/enabled")) do
             else
                 threadterm = term
             end    
-            tasking.createTask("Service: " .. i:sub(3), function()
+            local pid = tasking.createTask("Service: " .. i:sub(3), function()
                 local ok, err = arcos.r({
                     ackFinish = function()
                         currentServiceDone = true
@@ -65,6 +66,9 @@ for index, value in ipairs(files.ls("/services/enabled")) do
                 end
                 sleep(1)
             end, 1, "root", threadterm)
+            if i:sub(1,1) ~= "l" then
+               rt = pid 
+            end
             if i:sub(2,2) == "|" then
                 repeat sleep(0.2)
                 until currentServiceDone
@@ -73,7 +77,13 @@ for index, value in ipairs(files.ls("/services/enabled")) do
         end
     end
 end
-tasking.setTaskPaused(arcos.getCurrentTask()["pid"], true)
 while true do
     local ev = {coroutine.yield()}
+    if ev[1] == "terminate" and ev[2] == "root" then
+        if rt == -1 then
+            write("\011f8Init: No root task (last task which outputs to the console), terminate not happening.")
+        else
+            tasking.killTask(rt, "terminate")
+        end
+    end
 end

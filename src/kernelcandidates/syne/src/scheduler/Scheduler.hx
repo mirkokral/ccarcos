@@ -61,7 +61,15 @@ class TaskInfo {
 	 */
 	public var out:Dynamic;
 
-	public function new(name:String, id:Int, env:Map<String, String>, user:String, out:Dynamic) {
+	/**
+	 * All the task's parents
+	 * This is mainly used to let tasks with children that are another user be able to modify and kill their children.
+	 * The last task in the array is the task's creator.
+	 * This is an array of pids.
+	 */
+	public var parents: Array<Int> = [];
+
+	public function new(name:String, id:Int, env:Map<String, String>, user:String, out:Dynamic, parents: Array<Int>) {
 		this.name = name;
 		this.id = id;
 		this.env = env;
@@ -69,10 +77,11 @@ class TaskInfo {
 		this.paused = false;
 		this.nice = 0;
 		this.out = out;
+		this.parents = parents;
 	}
 
 	public function copy() {
-		var ti = new TaskInfo(this.name, this.id, this.env, this.user, this.out);
+		var ti = new TaskInfo(this.name, this.id, this.env, this.user, this.out, this.parents);
 		ti.paused = this.paused;
 		ti.nice = this.nice;
 		return ti;
@@ -102,7 +111,7 @@ class Scheduler {
 		if (tasks[currentTaskPid] != null) {
 			return tasks[currentTaskPid].pInfo.copy();
 		} else {
-			return new TaskInfo("Kernel", -1, [], "root", Hal.terminal);
+			return new TaskInfo("Kernel", -1, [], "root", Hal.terminal, []);
 		}
 	}
 
@@ -119,7 +128,7 @@ class Scheduler {
 		tasks[pid].coroutine = Coroutine.create(() -> {
 			if (usePreemption) {
 				Debug.sethook(() -> {
-					if (Hal.computer.uptime() - tasks[pid].lastPreempt > 0.01) { // Momentary jiffy value
+					if (Hal.computer.uptime() - tasks[pid].lastPreempt > 0.1) { // Momentary jiffy value
 						Coroutine.yield("preempt");
 						tasks[pid].lastPreempt = Hal.computer.uptime();
 					}
@@ -139,7 +148,7 @@ class Scheduler {
 			}
 		});
 		tasks[pid].taskQueue = [];
-		tasks[pid].pInfo = new TaskInfo(name, pid, env, user, out);
+		tasks[pid].pInfo = new TaskInfo(name, pid, env, user, out, getCurrentTask().parents.concat([getCurrentTask().id]));
 		tasks[pid].lastPreempt = Hal.computer.uptime();
 		return pid;
 	}
@@ -148,15 +157,97 @@ class Scheduler {
 		tasks.remove(tasks[pid]);
 	}
 
+	public function fixEvent(ev: Array<Dynamic>, termoffsetx: Int, termoffsety: Int, ?monitor: String): Array<Array<Dynamic>> {
+		if(monitor != null) {
+			if(ev[0] == "monitor_touch" && ev[1] == monitor) {
+				return [
+					[
+						"mouse_click",
+						1,
+						ev[2] + termoffsetx,
+						ev[3] + termoffsety,
+					],
+					[
+						"mouse_up",
+						1,
+						ev[2] + termoffsetx,
+						ev[3] + termoffsety,
+					]
+				];
+			}
+			if(ev[0] == "monitor_resize" && ev[1] == monitor) {
+				return [[
+					"term_resize"
+				]];
+			}
+			if(["term_resize", "mouse_click", "mouse_up", "mouse_drag", "mouse_scroll"].contains(ev[0])) {
+				Logger.log("Cancelling event: " + ev[0], 0);
+				return [];
+			}
+		} else {
+			if(ev[0] == "mouse_click") {
+				return [[
+					"mouse_click",
+					ev[1],
+					ev[2] + termoffsetx,
+					ev[3] + termoffsety,
+				]];
+			}
+			if(ev[0] == "mouse_drag") {
+				return [[
+					"mouse_drag",
+					ev[1],
+					ev[2] + termoffsetx,
+					ev[3] + termoffsety,
+				]];
+			}
+			if(ev[0] == "mouse_scroll") {
+				return [[
+					"mouse_scroll",
+					ev[1],
+					ev[2] + termoffsetx,
+					ev[3] + termoffsety,
+				]];
+			}
+			if(ev[0] == "mouse_up") {
+				return [[
+					"mouse_up",
+					ev[1],
+					ev[2] + termoffsetx,
+					ev[3] + termoffsety,
+				]];
+			}
+		}
+		return [ev];
+	}
+
+	var ctrlPressed = false;
+
 	private function handleEvent(ev: Array<Dynamic>) {
 		if(ev[0] == "peripheral") {
 			kernel.dm.add(new PeripheralDevice(ev[1]));
 		}
+		if(ev[0] == "key" && ev[1] == Hal.terminal.kMap.leftCtrl) {
+			ctrlPressed = true;
+		}
+		if(ev[0] == "key" && ev[1] == Hal.terminal.kMap.rightCtrl) {
+			ctrlPressed = true;
+		}
+		if(ev[0] == "key_up" && ev[1] == Hal.terminal.kMap.leftCtrl) {
+			ctrlPressed = false;
+		}
+		if(ev[0] == "key_up" && ev[1] == Hal.terminal.kMap.rightCtrl) {
+			ctrlPressed = false;
+		}
 		if(ev[0] == "peripheral_detach") {
 			kernel.dm.remove(ev[1]);
 		}	
-		for (task in tasks) {
-			task.taskQueue.push(ev);
+		if((ctrlPressed && ev[0] == "key" && ev[1] == Hal.terminal.kMap.c) || ev[0] == "terminate") {
+			tasks[0].taskQueue.push(["terminate", "root"]);
+		} else {
+			for (task in tasks) {
+				task.taskQueue = task.taskQueue.concat(fixEvent(ev, task.pInfo.out.offsetx ?? 0, task.pInfo.out.offsety ?? 0, task.pInfo.out.name));
+			}
 		}
 	}
 
@@ -221,8 +312,8 @@ class Scheduler {
 	}
 
 	public function tick() {
-		if (tasks.length == 0) {
-			this.kernel.panic("All tasks died", "Scheduler", 0);
+		if (tasks[0] == null) {
+			this.kernel.panic("Init died", "Scheduler", 0);
 		}
 		var n = false;
 		for (task in tasks) {
