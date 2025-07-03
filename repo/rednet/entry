@@ -4,6 +4,5 @@
     "owner": "TNC™ Development and Management Team",
     "version": "5",
     "vId": 5,
-    "dependencies": [],
-    "isIndependable": false
+    "dependencies": []
 }

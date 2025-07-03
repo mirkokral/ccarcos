@@ -1,5 +1,0 @@
-d>config
-d>config/desktops
-f>config/desktops/Shell
-d>services
-f>services/audm.lua

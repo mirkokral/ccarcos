@@ -5,8 +5,7 @@
     "owner": "TNC\u2122 Development and Management Team",
     "version": "24.08.21",
     "vId": 21,
-    "dependencies": [],
-    "isIndependable": true
+    "dependencies": []
   },
   "bmoscompat": {
     "friendlyName": "BM-OS Subsystem",
@@ -16,8 +15,15 @@
     "vId": 51,
     "dependencies": [
       "craft"
-    ],
-    "isIndependable": true
+    ]
+  },
+  "brainfuck": {
+    "friendlyName": "Brainfuck",
+    "description": "Funny programming language",
+    "owner": "arcos Development Team and contributors",
+    "version": "v2",
+    "vId": 2,
+    "dependencies": []
   },
   "craft": {
     "friendlyName": "Craft",
@@ -27,8 +33,7 @@
     "vId": 40,
     "dependencies": [
       "rednet"
-    ],
-    "isIndependable": true
+    ]
   },
   "gconfig": {
     "friendlyName": "Tweaks",
@@ -36,8 +41,7 @@
     "owner": "TNC\u2122 Development and Management Team",
     "version": "24.08.12",
     "vId": 12,
-    "dependencies": [],
-    "isIndependable": true
+    "dependencies": []
   },
   "ged": {
     "friendlyName": "Editor",
@@ -45,44 +49,7 @@
     "owner": "TNC\u2122 Development and Management Team",
     "version": "24.08.7",
     "vId": 7,
-    "dependencies": [],
-    "isIndependable": true
-  },
-  "rednet": {
-    "friendlyName": "RedNet",
-    "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
-    "owner": "TNC\u2122 Development and Management Team",
-    "version": "5",
-    "vId": 5,
-    "dependencies": [],
-    "isIndependable": false
-  },
-  "test": {
-    "friendlyName": "Test Application",
-    "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
-    "owner": "TNC\u2122 Development and Management Team",
-    "version": "24.08.4",
-    "vId": 4,
-    "dependencies": [],
-    "isIndependable": true
-  },
-  "base": {
-    "friendlyName": "arcos itself",
-    "description": "The package that has all the arcos files",
-    "owner": "arcos Development Team and contributors",
-    "version": "24.10b \"Synoid\"",
-    "vId": 15,
-    "dependencies": [],
-    "isIndependable": true
-  },
-  "brainfuck": {
-    "friendlyName": "Brainfuck",
-    "description": "Funny programming language",
-    "owner": "arcos Development Team and contributors",
-    "version": "v2",
-    "vId": 2,
-    "dependencies": [],
-    "isIndependable": true
+    "dependencies": []
   },
   "nwm": {
     "friendlyName": "Net WM",
@@ -90,7 +57,23 @@
     "owner": "TNC\u2122 Development and Management Team",
     "version": "0.0.1",
     "vId": 0,
-    "dependencies": [],
-    "isIndependable": true
-  }
+    "dependencies": []
+  },
+  "rednet": {
+    "friendlyName": "RedNet",
+    "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
+    "owner": "TNC\u2122 Development and Management Team",
+    "version": "5",
+    "vId": 5,
+    "dependencies": []
+  },
+  "test": {
+    "friendlyName": "Test Application",
+    "description": "Simply prints the string \"Hello, world!\" on the screen with the UI library.",
+    "owner": "TNC\u2122 Development and Management Team",
+    "version": "24.08.4",
+    "vId": 4,
+    "dependencies": []
+  },
+  "syne": {}
 }

@@ -1,31 +1,12 @@
-|/apis|-1|
 |/apps|-1|
 |/data|-1|
 |data/craft|-1|
 |data/craft/util|-1|
-|/index|0|
-|apis/_CEXPORTS.lua|136|
-|apps/craft.lua|405|
-|apps/edit.lua|14950|
-|data/craft/util/startup.lua|15004|
+|apps/craft.lua|0|
+|apps/edit.lua|14545|
+|data/craft/util/startup.lua|14599|
 --ENDTABLE
-d>apis
-f>apis/_CEXPORTS.lua
-d>apps
-f>apps/craft.lua
-f>apps/edit.lua
-d>data
-d>data/craft
-d>data/craft/util
-f>data/craft/util/startup.lua
--- This api only exists to replace the getfenv magic used by craft.lua.
--- This api is not meant to be used by anything else
-return {
-    paintutils = __LEGACY.paintutils,
-    settings = __LEGACY.settings,
-    textutils = __LEGACY.textutils,
-    help = __LEGACY.help,
-}
+
 local arcos = require("arcos")
 local devices = require("devices")
 local tasking = require("tasking")

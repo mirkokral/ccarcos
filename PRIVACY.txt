@@ -1,0 +1,6 @@
+By using arcos, you automatically agree to these
+terms.
+
+arcos at it's base does not phone home, send your data to the CIA, FBI or anyone else, send space drones after you for putting pear on your pizza, or use your screen content to train AI models.
+
+However, additional applications may not follow this privacy policy and utilize their own. We have no responsibility of privacy on non-arcos packages.

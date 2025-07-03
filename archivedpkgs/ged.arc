@@ -1,9 +1,6 @@
 |/apps|-1|
-|/index|0|
-|apps/ged.lua|22|
+|apps/ged.lua|0|
 --ENDTABLE
-d>apps
-f>apps/ged.lua
 local files = require("files")
 local ui = require("ui")
 local col = require("col")

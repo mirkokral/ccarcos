@@ -1038,18 +1038,18 @@ class TextArea extends Widget {
 		}
 		cursorPosAsInt += this.cursorPos.x | 0;
 		if(c[0] == "key_up") {
-			if(c[1] == keys.control) {
+			if(c[1] == Keys.control) {
 				this.ctrlPressed = false;
 			}
 		}
 		if(c[0] == "key") {
-			if(c[1] == keys.control) {
+			if(c[1] == Keys.control) {
 				this.ctrlPressed = true;
 			}
-			if(this.ctrlPressed && c[1] == keys.u && this.focused) {
+			if(this.ctrlPressed && c[1] == Keys.u && this.focused) {
 				this.value = "";
 			}
-			if(c[1] == keys.backspace && !(this.cursorPos.y < 1 && this.cursorPos.x < 1)) {
+			if(c[1] == Keys.backspace && !(this.cursorPos.y < 1 && this.cursorPos.x < 1)) {
 				this.value = this.value.substring(0,cursorPosAsInt - 1) + this.value.substring(cursorPosAsInt);
 				this.cursorPos.x--;
 				if(this.cursorPos.x < 0) {
@@ -1057,16 +1057,16 @@ class TextArea extends Widget {
 					this.cursorPos.x = this.value.split("\n")[this.cursorPos.y | 0].length;
 				}
 			}
-			if(c[1] == keys.home) {
+			if(c[1] == Keys.home) {
 				this.cursorPos.x = 0;
 			}
-			if(c[1] == keys.end) {
+			if(c[1] == Keys.end) {
 				this.cursorPos.x = this.value.split("\n")[this.cursorPos.y | 0].length;
 			}
-			if(c[1] == keys.delete) {
+			if(c[1] == Keys.delete) {
 				this.value = this.value.substring(0,cursorPosAsInt) + this.value.substring(cursorPosAsInt + 1);
 			}
-			if(c[1] == keys.left) {
+			if(c[1] == Keys.left) {
 				this.cursorPos.x--;
 				if(this.cursorPos.x < 0) {
 					if(this.cursorPos.y > 0) {
@@ -1079,7 +1079,7 @@ class TextArea extends Widget {
 				this.cursorPos.y = Math.min(this.cursorPos.y,this.value.split("\n").length - 1);
 				this.cursorPos.x = Math.min(this.cursorPos.x,this.value.split("\n")[this.cursorPos.y | 0].length - 1);
 			}
-			if(c[1] == keys.right) {
+			if(c[1] == Keys.right) {
 				this.cursorPos.x++;
 				if(this.cursorPos.x > this.value.split("\n")[this.cursorPos.y | 0].length) {
 					this.cursorPos.x--;
@@ -1091,21 +1091,21 @@ class TextArea extends Widget {
 				this.cursorPos.y = Math.min(this.cursorPos.y,this.value.split("\n").length - 1);
 				this.cursorPos.x = Math.min(this.cursorPos.x,this.value.split("\n")[this.cursorPos.y | 0].length);
 			}
-			if(c[1] == keys.up) {
+			if(c[1] == Keys.up) {
 				this.cursorPos.y--;
 				this.cursorPos.y = Math.min(this.cursorPos.y,this.value.split("\n").length - 1);
 				this.cursorPos.x = Math.min(this.cursorPos.x,this.value.split("\n")[this.cursorPos.y | 0].length);
 			}
-			if(c[1] == keys.down) {
+			if(c[1] == Keys.down) {
 				this.cursorPos.y++;
 				this.cursorPos.y = Math.min(this.cursorPos.y,this.value.split("\n").length - 1);
 				this.cursorPos.x = Math.min(this.cursorPos.x,this.value.split("\n")[this.cursorPos.y | 0].length);
 			}
-			if(c[1] == keys.enter && this.height > 1) {
+			if(c[1] == Keys.enter && this.height > 1) {
 				this.value = this.value.substring(0,cursorPosAsInt) + "\n" + this.value.substring(cursorPosAsInt);
 				this.cursorPos.y++;
 				this.cursorPos.x = 0;
-			} else if(c[1] == keys.enter && this.height <= 1) {
+			} else if(c[1] == Keys.enter && this.height <= 1) {
 				this.onSubmit.execute(this,this.lsw,this.lsh);
 			}
 			this.requestRerender();
@@ -1206,7 +1206,7 @@ $hx_exports["Values"] = Values;
 Values.__name__ = true;
 class CCOS {
 	static pullEvent() {
-		__lua__("\n        if arcos then return arcos.ev() else return os.pullEvent() end\n        ");
+		__lua__("\n        if package.isarcos then return require(\"arcos\").ev() else return os.pullEvent() end\n        ");
 		return null;
 	}
 }
@@ -1652,7 +1652,6 @@ class Runner {
 		try {
 			__lua__("peripheral.wrap(\"back\").transmit(630, 630, t)");
 		} catch( _g ) {
-			__lua__("\n            local fear, err = fs.open(\"log.txt\", \"a\")\n            if fear then fear.write(t .. \"\\n\") fear.close() end\n            ");
 		}
 	}
 }

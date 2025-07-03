@@ -1,5 +1,0 @@
-{
-    "name": "Test Application",
-    "execute": "/apps/test.lua",
-    "icon": "+------+\n| \\  \/ |\n|  \\\/  |\n|  \/\\  |\n| \/  \\ |\n+------+"
-}

@@ -1,9 +1,0 @@
-{
-    "friendlyName": "arcos itself",
-    "description": "The package that has all the arcos files",
-    "owner": "arcos Development Team and contributors",
-    "version": "24.10b \"Synoid\"",
-    "vId": 15,
-    "dependencies": [],
-    "isIndependable": true
-}

@@ -1,0 +1,8 @@
+{
+    "friendlyName": "Syne Kernel",
+    "description": "The kernel behind arcos.",
+    "owner": "TNC™ Development and Management Team",
+    "version": "3.7 \"Dawn\"",
+    "vId": 370,
+    "dependencies": []
+}

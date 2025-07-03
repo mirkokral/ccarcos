@@ -13,7 +13,7 @@ for erm in files:
         if os.path.exists(erm + "/build.sh") and os.path.isfile(erm + "/build.sh"):
             os.system(f'bash -c "cd {erm}; bash build.sh; cd .."');
             if not os.path.exists(erm + "/out") or not os.path.isdir(erm + "/out"):
-                raise InvalidPackageError("Package's build script does not have an out directory.")
+                raise InvalidPackageError(f"Package {erm}'s build script does not have an out directory.")
             dirs = []
             files = []
             for p2, dirnames, filenames in os.walk(f"{erm}/out/"):

@@ -1,17 +1,10 @@
 |/apis|-1|
 |/services|-1|
 |services/enabled|-1|
-|/index|0|
-|apis/rednet.lua|105|
-|services/rednet.lua|9097|
-|services/enabled/4 rednet|9120|
+|apis/rednet.lua|0|
+|services/rednet.lua|8992|
+|services/enabled/4 rednet|9015|
 --ENDTABLE
-d>apis
-f>apis/rednet.lua
-d>services
-f>services/rednet.lua
-d>services/enabled
-f>services/enabled/4 rednet
 local arcos = require("arcos")
 local devices = require("devices")
 

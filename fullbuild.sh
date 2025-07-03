@@ -1,5 +1,7 @@
+if [ ! -e archivedpkgs ]; then
+    mkdir archivedpkgs
+fi
 rm archivedpkgs/*
-bash build.sh
 cd repo
 python build.py
 cd ..

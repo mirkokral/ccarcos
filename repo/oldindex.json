@@ -3,10 +3,9 @@
         "friendlyName": "arcos itself",
         "description": "The package that has all the arcos files",
         "owner": "arcos Development Team and contributors",
-        "version": "24.09p5 Beta release \"Sillicum\"",                   
+        "version": "24.09p5 Beta release \"Sillicum\"",
         "vId": 5,
-        "dependencies": [],
-        "isIndependable": true
+        "dependencies": []
     },
     "test": {
         "friendlyName": "Test Application",
@@ -14,8 +13,7 @@
         "owner": "TNC™ Development and Management Team",
         "version": "24.08.3",
         "vId": 3,
-        "dependencies": [],
-        "isIndependable": true
+        "dependencies": []
     },
     "audm": {
         "friendlyName": "arcui Display Manager",
@@ -23,8 +21,7 @@
         "owner": "TNC™ Development and Management Team",
         "version": "24.08.16",
         "vId": 16,
-        "dependencies": [],
-        "isIndependable": true
+        "dependencies": []
     },
     "gconfig": {
         "friendlyName": "Tweaks",
@@ -32,9 +29,7 @@
         "owner": "TNC™ Development and Management Team",
         "version": "24.08.11",
         "vId": 11,
-        "dependencies": [],
-        "isIndependable": true
-
+        "dependencies": []
     },
     "ged": {
         "friendlyName": "Editor",
@@ -42,37 +37,34 @@
         "owner": "TNC™ Development and Management Team",
         "version": "24.08.6",
         "vId": 6,
-        "dependencies": [],
-        "isIndependable": true
-
+        "dependencies": []
     },
     "craft": {
         "friendlyName": "Craft",
         "description": "A compatibility layer to run CraftOS apps",
-        "owner":"TNC™ Development and Management Team",
+        "owner": "TNC™ Development and Management Team",
         "version": "39",
         "vId": 39,
-        "dependencies": ["rednet"],
-        "isIndependable": true
-
+        "dependencies": [
+            "rednet"
+        ]
     },
     "bmoscompat": {
         "friendlyName": "BM-OS Subsystem",
         "description": "A WIP BM-OS subsystem",
-        "owner":"AdamTheDumbPerson",
+        "owner": "AdamTheDumbPerson",
         "version": "1",
         "vId": 50,
-        "dependencies": ["craft"],
-        "isIndependable": true
+        "dependencies": [
+            "craft"
+        ]
     },
     "rednet": {
         "friendlyName": "RedNet",
         "description": "A rednet implementation for arcos with an api slimar to the CraftOS one",
-        "owner":"TNC™ Development and Management Team",
-        "version":"4",
+        "owner": "TNC™ Development and Management Team",
+        "version": "4",
         "vId": 4,
-        "dependencies": [],
-        "isIndependable": false
+        "dependencies": []
     }
-    
 }

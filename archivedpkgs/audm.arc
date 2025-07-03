@@ -1,15 +1,9 @@
 |/config|-1|
 |/services|-1|
 |config/desktops|-1|
-|/index|0|
-|config/desktops/Shell|82|
-|services/audm.lua|97|
+|config/desktops/Shell|0|
+|services/audm.lua|15|
 --ENDTABLE
-d>config
-d>config/desktops
-f>config/desktops/Shell
-d>services
-f>services/audm.lua
 /apps/shell.lualocal files = require("files")
 local ui = require("ui")
 local col = require("col")

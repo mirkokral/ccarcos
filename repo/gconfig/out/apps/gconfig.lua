@@ -1,5 +1,5 @@
 local files = require("files")
-local tutils = require("tutils")
+local json = require("json")
 local ui = require("ui")
 local col = require("col")
 
@@ -8,7 +8,7 @@ local currentScreen = "main"
 local running = true
 local blcf = files.open("/config/aboot", "r")
 if not blcf then error("Broken system") end
-local blc = tutils.dJSON(blcf.read())
+local blc = json.decode(blcf.read())
 local configScreens
 local function changeScreens(new, ot)
     ui.PageTransition(configScreens[currentScreen], configScreens[new], false, 1, ot, term)
@@ -16,23 +16,23 @@ local function changeScreens(new, ot)
 end
 configScreens = {
     main = {
-        ui.Label{
+        ui.Label {
             label = "Select what to configure",
             x = 2,
             y = 2
         },
-        ui.ScrollPane{
+        ui.ScrollPane {
             x = 2,
             y = 4,
-            width = w-1,
-            height = h-4,
+            width = w - 1,
+            height = h - 4,
             col = col.black,
             children = {
                 ui.Button {
                     label = "Bootloader",
                     x = 1,
                     y = 1,
-                    callBack = function ()
+                    callBack = function()
                         changeScreens("bl", true)
                         return true
                     end
@@ -40,11 +40,11 @@ configScreens = {
             },
             showScrollBtns = true
         },
-        ui.Button{
+        ui.Button {
             label = "Quit",
-            x = w-4,
-            y = h-1,
-            callBack = function ()
+            x = w - 4,
+            y = h - 1,
+            callBack = function()
                 running = false
                 return false
             end,
@@ -53,56 +53,56 @@ configScreens = {
         },
     },
     bl = {
-        ui.Label{
+        ui.Label {
             label = "Skip prompt: ",
             x = 2,
             y = 2
         },
-        ui.Button{
+        ui.Button {
             label = blc["skipPrompt"] and "Yes" or "No",
             x = 15,
             y = 2,
-            callBack = function ()
+            callBack = function()
                 blc["skipPrompt"] = not blc["skipPrompt"]
                 configScreens.bl[2].label = blc["skipPrompt"] and "Yes" or "No"
                 return true
             end
         },
-        ui.Label{
+        ui.Label {
             label = "Default Args: ",
             x = 2,
             y = 4
         },
-        ui.TextInput{
+        ui.TextInput {
             label = blc["defargs"],
             x = 16,
             y = 4,
             width = w - 16
         },
-        ui.Label{
+        ui.Label {
             label = "Auto Update: ",
             x = 2,
             y = 6
         },
-        ui.Button{
+        ui.Button {
             label = blc["autoUpdate"] and "Yes" or "No",
             x = 15,
             y = 6,
-            callBack = function ()
+            callBack = function()
                 blc["autoUpdate"] = not blc["autoUpdate"]
                 configScreens.bl[6].label = blc["autoUpdate"] and "Yes" or "No"
                 return true
             end
         },
-        ui.Button{
+        ui.Button {
             label = "Save & Back",
-            x = w-11,
-            y = h-1,
-            callBack = function ()
+            x = w - 11,
+            y = h - 1,
+            callBack = function()
                 blc["defargs"] = configScreens.bl[4].text
                 local f = files.open("/config/aboot", "w")
                 if not f then error("Broken system") end
-                f.write(tutils.sJSON(blc))
+                f.write(json.encode(blc))
                 f.close()
                 changeScreens("main", false)
                 return true

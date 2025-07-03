@@ -4,6 +4,5 @@
     "owner": "arcos Development Team and contributors",
     "version": "v2",
     "vId": 2,
-    "dependencies": [],
-    "isIndependable": true
+    "dependencies": []
 }

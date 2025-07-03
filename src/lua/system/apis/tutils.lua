@@ -1,4 +1,5 @@
 local expect = require("col").expect
+local json = require("json")
 
 local function getArgs(func)
     -- local args = {}
@@ -6,7 +7,7 @@ local function getArgs(func)
     --     table.insert(args, debug.getlocal(func, i));
     -- end
     -- return args;
-    return {"..."}
+    return { "..." }
 end
 local function serializeTable(val, name, skipnewlines, depth, doColors)
     skipnewlines = skipnewlines or false
@@ -14,13 +15,22 @@ local function serializeTable(val, name, skipnewlines, depth, doColors)
 
     local tmp = string.rep(" ", depth)
 
-    if name then tmp = tmp .. (doColors and "\011f7" or "") .. "[" .. (doColors and "\011fd" or "") .. serializeTable(name, nil, true, 0, false) .. (doColors and "\011f7" or "") .. "]" .. (doColors and "\011f8" or "") .. " = " end
+    if name then
+        tmp = tmp ..
+            (doColors and "\011f7" or "") ..
+            "[" ..
+            (doColors and "\011fd" or "") ..
+            serializeTable(name, nil, true, 0, false) ..
+            (doColors and "\011f7" or "") .. "]" .. (doColors and "\011f8" or "") .. " = "
+    end
 
     if type(val) == "table" then
         tmp = tmp .. (doColors and "\011f8" or "") .. "{" .. (not skipnewlines and "\n" or "")
 
         for k, v in pairs(val) do
-            tmp = tmp .. serializeTable(v, k, skipnewlines, depth + 1, doColors) .. (doColors and "\011f7" or "") .. "," .. (not skipnewlines and "\n" or "")
+            tmp = tmp ..
+                serializeTable(v, k, skipnewlines, depth + 1, doColors) ..
+                (doColors and "\011f7" or "") .. "," .. (not skipnewlines and "\n" or "")
         end
 
         tmp = tmp .. string.rep(" ", depth) .. (doColors and "\011f8" or "") .. "}"
@@ -43,12 +53,14 @@ end
 ---Serializes an object into JSON
 ---@param obj any
 ---@return string
+---@deprecated Use json.encode
 local function sJSON(obj)
     return json.encode(obj)
 end
 ---Deserializes a JSON string
 ---@param obj string
 ---@return any
+---@deprecated Use json.decode
 local function dJSON(obj)
     return json.decode(obj)
 end

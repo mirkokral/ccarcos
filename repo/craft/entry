@@ -6,6 +6,5 @@
     "vId": 40,
     "dependencies": [
         "rednet"
-    ],
-    "isIndependable": true
+    ]
 }
